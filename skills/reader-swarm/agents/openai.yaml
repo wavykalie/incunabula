@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reader Swarm"
+  short_description: "Large simulated reader panels for reaction, niche risk, and public framing."
+  default_prompt: "Run a simulated reader swarm on this manuscript: cohorts, niche-risk scouting, public reaction, and revision tickets."

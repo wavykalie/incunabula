@@ -1,0 +1,77 @@
+# ============================================================================
+# BOOKS.yaml — the registry of books this framework governs.
+#
+# WHY THIS FILE EXISTS: the 2026-10-01 all-books suite silently omitted
+# `marrow-light/` — a complete, finished book — because the suite's book list
+# was hand-typed into a report. Nothing enforced "every book appears". The
+# registry is that enforcement: the suite reads this list, and
+# `tools/check-registry.py` checks it in BOTH directions (every registered
+# path exists; every PROJECT_STATE.yaml on disk is registered).
+#
+# WHAT IT IS NOT: a second length contract. The gates read each book's own
+# PROJECT_STATE.yaml; this file carries only pointers and stage. Duplicating
+# contracts here would create two places for a number to drift.
+#
+# status vocabulary: concept | drafting | complete | published | fixture
+# expected_manuscript: does the suite's prose gates apply to it?
+#
+# A book may exist on disk but be deliberately absent from this list (a private
+# title). check-registry.py prunes those from its on-disk scan when they are
+# named in .registry-private - a gitignored file, so the public repository
+# never carries the name.
+# ============================================================================
+
+books:
+  - path: demo-magician
+    title: "The Trick"
+    status: complete
+    expected_manuscript: true
+    note: "1930s conjuring mystery, 34 chapters, swept 2026-10-01, colophon built."
+
+  - path: the-origin-point
+    title: "The Origin Point"
+    status: drafting
+    expected_manuscript: true
+    note: "Fire-investigation mystery, premise 2; declares status: in_progress, so L1 records rather than judges."
+
+  - path: muzzle-and-marrow
+    title: "Muzzle and Marrow"
+    status: complete
+    expected_manuscript: true
+    note: "The from-scratch pilot; its U1/L1 failures are deliberately kept findings."
+
+  - path: marrow-light
+    title: "Marrow Light (working title)"
+    status: complete
+    expected_manuscript: true
+    note: "38 chapters, 78,070 words; L1 breach carried as fact. MISSED by the 2026-10-01 suite — the omission that created this registry."
+
+  - path: sons-of-heaven-v2
+    title: "Sons of Heaven, Students of Dust"
+    status: complete
+    expected_manuscript: true
+    note: "Narrative nonfiction; declares positioning: nonfiction (U1/U4/U5 advisory)."
+
+  - path: incunabula-test
+    title: "Sons of Heaven, Students of Dust (WORKING TITLE)"
+    status: fixture
+    expected_manuscript: true
+    note: "The pipeline's test book; 15 chapters post-rechapter. L1 shortfall recorded, not repaired."
+
+  - path: validation-series/book-1
+    title: "Merope book one (WORKING TITLE)"
+    status: fixture
+    expected_manuscript: true
+    note: "v2 eleven-chapter rebuild; explicitly no length contract (target_range_words [0,0])."
+
+  - path: validation-series/book-2
+    title: "Merope book two (WORKING TITLE)"
+    status: fixture
+    expected_manuscript: true
+    note: "v2 eleven-chapter rebuild; explicitly no length contract (target_range_words [0,0])."
+
+  - path: demo-galactic
+    title: "(concept)"
+    status: concept
+    expected_manuscript: false
+    note: "Concept stage, no manuscript; prose gates do not apply."

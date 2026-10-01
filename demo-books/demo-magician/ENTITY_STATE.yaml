@@ -1,0 +1,204 @@
+# ENTITY_STATE.yaml — The Trick
+# Phase 2.7, BUILD mode. Every entity extracted from premise.md, outline.md, the forme,
+# the voice matrix and the Corbeau school artifact.
+#
+# PROVENANCE RULE: every fact carries a source. Nothing here is invented during drafting.
+# If a chapter needs a fact that is not in this file, it goes in premise.md or outline.md
+# first, and this file is updated from that. A fact that appears in a chapter and nowhere
+# else is a continuity error waiting to be discovered by a reader.
+
+meta:
+  project: "the-trick"
+  mode: "BUILD"
+  created: "2026-09-28"
+  last_verified: "2026-09-28"
+  source_artifacts:
+    - "premise.md (§1-§9)"
+    - "outline.md (34 ch)"
+    - "artifacts/01-the-corbeau-school.md"
+    - "artifacts/02-naming-the-troop.md"
+    - "artifacts/03-forme.md"
+    - "artifacts/04-voice-matrix.md"
+    - "artifacts/05-cold-solve.md"
+    - "artifacts/07-the-test.md"
+
+# ------------------------------------------------------------------ PEOPLE
+
+people:
+  - id: "P-001"
+    name: "Elsa Reiner"
+    stage_name: null
+    stage_name_note: "DECLINED. A conjurer's stage name is a [presumed/actual] pair; she refuses the second name and is the only performer in the book with no misdirection to wear."
+    age: 34
+    role: "protagonist — working conjurer, and the only professional in the room with no institution behind her"
+    source: "premise.md §8, 03-forme.md §1, 04-voice-matrix.md"
+    invariants:
+      - "She is NOT police, NOT a magistrate, NOT a relative of any victim. She has no standing in any room in Act III and is refused access twice."
+      - "She carries no stage name and is never called Elsa except by Rask."
+      - "Her tic: she will not describe a person in a single word. A man, not the Norwegian, not her husband. This is the name-refusal made unconsciously and the book must never point at it."
+      - "She cannot prove anything by procedure. Every act of proof in the book is a personal act."
+    lie: "I have nothing to perform, therefore I have nothing to be accused of."
+    arc: "positive — the lie breaks in ch 22, when the test works only because she is a specific performer with a specific history"
+    knows_from: 1
+    learns_at: 22
+
+  - id: "P-002"
+    name: "Rask"
+    stage_name: null
+    stage_name_note: "DECLINED, and more completely than Elsa's. He has no first name in the book. Nobody says 'Mr Rask'. He is addressed by surname, alone."
+    age: "late 50s"
+    role: "the best Corbeau living; the only living person who has met the killer"
+    source: "premise.md §8, 03-forme.md §1"
+    invariants:
+      - "HE TAUGHT THE KILLER, in 1919, briefly and badly, in a town that is never named in this book. The town is never named in any artifact either."
+      - "He will not be looked at while eating. One scene is built on this and nobody comments on it."
+      - "He answers ch 23 because Reiner already has the answer, not to help her."
+      - "FLAT ARC. He does not soften, does not become a mentor, does not confess. What changes is that he finally answers a question he has been avoiding for forty years."
+    knows_from: 1
+    tells_at: 23
+
+  - id: "P-003"
+    name: "Sigrid Voll"
+    stage_name: "Sigrid Voll"
+    stage_name_note: "UNCHANGED. The northern tent doctrine is austerity: a large name claims a grandeur the tent cannot support."
+    age: 29
+    role: "northern tent performer; the corps[e]; comic relief that is not relief"
+    source: "02-naming-the-troop.md §3, 03-forme.md §1"
+    invariants:
+      - "She is FUNNY. The book loses if she is sad."
+      - "She inflates one or two words per sentence and corrects herself; the correction is the joke."
+      - "She calls the crew by their instrument — the Hands, the Coat."
+      - "Her arc: she inflates, once, publicly, at a cost, and the name she takes is small and ugly and works."
+    chapter_function: "ch 6 (introduced, funny), ch 8 (the corps[e] economics), ch 14 (HIGH — her booking), ch 31 (present and silent)"
+
+  - id: "P-004"
+    name: "Halvard Grens"
+    stage_name: "Halvard Grens"
+    stage_name_note: "UNCHANGED. Northern tent. Rock guardian — a man who has never been asked what he was guarding against."
+    age: 38
+    role: "northern tent performer; cleared of a manslaughter eight years ago and never asked about it since"
+    source: "02-naming-the-troop.md §3, 03-forme.md §1"
+    invariants:
+      - "He uses the fewest words of anyone and the fewest are wrong."
+      - "He orients to load-bearing structures in a room: the tent, the assembly hall, the court. Mentioned once by Reiner, never by anyone else."
+      - "NEGATIVE ARC AND HE DOES NOT NOTICE IT. In ch 32 he states a position instead of answering a question, ADDS DETAIL, and the additional detail convicts him. He never understands that he did it."
+      - "He is funny in ch 6 and wrong in ch 32. Both are required."
+    chapter_function: "ch 6 (funny), ch 11, ch 20, ch 32 (the additional detail)"
+
+  - id: "P-005"
+    name: "Anouk Soldano"
+    stage_name: "L'Ombrière"
+    stage_name_note: "Salle, the grand manner. The name is a claim of capability that can be formally challenged — which is why the dossiers exist."
+    age: "40s"
+    role: "salle performer; keeps the dossiers; the only person with a paper record of the whole career"
+    source: "artifacts/03-the-dossier.md, 03-forme.md §1"
+    invariants:
+      - "She is never called Soldano in dialogue. Only in documents."
+      - "She has never told anybody anything in eleven years and gets NO confession scene."
+      - "Her formality INCREASES under pressure. By the trial it is the only thing holding her together."
+      - "She is the worst witness in the room and the only one who is right."
+    chapter_function: "ch 9 (the dossier), ch 25-27 (procedure), ch 32 (testimony — the most expensive arc in the book)"
+
+  - id: "P-006"
+    name: "Brynjar Sigmundsson"
+    stage_name: "La Furette"
+    stage_name_note: "Ports. Names arrive wrong and nobody is embarrassed, because embarrassment is a luxury of the salle. He is from three places and belongs to none."
+    age: 34
+    role: "the ferret — sells information; the reason the fourth death happened, by not asking a question"
+    source: "03-forme.md §1, 04-voice-matrix.md"
+    invariants:
+      - "He talks faster under pressure. Nobody in the book has heard him slow."
+      - "He refers to himself in the third person once, in the port scene, and it is the only time Reiner is frightened of anyone."
+      - "He is BAD at charm and that is his tragedy. He can sell a fact and cannot sell himself."
+      - "In ch 33 he testifies to having sold the information and is not believed, because a man who sells information is not a witness."
+    chapter_function: "ch 7 (introduced), ch 18 (the port), ch 33 (testimony)"
+
+  - id: "P-007"
+    name: "Le Corbeau"
+    stage_name: "Le Corbeau"
+    birth_name: "UNKNOWN — never spoken in the book"
+    role: "the killer"
+    source: "premise.md §9, 03-forme.md §1"
+    invariants:
+      - "NEVER IN POV. No scene from inside him. This is the design, not an omission."
+      - "He gets four spoken lines in the entire book that are not in writing, and each is worse for him than the last."
+      - "He does NOT know a trial is coming and does NOT want one. He has spent a career making sure no competent person is ever in a position to ask."
+      - "He never performs in the trial (ch 31) because a trick needs a retinue and the entire assembly is a witness."
+      - "His French is excellent. His procedural English is thin. His spelling of towns is correct; his inflection of local custom is half a beat late. THE TELL IS IN HIS SYNTAX, NOT HIS VOCABULARY."
+      - "He does not enjoy the trial. He does not monologue. He is defeated by a request for leave."
+    appears: "only in print, in documents, in notices, in a sentence written for the file"
+
+# ------------------------------------------------------------------ THE METHOD
+
+method:
+  id: "M-001"
+  name: null
+  name_status: "NEVER NAMED ON THE PAGE. Rask says it cannot be described because describing it would be repetition, not proof. CONFIRMED by cold solve: the effect is reconstructible from planted evidence without the name."
+  source: "premise.md §8, artifacts/05-cold-solve.md Part B, artifacts/07-the-test.md"
+  the_trick: "The five canon effects all MOVE a thing while the audience believes it is still. The sixth never moves anything. It uses the audience being exactly right: he performs the transfer in full view, and what the room saw was true — a man was brought in and a man was taken out. The trick is that 'a man' was never a fixed quantity across the interval."
+  mechanism: "The Corbeau doctrine — the audience is always right about what it saw and always wrong about what it meant — is a BLIND SPOT, not a defence. Nobody in a Corbeau school has been taught that a person is a thing that can be swapped. He does not defeat their training; he stands where it does not reach."
+  evidence_left: "NONE. No apparatus, no mark, no gap, no accomplice in the moment. The room's evidence is entirely true, and it convicts them."
+  why_it_works: "A retinue — the small circle who have seen it before — is the only body of people who will testify in detail about who was present. He assembles a room of people who will be confident. The assembling IS the requirement, not the hospitality."
+
+proof:
+  id: "PF-001"
+  mechanism: "A falsifiable prediction. A general description cannot be wrong and proves nothing; a specific one can, and the possibility of being wrong is visible before she speaks."
+  the_test: "Reiner states in advance, in open court, where a named man will say he was looking — using an inquest account sealed weeks earlier. The room confirms it."
+  why_a_reciter_fails: "A reciter holds a METHOD and predicts what the method does. She predicts where a specific person in a specific chair was looking. Generality is unfalsifiable; the second is checkable against a record that predates the question."
+  first_performed: "ch 22 (private, four witnesses, Reiner's room)"
+  public: "ch 30 (open court, a room that does not share the vocabulary)"
+  never_proves: "It does not prove murder. The trick is not a crime and never was."
+
+# ------------------------------------------------------------------ THE TRIAL
+
+trial:
+  structure: "Act III, ch 25-31. Procedure, not melodrama. A requête, a réponse, a sentence."
+  the_defeat: "ch 31 — he is required to perform it and cannot. There is no retinue; the assembly is entirely witnesses, and a witness cannot be a retinue."
+  the_retreat: "ch 27 — he requests leave, cites a prior engagement, and is refused by a clerk. Paperwork defeats him."
+  forbidden: "No new methods. No monologue. No courtroom thriller. The dossier, the ledger and the trial each name zero methods."
+
+# ------------------------------------------------------------------ PLACES
+
+places:
+  - id: "PL-001"
+    name: "the northern tent circuit"
+    doctrine: "Austerity. Short, worklike names. A large name claims a grandeur the tent cannot support."
+    source: "02-naming-the-troop.md §2"
+  - id: "PL-002"
+    name: "the continental salle"
+    doctrine: "The grand manner. The name names an effect and is a claim that can be formally challenged. A grand name generates a paper record — the dossier."
+    source: "02-naming-the-troop.md §2, 03-the-dossier.md"
+  - id: "PL-003"
+    name: "the southern and colonial ports"
+    doctrine: "No convention, only borrowing. Names arrive wrong. He works with an audience that will not give him a Handover and abandons the grammar."
+    source: "02-naming-the-troop.md §2"
+
+# ------------------------------------------------------------------ DOCUMENT
+
+documents:
+  - id: "D-001"
+    name: "the dossier"
+    kind: "a performer's own bound record of their losses at a salle"
+    contents: "Seven disputes, three countries, 1929-1932. He wins most and wins them well. One answer uses the wrong convention's vocabulary for the court it is in."
+    load_bearing: "The dossier is the killer's interior. It is the ONLY place the reader gets him, and it names ZERO methods."
+    verified_absence: "No canon effect name appears anywhere in it. Checked mechanically: all six = 0."
+    source: "artifacts/03-the-dossier.md"
+  - id: "D-002"
+    name: "the inquest account of Aldrich"
+    kind: "sealed, dated, independent — given weeks before the test"
+    contents: "He says he was watching the door when the second man came in, and does not think about it again."
+    load_bearing: "THE EVIDENCE PREDATES THE QUESTION. This is what makes the test sound: she is not tested on her memory, she is tested on her correspondence with a record that already existed."
+    source: "artifacts/05-cold-solve.md row 29, 07-the-test.md §2.3"
+
+# ------------------------------------------------------------------ INVARIANTS
+
+invariants:
+  - "The sixth effect is never named on the page."
+  - "No canon method name appears in the dossier, the ledger's reader-facing half, or the trial."
+  - "The killer is never in POV."
+  - "Rask has no first name in the book."
+  - "The town of 1919 is never named."
+  - "Esla Reiner has no institutional standing in Act III."
+  - "Chapters 8, 14, 20 and 34 are rest chapters. Ch 8, 14, 20 contain no death."
+  - "Nothing required by a reveal may first appear inside the reveal."
+  - "Every name has a recorded reason in 02-naming-the-troop.md. Two names are declined on purpose."

@@ -1,0 +1,98 @@
+=== PER DOCUMENT ===
+doc                                              words     D1     D2   P1mx    P2 P3run  -ly/k   shrt%
+elaina-v05__22__chapter015.txt                    9184    5.3    1.1      7     1     2   15.6     8.4  <- would FAIL under current caps
+elaina-v05__10__chapter003.txt                    9016    3.5    1.1      4     0     3   12.5    11.4  <- would FAIL under current caps
+elaina-v05__26__chapter019.txt                    8337    6.8    1.0      8     0     3   16.4    14.5  <- would FAIL under current caps
+elaina-v02__16__chapter008.txt                    8191    4.9    2.0      5     0     3   13.4     9.1  <- would FAIL under current caps
+elaina-v01__07__chapter001.txt                    7521    4.0    0.9      4     0     2   14.5    11.2  <- would FAIL under current caps
+elaina-v05__09__chapter002.txt                    7447    3.4    0.8      5     0     4   14.4    13.5  <- would FAIL under current caps
+elaina-v02__19__chapter011.txt                    7391    4.3    1.2      4     0     4   12.7    11.8  <- would FAIL under current caps
+elaina-v05__18__chapter011.txt                    6661    3.8    0.9      4     0     2   16.5     9.6  <- would FAIL under current caps
+elaina-v01__24__chapter012.txt                    6109    1.6    1.8     16     0     5   12.6     9.7  <- would FAIL under current caps
+elaina-v01__12__chapter004.txt                    5144    2.9    0.8      4     0     1   14.4     6.0  <- would FAIL under current caps
+elaina-v02__28__chapter020.txt                    5103    3.9    2.2      3     0     5   16.5    14.0  <- would FAIL under current caps
+elaina-v02__24__chapter016.txt                    4717    2.8    0.4      3     0     3   14.0    12.1  <- would FAIL under current caps
+elaina-v01__27__chapter014.txt                    4602    1.5    2.0      5     0     1   16.7     6.6  <- would FAIL under current caps
+elaina-v01__17__chapter009.txt                    4315    3.0    1.2      3     0     4   16.5    11.3  <- would FAIL under current caps
+elaina-v02__11__chapter003.txt                    4304    6.7    0.2      5     0     2   13.9     9.9  <- would FAIL under current caps
+elaina-v01__23__chapter011.txt                    4244    1.2    0.7      5     0     2   14.8     8.6  <- would FAIL under current caps
+elaina-v02__30__chapter022.txt                    4199    4.3    1.9      3     0     3   15.7    10.6  <- would FAIL under current caps
+elaina-v01__14__chapter006.txt                    4147    2.2    1.2      6     0     2   18.1     5.3  <- would FAIL under current caps
+elaina-v05__24__chapter017.txt                    4085    5.9    0.7      3     0     2   12.7    12.9  <- would FAIL under current caps
+elaina-v05__14__chapter007.txt                    3814    5.5    1.0      3     0     3   12.3     9.5  <- would FAIL under current caps
+elaina-v05__21__chapter014.txt                    3771    4.8    0.5      3     0     2   14.1     2.9  <- would FAIL under current caps
+elaina-v01__29__chapter014_b.txt                  3651    2.2    1.4      2     0     2   13.4     5.8
+elaina-v02__21__chapter013.txt                    3594    3.1    0.6      5     0     1   12.2     6.4  <- would FAIL under current caps
+elaina-v01__16__chapter008.txt                    3481    1.7    0.3      4     0     2   20.1    16.9  <- would FAIL under current caps
+elaina-v01__10__chapter002.txt                    3298    3.3    1.8      4     0     2   14.3     7.3  <- would FAIL under current caps
+elaina-v01__15__chapter007.txt                    3262    2.5    0.3      3     0     1    8.9     6.2  <- would FAIL under current caps
+elaina-v02__23__chapter015.txt                    3241    4.9    0.9      3     0     2   15.1    12.6  <- would FAIL under current caps
+elaina-v02__15__chapter007.txt                    2784    3.2    1.1      2     0     2   15.8     9.5
+elaina-v01__22__chapter010_b.txt                  2758    2.9    0.7      5     0     2   14.1     8.1  <- would FAIL under current caps
+elaina-v01__20__chapter010.txt                    2632    4.6    0.0      3     0     2   18.6     7.6  <- would FAIL under current caps
+elaina-v02__09__chapter001.txt                    2353    4.2    0.8      5     0     1   16.1     9.9  <- would FAIL under current caps
+elaina-v05__12__chapter005.txt                    2316    3.9    1.3      6     0     2   14.2     5.1  <- would FAIL under current caps
+elaina-v01__13__chapter005.txt                    2273    3.1    1.3      5     0     4   11.4    16.8  <- would FAIL under current caps
+elaina-v02__10__chapter002.txt                    2226    2.7    0.4      2     0     1   15.7     3.5
+elaina-v02__27__chapter019.txt                    2177    4.6    1.8      2     0     2   14.7    10.5  <- would FAIL under current caps
+elaina-v02__22__chapter014.txt                    1672    5.4    1.8      2     0     2   12.0    13.0  <- would FAIL under current caps
+elaina-v01__25__chapter013.txt                    1482    0.7    2.7      2     0     1   14.8     5.2
+elaina-v02__18__chapter010.txt                    1456    2.1    3.4      1     0     3   14.4    16.4
+elaina-v05__16__chapter009.txt                    1246    4.0    0.0      1     0     1   12.0     2.9  <- would FAIL under current caps
+elaina-v02__26__chapter018.txt                    1097    3.6    1.8      1     0     1   10.0    11.9
+elaina-v01__11__chapter003.txt                     988    6.1    0.0      2     0     1    9.1    11.8  <- would FAIL under current caps
+elaina-v05__08__chapter001.txt                     942    7.4    2.1      1     0     1   12.7    16.7  <- would FAIL under current caps
+elaina-v02__13__chapter005.txt                     882    4.5    0.0      2     0     0    9.1     0.0  <- would FAIL under current caps
+elaina-v02__14__chapter006.txt                     714    7.0    0.0      1     0     2   16.8    12.5  <- would FAIL under current caps
+elaina-v05__20__chapter013.txt                     699    4.3    0.0      3     0     1   24.3    10.7  <- would FAIL under current caps
+elaina-v05__17__chapter010.txt                     593    6.7    1.7      1     0     1   23.6    12.0  <- would FAIL under current caps
+elaina-v01__09__chapter001_b.txt                   559    8.9    3.6      1     0     1   10.7     5.0  <- would FAIL under current caps
+elaina-v02__31__chapter023.txt                     466    2.1    0.0      1     0     0   17.2     0.0
+
+=== DISTRIBUTIONS (per document, n=48) ===
+metric                      median     p75     p90     p95     p99     max cur cap
+D1 em dash /1k                 3.9     4.9     6.7     6.9     8.2     8.9       4
+D2 rule-of-three /1k           1.0     1.8     2.0     2.5     3.5     3.6       8
+P1 max repeated opener         3.0     5.0     5.3     6.6    12.2    16.0       2
+P2 duplicate sentences         0.0     0.0     0.0     0.0     0.5     1.0       0
+P3 max short-sent run          2.0     3.0     4.0     4.0     5.0     5.0       3
+-ly adverbs /1k               14.4    16.2    17.4    19.6    24.0    24.3    note
+short sentences %              9.8    12.0    14.2    16.6    16.9    16.9    note
+
+=== BY CORPUS (translation skew check) ===
+-- elaina  (n=48, 175144 words)
+   metric                      median     p90     max
+   D1 em dash /1k                 3.9     6.7     8.9
+   D2 rule-of-three /1k           1.0     2.0     3.6
+   A20 curly quote /1k           98.0   122.0   140.0
+   A23 parenthetical /1k          0.4     1.1     1.8
+   P1 repeats /1k                 0.9     2.2     4.3
+   P1 top-opener share %          2.5     5.2    11.8
+   P3 max short-sent run          2.0     4.0     5.0
+   -ly adverbs /1k               14.4    17.4    24.3
+
+=== HARD RULE HITS ACROSS THE CORPUS ===
+  maxdoc/1k = worst single document's rate (drives any cap)
+id    rule                       hits   docs    hits/1M  maxdoc/1k
+A1    delve family                  2      2       11.4       0.31
+A2    magic adverbs                37     24      211.3       0.95
+A3    grandiose nouns               9      8       51.4       4.29
+A4    serves-as dodge               1      1        5.7       0.13
+A5    negative parallelism         10      8       57.1       0.61
+A6    not X not Y                   1      1        5.7       0.30
+A7    the X? a Y                    1      1        5.7       0.12
+A9    teacher voice                 1      1        5.7       0.11
+A10   filler transition            14     12       79.9       1.13
+A11   signposted conclusion         2      1       11.4       0.24
+A15   superficial -ing              7      6       40.0       1.69
+A20   unicode decoration        17146     48    97896.6     139.97
+A22   excluded-book residue         4      4       22.8       0.91
+A23   parenthetical dash           85     37      485.3       1.79
+corpus words: 175144
+rules never triggered by published prose: A8, A12, A13, A14, A16, A17, A18, A19, A21
+
+=== P2 DUPLICATE SENTENCE EXAMPLES (published prose) ===
+  elaina-v05__22__chapter015.txt            She could, to put it clearly and concisely, see the future.
+
+
+Exactly how long she had bee

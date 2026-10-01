@@ -1,0 +1,4 @@
+interface:
+  display_name: "Incunabula"
+  short_description: "The full book pipeline: gated phases, voice contracts, canon, maintenance."
+  default_prompt: "Run the Incunabula pipeline for my book project, with guided intake, voice contracts, canon tracking, and maintenance."

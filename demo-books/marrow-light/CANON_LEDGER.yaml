@@ -1,0 +1,110 @@
+# CANON_LEDGER.yaml — MARROW LIGHT (working title)
+#
+# Written 2026-09-29, BEFORE any prose exists.
+#
+# WHY THIS FILE IS SHAPED THE WAY IT IS
+#
+# `check-names.py` splits a declared name on whitespace: parts[0] is the first name,
+# parts[1] the surname. Probed on the pilot, a title lands in the FIRST-NAME slot
+# ("Duke Rocky of Cavalton" -> first="Duke", surname="Rocky") and a single bare part is
+# dropped from the cast entirely. A pet-name or titled cast would have been largely
+# INVISIBLE to the gate - a pass on a book never looked at, which is the Freeze 8/9
+# defect class.
+#
+# So each character is declared twice: `canonical_name` is what the parser reads, and it
+# is always two ordinary parts. `called_in_prose` is what the manuscript will actually
+# print. The frozen gate is NOT modified and no prose will be bent to satisfy a parser.
+#
+# Verified with _verify_cast.py: 6 visible, no titles, no connectors, no collisions.
+
+book:
+  title: "Marrow Light"
+  title_status: "WORKING. Nothing is named until the manuscript is drafted, per the
+                 project's title rule. The directory name is inherited and does not
+                 describe the book."
+  genre: "romance"
+  subgenre: "yuri romance; two-hander"
+  positioning: "full-length commercial romance"
+  paragraph_convention: "commercial-dialogue"
+  declared: "2026-09-29"
+  gate_expectations:
+    U1: "recorded, not optimised. 12.1% on the pilot is the expected output of a book
+         written without length targets, not a defect. See DRAFTING_FRAMEWORK.md."
+    U4: "ENFORCED. paragraph_convention is commercial-dialogue, declared before drafting.
+         This is the first book in the project to opt in, and the first to put the row
+         under real load."
+
+cast:
+
+  - id: "CHR-001"
+    canonical_name: "Ines Varga"          # parser-facing: two ordinary parts
+    called_in_prose: "Ines"               # what the manuscript prints
+    age: 38
+    role: "protagonist"
+    profession: "cave explorer, decommissioned; now sells technical equipment to people
+                 who go into holes"
+    wound: "the last survey ended in a collapse that killed her partner"
+    lie: "that the cave took something from her, rather than her having gone back too
+          many times"
+    engine_role: "the one who knows the system and will not go into it"
+
+  - id: "CHR-002"
+    canonical_name: "Ottoline Marrow"     # parser-facing: two ordinary parts
+    called_in_prose: "Ottoline"
+    age: 22
+    role: "protagonist"
+    profession: "film-school student, second year"
+    wound: "has never been told, by anyone who was there, why her mother stopped making
+            films"
+    lie: "that documenting a thing is the same as understanding it"
+    engine_role: "the one who insists on going in"
+    renamed: "2026-09-29. Was 'Wren Okonkwo'. check-names.py found Wren already in
+              use as a first name in the-origin-point's archived premise 1. A returning
+              reader meets the name twice and reads it as one writer's habit. Caught
+              BEFORE any prose exists, which is the point of probing the gate at
+              planning time rather than after a manuscript."
+
+  - id: "CHR-003"
+    canonical_name: "Fabiola Renn"
+    called_in_prose: "Fabiola"
+    age: 61
+    role: "secondary; the equipment business Ines works for"
+    engine_role: "the one who says no and is right to"
+    renamed: "2026-09-29. Was 'Delphine Ashby'. check-names.py found Delphine in use in
+              the-origin-point's CANON_LEDGER, ENTITY_STATE and two chapters, and in
+              demo-magician. Renamed at planning time for the same reason as CHR-002."
+
+  - id: "CHR-004"
+    canonical_name: "Marisol Trent"
+    called_in_prose: "Marisol"
+    age: 45
+    role: "secondary; film-school supervisor who objects to the shoot"
+    engine_role: "the one who makes the film cost something"
+    # Marisol appears in vermillion-study prose, which is a study document rather than a
+    # book, so the name gate does not count it. Left as drafted.
+
+  - id: "CHR-005"
+    canonical_name: "Tove Marsk"
+    called_in_prose: "Tove"
+    age: 34
+    role: "secondary; the surveyor who goes first on the line"
+    engine_role: "the professional Ines is being compared to"
+
+  - id: "CHR-006"
+    canonical_name: "Hana Vogel"
+    called_in_prose: "Hana"
+    age: 29
+    role: "secondary; the surface contact who cannot come underground"
+    engine_role: "the voice on the other end of the line"
+
+world_rules:
+  - id: "WR-001"
+    rule: "A survey of a tight system needs two people on separate ends of a line. This
+           is a physical constraint, not a metaphor, and the plot depends on it."
+  - id: "WR-002"
+    rule: "The system Ines is avoiding has one entrance large enough for a person with
+           a full rack and not large enough for two people abreast. Everyone who goes in
+           goes in one at a time."
+  - id: "WR-003"
+    rule: "The collapse was caused by water, not rock, and this is knowable from the
+           start. Nothing in the book turns on the reader not knowing it."

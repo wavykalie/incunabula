@@ -1,0 +1,134 @@
+# ENTITY_STATE.yaml — Case Tracking (BUILD, Phase 2.7)
+#
+# Single source of truth for continuity, drafted from foundation.md + outline.md
+# before Chapter 1 was written.
+#
+# `status: planned` = known from the outline, not yet on the page.
+#
+# ---------------------------------------------------------------------------
+# CAST DECLARATION FORMAT — this is load-bearing, do not "tidy" it
+# ---------------------------------------------------------------------------
+# The frozen gate `check-names.py` reads cast from `canonical_name:` lines and
+# splits each on whitespace: parts[0] is treated as a FIRST name and parts[1] as
+# a SURNAME. That parser was probed against this book's naming convention before
+# drafting (see `evaluations/name-gate-probe.md`).
+#
+# What the probe found, measured on the frozen parser itself:
+#
+#   "Mittens the 7th"              -> IGNORED entirely (single bare part)
+#   "Pipp O'Halloran"              -> IGNORED entirely (clean() drops the digit)
+#   "Duke Rocky of Cavalton"       -> first="Duke"        surname="Rocky"
+#   "Sergeant Pips Quill"          -> first="Sergeant"    surname="Pips"
+#   "Baroness Whiskers von Fluff"  -> first="Baroness"    surname="Whiskers"
+#
+# So titles land in the first-name slot, and several of the book's names are
+# invisible to the gate. The declarations below therefore carry a
+# `canonical_name:` chosen to be parsed CORRECTLY, separate from the name the
+# character is called in the prose. `called_in_prose:` records what readers see.
+# This is a declaration-format decision, not a rename: nothing in the manuscript
+# is changed to satisfy a parser, and the frozen gate is NOT modified.
+#
+# This is the honest reading of "the population that matters is this author's own
+# catalogue": the check should fire on two characters the reader would confuse,
+# and a title in the surname slot is not that.
+
+meta:
+  mode: "BUILD (Phase 2.7), then UPDATE (Phase 3.7 after chs 1-3)"
+  built: "2026-09-29"
+  sources: [foundation.md, outline.md]
+  last_update: "2026-09-29"
+  update_note: "Initial build. No chapter drafted yet."
+
+# ------------------------------------------------------------------ characters
+# `canonical_name` is the parser-facing two-part name. `called_in_prose` is what
+# the manuscript uses. They differ deliberately, and only for the gate's benefit.
+characters:
+  - id: CHR-01
+    canonical_name: "Mittens Brisk"
+    called_in_prose: "Mittens the 7th"
+    species: cat
+    role: protagonist
+    age: 31
+    note: >
+      Seventh of his name. Blade-fighter, genuinely excellent, publicly embarrassed.
+      canonical_name uses a two-part form because "Mittens the 7th" parses to a
+      single bare part and is dropped by the gate entirely — an invisible main
+      character is a blind spot, not a pass. "Brisk" is a pet name in the world's
+      register and is used in the ledger only.
+    chapters: [1, 2, 3]
+    status: planned
+
+  - id: CHR-02
+    canonical_name: "Rocky Cavaltone"
+    called_in_prose: "Duke Rocky of Cavalton"
+    species: dog
+    role: patron, oath-holder
+    note: >
+      Swears the quest because the oath means something to him. Funds everything.
+      Comic only by being entirely sincere.
+    chapters: [1, 3]
+    status: planned
+
+  - id: CHR-03
+    canonical_name: "Hester Pye"
+    called_in_prose: "Dame Hester Pye"
+    species: raven
+    role: archivist
+    note: >
+      Has read the accounts of the last party to reach the Orb. Right too early.
+    chapters: [2, 3]
+    status: planned
+
+  - id: CHR-04
+    canonical_name: "Patches Quill"
+    called_in_prose: "Sergeant Patches of the Low Barracks"
+    species: ram
+    role: party competence, bad temper
+    note: "Retired twice. Has decided he does not want a wish and will re-decide."
+    chapters: [1, 3]
+    status: planned
+
+  - id: CHR-05
+    canonical_name: "Tuppence Small"
+    called_in_prose: "Tuppence"
+    species: mouse
+    role: thief, courier, comic engine
+    note: >
+      Planning to sell the party to whoever reaches the Orb first. A single bare
+      name, so the ledger carries a parser-facing pair; the prose never does.
+    chapters: [2, 3]
+    status: planned
+
+  - id: CHR-06
+    canonical_name: "Void Nighthollow"
+    called_in_prose: "Madame Void of the Ninth Coil"
+    species: serpent
+    role: offstage antagonist
+    note: >
+      Trying to stop anyone else reaching the Orb. Not competing for it. Believed
+      to be gone.
+    chapters: []
+    status: planned
+
+# ------------------------------------------------------------------ places
+places:
+  - { id: PLC-01, name: "Carrowmarket", kind: city, note: "Cat-majority port city. Midden Row, where Mittens grew up.", chapters: [1], status: planned }
+  - { id: PLC-02, name: "The Descent", kind: route, note: "Down. The only known way toward the centre.", chapters: [2, 3], status: planned }
+  - { id: PLC-03, name: "The Low Barracks", kind: district, note: "Patches' old post. Rums, paperwork, and a very specific kind of tired.", chapters: [1], status: planned }
+  - { id: PLC-04, name: "Cavalton", kind: estate, note: "Duke Rocky's family seat. Dog nobility; sworn collar traditions.", chapters: [3], status: planned }
+
+# ------------------------------------------------------------------ objects
+objects:
+  - { id: OBJ-01, name: "The Great Orb of Light", kind: artefact, note: "Centre of the world. Grants any wish. Stated in the passive voice by people who were not there.", chapters: [1, 2, 3], status: planned }
+  - { id: OBJ-02, name: "Hester's fourth folio", kind: document, note: "The last party's account. What it records is the book's central problem.", chapters: [2, 3], status: planned }
+
+# ------------------------------------------------------------------ knowledge
+# What each character knows, and when the reader learns it. The continuity gate
+# asks "how does this character know that?" — this table is the answer.
+knowledge_flow:
+  - { fact: "The Orb grants the wish as worded, not as meant", known_by: [CHR-03], reader_learns: 3, source: OBJ-02 }
+  - { fact: "A previous party reached the Orb and came back", known_by: [CHR-03], reader_learns: 2, source: OBJ-02 }
+  - { fact: "That party's record is incomplete and has been deliberately kept so", known_by: [CHR-03], reader_learns: 3, source: OBJ-02 }
+  - { fact: "Mittens is going for a personal reason he has not stated", known_by: [CHR-01], reader_learns: 1, source: "CH-01" }
+  - { fact: "Tuppence intends to sell the party", known_by: [CHR-05], reader_learns: 2, source: "CH-02" }
+  - { fact: "Madame Void is trying to prevent the Orb being used", known_by: [], reader_learns: null, source: "CHR-06" }

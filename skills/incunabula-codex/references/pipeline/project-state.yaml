@@ -1,0 +1,90 @@
+# PROJECT_STATE.yaml - the codex engine's live picture of a project.
+# This file is the primary state file unless the project declares another one in
+# CANON_LEDGER.yaml under meta.primary_state_file.
+#
+# rule: every value here must be checkable against a file on disk. A field nobody
+# can verify is a field that will drift, and a state file that does not parse is
+# treated as a failure, not as a blank slate.
+
+schema_version: "1.0"
+
+project:
+  working_title: ""
+  genre: ""
+  audience: ""
+  language: ""
+  positioning: ""            # full-length book | short novel | novella | serial | nonfiction
+  paragraph_convention: ""   # "" (default) | commercial-dialogue - see below
+  # LENGTH. These three are REQUIRED, not optional metadata, and they must be real
+  # numbers before Phase 1. They used to default to 0 here and to [0, 0] in the intake
+  # schema, which meant every book started with no floor - and the only rows that
+  # measured chapter shape were variance measures, which are satisfied by a SHORT book.
+  # A book could therefore be half its intended length and pass everything. `check-length.py`
+  # (row L1) now enforces these; leaving them at 0 makes L1 exit 2, not pass.
+  #
+  # Derive the floor and ceiling from the market, not from taste: a 10-15% band around the
+  # midpoint is the normal commercial tolerance. A single `word_target` with no band makes
+  # L1 advisory, because failing one figure means inventing a tolerance.
+  word_target: 0             # planning midpoint, e.g. 30000
+  word_floor: 0              # below this L1 FAILS, e.g. 28000
+  word_ceiling: 0            # above this L1 FAILS, e.g. 32000
+  chapters_planned: 0
+  words_per_chapter_target: 0
+  opened: ""                 # ISO date the project started
+  touched: ""                # ISO date of the last write to this file
+
+# paragraph_convention
+#   Leave empty unless this book is deliberately written to the dialogue-dense
+#   commercial convention that U4 was calibrated on. Setting it to
+#   "commercial-dialogue" re-enables the U4 gate, which is advisory everywhere else.
+#
+#   This is the one field here that is a DECLARATION rather than a measurement, and it
+#   is deliberately not the default. U4's one-line-paragraph floor measures 50-62% on
+#   the calibration corpus and a median of 33.2% across 140 public-domain English
+#   novels (13.06M words) - 59% of which fall below the gate's own failure line. A
+#   check that fails three human novels in five is not measuring a defect, so the
+#   default reports the number and lets a person judge. Set this field to take the
+#   market signal instead. Full reasoning: tools/prose/calibration/CALIBRATION.md,
+#   "U4 is advisory by default".
+
+pipeline:
+  phase: "0-intake"          # 0-intake | 1-foundation | 2-architecture | 3-drafting |
+                             # 4-devils-audit | 5-fine-press-loop | 6-final-score | 7-colophon
+  gate: "intake"
+  status: "ready"            # ready | running | gate_pending | gate_passed | blocked | repair
+  resume_from: ""            # the exact step to pick up from, if status is not ready
+  history: []                # one entry per phase, including phases that never ran
+
+manuscript:
+  chapters_planned: 0
+  chapters_written: 0
+  word_count: 0
+  length_gate: "flag"        # ok | flag | fail
+  chapters: []               # slug, status, words, prose-gate verdict, last scan date
+
+quality:
+  score_floor: 0.0
+  first_impression: 0.0
+  evaluator_grade: ""        # A | B | C - how independent the scoring run actually was
+  open_major_findings: []
+  fine_press_target: 0.0     # 0.0 means the Fine Press loop is not active
+
+errata:
+  # How observations in ERRATA.md become entries in PRINTERS_COPY.md.
+  # Empty means "hand", which is the shipped default and the safest of the three.
+  #
+  #   hand   observations append; only a person edits PRINTERS_COPY.md, as a diff
+  #   bulk   observations auto-promote to the PROJECT-LOCAL copy at 3 agreeing books;
+  #          never the shipped pipeline, never a threshold
+  #   auto   thresholds may also re-derive from accumulated data, with a printed changelog
+  #          and a dated re-check horizon on every rule. PRINTERS_COPY.md §7 argues
+  #          against this mode. It is available, not endorsed.
+  #
+  # No mode may promote a privacy rule to aesthetic, move a threshold on a single book,
+  # write a motive field, or learn from a humanising score. See PRINTERS_COPY.md §7.
+  mode: ""                   # "" | hand | bulk | auto
+
+decisions: []                # date, decision, why, phase
+
+assumptions_file: "ASSUMPTIONS.md"
+run_report: "RUN_REPORT.md"

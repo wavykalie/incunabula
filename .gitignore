@@ -1,0 +1,25 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+
+# Per-user preference notes. Deliberately NOT shipped: this file records one person's
+# taste (see tools/prose/PREFERENCES.md for the contract), and a clone of this repo must
+# get Incunabula exactly as tested. Its absence is indistinguishable from a user with no
+# preferences, which is the correct default -- shipping it would make taste a default.
+USER_PREFERENCES.md
+
+# Private registry exemptions: books on disk this public repo must not name.
+# Read by tools/check-registry.py (load_private_dirs); see BOOKS.yaml header.
+.registry-private

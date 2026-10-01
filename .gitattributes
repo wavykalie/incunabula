@@ -1,0 +1,27 @@
+# Byte-exact storage for the frozen instrument.
+#
+# WHY THIS FILE EXISTS
+#
+# The freeze manifest records a sha256 for each gate. Those hashes were computed against
+# the working copy on one machine. Git's default `core.autocrlf` behaviour silently
+# rewrote CRLF to LF on commit, so the blob stored in the repository was NOT the file the
+# hash was taken from.
+#
+# The result was found by doing the only test that matters: cloning the repo into a
+# clean directory and running the verifier. 14 of 15 rows held and one did not --
+#
+#     validate-controls.sh   24bfb66ff11d52aa  CHANGED (frozen 84a6bef3539efaa8)
+#
+# -- while the same file hashed 84a6bef3539efaa8 in the working copy it was frozen from.
+# The freeze was unverifiable by anyone but the machine that took it, which is the one
+# thing a freeze is for. This is a defect of the same class as the backtick manifest bug
+# already recorded in GATE_FREEZE.md: a measurement that looks valid and is not portable.
+#
+# `* -text` disables all end-of-line conversion, in both directions. Every file is
+# stored and checked out byte-for-byte as it is on disk. Nothing is renormalised.
+#
+# This is the conservative setting on purpose. The alternative -- normalising the
+# repository to LF and re-recording all fifteen hashes -- would be a real Freeze 7 that
+# invalidates the attribution on every finished book, in exchange for line endings.
+# Byte-exact storage costs one file and moves no hash.
+* -text

@@ -1,0 +1,3 @@
+display_name: Agent Panel
+short_description: Sits a book in front of an agent, an acquiring editor, a bookseller, and a target reader, and reports what each of them would say.
+default_prompt: Put this book project in front of an agent panel. Tell me what stands between it and being published.

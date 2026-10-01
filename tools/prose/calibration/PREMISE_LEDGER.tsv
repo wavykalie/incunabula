@@ -1,0 +1,44 @@
+# PREMISE_LEDGER.tsv - what premise machinery this author has already spent
+#
+# Frozen data file for check-premise-distinct.py. Seeded BY HAND by the author, which is
+# the point: the population that matters is "premises this author has already used", and
+# the author is the only person who knows that list. There is no corpus of published
+# fiction that could tell us, and a gate that tried to infer it would be measuring the
+# same thing NAME_FREQUENCY measures - what a model reaches for by default - which is
+# this author's other gate's job and not this one's.
+#
+# FORMAT - tab separated, 6 columns, no tabs inside a field.
+#   book <TAB> year <TAB> profession <TAB> engine <TAB> relationship <TAB> note
+#
+# THE THREE AXES, and why three.
+#   profession     what the protagonist is employed as. The single most legible thing a
+#                  blurb contains, and therefore the thing a reader uses to decide whether
+#                  they have read this book before. "fire investigator" and "records
+#                  clerk" are different jobs; two books that both open on a professional
+#                  opening a case read alike regardless of what else differs.
+#   engine         the machine the book runs on - the procedural, the relationship, the
+#                  institutional pressure that generates the plot. This is the axis a
+#                  trope detector would want and cannot reliably get. Written as a short
+#                  gerund phrase so near-misses are visible.
+#   relationship   the central human pair or the central dynamic, in the same shape.
+#                  A book is not a job plus a trick; a book is a job plus a trick plus
+#                  who is lying to whom.
+#
+# MATCH RULE
+#   FAIL  when profession AND engine both match another row, or when all three match.
+#   WARN  when exactly two of the three match.
+#   Pass  on zero or one.
+#
+# Why FAIL needs TWO axes and not one. Two books with the same profession are extremely
+# common and completely fine - every detective series ever written. Two books with the
+# same profession AND the same engine is the same machine with a new coat, and that is
+# the specific feeling of "I have read this". A gate that fired on profession alone
+# would fail every book in every series ever, which is why it must not.
+#
+# SEEDED 2026-09-28 from the author's own catalogue. New rows are added when a book is
+# FINISHED, not when it is started - a premise entered at Phase 0 would make the book
+# collide with itself.
+
+sons-of-heaven	2025	narrator	nonfiction investigation	marriage and a life disclosed	complete, 28133 words
+hollow-bridge	2025	railway signalman	industrial accident investigation	sibling rivalry, one dead	AI control book, 33 ch
+the-origin-point	2026	fire investigator	origin-point certification of a fire	nephew suspected of an old fire	premise 2; premise 1 archived

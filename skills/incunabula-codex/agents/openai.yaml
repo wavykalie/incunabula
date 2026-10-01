@@ -1,0 +1,4 @@
+interface:
+  display_name: "Incunabula Universal Core"
+  short_description: "The portable pipeline and upgrade layer for existing book projects."
+  default_prompt: "Start or upgrade a book project with the portable pipeline, then keep its state, voice contracts, and canon ledger current."
