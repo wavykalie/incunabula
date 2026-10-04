@@ -93,8 +93,25 @@ COMMON_NOISE = {"The", "And", "But", "She", "Her", "His", "You", "Not", "When",
                 "God", "Damn", "Hell", "Shit", "Fuck", "Hello", "Hi", "Bye"}
 
 
+# Temporal nouns and honorifics capitalise without being names. Measured on the
+# demo books: "said he, on Thursday" attributed seven lines to Thursday, and months,
+# weekdays and Mrs filled the table. "March" and "May" are also first names; the
+# over-filter is accepted and recorded - this is a report row and a missing minor row
+# costs less than a table a reader stops believing.
+TEMPORAL_HONORIFIC = {
+    "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+    "january", "february", "march", "april", "may", "june", "july", "august",
+    "september", "october", "november", "december", "today", "tonight", "yesterday",
+    "tomorrow", "morning", "evening", "afternoon", "night", "week", "month", "year",
+    "mr", "mrs", "ms", "miss", "dr", "sir", "lady", "lord", "madam", "madame",
+    "monsieur", "herr", "frau", "capt", "colonel", "general", "sergeant",
+    "lieutenant", "professor", "reverend"}
+
+
 def is_name_candidate(word, lowercase_words):
-    return word not in COMMON_NOISE and word.lower() not in lowercase_words
+    return (word not in COMMON_NOISE
+            and word.lower() not in lowercase_words
+            and word.lower() not in TEMPORAL_HONORIFIC)
 
 
 def load(directory):

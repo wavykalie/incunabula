@@ -36,8 +36,8 @@ WHAT IT CANNOT DO
   for content.
 
 ROWS (all report-only; the tool exits 0 on any content)
-  G1  sentences carrying 2+ image units (a marker plus each coordinated clause
-      of two words or more inside its complement counts as a separate unit)
+  G1  sentences carrying 2+ image units (a marker plus each later clause of its
+      complement that joins with "while" or carries its own sensory cue)
   G2  50-word windows carrying 3+ image units
 
 EXIT CODES
@@ -75,24 +75,48 @@ AS_AS = re.compile(r"\bas\s+\w+\s+as\b", re.I)
 # clauses inside a complement are counted as separate image units.
 CLAUSE_SPLIT = re.compile(r"\b(?:while|and|as|but|then|though|than)\b", re.I)
 SENT_END = re.compile(r"[.!?]")
+# A second image is only a second image if it SENSATES. The first version counted
+# every coordinated clause in a complement as an image, so one simile plus a chain of
+# predicates read as eleven images in one sentence (measured on demo-magician), and
+# the report listed five windows per chapter - which points a reader at nothing.
+# A clause counts as a separate image unit when it joins with "while" (the canonical
+# two-images-one-sentence shape) or carries a sensory/impact cue of its own.
+IMAGE_CUE = re.compile(
+    r"\b(?:struck|strike|rang|ring|echo(?:ed)?|burn(?:ed|t|ing)?|bit(?:ten)?|bite|"
+    r"cut|tast(?:e|ed|ing)|smell(?:ed|ing)?|stung|sting|ach(?:e|ed|ing)|"
+    r"scream(?:ed|ing)?|crash(?:ed|ing)?|tore|tear(?:s|ing)?|slamm?ed|slam|hit|"
+    r"snapp?ed|snap|crack(?:ed|ing)?|throb(?:bed|bing)?|puls(?:e|ed|ing)|"
+    r"flash(?:ed|ing)?|blaz(?:e|ed|ing)|roar(?:ed|ing)?|whistl(?:e|ed|ing)|"
+    r"hum(?:med|ming)?|buzz(?:ed|ing)?|rattl(?:e|ed|ing)|grind(?:ing)?|ground|"
+    r"scrap(?:e|ed|ing)|chok(?:e|ed|ing)|gagg?ed|swell(?:ed|ing)?|twist(?:ed|ing)?|"
+    r"knott?ed|clench(?:ed|ing)?|pool(?:ed|ing)?|drain(?:ed|ing)?|rush(?:ed|ing)?|"
+    r"flood(?:ed|ing)?|shiver(?:ed|ing)?|trembl?(?:ed|ing)|quiver(?:ed|ing)?|"
+    r"spark(?:ed|ing)?|glitter(?:ed|ing)?|gleam(?:ed|ing)?)\b", re.I)
+ALWAYS_IMAGE_JOIN = {"while"}
 
 
 def _complement_units(text, end):
-    """Image units inside one marker's complement: the head plus each coordinated
-    clause of two words or more. Clauses that contain another marker are left to
-    that marker's own count, so nested constructions are not counted twice."""
+    """Extra image units inside one marker's complement. The head clause is the
+    marker's own image; each later clause counts as one more only when it joins with
+    "while" or carries its own sensory cue. Clauses containing another marker are
+    left to that marker's count, so nested constructions are not counted twice."""
     tail = text[end:]
     stop = SENT_END.search(tail)
     if stop:
         tail = tail[:stop.start()]
-    head_count = 0
-    for clause in CLAUSE_SPLIT.split(tail):
+    parts = CLAUSE_SPLIT.split(tail)
+    seps = CLAUSE_SPLIT.findall(tail)
+    extra = 0
+    for i in range(1, len(parts)):
+        clause = parts[i]
         if len(clause.split()) < 2:
             continue
         if SIMILE.search(clause) or AS_IF.search(clause) or AS_AS.search(clause):
             continue
-        head_count += 1
-    return max(0, head_count - 1)   # the head clause is already the marker's 1
+        sep = seps[i - 1].lower() if i - 1 < len(seps) else ""
+        if sep in ALWAYS_IMAGE_JOIN or IMAGE_CUE.search(clause):
+            extra += 1
+    return extra
 
 
 def markers(text):

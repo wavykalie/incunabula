@@ -83,7 +83,10 @@ MODIFIER_WORDS = {"metric", "imperial", "square", "cubic", "nautical", "linear"}
 STOP_HEADS = {"of", "and", "or", "the", "a", "an", "in", "on", "at", "to", "for",
               "by", "with", "more", "less", "other", "others", "than", "that",
               "this", "these", "those", "its", "his", "her", "their", "my", "our",
-              "from", "into", "over", "under", "about", "around"}
+              "from", "into", "over", "under", "about", "around", "ones", "does",
+              "asked", "called", "said", "made", "gave", "took", "went", "came",
+              "because", "although", "though", "while", "during", "before", "after",
+              "between", "among", "against", "without", "within", "upon", "through"}
 # Adjectives that sit between a number and its noun: "two corporate gun-cutters".
 HEAD_ADJ = {"corporate", "military", "medical", "full", "half", "double", "single",
             "extra", "last", "next", "first", "second", "third", "whole", "empty",
@@ -103,6 +106,19 @@ G_FORCE = re.compile(rf"\b({NUM})\s*(gravities|gravity|g(?:'s)?)\b", re.I)
 COUNT = re.compile(rf"\b({NUM})\s+([A-Za-z][A-Za-z-]*)(?:\s+([A-Za-z][A-Za-z-]*))?", re.I)
 
 
+def singularize(word):
+    """Crude and sufficient: countries -> country, boxes -> box, canisters -> canister.
+    The first version stripped a trailing 's' only, which turned 'countries' into
+    'countrie' and 'does' into 'doe' - two words that do not exist and that then
+    polluted every grouping. Found by running the row on the demo books."""
+    if word.endswith("ies") and len(word) > 4:
+        return word[:-3] + "y"
+    for suf in ("xes", "zes", "ches", "shes"):
+        if word.endswith(suf):
+            return word[:-2]
+    return word[:-1] if word.endswith("s") else word
+
+
 def counted_head(w1, w2):
     """The noun a count applies to, or None if the span is a unit phrase or grammar."""
     w1, w2 = (w1 or "").lower(), (w2 or "").lower()
@@ -117,9 +133,14 @@ def counted_head(w1, w2):
     head = w2 if (w1 in HEAD_ADJ and w2) else w1
     if head in STOP_HEADS or re.fullmatch(UNITS, head, re.I):
         return None
-    if head.endswith("ss"):
-        return head
-    return head[:-1] if head.endswith("s") else head
+    # PLURAL HEADS ONLY. A stock is stated in the plural - "fifty canisters", not
+    # "fifty canister" - while a singular bare noun after a number is overwhelmingly
+    # grammar, a verb, or a date: measured on the demo books, singular heads produced
+    # rows like 'a' (1, 11, 31), 'because' (5, 1936), and 'the four asked'. The trade
+    # is recorded: mass counts like 'three people' or 'nine men' are missed.
+    if not (head.endswith("s") and not head.endswith("ss") and len(head) > 2):
+        return None
+    return singularize(head)
 
 MAGNITUDE = {"hundred": 100, "thousand": 1000, "million": 1000000}
 

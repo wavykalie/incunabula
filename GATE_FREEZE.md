@@ -969,9 +969,9 @@ and the next proposal to add a *corpus* row still owes a corpus.
 | file | sha256 (first 16) | role |
 |---|---|---|
 | `tools/prose/check-narrative.py` | `74ef6d9819031279` | N1 debt (gates) / N2 beat repetition / N3 scene function / N4 ledger conformance (gates); reads no prose — the contract row, L1's class (re-keyed at the second update; see below) |
-| `tools/prose/check-figurative.py` | `31a67b2ce19f50a4` | G1/G2 figurative pile-up reporter; report-only |
-| `tools/prose/check-dialogue-tags.py` | `56cb000be7308a58` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second update) |
-| `tools/prose/check-quantities.py` | `263b87b7f0444f71` | Q1–Q4 quantity extraction, spread, sanity notes, counted-noun conflicts; report-only (re-keyed at the third update) |
+| `tools/prose/check-figurative.py` | `53962ce04c430d4f` | G1/G2 figurative pile-up reporter; report-only (re-keyed at the fourth update) |
+| `tools/prose/check-dialogue-tags.py` | `b5a0d9a899230169` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second and fourth updates) |
+| `tools/prose/check-quantities.py` | `4cc4a538dde7309e` | Q1–Q4 quantity extraction, spread, sanity notes, counted-noun conflicts; report-only (re-keyed at the third and fourth updates) |
 
 Also frozen, because they change what the gates see or what the skills declare:
 
@@ -1211,3 +1211,51 @@ it can take ten minutes" is never wrong advice, but the ten-minute figure measur
 conflated configuration, not the suite. And the caveat at the foot of that defect note
 — "not a single reproducible end-to-end run" — is now discharged: this is that run,
 and re-running it with the same three paths reproduces it.
+
+---
+
+## Freeze 13 — fourth update (same session): the demo-book sweep, and a detector calibrated on its target is untested
+
+Regression requested by the author: run the narrative class across the three shipped
+demo books (`demo-magician`, 34 ch; `muzzle-and-marrow`; `marrow-light`, 38 ch) — the
+first manuscripts any of these detectors ever saw that were **not** the book the
+critique examined and **not** a purpose-built fixture.
+
+| tool | demo-magician | muzzle-and-marrow | marrow-light | verdict |
+|---|---|---|---|---|
+| `check-narrative.py` | exit 3 | exit 3 | exit 3 | **correct** — the books predate the layer; UNGOVERNED, never a pass |
+| `check-figurative.py` | 15 listed | 6 | 34 | exit 0, after the fix below (was 159 / 46 / 149) |
+| `check-dialogue-tags.py` | exit 0 | exit 0 | exit 0 | exit 0, after the fix below |
+| `check-quantities.py` | exit 0 | exit 0 | exit 0 | exit 0, after the fix below (RECONCILE 214 -> 90 lines) |
+
+**Three detectors were mismeasuring other manuscripts**, and all three had looked
+validated — each was built against the critique's novella and proven on a fixture
+written to trip it. Both of those are the detector's own target. The demo books are
+the first out-of-domain corpus they ever saw, and each failed on it:
+
+| defect | measured on the demo books | fix |
+|---|---|---|
+| `check-figurative.py` counted every coordinated clause of a complement as an image | "11 image units in one sentence"; 159 / 46 / 149 listed passages — roughly five windows per chapter, which points a reader at nothing | a later clause counts as a separate image only when it joins with `while` (the canonical two-images shape) or carries its own sensory cue. Now 15 / 6 / 34; the worst sentence reads 3 units |
+| `check-dialogue-tags.py` attributed temporal nouns and honorifics as speakers | `Thursday (7)`, `February (4)`, `Mrs (6)` — `"...," said he, on Thursday.` puts a capitalised temporal noun in the name slot | temporal/honorific stop list. Over-filtering `March`/`May` as first names is accepted and recorded; a missing minor row costs less than a table a reader stops believing |
+| `check-quantities.py` Q4 read non-nouns as counted nouns and mangled plurals | `'a' (1, 11, 31)`, `'because' (5, 1936)`, `'the four asked'`; singularize turned `countries` -> `countrie`, `does` -> `doe`; **214 RECONCILE lines** | **plural heads only** — a stock is stated in the plural ("fifty canisters", never "fifty canister") while a singular bare noun after a number is grammar, a verb, or a date — plus a real singularizer (`-ies` -> `-y`). 90 RECONCILE lines across 74 chapters; remaining heads are real counted nouns (`chair`, `crate`, `country`, `conjurer`). Trade recorded: mass counts (`three people`, `nine men`) are missed |
+
+**What survives regression, which is the other half of the test:** every finding the
+critique named still fires on `kagiroi-drift` — the copper-foil pile-up (G1),
+`'canister' 4, 12, 50` with RECONCILE on the cross-chapter pairs, the 8-gravity sanity
+note — and every control-16 assertion still holds on the shipped fixture, so no
+control moved. `check-narrative.py` needed no fix: exit 3 UNGOVERNED on all three
+books is the row behaving exactly as its exit-code contract says.
+
+| file | third update | fourth update |
+|---|---|---|
+| `check-figurative.py` | `31a67b2ce19f50a4` | `53962ce04c430d4f` |
+| `check-dialogue-tags.py` | `56cb000be7308a58` | `b5a0d9a899230169` |
+| `check-quantities.py` | `263b87b7f0444f71` | `4cc4a538dde7309e` |
+
+**The lesson, fifth recurrence of the one this project keeps re-learning:** *run the
+gate on a book it has never been run on.* A detector that fires on the case it was
+built for and passes a fixture written for it has demonstrated recall on its target
+and nothing else — the demo books are three books it had never seen, and they broke
+all three tools at once. These are report rows and could fail no book, which is
+exactly why the class was shipped report-only first: the noise was found by a
+regression sweep instead of by a writer being told their correct prose was wrong.
