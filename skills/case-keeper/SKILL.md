@@ -1,6 +1,6 @@
 ---
 name: case-keeper
-description: Maintains ENTITY_STATE.yaml — the structured record of every character, place, object, organisation, timeline entry, and world rule in the manuscript. Runs in BUILD mode to extract from chapters already written, and UPDATE mode to fold in new or revised chapters. Other skills read it instead of re-reading the book.
+description: Maintains ENTITY_STATE.yaml — the structured record of every character, place, object, organisation, timeline entry, and world rule in the manuscript — and NARRATIVE_LEDGER.yaml, the record of what the book owes. Runs in BUILD mode to extract from chapters already written, and UPDATE mode to fold in new or revised chapters. Other skills read it instead of re-reading the book.
 ---
 
 # Case-keeper — the book's structured memory
@@ -12,6 +12,13 @@ manuscript: it reads chapters and files every trackable thing into one YAML file
 Case-keeper does not judge, audit, or write. It extracts, structures, tracks, and flags.
 Nothing else. Every skill that needs to know a character's eye colour, whether she has
 learned the secret yet, or where the gun was last seen reads the YAML rather than the book.
+
+Case-keeper maintains a second file alongside `ENTITY_STATE.yaml`:
+`NARRATIVE_LEDGER.yaml`, the book's declared obligations (schema:
+`incunabula-codex/references/narrative-ledger-schema.md`). Debt entries are extraction —
+factual state, same as object status. Beat arcs and scene functions are *judgments*, so
+case-keeper records them when `proof-panel` or the outline declares them and never
+invents its own.
 
 ## What it is not
 
@@ -133,9 +140,9 @@ A conflict is not case-keeper's mistake. It is the manuscript's, surfaced on pur
 
 ---
 
-## Five extraction passes
+## Six extraction passes
 
-Every processed chapter runs all five, in order.
+Every processed chapter runs all six, in order.
 
 **1. Characters.** Find every known name and alias, take a five-line window around each
 hit, and pull out physical description, trait demonstrated through action, knowledge
@@ -168,6 +175,19 @@ knowledge_gap:
 ```
 
 These gaps are the most valuable thing case-keeper produces.
+
+**6. Narrative obligations.** Find what the chapter introduces *with emphasis* —
+mysteries, traumas and core wounds, named secondary characters given weight, ticking
+clocks, promises, threats, objects loaded with meaning, skills taught on the page. Each
+becomes a debt entry in `NARRATIVE_LEDGER.yaml` with status OPEN and a source ref. The
+bar is emphasis, the same bar collator's unpaid-setup audit uses: not every detail pays
+off, but anything that creates an expectation is owed. When unsure, record it with the
+uncertainty in the description — a false entry costs one line, a missing one costs a
+plot. When a payoff fires on the page (the gun goes off, the promise is kept, the wound
+is finally faced in a scene that turns on it), the entry becomes RESOLVED with
+`resolution` and `resolved_at`. Never mark RESOLVED from a passing mention, and never
+mark DEFERRED without a reason — deferral is a decision and the reason is the decision.
+Unresolved is the honest default.
 
 ---
 
@@ -204,12 +224,23 @@ Before extraction, UPDATE also sweeps every unresolved conflict for auto-resolut
 matrix if present and fill voice references. Then per existing chapter run passes one
 through five and advance `chapters_tracked`. Write the file and report counts.
 
-**UPDATE.** Load the YAML; sweep unresolved conflicts; for each named chapter run the five
+**UPDATE.** Load the YAML; sweep unresolved conflicts; for each named chapter run the six
 passes and merge; refresh `meta`. Write and report new entities, conflicts flagged and
-auto-resolved, gaps added, and review flags.
+auto-resolved, gaps added, and review flags. Also fold in any beat arcs and scene
+functions declared by `proof-panel` since the last run (Phase 4 declarations land in the
+ledger verbatim — case-keeper transports them, it does not rewrite them), and sweep debt
+entries for payoffs the new chapters have fired.
+
+**NARRATIVE_LEDGER.yaml** follows the same merge discipline: never delete an entry,
+never overwrite a status silently (an OPEN becoming RESOLVED carries its resolution and
+the chapter that fired it), and `meta.chapters_tracked` advances with each UPDATE so
+`check-narrative.py` can tell a covered book from a stale one.
 
 **Report** after either run: chapters processed, counts of characters, locations, objects,
-organisations, timeline and knowledge entries, unresolved conflicts, gaps, and review flags.
+organisations, timeline and knowledge entries, unresolved conflicts, gaps, and review
+flags; and for the narrative ledger: debt entries added and resolved, open debt carried,
+beat arcs and scene functions folded in, and whether the ledger still covers every
+chapter file on disk.
 
 **Error handling.** Missing foundation or missing chapters: stop. Missing YAML in UPDATE:
 switch to BUILD. Missing chapter file: skip it, warn, continue. Unparseable YAML: stop and

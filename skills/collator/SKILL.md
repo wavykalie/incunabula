@@ -121,6 +121,16 @@ replacing a boss.
 **Money.** Currency consistent, prices proportionate to each other and to the period, and
 financial status that does not flip from broke to house-buying without cause.
 
+**Quantities.** Every number with a unit, checked against every other statement of the
+same quantity: masses, distances, durations, accelerations, counts. The failure mode is
+the book inviting a careful reading and then breaking its own numbers — a load stated as
+fifty units on arrival and forty on departure, a body under a force no body survives, a
+tonnage moved on thrust that does not cohere with its own mass. Run
+`tools/prose/check-quantities.py` and read its table; the extraction cannot see what a
+number applies to, so every hit is verified against the passage before it is a finding.
+Order-of-magnitude sanity for anything physical is part of this audit: the reader who
+computes will compute.
+
 **Language.** Dialect, regional vocabulary, and code-switching patterns held steady.
 
 ### 5. Plot threads
@@ -132,6 +142,30 @@ it resolved, and its importance.
 emphasis and never paid off. Not every detail needs payoff — a meaningful share should be
 pure texture — so only flag what was introduced *with emphasis*, which is what creates an
 expectation. A major setup without payoff is a warning.
+
+**The narrative ledger, cross-checked against the text.** When
+`NARRATIVE_LEDGER.yaml` exists, this audit becomes a two-way reconciliation, and the
+two directions have opposite severities:
+
+- a setup the manuscript introduces with emphasis and the ledger does not record is a
+  finding — the debt ledger is blind to unrecorded promises, so this audit is the only
+  place they surface;
+- a ledger entry marked RESOLVED whose payoff is not on the page is **critical** — a
+  resolution the book never earned is the payoff-without-setup error wearing a green
+  status;
+- an entry marked OPEN is not itself a finding mid-book (open debt is normal while
+  drafting) but is a **blocking failure at the full pass before delivery**.
+
+Also read, at batch and full scope, the two structural patterns no single chapter's
+writer can see:
+
+- **Beat repetition** — the per-chapter emotional arcs declared in the ledger compared
+  across chapters. When consecutive chapters share one arc shape, or one circuit runs
+  more than twice in the book, name it with the chapter numbers. Four chapters running
+  the same circuit is the book having one scene four times.
+- **Scene-function duplication** — extended scenes declaring the same function. Two
+  `relationship shift` scenes in a row is a rhythm; the same function carrying the
+  book's long scenes is a structure that needs a reader's ruling.
 
 **Payoff without setup.** Resolutions that lean on something never established — the
 lockpick her father taught her when no such scene exists, the symbol "from his research"
@@ -198,7 +232,9 @@ Character fact sheet · master timeline · knowledge database · open threads
 
 When the entity file exists, also emit a `suggested_patches` block — keep-original, update,
 add, or create, each with a reason — for case-keeper to apply on its next update. These are
-recommendations, not edits.
+recommendations, not edits. The same block carries **suggested debt entries** for any
+emphatic setup the ledger has not recorded, and suggested status changes with the
+chapter that would fire them — case-keeper applies, collator never edits the ledger.
 
 ---
 

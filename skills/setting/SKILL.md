@@ -229,7 +229,11 @@ not from confusion but from pleasure.
 Fat — *basically, literally, really, very, quite*. Abstraction where a body was needed:
 *he felt a profound existential dread* becomes the tightened chest, the shaking hands, the
 urge to be sick. Passive voice with no reason. Adjective piles — one strong one beats three
-weak ones.
+weak ones. **Figurative pile-ups** — two images fighting over one referent. Sensory density
+is this craft's strength and its failure mode: *like chewing on copper foil while someone
+struck a bronze bell inside her sinuses* is two good images in one sensation, and the
+sentence loses both. One image per sensation, fully committed, beats two competing ones.
+`tools/prose/check-figurative.py` points at the windows where images cluster.
 
 **Per-chapter test.** Read it aloud for rhythm. Find three sentences that deserve
 underlining; if none exist, the prose is functional but anonymous. Find three sentences

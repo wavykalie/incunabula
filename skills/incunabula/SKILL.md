@@ -130,7 +130,7 @@ need moments of disorder.
 
 ---
 
-## The two required gates
+## The required gates
 
 ### Prose gate
 
@@ -158,6 +158,40 @@ an outlier chapter, an abandoned obsession, a section that runs long because the
 wanted it, a chapter that ends flat because it should. See **Consistency Is the Fingerprint**
 in the deslopify guide. A waiver on a uniformity row is recorded with its reason, and the
 same waiver recurring across books is itself the pattern.
+
+### Narrative gate (Freeze 13)
+
+Required at evaluation and at delivery, and never satisfied by a ledger nobody filled.
+The prose gate measures the surface of sentences; this one measures the shape of story.
+It is one declared file — `NARRATIVE_LEDGER.yaml` at the book root — checked by
+`tools/prose/check-narrative.py`, which reads no prose at all:
+
+- **N1 narrative debt (gates).** Every obligation the book introduced with emphasis —
+  mystery, trauma, named secondary character, ticking clock, promise, threat, loaded
+  object, taught skill — ends RESOLVED (payoff recorded) or DEFERRED (reason recorded).
+  OPEN at delivery is a failure. An unexamined setup is a failure, not a loose end.
+- **N2 beat repetition (reports).** Declared per-chapter emotional arcs that repeat,
+  exactly or near-exactly, including consecutive runs. Four chapters running the same
+  circuit is the book having one scene four times; the row makes it visible.
+- **N3 scene function (reports).** Extended scenes declare their function from a closed
+  list (relationship shift, theme payoff, plot turn, character revelation, pure
+  texture); duplication is reported and `pure texture` is a budget the author sets.
+- **N4 ledger conformance (gates).** Schema validity, status discipline (RESOLVED
+  without a resolution is a defect; DEFERRED without a reason is a defect), and
+  staleness — a chapter the ledger has never seen cannot be shown to owe nothing.
+
+The ledger is fed by declarations, not by scripts: `case-keeper` extraction pass 6
+records debt, `proof-panel` declares each chapter's beat arc and each extended scene's
+function at Phase 4, `collator` audits the ledger against the text. The three
+prose-reading companions — `check-figurative.py` (two images fighting over one
+referent), `check-dialogue-tags.py` (per-character tag register vs. the voice matrix),
+`check-quantities.py` (numbers that disagree with each other) — are **report-only**:
+no measured corpus stands behind them, so they report and cannot fail anything.
+
+It gates with no corpus for the same reason `check-length.py` does: it compares a book
+to the obligations that book declared for itself, and there is no population it can
+false-fail. Everything it cannot see it says so: an unrecorded setup passes this gate
+perfectly, which is why collator's full pass runs before the row is consulted.
 
 ### Maintenance gate
 
@@ -191,13 +225,13 @@ Each arrow below must be earned, not assumed.
 - **3.5 → 3.7** the quoin applied at least five of its nine operations, including operation 9, and preserved the emotional anchor. Every three to five chapters, the case tracker updates.
 - **3.7 → 3.8** the quoin report is saved and the anchor intact.
 - **3.8 → 4** the composing pass is run and an agent has reviewed its diffs for false positives.
-- **4 → 4.5** the prose gate passes, the score is calculated per chapter and globally, weaknesses are ranked by taxonomy with citations, the top three weaknesses and the top three strengths to preserve are named, the tic scan ran against genre targets, the character-chaos check ran, and the keepsake anchors were counted.
+- **4 → 4.5** the prose gate passes, the score is calculated per chapter and globally, weaknesses are ranked by taxonomy with citations, the top three weaknesses and the top three strengths to preserve are named, the tic scan ran against genre targets, the character-chaos check ran, and the keepsake anchors were counted. The chapter's **beat arc and extended scene functions are declared** into `NARRATIVE_LEDGER.yaml`, and any new obligation the chapter opened is recorded as a debt entry — declarations are what the narrative gate later checks.
 - **4 → 4.5, the passing-reader gate** — if the passing reader would not keep reading, treat it as critical regardless of the score. It is the single best predictor of commercial success and it overrides everything else.
 - **4.5 → 5** the proof pull looped up to three times; if the floor did not move after three, escalate as structural. The threshold is genre-adjusted (literary 7.5; commercial, thriller, and prescriptive nonfiction 7.0; memoir 7.5), with 8.0 recommended for submission and 8.5 for a bestseller or award target.
 - **5 → 4 loop** revisions completed and strengths confirmed intact, at most three cycles. If the oscillation count falls under six, rises above twelve, or comes back irregular, that is a macro-structural problem the editor cannot fix — loop to phase two.
 - **5 → 5.5** the case tracker updates after revision.
-- **5.5 → 5.6** the full-manuscript collation runs: names, appearances, and relationships consistent; no impossible timeline or travel; no character acting on knowledge they cannot hold; every thread closed or deliberately open; world rules unbroken.
-- **5.6 → 6** the prose gate passes on every chapter with the control run recorded; the floor meets the genre threshold; **first impression ≥ 7.0**, and where it is under 7.0 while the floor is at or above 7.5, a targeted pacing and shareability revision runs before packaging; no structural weaknesses remain; human feedback integrated or explicitly deferred; user approval to package.
+- **5.5 → 5.6** the full-manuscript collation runs: names, appearances, and relationships consistent; no impossible timeline or travel; no character acting on knowledge they cannot hold; every thread closed or deliberately open; world rules unbroken. The narrative ledger is audited against the text: unrecorded emphatic setups become debt entries, a RESOLVED entry without its payoff on the page is a critical finding, and beat-arc repetition and scene-function duplication across the whole book are read in one pass.
+- **5.6 → 6** the prose gate passes on every chapter with the control run recorded; the floor meets the genre threshold; **first impression ≥ 7.0**, and where it is under 7.0 while the floor is at or above 7.5, a targeted pacing and shareability revision runs before packaging; **the narrative gate passes — `check-narrative.py` exits clean: every debt entry RESOLVED or DEFERRED with a reason, the ledger covering every chapter file**; no structural weaknesses remain; human feedback integrated or explicitly deferred; user approval to package.
 
 **How to read the two indices.** The score governs revision priority; the first-impression
 index governs submission readiness. When they diverge by two points or more, report the
@@ -298,7 +332,9 @@ up to three rounds, escalating rather than churning.
 the strengths to protect. Never undo a quoin unless the evaluation flagged it as harmful.
 
 **Delivery** — `colophon` for the package and the upstream signals file, then `presswork`
-for the proofread and the formatting.
+for the proofread and the formatting. The narrative gate is consulted first: a book
+with OPEN debt does not ship, and the delivery run records the `check-narrative.py`
+exit status beside the prose-gate evidence.
 
 After delivery, read the upstream signals. If the packager flagged premise clarity or
 structural suspense, those are problems the evaluation missed, and a targeted re-evaluation

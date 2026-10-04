@@ -241,8 +241,9 @@ share the context that wrote the chapter, or the evaluation is worthless.
 
 ## The gates
 
-Two gates are **required at every phase**. Neither is skippable, and neither is
-satisfied by work that was never run.
+Two gates are **required at every phase**; a third — the narrative gate — is required at
+evaluation and at delivery. None is skippable, and none is satisfied by work that was
+never run.
 
 ### The prose gate
 
@@ -276,6 +277,33 @@ cap while being one of two different books.
 
 Passing the gate is necessary and never sufficient. It cannot see voice, rhythm, a dead
 metaphor, or one argument restated ten ways. The read-aloud pass stays in force.
+
+### The narrative gate
+
+The prose gate measures the surface of sentences; the narrative gate measures the shape
+of story. One declared file — `NARRATIVE_LEDGER.yaml` at the book root — checked by
+`tools/prose/check-narrative.py`, which reads no prose at all:
+
+| row | what it asks | tier |
+|---|---|---|
+| `N1` narrative debt | every obligation the book introduced with emphasis ends RESOLVED (payoff recorded) or DEFERRED (reason recorded); OPEN at delivery is a failure | **gates** |
+| `N2` beat repetition | do declared per-chapter emotional arcs repeat — the same circuit four times is the book having one scene four times | reports |
+| `N3` scene function | do extended scenes declare the same function; `pure texture` is a budget the author sets | reports |
+| `N4` ledger conformance | schema, status discipline (RESOLVED without a resolution is a defect), staleness — a chapter the ledger never saw cannot be shown to owe nothing | **gates** |
+
+An unexamined setup is a failure, not a loose end — the structural analogue of
+"not-run is never pass". The ledger is fed by declarations: `case-keeper` extraction
+pass 6 records debt, `proof-panel` declares each chapter's beat arc and each extended
+scene's function at Phase 4, `collator` audits the ledger against the text in both
+directions. Three prose-reading companions — `check-figurative.py`,
+`check-dialogue-tags.py`, `check-quantities.py` — are report-only: no measured corpus
+stands behind them, so they report and cannot fail anything. The narrative gate gates
+with no corpus for the same reason `check-length.py` does: it compares a book to the
+obligations that book declared for itself, and there is no population it can false-fail.
+And it says what it cannot see: an unrecorded setup passes this gate perfectly.
+
+Schema: `incunabula-codex/references/narrative-ledger-schema.md`. Provenance: Freeze 13
+in `GATE_FREEZE.md`.
 
 ### The maintenance gate
 
@@ -360,6 +388,7 @@ A run produces a self-contained project directory:
   ASSUMPTIONS.md                    every inference labelled as an inference
   RUN_REPORT.md                     the exact unfinished task and resume step
   CANON_LEDGER.yaml                 facts with provenance and conflict records
+  NARRATIVE_LEDGER.yaml             what the book owes: debt, beat arcs, scene functions
   foundation.md  outline.md  voice-matrix.md  readership.md
   manuscript/chapters/              one file per chapter
   evaluations/  continuity/  research/  delivery/

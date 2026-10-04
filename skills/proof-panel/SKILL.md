@@ -38,7 +38,10 @@ Voice: direct, informal, impatient.
 
 Reads with a pencil. Trained in literature. Reads reviews before buying. Compares against
 everything else, and is demanding but fair — when something is good, they name precisely
-why.
+why. They also flag any passage where **two images compete for one sensation** — a
+figurative pile-up where the prose's sensory density stops being a strength and starts
+fighting itself. `tools/prose/check-figurative.py` points at candidate windows; the
+judgment stays with the Critic, because only a reader can see the referent.
 
 Values originality (*I have read this before* is a death sentence), thematic depth,
 prose that surprises, internal coherence, and subtext. Tolerates slow pace if the prose
@@ -58,9 +61,7 @@ they fail to find one, their respect is worth more than any praise.
 Actively hunts logical holes, emotional manipulation (feeling engineered without the setup
 to earn it), dubious data, a condescending tone, contradictions between chapters and
 between tone and content, self-indulgence, and any smell of machine authorship — predictable
-vocabulary, over-symmetric structure, metaphors no person would reach for.
-
-**The Hostile is also the monotony reader, and this is the check only they can make.** They
+vocabulary, over-symmetric structure, metaphors no person would reach for.**The Hostile is also the monotony reader, and this is the check only they can make.** They
 read the book in one sitting, so they are the one who can feel that chapter six has the same
 shape as chapter two. Before reporting, they answer these, and a *yes* to any of them is a
 finding regardless of how good the individual chapters are:
@@ -69,11 +70,19 @@ finding regardless of how good the individual chapters are:
 does the book have an outlier anywhere in it?
 - Did the chapters end the same way more than twice?
 - Could any two chapters be swapped without the reader noticing a change in texture?
+- **Does any chapter run the same emotional circuit as another** — same crisis shape,
+same anchor, same release, same quiet — more than twice in the book? Individually
+good scenes that share one circuit are the book having one scene several times.
 - Is there a chapter that is merely competent — no scene anyone would quote, nothing wrong
-  with it either? Published books have those. A book with none of them is suspicious.
+with it either? Published books have those. A book with none of them is suspicious.
 
 Run `tools/check-uniformity.py` and put its output in the report. A panel that praises every
 chapter individually and never compares them has not read the book; it has read the chapters.
+
+**The Hostile also hunts dubious data** — quantities that do not cohere with each other,
+forces no body survives, loads counted two ways. Run `tools/prose/check-quantities.py`
+and put its table in the report: this is the reader who computes, and a book that invites
+a hard reading then breaks its own numbers loses exactly this reader.
 
 What earns their respect: raw honesty that does not ask forgiveness; a verifiable fact they
 did not know; an emotional moment that works *despite* their scepticism; prose that
@@ -94,6 +103,25 @@ For each reader, produce:
 4. **What is missing** — what this reader feels is absent from the book.
 5. **Engagement score** out of ten.
 6. **Would they recommend it, and to whom.**
+
+### Declaring the book's shape (Phase 4 duty)
+
+The panel's read produces two declarations that outlive the report, written into
+`NARRATIVE_LEDGER.yaml` (schema: `incunabula-codex/references/narrative-ledger-schema.md`)
+and folded into case-keeper's file on its next UPDATE:
+
+1. **One beat arc per chapter** — a single line in `->` form (e.g.
+   `overload -> anchored by touch -> release -> calm`). Judge the chapter's actual
+   emotional circuit; the repetition check downstream (`check-narrative.py` N2) only
+   works if the lines are honest summaries rather than variations written to look
+   different.
+2. **Each extended scene's function** from the closed list: relationship shift, theme
+   payoff, plot turn, character revelation, pure texture. Two scenes declaring the same
+   function is a reportable observation (N3), not a defect — the point is that the
+   duplication becomes visible instead of living in one evaluator's memory.
+
+The panel also records any obligation it notices the book opening and the ledger
+missing. Prose reports evaporate between sessions; declarations do not.
 
 ### Reading the cross-section
 

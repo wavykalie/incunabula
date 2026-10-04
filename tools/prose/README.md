@@ -1,9 +1,9 @@
 # prose — the mechanical half of the prose gate
 
-Seven tools that check a manuscript mechanically, so that a human review can spend its
+The tools that check a manuscript mechanically, so that a human review can spend its
 attention on the parts no scanner can see. They ship with the pipeline because every
-book built by it was checked with them, and because the numbers behind their thresholds
-are recorded rather than remembered.
+book built by it was checked with them, and the numbers behind their thresholds are
+recorded rather than remembered.
 
 ```
 deslop-check.sh        one chapter at a time, against per-1k caps
@@ -14,7 +14,18 @@ check-surplus.py       how much of the dialogue carries no plot    (reports, nev
 check-recoverable.py   which tics a character could plausibly own (reports, never gates)
 check-length.py        did the book deliver the length it declared (gates; L1)
 check-errata.py        the guard on this system's own guidance    (reads no prose)
-validate-controls.sh   re-runs the nine calibration controls
+validate-controls.sh   re-runs the control suite (16 controls)
+```
+
+And the narrative class (Freeze 13), which measures the shape of story rather than the
+surface of prose:
+
+```
+check-narrative.py     what the book owes: debt, beat arcs, scene functions
+                       (N1/N4 gate on declared contracts - reads no prose, L1's class)
+check-figurative.py    where the images pile up on one referent   (reports, never gates)
+check-dialogue-tags.py per-character speech-tag register          (reports, never gates)
+check-quantities.py    do the numbers agree with each other       (reports, never gates)
 ```
 
 `calibration/` holds four more, all report-only:
@@ -121,7 +132,12 @@ python check-length.py <book>/                              # L1; 0 ok, 1 short/
 python check-recoverable.py manuscript/                     # report only, always exits 0
 python check-errata.py                                      # the pipeline's own protocol
 
-bash validate-controls.sh   # exits 2 if no corpus installed; 0 if all 9 pass
+python check-narrative.py <book>/                           # N1/N4 gate; N2/N3 report
+python check-figurative.py <book>/                          # report only, cannot fail
+python check-dialogue-tags.py <book>/                       # report only, cannot fail
+python check-quantities.py <book>/                          # report only, cannot fail
+
+bash validate-controls.sh   # exits 2 if no corpus installed; 0 if all controls pass
 ```
 
 **Point the scanner at the chapters directory, not the book.** `deslop-check.sh` on a
@@ -152,7 +168,7 @@ cd tools/prose
 HUMAN_CORPUS="calibration/corpus/montgomery" \
 VOLUME_CORPUS="calibration/corpus/multivolume" \
 AI_CONTROL="/path/to/an-ai-written-control/chapters" \
-bash validate-controls.sh      # exits 0 when all eleven pass
+bash validate-controls.sh      # exits 0 when every control passes
 ```
 
 `HUMAN_CORPUS` is scanned file-by-file by the per-chapter scanner and wants a handful of
@@ -264,6 +280,33 @@ past it — which is what a bad metric looks like from the inside.
   `check-surplus.py` does), and a book can score well on it while being poor — dialogue is the
   easiest place in a manuscript to hide a tic, and concentrated slop is still slop. Treat it
   as a question, not a score.
+- `check-narrative.py` **cannot see a setup nobody recorded.** It reads no prose; it
+  verifies `NARRATIVE_LEDGER.yaml` against the book's chapter files. The extraction is
+  `case-keeper`'s job and the audit is `collator`'s; a clean ledger over a careless
+  extraction is invisible here, which is why collator's full pass runs before this row
+  is consulted at delivery. It gates with no corpus for `check-length.py`'s reason: it
+  compares a book to the obligations *that book declared for itself*, and there is no
+  population it can false-fail. N2/N3 report repetition and duplication and fail
+  nothing: a repeated circuit is sometimes deliberate, and no corpus of published beat
+  maps exists from which a floor could be derived.
+- `check-figurative.py` counts figurative *markers* and coordinated image clauses, not
+  meaning. It cannot see a metaphor without a marker, it counts `like` in comparisons
+  that are not figurative, and it cannot attribute an image to a referent — the
+  "two images, one sensation" judgment is `proof-panel`'s Critic, and the tool says so
+  on every run. A dense good passage lights it up.
+- `check-dialogue-tags.py` attributes by name within a short window of the quote;
+  pronoun-tagged lines count as unattributed, so a chapter that tags every line with
+  "she" reports few attributed lines. It reads speech out of quotation marks (a quoted
+  letter counts), and a name that is also a lowercase common word in the book is
+  filtered out as a false positive — occasionally over-filtering a real one.
+- `check-quantities.py` cannot see what a number applies to, so two same-unit values can
+  be correct in two situations and Q2's spreads are observations. Ranges collapse to
+  their first number. Q3's g-force notes come from physiology, not from a corpus: they
+  are notes for a reader, not a threshold, and dimensional coherence stays an evaluator
+  judgment. Q4 (counted nouns carrying conflicting values, RECONCILE on values restated
+  across chapters) **never sums**: parts of a stock add up (four taken plus thirty-six
+  left), so it names candidates and the reader reconciles. A listed candidate is not a
+  finding.
 - The **density caps** in `deslop-check.sh` are calibrated on documents and applied to
   chapters. All three offenders are now resolved: `D1` and `D2` are report-only because the
   AI control sits *inside* the published distribution on both (`D1` reads 0.00/1k on all 22
@@ -371,3 +414,13 @@ that matters:
 So the freeze manifest's "all ten controls pass" is a claim with current supporting
 evidence at the level of its individual properties, but not a single reproducible
 end-to-end run. Treat it that way rather than as a green light.
+
+**Discharged 2026-10-04.** The single end-to-end run now exists: all sixteen controls,
+corpus and AI control supplied, `ALL CONTROLS PASS`, exit 0, zero skips — including
+control 3 (6 of 11 chapters fail, 5 pass, unchanged from the last figure). The timing
+refines the paragraph above: the 590s blowup is the **conflated** configuration
+(`HUMAN_CORPUS` pointed at the 303-file multi-volume corpus). With the recommended
+split — `HUMAN_CORPUS=corpus/montgomery`, `VOLUME_CORPUS=corpus/multivolume` — the full
+suite completes in **about three minutes**. "Run it somewhere it can take ten minutes"
+stands as belt-and-braces; the ten-minute figure measures the mistake, not the suite.
+The run is recorded in `GATE_FREEZE.md` under the Freeze 13 entries.

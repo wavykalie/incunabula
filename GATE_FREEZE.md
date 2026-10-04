@@ -24,7 +24,7 @@ when its published band turned out to come from a translated light novel.
 | `tools/prose/check-names.py` | `6fcb3bd0dd1ae1c2` | cross-book cast-name collisions + default-name filter, reads no prose (Freeze 4 - added after the author found `Priya` in two books) |
 | `tools/prose/calibration/NAME_FREQUENCY.tsv` | `f17e837f6f2ae0a5` | the name-frequency data `check-names.py` reads (Freeze 4) |
 | `tools/prose/calibration/NAME_FREQUENCY.md` | `75f6fa0dae36f327` | provenance + the tier reasoning; frozen because it states what the tiers mean (Freeze 4) |
-| `tools/prose/validate-controls.sh` | `f76ee16eaaddb943` | the ten controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only) |
+| `tools/prose/validate-controls.sh` | `d8d84fddeaddbd36` | the controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only; Freeze 13 - controls 13-16 added) |
 
 Also frozen, because they change what the gates *see* rather than what they assert:
 
@@ -907,3 +907,307 @@ Controls re-run at this freeze, corpus installed and the AI control supplied:
 **all twelve controls behave, zero skips — `ALL CONTROLS PASS`, exit 0.** Control 3
 (the discrimination control) still separates the control book: 6 of 11 chapters fail,
 5 pass. `verify-freeze.sh`: 15 files, all ok.
+
+---
+
+## Freeze 13 — 2026-10-04: the narrative instrument class (Freeze 6 amended, one notch)
+
+**Trigger: an external structural critique of a finished novella** (*Kagiroi Drift*,
+Draft 12) — a full read of the manuscript as a reader and as a systems thinker, aimed
+at the layer no gate measures. Its thesis: **the suite verifies prose, not story.** The
+calibration corpus taught the instrument what a good sentence looks like; nothing in it
+could see what a well-built book looks like. Six findings, each named against what the
+instrument could not see:
+
+| finding | observed in the book | why every gate missed it |
+|---|---|---|
+| F-01 beat repetition | ch 1, 2, 4, 6 run one circuit: overload -> anchored by touch -> release -> calm | `deslop-check.sh` never holds two chapters; `check-uniformity.py` measures length and rhythm, not content; `check-drift.py` watches voice, and the voice does not shift while the beats repeat |
+| F-02 unfired setups | the Minato pod wound (ch 1) and Mizore, the secondary character who delivers the plot and exits in a log entry | `case-keeper` tracks entity state, not narrative obligation; nothing tracked "introduced but unresolved" |
+| F-03 figurative pile-ups | "like chewing on copper foil while someone struck a bronze bell inside her sinuses" — two images, one referent | metaphor stacking is semantic; the deslop scanner's regexes cannot reach it |
+| F-04 dialogue register flattening | two viewpoint characters default to breathless whispering and gasping outside intimate contexts | `voice-matrix` writes the specs; nothing verifies the manuscript against them |
+| F-05 quantity incoherence | a standing human under "eight gravities"; a 60,000-ton station jerked "in a fraction of a second" | no gate extracts or reasons about quantities at all |
+| F-06 scene-function duplication | the four extended intimate scenes serve overlapping functions; ch 2's could lose half its length without cost | nothing requires a scene to declare what it is for |
+
+F-01, F-02, F-04 and F-06 are the same failure wearing different clothes: the system
+verifies prose, not story. F-03 and F-05 are narrower semantic checks no regex reaches.
+
+### What this freeze does to Freeze 6
+
+Freeze 6 (2026-09-28) ruled: *no new gate, no new gate class; if a check is wanted it
+becomes a checklist line inside an existing phase, not a script.* That ruling is
+amended here, deliberately and once, to open exactly one named class — **the narrative
+instruments** — with the boundary drawn where this directory has always drawn it:
+
+1. **The one gating instrument is a contract row in the class of `check-length.py` (L1),
+   not a corpus row.** `check-narrative.py` reads no prose and measures no population:
+   it compares a book to the narrative obligations *that book declared for itself* in
+   `NARRATIVE_LEDGER.yaml`. L1's own reasoning applies unchanged: **"there is no
+   population it can false-fail, because it is not measuring a population."** N1
+   (debt) and N4 (conformance) gate; there is no threshold in them to defend, because
+   there is no threshold in them at all — an entry is RESOLVED, DEFERRED-with-reason,
+   or OPEN, and OPEN at delivery is a failure.
+2. **Every prose-reading instrument in the class is report-only and cannot fail
+   anything.** `check-figurative.py`, `check-dialogue-tags.py`, `check-quantities.py`
+   read real prose and have **no measured corpus behind them**, so they carry no caps
+   and no fail lines. This is the same line drawn for `check-surplus.py` and
+   `check-recoverable.py`: reports, never gates, until a corpus exists.
+3. **The detection that needs a reader stays a rubric.** "Two images competing for one
+   sensation" and order-of-magnitude physical coherence are judgments; the scripts are
+   the cheap first look that points the reader at the right windows. The critique
+   argued checks should become scripts because *prompts drift and gates don't* — true
+   for what a script can see, and the script-shipped part of that advice is honoured
+   here; where the script cannot see the referent, the rubric in `proof-panel` is the
+   authority and the report says so in those words.
+
+Freeze 6's cost argument is not repudiated — every gate is a threshold to defend and a
+false-positive class — it is answered by construction: one contract row with no
+threshold, three report rows that cannot convict. Freeze 6 stands for everything else,
+and the next proposal to add a *corpus* row still owes a corpus.
+
+### New frozen files
+
+| file | sha256 (first 16) | role |
+|---|---|---|
+| `tools/prose/check-narrative.py` | `74ef6d9819031279` | N1 debt (gates) / N2 beat repetition / N3 scene function / N4 ledger conformance (gates); reads no prose — the contract row, L1's class (re-keyed at the second update; see below) |
+| `tools/prose/check-figurative.py` | `31a67b2ce19f50a4` | G1/G2 figurative pile-up reporter; report-only |
+| `tools/prose/check-dialogue-tags.py` | `56cb000be7308a58` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second update) |
+| `tools/prose/check-quantities.py` | `263b87b7f0444f71` | Q1–Q4 quantity extraction, spread, sanity notes, counted-noun conflicts; report-only (re-keyed at the third update) |
+
+Also frozen, because they change what the gates see or what the skills declare:
+
+- `skills/incunabula-codex/references/narrative-ledger-schema.md` — the ledger contract
+  (closed vocabularies, status discipline, the strict-parser subset).
+- `tools/prose/calibration/narrative-debt-fixture/` — **positive control**: must make
+  `check-narrative.py` exit 1 (OPEN debt at delivery + one DEFERRED without a reason).
+- `tools/prose/calibration/narrative-clean-fixture/` — **negative control**: must make
+  it exit 0. Both directions are required; a gate seen only to fail is as untrustworthy
+  as one never seen to fail.
+- `skills/` — seven skills edited, listed below.
+
+### Skill edits (skills/ is on the also-frozen list)
+
+| skill | what moved |
+|---|---|
+| `incunabula` | the narrative gate joins the prose and maintenance gates; phase transitions 4->4.5 (declare beats and scene functions), 5.5->5.6 (ledger audited against the text), 5.6->6 and delivery (check-narrative must exit clean) |
+| `case-keeper` | extraction pass 6: narrative obligations into the ledger; UPDATE folds in Phase 4 declarations and fires payoffs; status discipline enforced at the writer, not just the checker |
+| `collator` | plot-thread audit becomes a two-way ledger reconciliation (unrecorded setup = finding, RESOLVED without payoff = critical, OPEN at full pass = blocking); new cross-chapter reads for beat repetition and scene-function duplication; quantities sub-audit under world rules |
+| `proof-panel` | the panel declares each chapter's beat arc and each extended scene's function; the Hostile asks the circuit-repetition question and hunts dubious data with the quantity table; the Critic flags two images competing for one sensation |
+| `register` | closes the `voice-matrix` loop: per-character tag register checked against the voice card — specs without verification are wishes |
+| `setting` | one image per sensation: the figurative pile-up joins what an editor marks to cut |
+| `presswork` | the delivery gate: a book with OPEN debt does not ship; the exit status is recorded beside the prose-gate evidence |
+
+None of these generates prose differently in any way a prose gate can see; the craft
+channel moved, the measurement channel did not. **Recorded as a hand-mode act:** the
+author read the external critique and directed its adoption, which is the promotion
+path `SELF_IMPROVEMENT.md` reserves to a person. The craft-channel verifier (held-out
+comparison) has not judged the new rubric lines; they are adopted on author direction,
+not on falsification, and this sentence is so nobody later mistakes them for the other.
+
+### Verified at this freeze
+
+Both control directions, on a fresh run, with no corpus involved:
+
+    narrative-debt-fixture    exit 1   N1 (2 OPEN) + N4 (DEFERRED without reason)   ok
+    narrative-clean-fixture   exit 0   N1 clean (3 resolved, 1 reasoned deferral)   ok
+
+Then on the critique's own book (`kagiroi-drift`, seeded with the ledger the critique's
+findings imply), which is the only test that could have found the defects below:
+
+    check-narrative     exit 1  reproduces F-01 (N2: identical arc ch 1, 2, 4, 6),
+                                F-02 (N1: Minato pod and Mizore OPEN),
+                                F-06 (N3: 'relationship shift' x3)
+    check-quantities    reports F-05 (8 gravities on a standing human; 60,000 t)
+    check-figurative    reports F-03 (the copper-foil / bronze-bell pile-up, ch 2)
+    check-dialogue-tags reports the per-character table F-04 needs
+
+All four compile clean; `verify-freeze.sh` holds the fifteen pre-existing rows
+byte-identical and hashes the four new ones.
+
+### Three defects found by first runs — same shape as Freeze 7, recorded the same way
+
+A tool verified only on fixtures mis-measured a real book in three ways. None was
+visible in the fixture runs; all three surfaced by running the tool on the book the
+critique examined and reading what it said.
+
+| defect | symptom | fix |
+|---|---|---|
+| `check-quantities.py` matched one token as the number | "sixty thousand tons" read as **1,000 tons** (matched at "thousand"); "forty-two degrees" read as **2 degrees** | number-phrase parsing: spelled tens + magnitude words, hyphenated compounds; "twenty metric tons" accepted |
+| `check-dialogue-tags.py` read imperatives as characters | `Don` (from "Don't"), `Touch`, `Breathe`, `Speak`, `Good` appeared as the cast; 16 spurious V2 pair warnings | three filters, all needed: apostrophe-truncation guard, sentence-starter list, and the lowercase rule (a real name does not also appear as a lowercase common word in the book) |
+| `check-figurative.py` counted markers, not images | **the critique's own canonical pile-up was invisible** — one `like` governing two images is one marker | coordinated clauses inside a complement count as separate image units; the copper-foil sentence now fires |
+
+The third one is the lesson worth keeping: the detector was built for a named failure
+and missed that exact failure, because its unit (the marker) was not the unit of the
+defect (the image). **A check that has never been seen to fire on the case it was built
+for is not yet known to work.**
+
+### What was NOT added, and why
+
+- **No gate on beat repetition (N2 reports).** A repeated circuit is sometimes
+  deliberate — a ritual structure, a deliberate echo — and no corpus of published beat
+  maps exists from which a floor could honestly be derived.
+- **No figurative cap, no tag threshold, no physics validator.** All three are
+  report rows for the same reason: no corpus, no cap. Dimensional coherence (thrust
+  against mass against acceleration) is evaluator work and stays with `proof-panel`'s
+  Hostile.
+- **No scene-function cap.** "Pure texture should be a capped budget" is the
+  critique's proposal and it is declined as a *program* rule for the same reason the
+  naming preference was: the budget is an author's decision, recorded in the ledger,
+  not a number this directory invents. N3 prints the share; the author rules.
+
+---
+
+## Freeze 13 — second update (same session): controls 13–16 join the suite, and the suite caught a gate defect on its first run
+
+Raised at the author's direction: the narrative instruments join the control suite.
+Three rows move; no cap, threshold, or detector rule changes. Manifest rows above carry
+the current hashes; the moves are recorded here in bare-filename form, per the standing
+convention.
+
+| file | first freeze 13 | second update | what moved |
+|---|---|---|---|
+| `validate-controls.sh` | `f76ee16eaaddb943` | `fdc21ec0bd7b649d` | controls 13–16 appended, and the partial-run summary names the narrative proof alongside the scanner and the three gates |
+| `check-narrative.py` | `87adebe1311dd75e` | `74ef6d9819031279` | the exit-code defect control 15 caught (below), plus N4 row-format normalisation |
+| `check-dialogue-tags.py` | `8a978e2cd7d5ad13` | `56cb000be7308a58` | the V1 table now prints its own row id — a row that cannot be grepped cannot be controlled |
+
+### The new controls
+
+| control | property | arms |
+|---|---|---|
+| 13 | the unresolved-debt ledger must FAIL | checks N1 **and** N4 each fired — an exit-code-only control would not notice a gate losing half its judgement while keeping its verdict |
+| 14 | the closed narrative ledger must PASS | the inverse: a gate seen only to fail is as untrustworthy as one never seen to fail |
+| 15 | a drafting book's open debt is recorded, not failed | draft exits 4; the SAME book finished exits 1 — both arms, so the control cannot be satisfied by a gate that stopped failing anything |
+| 16 | the narrative REPORT rows must not be able to fail | G1, V1, Q3 must FIRE on the fixture and must NOT be able to fail it — either half alone is insufficient |
+
+All four run on shipped fixtures and synthesized books with **no corpus**, so a fresh
+clone proves the narrative half of the harness on its first run. Fixture change of
+record: `narrative-debt-fixture`'s `chapter-01.md` now carries deliberate pile-up,
+tagged-dialogue, and 8-gravity prose for control 16; its ledger is unchanged and it is
+still the N1/N4 positive control, because `check-narrative.py` reads no prose.
+
+### The defect the control caught: the row was honest and the exit code lied
+
+**Control 15's first run failed a gate that looked correct on screen.** `check()`
+returned 4 for the in-progress book and printed exactly what it should — "recorded,
+not judged" — but `main()`'s book loop counted any non-failure as judged, so the
+process exited **0**. A delivery check keyed on the exit code would have shipped a
+drafting book's OPEN debt while the report on screen said it was not being judged.
+
+This is KF-004's shape one layer down: *a gate that exits 0 and a gate that ran are
+different claims* becomes *a gate that exits 0 and a gate that **recorded** are
+different claims*. The same class as the exit-2 confusions in Freezes 8 and 9, found
+the same way those were: not by reading the code, but by running the instrument on the
+one state combination nobody had run — a **conformant** ledger on an **in_progress**
+book. Fixtures and a real book had exercised every other path.
+
+The lesson, fourth recurrence and worth keeping: **a check that has never been seen to
+fail is not yet known to work.** It was a control's first run — not a corpus, not a
+review — that found it. Fixed by carrying the in-progress state through the book loop
+to the exit code with `check-length.py`'s precedence (failure > ungoverned >
+in-progress > not-run).
+
+### Verified at this update
+
+    control 13   ok   FAIL with 2 rows (N1 and N4 both fired)
+    control 14   ok   the closed ledger passes (exit 0)
+    control 15   ok   draft exits 4, recorded not judged / same book finished exits 1
+    control 16   ok   G1, V1, Q3 fire on the fixture; none of the three can fail it
+
+Suite run with no corpus installed: every fixture-only control passes, five
+corpus-backed controls report not-run, **exit 2** — partial, with the summary naming
+which half it proved. The corpus-backed controls 1–10 are untouched by this diff
+(only new blocks appended above the summary) and were verified at Freeze 12.
+Regression: the debt fixture still exits 1, the clean fixture 0, `kagiroi-drift` 1,
+and `verify-freeze.sh` holds every row including the three re-keyed here.
+
+---
+
+## Freeze 13 — third update (same session): Q4 closes the critique's "direct contradiction" gap
+
+The critique's F-05 asked for "direct contradictions first (the easy win)" before any
+sanity reasoning. Q1–Q3 covered extraction, spread, and physics notes but not the shape
+the book actually failed on: a stock counted one way in one chapter and another way in
+the next — fifty canisters promised in ch 3, against a ch-6 tally of four taken and
+thirty-six left, which is forty. Q4 is that row: counted nouns (a number with a noun
+head rather than a unit) grouped across the book, values listed with contexts, and a
+RECONCILE line for values restated in different chapters.
+
+| file | second update | third update | what moved |
+|---|---|---|---|
+| `check-quantities.py` | `dfbe4d3e9d464782` | `263b87b7f0444f71` | Q4 added; `hertz` reclassified from counted noun to unit; RECONCILE keys on cross-chapter restatement rather than closeness |
+| `validate-controls.sh` | `fdc21ec0bd7b649d` | `d8d84fddeaddbd36` | control 16 asserts Q4's listing AND its RECONCILE line fire — a row that lists but never reconciles has lost the half that names the contradiction |
+
+**Two detector rules were wrong on the first run**, recorded the same way as this
+morning's three — both found by reading Q4's output on `kagiroi-drift`:
+
+- RECONCILE keyed on *closeness* (values within 2x) flagged enumerations ("once, twice,
+  three times, four times") and stayed silent on the flagship case, whose extracted
+  values (4, 12, 50) are nowhere near each other. The contradiction shape is not
+  closeness — it is **restatement**: one stock counted two ways in different chapters.
+- `hertz` was parsed as a counted noun instead of a unit.
+
+**What Q4 deliberately does not do: it never sums.** Four taken plus thirty-six left is
+forty against a promised fifty, and that arithmetic needs the bare "thirty-six" of
+ch-6, which carries no noun and no extractor can attach. So Q4 names candidates and
+RECONCILE pairs, and the reader reconciles — which is also why the row's noun extraction
+is crude about which noun a number modifies (adjective and compound heads are guessed)
+and a listed candidate is not a finding.
+
+**Verified:** `kagiroi-drift` Q4 lists `'canister' 4, 12, 50` with RECONCILE on the
+cross-chapter pairs — the exact finding the critique named. The fixture's deliberate
+canister disagreement (ch-01 fifty against ch-02 thirty-six) fires both lines; control
+16 asserts both; the suite passes every fixture-only control and exits **2** (partial,
+corpus controls not run); `verify-freeze.sh` holds all 19 rows including the two
+re-keyed here. Fixture change of record: the debt fixture's chapters 01–02 carry the
+counted-noun disagreement; its ledger is unchanged and `check-narrative.py` still reads
+no prose.
+
+---
+
+## 2026-10-04 — the full control suite, corpus installed: all sixteen pass, zero skips
+
+No file moved; `verify-freeze.sh` unchanged at 19/19. This completes the Freeze 13
+record: the three entries above re-ran the fixture-only half (exit 2, partial) and said
+so in those words. This is the other half, one run, end to end:
+
+    HUMAN_CORPUS=calibration/corpus/montgomery \
+    VOLUME_CORPUS=calibration/corpus/multivolume \
+    AI_CONTROL=<root>/finished-manuscripts/hollow-bridge/manuscript/chapters \
+      bash validate-controls.sh
+
+| control | result |
+|---|---|
+| 1 human prose passes the scanner | **ok** — 3 documents, 0 failing |
+| 2 synthetic slop fails | **ok** — 16 failing rows |
+| 3 AI prose is discriminated | **ok** — 11 chapters, 6 failing, 5 passing |
+| 4 published volumes vary | **ok** |
+| 5 a uniform manuscript fails | **ok** — 2 failing rows |
+| 6 published prose holds one voice | **ok** |
+| 7 a voice shift fails | **ok** — 1 failing row |
+| 8 the REPORT tier cannot fail | **ok** — D1/D2 over cap, neither printed FAIL |
+| 9 the monotone-arc fixture fails | **ok** — A1 0.150 |
+| 10 non-fiction volumes are not flagged uniform | **ok** — 6 volumes, CV 28.2–113.7% |
+| 11 a book short of declared length fails | **ok** — and one inside range passes |
+| 12 a drafting book is recorded, not failed | **ok** — both arms |
+| 13 the unresolved-debt ledger fails | **ok** — N1 and N4 both fired |
+| 14 the closed narrative ledger passes | **ok** |
+| 15 open debt is recorded during drafting | **ok** — both arms |
+| 16 the narrative report rows cannot fail | **ok** — G1/V1/Q3/Q4 fire, none can fail |
+
+**`ALL CONTROLS PASS`, exit 0, zero skips — including control 3**, which has reported
+`skip` in every run recorded above because no AI control path was supplied. The control
+book is the private one (`Hollow Bridge` — the de-identified stand-in, whose real title is held only in the gitignored `.registry-private`),
+found through `.registry-private` and read at its archived path under
+`finished-manuscripts/`: the maintenance protocol's stub at the old book root is what
+made the path findable, which is the stub doing exactly its job. Its discrimination is
+unchanged from the Freeze 12 figure: **6 of 11 chapters fail, 5 pass.**
+
+**One operational finding, refining tools/prose/README.md tool-defect #2.** The
+documented "exceeded 590s" cost belongs to one specific mistake: pointing
+`HUMAN_CORPUS` at the multi-volume corpus, which runs the per-chapter scanner over 303
+files. With the split above — `montgomery` (3 documents) for control 1,
+`multivolume` (303 staged files) for controls 4–7 — **the full sixteen-control suite
+completes in about three minutes**, corpus and AI control included. "Run it somewhere
+it can take ten minutes" is never wrong advice, but the ten-minute figure measures the
+conflated configuration, not the suite. And the caveat at the foot of that defect note
+— "not a single reproducible end-to-end run" — is now discharged: this is that run,
+and re-running it with the same three paths reproduces it.

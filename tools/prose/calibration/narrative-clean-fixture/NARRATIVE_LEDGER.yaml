@@ -1,0 +1,32 @@
+# NEGATIVE CONTROL for check-narrative.py. This file MUST make the gate exit 0.
+# A positive control that fails proves the gate can fire; this proves it does not
+# fire on a ledger that has actually closed its obligations. Both directions are
+# required: a gate seen only to fail is as untrustworthy as one never seen to fail.
+#
+# Assumed book state for the run: chapters 1-5 on disk, status NOT in_progress.
+# Run against the fixture directory: check-narrative resolves book_root as two
+# levels above the chapters dir, so the fixture is exercised by copying this file
+# beside a manuscript/ tree or by the fixture harness in validate-controls.sh.
+meta:
+  version: "1.0"
+  last_updated: "2026-10-04"
+  last_updated_by: "fixture"
+  chapters_tracked: [1, 2, 3, 4, 5]
+
+beats:
+  - { chapter: 1, arc: "shock -> denial -> numbness", source: "fixture" }
+  - { chapter: 2, arc: "suspicion -> discovery -> dread", source: "fixture" }
+  - { chapter: 3, arc: "warmth -> betrayal -> withdrawal", source: "fixture" }
+  - { chapter: 4, arc: "standoff -> confession -> reckoning", source: "fixture" }
+  - { chapter: 5, arc: "loss -> resolve -> departure", source: "fixture" }
+
+scenes:
+  - { chapter: 2, scene: "the archive", function: "plot turn", words: 1100 }
+  - { chapter: 3, scene: "the kitchen", function: "relationship shift", words: 800 }
+  - { chapter: 5, scene: "the dock", function: "character revelation", words: 1000 }
+
+debt:
+  - { id: D-001, kind: mystery, description: "who falsified the dosimetry", opened: "ch-01:p4", status: RESOLVED, resolution: "the forger confesses in ch-04", resolved_at: "ch-04:p31", deferred_reason: null }
+  - { id: D-002, kind: promise, description: "she promised to bring her sister home", opened: "ch-02:p10", status: RESOLVED, resolution: "the sister is on the dock in ch-05", resolved_at: "ch-05:p12", deferred_reason: null }
+  - { id: D-003, kind: clock, description: "the reactor restart window", opened: "ch-03:p2", status: RESOLVED, resolution: "the restart happens in ch-05", resolved_at: "ch-05:p2", deferred_reason: null }
+  - { id: D-004, kind: character, description: "the harbour master's silence", opened: "ch-03:p18", status: DEFERRED, resolution: null, resolved_at: null, deferred_reason: "series hook for volume two; recorded with the author's consent" }

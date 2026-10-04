@@ -11,6 +11,13 @@ errors and a professional presentation, because a manuscript with visible errors
 reader's trust on the first page, and a badly formatted one looks amateur before it is even
 opened.
 
+**Before the technical pass, the delivery gate.** Run `tools/prose/check-narrative.py`
+and record its exit status beside the prose-gate evidence. A book with OPEN narrative
+debt does not ship: every obligation in `NARRATIVE_LEDGER.yaml` must be RESOLVED
+(payoff recorded) or DEFERRED (reason recorded). If the gate fails, the failure goes
+back to the orchestrator — presswork does not resolve debt and does not restructure;
+it only refuses to package a book that still owes what it promised.
+
 ---
 
 ## 1. The technical pass

@@ -85,7 +85,8 @@ the case, the pull, the colophon.
 
 Not every term needs a print-shop name. These stay ordinary: *oscillation*, *emotional anchor*,
 *engagement type*, *commercial pacing*, *scene*, *chapter*, *beat*, *voice under pressure*,
-*character chaos*, *anti-AI scan*.
+*character chaos*, *anti-AI scan*, *narrative debt*, *beat arc*, *scene function*, *setup and
+payoff* — the narrative layer (`NARRATIVE_LEDGER.yaml`, rows N1–N4) speaks plainly.
 
 Utility skills that are not part of this system keep their own names: `humanizer`,
 `copy-editing`, `good-idea`, `deslopify`.

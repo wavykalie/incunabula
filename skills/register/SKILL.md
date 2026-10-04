@@ -45,6 +45,13 @@ Run it on **every speaking character in this chapter**.
    last. Add overlap, mishearing, a non-answer, a tangent. Real speech is misaligned.
 4. **Tag and beat balance.** Count said-tags and action beats. Neither should dominate; avoid
    decorative tags ("he opined," "she retorted") — `said` and `asked` disappear, which is the point.
+   Then run `tools/prose/check-dialogue-tags.py` on the book and read this character's row:
+   the per-character tag verb distribution and breath-family share (whisper, gasp, pant,
+   murmur, sigh) is the measurable slice of voice, and a register that has flattened shows
+   up here first. Two characters sharing a top tag, a character carrying many tagged lines
+   on two verbs, or breath-family tags dominating outside the scenes that justify them are
+   findings against `voice-matrix.md` — **specs without verification are wishes**, and this
+   is the verification.
 5. **Dialogue-to-prose ratio.** Compare against the genre target in the state file. Correct toward
    it, do not overshoot.
 6. **Register consistency.** A character's formality must hold across the chapter. A sudden
@@ -75,6 +82,7 @@ Append to the chapter's evaluation file and record the pass:
 **Subtext added:** [n] — [examples]
 **Clean-dialogue repairs:** [n]
 **Tag:beat ratio:** [x:y]
+**Tag register vs voice-matrix:** [per-character verdict from check-dialogue-tags.py]
 **Dialogue-to-prose ratio:** [x%] (target [y%])
 **Narration untouched:** confirmed
 ```

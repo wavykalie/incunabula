@@ -630,6 +630,191 @@ else
 fi
 
 echo
+echo "=== Control 13/16: the unresolved-debt ledger must FAIL (N1 and N4 can still fire)"
+# Freeze 13. The narrative gate is a CONTRACT row in L1's class: it reads no prose and
+# compares a book to the obligations that book declared for itself, so its control needs
+# no corpus - a SHIPPED ledger fixture with two OPEN obligations at delivery and one
+# DEFERRED without a reason. Both failing rows are checked for, not just the exit code:
+# a gate that lost N4 but kept N1 (or the reverse) still exits 1 here, and an exit-code-
+# only control would not notice the row going missing - which is how a gate loses half
+# its judgement while keeping its verdict.
+NARR_DEBT_FIX="$HERE/calibration/narrative-debt-fixture"
+if [ ! -f "$HERE/check-narrative.py" ]; then
+  echo "    FAIL  missing check-narrative.py"
+  verdicts=1
+elif [ ! -f "$NARR_DEBT_FIX/NARRATIVE_LEDGER.yaml" ]; then
+  echo "    FAIL  missing the narrative-debt fixture (calibration/narrative-debt-fixture/)"
+  verdicts=1
+else
+  if $PYTHON "$HERE/check-narrative.py" "$NARR_DEBT_FIX" >"$TMP/narr-debt.txt" 2>&1; then
+    echo "    FAIL  a ledger with two OPEN obligations at delivery PASSED."
+    echo "          This is the gate that stops an unexamined setup shipping as a loose end."
+    sed 's/^/          /' "$TMP/narr-debt.txt" | tail -6
+    verdicts=1
+  elif [ "$(grep -cE '^   FAIL' "$TMP/narr-debt.txt" || true)" -eq 0 ]; then
+    echo "    FAIL  gate failed but reported no failing row - it is erroring, not judging"
+    sed 's/^/          /' "$TMP/narr-debt.txt" | head -6
+    verdicts=1
+  elif [ "$(grep -cE '^   FAIL +N1 ' "$TMP/narr-debt.txt" || true)" -eq 0 ]; then
+    echo "    FAIL  N1 did not fire on OPEN debt - the debt row is not judging."
+    verdicts=1
+  elif [ "$(grep -cE '^   FAIL +N4' "$TMP/narr-debt.txt" || true)" -eq 0 ]; then
+    echo "    FAIL  N4 did not fire on DEFERRED without a reason - conformance lost a row."
+    verdicts=1
+  else
+    echo "    ok    FAIL with $(grep -cE '^   FAIL' "$TMP/narr-debt.txt" || true) failing rows (N1 and N4 both fired)"
+    grep -E '^   FAIL' "$TMP/narr-debt.txt" | head -3 | sed 's/^/          /'
+  fi
+fi
+
+echo
+echo "=== Control 14/16: the closed narrative ledger must PASS (the gate can also stop)"
+# The inverse arm, and it is not optional: a gate seen only to fail is as untrustworthy
+# as one never seen to fail. The fixture carries three RESOLVED obligations, one
+# DEFERRED with a recorded reason, five distinct beat arcs, and no duplicated scene
+# function. A gate that fails THIS has grown an appetite, and an appetite is how a
+# contract row starts convicting correct books.
+NARR_CLEAN_FIX="$HERE/calibration/narrative-clean-fixture"
+if [ ! -f "$HERE/check-narrative.py" ]; then
+  echo "    FAIL  missing check-narrative.py"
+  verdicts=1
+elif [ ! -f "$NARR_CLEAN_FIX/NARRATIVE_LEDGER.yaml" ]; then
+  echo "    FAIL  missing the narrative-clean fixture (calibration/narrative-clean-fixture/)"
+  verdicts=1
+else
+  if $PYTHON "$HERE/check-narrative.py" "$NARR_CLEAN_FIX" >"$TMP/narr-clean.txt" 2>&1; then
+    echo "    ok    a ledger that closed its obligations passes (exit 0)"
+  else
+    echo "    FAIL  a conformant ledger with no OPEN debt was failed. The row is over-reading."
+    sed 's/^/          /' "$TMP/narr-clean.txt" | tail -6
+    verdicts=1
+  fi
+fi
+
+echo
+echo "=== Control 15/16: a drafting book's open debt is recorded, not failed (N1 in-progress)"
+# The L1 lesson (control 12) one row down. A book that says it is still being drafted
+# legitimately owes open setups, and a gate that cries during drafting is trained out of
+# its reader before delivery. Both arms are tested - the draft exits 4, and the SAME
+# book finished (status removed) fails its open debt again - so this control cannot be
+# satisfied by a gate that stopped failing anything. The ledger is SYNTHESISED rather
+# than shipped, and is deliberately conformant: the only thing that can reclassify the
+# run is the status declaration, which is the whole property under test.
+if [ ! -f "$HERE/check-narrative.py" ]; then
+  echo "    FAIL  missing check-narrative.py"
+  verdicts=1
+else
+  rm -rf "$TMP/draftnarr"
+  mkdir -p "$TMP/draftnarr/manuscript/chapters"
+  for c in 01 02 03 04 05; do
+    printf '# draft stub\n' >"$TMP/draftnarr/manuscript/chapters/chapter-$c.md"
+  done
+  cat >"$TMP/draftnarr/NARRATIVE_LEDGER.yaml" <<'YEOF'
+meta:
+  version: "1.0"
+  last_updated: "2026-10-04"
+  last_updated_by: "control"
+  chapters_tracked: [1, 2, 3, 4, 5]
+
+debt:
+  - { id: D-001, kind: mystery, description: "the control's open setup", opened: "ch-01:p1", status: OPEN, resolution: null, resolved_at: null, deferred_reason: null }
+YEOF
+  printf 'project:\n  status: "in_progress"\n' >"$TMP/draftnarr/PROJECT_STATE.yaml"
+  draft_rc=0
+  $PYTHON "$HERE/check-narrative.py" "$TMP/draftnarr" >"$TMP/draftnarr.txt" 2>&1 || draft_rc=$?
+  if [ "$draft_rc" -eq 0 ] || [ "$draft_rc" -eq 1 ] || [ "$draft_rc" -eq 3 ]; then
+    echo "    FAIL  a book declaring in_progress exited $draft_rc - the draft was judged as delivery."
+    sed 's/^/          /' "$TMP/draftnarr.txt" | tail -6
+    verdicts=1
+  elif [ "$draft_rc" -ne 4 ]; then
+    echo "    FAIL  drafting book exited $draft_rc, not 4. The reclassification is not wired."
+    sed 's/^/          /' "$TMP/draftnarr.txt" | tail -6
+    verdicts=1
+  elif [ "$(grep -cE 'IN PROGRESS' "$TMP/draftnarr.txt" || true)" -eq 0 ]; then
+    echo "    FAIL  exit was 4 but the row did not say what it did."
+    verdicts=1
+  else
+    echo "    ok    a draft declaring in_progress exits 4, recorded not judged"
+    grep -E '^   --   N1' "$TMP/draftnarr.txt" | head -1 | sed 's/^/          /'
+  fi
+  # The inverse arm: the same book, finished, must fail its open debt again.
+  sed -i 's/  status: "in_progress"//' "$TMP/draftnarr/PROJECT_STATE.yaml"
+  fin_rc=0
+  $PYTHON "$HERE/check-narrative.py" "$TMP/draftnarr" >/dev/null 2>&1 || fin_rc=$?
+  if [ "$fin_rc" -eq 1 ]; then
+    echo "    ok    the same book finished fails its OPEN debt (N1 intact at delivery)"
+  else
+    echo "    FAIL  a finished book with open debt exited $fin_rc - delivery enforcement lost."
+    verdicts=1
+  fi
+  rm -rf "$TMP/draftnarr"
+fi
+
+echo
+echo "=== Control 16/16: the narrative REPORT rows must not be able to fail (G1, V1, Q3, Q4)"
+# The control-8 lesson, one class down. check-figurative.py, check-dialogue-tags.py and
+# check-quantities.py measure PROSE with no corpus behind them - no caps, no fail lines -
+# and they must stay that way until a corpus is measured and the rows are re-derived.
+# The fixture's chapter-01 carries a figurative pile-up, tagged dialogue, and an
+# 8-gravity quantity, so this control asserts both halves at once: the detectors FIRE
+# on the fixture, and the findings CANNOT fail it. Either half alone is insufficient -
+# a report row that prints nothing is decorative, and a report row that can fail is a
+# gate that owes a corpus it does not have.
+if [ ! -f "$HERE/check-figurative.py" ] || [ ! -f "$HERE/check-dialogue-tags.py" ] || \
+   [ ! -f "$HERE/check-quantities.py" ]; then
+  echo "    FAIL  missing one of the narrative report tools"
+  verdicts=1
+else
+  rep_bad=0
+  for tool in check-figurative.py check-dialogue-tags.py check-quantities.py; do
+    $PYTHON "$HERE/$tool" "$NARR_DEBT_FIX" >"$TMP/rep-$tool.txt" 2>&1
+    rc=$?
+    if [ "$rc" -ne 0 ]; then
+      echo "    FAIL  $tool exited $rc on a fixture that produces findings - a report row"
+      echo "          must not be able to fail a book."
+      rep_bad=1
+      verdicts=1
+    fi
+  done
+  if ! grep -qE '^   --   G1' "$TMP/rep-check-figurative.py.txt"; then
+    echo "    FAIL  check-figurative printed no G1 row on a chapter built to trip it."
+    echo "          The detector is blind; a report that cannot fire cannot be trusted."
+    rep_bad=1
+    verdicts=1
+  fi
+  if ! grep -qE '^   --   V1' "$TMP/rep-check-dialogue-tags.py.txt"; then
+    echo "    FAIL  check-dialogue-tags printed no V1 row on a chapter with tagged dialogue."
+    rep_bad=1
+    verdicts=1
+  fi
+  if ! grep -q 'SANITY' "$TMP/rep-check-quantities.py.txt"; then
+    echo "    FAIL  check-quantities printed no Q3 sanity note on an 8-gravity fixture."
+    rep_bad=1
+    verdicts=1
+  fi
+  # Q4 is the counted-noun contradiction row: chapter-01's fifty canisters against
+  # chapter-02's thirty-six, across chapters. Both the listing and the RECONCILE
+  # line are checked - a detector that lists but never reconciles has lost the
+  # half of the row that names the contradiction shape.
+  if ! grep -qE '^   --   Q4' "$TMP/rep-check-quantities.py.txt"; then
+    echo "    FAIL  check-quantities printed no Q4 row on a fixture with a counted noun"
+    echo "          stated two ways across chapters."
+    rep_bad=1
+    verdicts=1
+  fi
+  if ! grep -q 'RECONCILE' "$TMP/rep-check-quantities.py.txt"; then
+    echo "    FAIL  Q4 listed but never reconciled - cross-chapter restatement is the"
+    echo "          contradiction shape and the RECONCILE line is what names it."
+    rep_bad=1
+    verdicts=1
+  fi
+  if [ "$rep_bad" -eq 0 ]; then
+    echo "    ok    G1, V1, Q3 and Q4 fire on the fixture and none of the three tools can fail it"
+    grep -hE '^   --   (G1|V1|Q3|Q4)' "$TMP"/rep-check-*.txt | head -4 | sed 's/^/          /'
+  fi
+fi
+
+echo
 # The summary is where a partial run becomes a false claim. On a fresh clone the suite
 # cannot reach published prose, and the wording used to say "ALL CONTROLS PASS - still
 # calibrated against published prose" off the back of controls that only used fixtures
@@ -644,8 +829,10 @@ if [ "$CORPUS_ABSENT" -eq 1 ]; then
   echo "PARTIAL - controls that need only shipped fixtures ran and passed; $notrun"
   echo "control(s) could not run because no calibration corpus is installed."
   echo
-  echo "  Proven on this run: the scanner FAILS synthetic slop, and the uniformity,"
-  echo "  drift and arc gates still FAIL the manuscripts they are built to reject."
+  echo "  Proven on this run: the scanner FAILS synthetic slop, the narrative gate"
+  echo "  FAILS an unresolved-debt ledger and PASSES a closed one, its report rows"
+  echo "  fire without being able to fail, and the uniformity, drift and arc gates"
+  echo "  still FAIL the manuscripts they are built to reject."
   echo "  That is the harness detecting bad output, and it is the part that does not"
   echo "  depend on anyone else's copyright."
   echo

@@ -1,0 +1,42 @@
+# POSITIVE CONTROL for check-narrative.py. This file MUST make the gate exit 1.
+# It is the narrative-layer analogue of slop-fixture.md: a shipped fixture that must
+# always fail, so a fresh clone can watch the harness reject a bad ledger with no
+# corpus and no setup. If this file ever passes, the narrative gate is blind and
+# nothing it says about any book means anything.
+#
+# The book tree doubles as the REPORT-ROW control (validate-controls.sh control 16):
+# chapter-01.md carries a figurative pile-up, tagged dialogue, and an 8-gravity
+# quantity, so the three report-only tools must fire on it AND must not be able to
+# fail it. check-narrative.py reads no prose, so none of that touches this file's
+# job as the N1/N4 positive control.
+#
+# Deliberate defects, each targeting a row:
+#   N1  D-001 and D-002 are OPEN at delivery        -> must FAIL
+#   N2  chapters 1, 2, 4, 6 declare the same arc    -> must be reported
+#   N3  three scenes declare "theme payoff"          -> must be reported
+#   N4  D-003 is DEFERRED with no deferred_reason    -> must FAIL
+meta:
+  version: "1.0"
+  last_updated: "2026-10-04"
+  last_updated_by: "fixture"
+  chapters_tracked: [1, 2, 3, 4, 5, 6]
+
+beats:
+  - { chapter: 1, arc: "overload -> anchored by touch -> release -> calm", source: "fixture" }
+  - { chapter: 2, arc: "overload -> anchored by touch -> release -> calm", source: "fixture" }
+  - { chapter: 3, arc: "discovery -> doubt -> decision", source: "fixture" }
+  - { chapter: 4, arc: "overload -> anchored by touch -> release -> calm", source: "fixture" }
+  - { chapter: 5, arc: "crisis -> cost -> resolve", source: "fixture" }
+  - { chapter: 6, arc: "overload -> anchored by touch -> release -> calm", source: "fixture" }
+
+scenes:
+  - { chapter: 2, scene: "the bath", function: "theme payoff", words: 1400 }
+  - { chapter: 4, scene: "the airlock", function: "theme payoff", words: 1200 }
+  - { chapter: 6, scene: "the port", function: "theme payoff", words: 1600 }
+  - { chapter: 5, scene: "the burn", function: "plot turn", words: 900 }
+
+debt:
+  - { id: D-001, kind: trauma, description: "the Minato pod - forty hours, three corpses", opened: "ch-01:p12", status: OPEN, resolution: null, resolved_at: null, deferred_reason: null }
+  - { id: D-002, kind: character, description: "Mizore delivers the plot and exits in a log entry", opened: "ch-03:p8", status: OPEN, resolution: null, resolved_at: null, deferred_reason: null }
+  - { id: D-003, kind: mystery, description: "who falsified the dosimetry", opened: "ch-02:p3", status: DEFERRED, resolution: null, resolved_at: null, deferred_reason: null }
+  - { id: D-004, kind: clock, description: "the Jovial transit window", opened: "ch-01:p2", status: RESOLVED, resolution: "the window closes on the page in ch-06", resolved_at: "ch-06:p40", deferred_reason: null }
