@@ -1,0 +1,37 @@
+# niche-pool.txt — the shelves roll-brief.py draws from.
+#
+# One niche per line. The pool grows: every autonomous firing appends FIVE new
+# niches to this file — invented by the run, because a script can only draw a
+# niche, never invent one. A pool that never grows is a button that gives the
+# same six answers forever.
+
+cozy mystery in a small town
+hard SF first contact
+solarpunk coming-of-age
+YA fantasy academy
+military science fiction
+regency romance
+progression fantasy
+psychological thriller
+magical realism literary fiction
+cozy fantasy slice of life
+grimdark epic fantasy
+space opera
+cyberpunk noir
+mythic retelling
+small-town romantic suspense
+historical fiction, Tudor court
+post-apocalyptic survival
+xianxia cultivation
+gothic horror
+domestic suspense
+techno-thriller
+hopepunk
+weird west
+gaslamp fantasy
+climate fiction
+medical thriller
+cold-war spy fiction
+superhero deconstruction
+fractured fairytale
+quiet literary character study

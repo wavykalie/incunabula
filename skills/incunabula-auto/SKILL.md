@@ -1,11 +1,46 @@
 ---
 name: incunabula-auto
-description: One command, one book. Give it an idea and it dispatches the orchestrator to run the whole pipeline autonomously, stopping only at three human checkpoints.
+description: One command, one book. Give it an idea and it dispatches the orchestrator to run the whole pipeline autonomously, stopping only at three human checkpoints. Or hit the random button: no idea, no author — a rolled niche and subagent-approved checkpoints.
 ---
 
 # incunabula-auto — one command, one book
 
 An idea goes in. A book comes out.
+
+## The random button — autonomous mode
+
+`incunabula-auto random` runs the pipeline with **no author and no idea**. The
+brief is rolled, not given:
+
+1. `python tools/roll-brief.py` — rolls language, niche, tone, and length from
+   `tools/niche-pool.txt`, plus two premise seeds. The dice choose the shelf,
+   not the story: the run invents the premise from the seeds. `--seed N`
+   reproduces any earlier roll exactly; record the seed in the book's
+   PROJECT_STATE.yaml so the run can be re-derived.
+2. **The pool grows.** After rolling, the run appends **five new niches** to
+   `tools/niche-pool.txt` — invented, because a script can draw a niche but
+   never invent one. A pool that never grows is a button that gives the same
+   answers forever.
+3. Scaffold and register: `python tools/init-book.py --path <slug> --title
+   "<working title>" --status autonomous --floor <rolled> --ceiling <rolled>`.
+   `status: autonomous` in BOOKS.yaml means a run in flight: the registry
+   checks skip the manuscript-shape rows for it, and the book is judged at its
+   own gates instead.
+4. Run the pipeline as below, with one change: **the three checkpoints are
+   decided by subagent vote, not by the author.** At each checkpoint, dispatch
+   a critic subagent (a fresh one each round — never the agent that produced
+   the material) with the checkpoint's deliverables and the rubric for that
+   gate. It returns **APPROVE** or **DENY** with reasons. On DENY: revise to
+   answer every reason, then dispatch a fresh critic. **Loop until APPROVE.**
+   Record every verdict — date, verdict, reasons — in PROJECT_STATE.yaml. A
+   denied round that vanishes from the record is a round nobody learns from.
+5. Deliver as usual. The book sits in the registry as `status: autonomous`;
+   the author can promote it (edit the status by hand) or archive it.
+
+Safety valve: if the same checkpoint is denied three times with materially the
+same reasons, stop and leave the book at that phase with the record intact.
+Three identical denials mean the rubric and the run disagree, and no critic
+vote resolves that — a human does.
 
 The skill dispatches the orchestrator agent, which runs the full pipeline with no
 interruption except three approval points:
@@ -30,7 +65,7 @@ interruption except three approval points:
 ## Usage
 
 ```
-incunabula-auto [language] [idea]
+incunabula-auto [language] [idea]   |   incunabula-auto random
 ```
 
 For example, a language-tagged idea in any supported language, a literary novel about a
@@ -49,6 +84,8 @@ instruction to run the entire pipeline autonomously, pausing only at the three c
 Do not add commentary and do not ask clarifying questions first. Dispatch.
 
 The orchestrator runs for as long as it takes and returns to the user at each checkpoint.
+In `random` mode it returns to nobody: the checkpoint subagent vote stands in for the
+author, and the run reports once, at delivery.
 
 ## Where projects live
 

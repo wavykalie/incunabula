@@ -32,12 +32,12 @@ import sys
 from datetime import date
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TOOLS_DIR = os.path.dirname(HERE)                     # incunabula/tools
+TOOLS_DIR = HERE                                      # incunabula/tools
 FRAMEWORK = os.path.dirname(TOOLS_DIR)                # incunabula/
-DEFAULT_WORKSPACE = os.path.dirname(FRAMEWORK)        # the parent of incunabula/
-REGISTRY = os.path.join(FRAMEWORK, "BOOKS.yaml")
+DEFAULT_WORKSPACE = os.path.dirname(FRAMEWORK)        # D:\KDP Books (parent of incunabula/)
+REGISTRY = os.environ.get("BOOKS_REGISTRY", os.path.join(FRAMEWORK, "BOOKS.yaml"))
 
-STATUSES = {"concept", "drafting", "complete", "published", "fixture"}
+STATUSES = {"concept", "drafting", "complete", "published", "fixture", "autonomous"}
 
 
 def append_registry(book_path, title, status, expected_manuscript):
@@ -45,6 +45,7 @@ def append_registry(book_path, title, status, expected_manuscript):
         "concept": "Concept stage; no manuscript expected yet.",
         "drafting": "Registered at creation by init-book.py.",
         "fixture": "Registered as a fixture by init-book.py.",
+        "autonomous": "Autonomous run (random button) - rolled by tools/roll-brief.py, no author at the wheel.",
     }.get(status, "Registered by init-book.py.")
     with open(REGISTRY, "a", encoding="utf-8") as fh:
         fh.write(
@@ -105,7 +106,7 @@ def main(argv=None):
             "# ============================================================================\n\n"
             "project:\n"
             f"  title: \"{args.title}\"\n"
-            f"  status: \"{'in_progress' if args.status == 'drafting' else args.status}\"\n\n"
+            f"  status: \"{'in_progress' if args.status in ('drafting', 'autonomous') else args.status}\"\n\n"
         )
         if floor or ceiling:
             fh.write(
@@ -130,7 +131,8 @@ def main(argv=None):
         append_registry(book_path, args.title, args.status, False)
 
     # 4. verify, do not assume
-    rc = os.system(f'"{sys.executable}" "{os.path.join(TOOLS_DIR, "check-registry.py")}" "{workspace}"')
+    import subprocess
+    rc = subprocess.call([sys.executable, os.path.join(TOOLS_DIR, "check-registry.py"), workspace])
     if rc != 0:
         print("init-book: the registry check did not pass after registration.")
         print("  Fix the registry by hand before running the suite.")
@@ -138,7 +140,7 @@ def main(argv=None):
 
     print(f"init-book: created {book_root}")
     print(f"           registered in BOOKS.yaml as status {args.status}")
-    if args.status == "drafting":
+    if args.status in ("drafting", "autonomous"):
         print("           status: in_progress is set - L1 records until you remove it at delivery.")
     return 0
 

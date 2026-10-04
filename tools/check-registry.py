@@ -155,6 +155,11 @@ def main(argv=None):
             continue
         if not has_state:
             problems.append(f"{b['path']}: status {status} but no PROJECT_STATE.yaml at the book root (ungoverned)")
+        if status == "autonomous":
+            # A run in flight may sit anywhere between scaffold and delivery —
+            # the chapter checks below judge books that claim to HAVE a
+            # manuscript. An autonomous book is judged at its own gates instead.
+            continue
         expects = b.get("expected_manuscript", True)
         if expects and not has_chapters:
             problems.append(f"{b['path']}: expected_manuscript true but no manuscript/chapters/")
