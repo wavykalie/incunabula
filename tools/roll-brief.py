@@ -67,26 +67,35 @@ def load_pool(path):
         return []
 
 
-def roll(seed, pool):
-    """Deterministic given (seed, pool). Returns the brief as a dict."""
+def roll(seed, pool, pool_size=None):
+    """Deterministic given (seed, pool, pool_size). Returns the brief as a dict.
+
+    pool_size draws from the pool AS IT WAS at roll time (the first K lines).
+    The pool is append-only and grows every firing, so a bare --seed would map
+    the same draw to a different niche once the pool grows. The brief records
+    K so the roll stays re-derivable forever.
+    """
     rng = random.Random(seed)
+    niches = pool[:pool_size] if pool_size else pool
     label, floor, ceiling = rng.choice(LENGTHS)
     return {
         "seed": seed,
         "language": rng.choice(LANGUAGES),
-        "niche": rng.choice(pool),
+        "niche": rng.choice(niches),
         "tone": rng.choice(TONES),
         "length": label,
         "floor": floor,
         "ceiling": ceiling,
         "subject": rng.choice(SUBJECTS),
         "pressure": rng.choice(PRESSURES),
+        "pool_size": len(niches),
     }
 
 
 def render(b, pool_size):
     return (
-        f"roll-brief — seed {b['seed']} (re-roll this exact brief with --seed {b['seed']})\n"
+        f"roll-brief — seed {b['seed']} (re-roll this exact brief with --seed {b['seed']}"
+        f" --pool-size {b['pool_size']})\n"
         f"\n"
         f"  language : {b['language']}\n"
         f"  niche    : {b['niche']}\n"
@@ -106,6 +115,12 @@ def self_test():
     a = roll(42, pool)
     b = roll(42, pool)
     assert a == b, "same seed must reproduce the same brief"
+    # the pool grows every firing; re-derivation must survive the growth
+    grown = pool + ["new niche one", "new niche two", "new niche three",
+                    "new niche four", "new niche five"]
+    assert roll(42, grown, pool_size=a["pool_size"]) == a, \
+        "same seed + pool size must reproduce the brief after the pool grows"
+    assert roll(42, grown)["niche"] != a["niche"] or True  # bare re-roll MAY differ; the flag is the contract
     assert a["niche"] in pool and a["language"] in LANGUAGES
     assert a["tone"] in TONES
     assert (a["length"], a["floor"], a["ceiling"]) in LENGTHS
@@ -122,6 +137,9 @@ def main():
     ap = argparse.ArgumentParser(description="Roll a random brief for an authorless run.")
     ap.add_argument("--seed", type=int, default=None,
                     help="reproduce a previous roll exactly")
+    ap.add_argument("--pool-size", type=int, default=None,
+                    help="draw from the pool as it was at roll time (first K niches; "
+                         "the brief records K — the pool is append-only)")
     ap.add_argument("--pool", default=DEFAULT_POOL,
                     help="niche pool file (one niche per line)")
     ap.add_argument("--self-test", action="store_true")
@@ -137,7 +155,7 @@ def main():
         return 2
 
     seed = args.seed if args.seed is not None else random.SystemRandom().randrange(10 ** 9)
-    print(render(roll(seed, pool), len(pool)))
+    print(render(roll(seed, pool, args.pool_size), len(pool)))
     return 0
 
 

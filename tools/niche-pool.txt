@@ -1,5 +1,8 @@
 # niche-pool.txt — the shelves roll-brief.py draws from.
 #
+# APPEND-ONLY, never reorder or delete: roll-brief.py re-derives old rolls from
+# the first K lines (the brief records K). An edit to line 7 rewrites history.
+#
 # One niche per line. The pool grows: every autonomous firing appends FIVE new
 # niches to this file — invented by the run, because a script can only draw a
 # niche, never invent one. A pool that never grows is a button that gives the
@@ -35,3 +38,8 @@ cold-war spy fiction
 superhero deconstruction
 fractured fairytale
 quiet literary character study
+silkpunk court intrigue
+solar-system hard SF rescue
+fae bargain romance
+small-town horror anthology
+nautical alternate history

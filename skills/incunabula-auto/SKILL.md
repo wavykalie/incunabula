@@ -14,9 +14,11 @@ brief is rolled, not given:
 
 1. `python tools/roll-brief.py` — rolls language, niche, tone, and length from
    `tools/niche-pool.txt`, plus two premise seeds. The dice choose the shelf,
-   not the story: the run invents the premise from the seeds. `--seed N`
-   reproduces any earlier roll exactly; record the seed in the book's
-   PROJECT_STATE.yaml so the run can be re-derived.
+   not the story: the run invents the premise from the seeds. `--seed N
+   --pool-size K` reproduces any earlier roll exactly (the pool grows, so the
+   brief records K and draws from the pool as it was; the pool is
+   append-only). Record the seed and pool size in the book's PROJECT_STATE.yaml
+   so the run can be re-derived.
 2. **The pool grows.** After rolling, the run appends **five new niches** to
    `tools/niche-pool.txt` — invented, because a script can draw a niche but
    never invent one. A pool that never grows is a button that gives the same
