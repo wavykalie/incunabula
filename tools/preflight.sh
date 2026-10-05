@@ -118,23 +118,26 @@ PYEOF
   done
 fi
 
-# 4. The dice ---------------------------------------------------------------------
+# 4. The dice and the integrity check ------------------------------------------------
 # roll-brief.py and niche-grow.py decide what a run is about, and a run against a
-# broken dice produces a book plus a RUN_REPORT nobody can re-derive. Both have a
-# self-test; both are cheap; neither reads a manuscript, so neither is frozen.
-echo "4. the dice"
+# broken dice produces a book plus a RUN_REPORT nobody can re-derive.
+# check-manuscript-integrity.py is here for a different reason: it is a check that
+# has never been seen to fail, which is the state this project keeps getting bitten
+# by. Twelve contaminated lines sat inside one chapter of La merienda in sentences
+# that read correctly on both sides, and no prose gate could see them.
+echo "4. the dice and the integrity check"
 if command -v python >/dev/null 2>&1; then
-  for t in roll-brief niche-grow; do
+  for t in roll-brief niche-grow check-manuscript-integrity; do
     if [ -f "$ROOT/tools/$t.py" ]; then
       out=$(python "$ROOT/tools/$t.py" --self-test 2>&1)
       rc=$?
       if [ $rc -eq 0 ]; then
         row "$t --self-test" PASS "$(printf '%s' "$out" | tail -1)"
       else
-        row "$t --self-test" FAIL "exit $rc - the dice cannot be trusted to reproduce a roll"
+        row "$t --self-test" FAIL "exit $rc - $(if [ "$t" = check-manuscript-integrity ]; then echo 'a check nobody has seen fail is not a check'; else echo 'the dice cannot be trusted to reproduce a roll'; fi)"
       fi
     else
-      row "$t --self-test" SKIP "$t.py not found at tools/ - no dice to test"
+      row "$t --self-test" SKIP "$t.py not found at tools/ - nothing to test"
     fi
   done
 else

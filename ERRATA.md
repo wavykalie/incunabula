@@ -1524,3 +1524,29 @@ Found by running every gate across every book (`incunabula/SUITE-2026-10-01.md`)
                only published roll records `pool_size: 35`, so no niche beyond the
                35th has ever been drawn and nothing published could be invalidated.
                Max reuse 14 -> 2, bare concepts 19 -> 0, "art" entries 86 -> 74.
+
+### 2026-10-05 — a contamination check that flagged the English canon
+- **row:**      brief | delegation
+- **observed:** `tools/check-manuscript-integrity.py` was written to find stray
+               CJK and Cyrillic in a non-English manuscript, and on its first run
+               across the workspace it reported 2,000-plus contaminated lines in
+               books that are perfectly clean, because "the", "and" and "with"
+               were on its English word list with nothing to say the book under
+               test was written in English. Two further versions of the same
+               mistake: reading `language: "en"` as a non-English code, and
+               treating an undeclared language as foreign.
+- **n:**        1 tool, 3 defects, 12 books, ~1,900 chapters scanned
+- **evidence:** the check's own first run: 183 false positives on one chapter of
+               demo-magician, 145 on marrow-light chapter 24. All from the English
+               word list. Zero real findings in the whole workspace afterwards.
+- **motive:**   aesthetic
+- **state:**    observed
+- **proposes:** none, and the fix is the opposite of a threshold. The English-word
+               check now runs ONLY where the book has declared itself non-English;
+               unknown is treated as unknown rather than as foreign. The character
+               allowlist is built from Unicode BLOCKS instead of being typed from
+               memory, because the hand-typed one rejected German "Ö" in
+               Vorräte and "²" in a fire report's "0.6m²" within one run.
+               **Markup is counted, not judged** — bold in a draft is a convention,
+               and reporting it put 103 FAILs across clean books. A check that
+               fails on everything has no signal left to give.

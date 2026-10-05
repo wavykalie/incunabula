@@ -14,10 +14,16 @@ brief is rolled, not given:
 
 1. `python tools/roll-brief.py` — rolls language, niche, tone, and length from
    `tools/niche-pool.txt`, plus two premise seeds. The dice choose the shelf,
-   not the story: the run invents the premise from the seeds. `--seed N
-   --pool-size K` reproduces any earlier roll exactly (the pool grows, so the
-   brief records K and draws from the pool as it was; the pool is
-   append-only). Record the seed and pool size in the book's PROJECT_STATE.yaml
+   not the story: the run invents the premise from the seeds. The language draw
+   is **English-weighted** (80/12/8 over English, German, Spanish) because this
+   harness's gates, voice contracts and calibration corpus are English — it is a
+   book-production pipeline, not a localisation engine. Languages that were
+   never fired at were removed rather than down-weighted. `--seed N
+   --pool-size K --dice 2` reproduces any roll made under the current dice
+   exactly (the pool grows, so the brief records K and draws from the pool as it
+   was). **A roll made before 2026-10-05 needs `--dice 1`**, because that is the
+   table and draw method that produced it; the seed alone no longer does.
+   Record the seed, the pool size and the dice in the book's PROJECT_STATE.yaml
    so the run can be re-derived.
 2. **The pool grows.** After rolling, the run appends **five new niches** to
    `tools/niche-pool.txt` — invented, because a script can draw a niche but
@@ -92,6 +98,18 @@ Do not add commentary and do not ask clarifying questions first. Dispatch.
 The orchestrator runs for as long as it takes and returns to the user at each checkpoint.
 In `random` mode it returns to nobody: the checkpoint subagent vote stands in for the
 author, and the run reports once, at delivery.
+
+## The integrity check
+
+Run `python tools/check-manuscript-integrity.py <book-root>` after each chapter is
+drafted, not at the end. It catches characters that do not belong in the book:
+stray CJK or Cyrillic, English words inside a non-English manuscript, unknown
+characters. Those sit inside sentences that read correctly for twenty words
+either side, so re-reading the prose does not find them and no prose gate will —
+a Cyrillic word is still a word and `check-length` counts it.
+
+It reads each book's declared language from `PROJECT_STATE.yaml`, so a book must
+declare one. `**bold**` is counted, not judged: bold in a draft is a convention.
 
 ## Where projects live
 
