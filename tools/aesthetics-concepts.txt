@@ -1,0 +1,670 @@
+# aesthetics-concepts.txt — seed material for niche-grow.py
+#
+# PROVENANCE. Every entry below is a Wikipedia article title, harvested from the
+# English Wikipedia on 2026-10-05 by walking the category tree rooted at
+# Category:Aesthetics (121 categories) and cross-reading three list articles:
+#
+#   https://en.wikipedia.org/wiki/Outline_of_aesthetics
+#   https://en.wikipedia.org/wiki/List_of_art_movements
+#
+# Text of the English Wikipedia is CC BY-SA 4.0. This file is a list of article
+# TITLES, not article text: no prose is reproduced. Attribution is owed anyway
+# and is recorded here.
+#
+# WHAT WAS DROPPED and why. The raw walk returned 1351 titles. Removed:
+#   - people (philosophers, painters, designers) — a shelf is not a biography
+#   - institutions (academies, museums, schools, prizes, journals)
+#   - works (individual paintings, novels, films)
+#   - places and time periods ("Ancient aesthetics", "19th-century")
+#   - disambiguation-only titles
+# The result is concepts, movements, schools and traditions: the flavour axis a
+# shelf can be built on.
+#
+# This file is APPEND-ONLY for the same reason niche-pool.txt is: a grower that
+# rewrites history makes an old roll unre-derivable. Add at the bottom.
+
+# --- schools and currents (Outline of aesthetics) ---
+aestheticism
+anti-art
+classicism
+formalism
+historicism
+modernism
+postmodernism
+psychoanalysis
+realism
+romanticism
+symbolism
+theosophy
+art for art's sake
+avant-garde
+art manifesto
+camp
+cool
+comedy
+cuteness
+kitsch
+lo-fi
+sublime
+picturesque
+elegance
+hauntology
+rasa
+iki
+itutu
+exoticism
+eroticism
+satire
+tragedy
+humour
+boring
+beauty
+taste
+style
+harmony
+gaze
+perception
+mimesis
+depiction
+magnificence
+reverence
+recreation
+iconography
+aniconism
+authenticity
+integrity
+appropriation
+artistic merit
+quality
+the work of art
+art for art
+life imitating art
+the beautiful ideal
+feminine beauty
+masculine beauty
+art and morality
+art and politics
+aestheticization of politics
+cultural hegemony
+feminist aesthetics
+marxist aesthetics
+the apollonian and the dionysian
+kama
+reverence and the sacred
+the afterlife of images
+
+# --- movements (List of art movements) ---
+abstract art
+art brut
+abstract expressionism
+abstract illusionism
+academic art
+action painting
+afrofuturism
+altermodern
+american barbizon school
+american impressionism
+american scene painting
+american realism
+analytical art
+arabesque
+arsenic and lace
+ashcan school
+assemblage
+australian tonalism
+automatism
+auto-destructive art
+bacone school
+barbizon school
+baroque
+bauhaus
+berlin secession
+black arts movement
+bengal school of art
+brutalism
+cave painting
+chosonhwa
+classical realism
+cloisonnism
+cobra
+color field
+concept art
+conceptual art
+concrete art
+constructivism
+crystal cubism
+cubism
+cubo-futurism
+cynical realism
+dada
+dakar school
+dansaekhwa
+danube school
+dau-al-set
+de stijl
+deconstructivism
+deStijl
+didacticism
+digital art
+early netherlandish painting
+ecological art
+environmental art
+excessivism
+expressionism
+fantastic realism
+fauvism
+feminist art
+figurative art
+figuration libre
+fin de siecle
+folk art
+fluxus
+funk art
+futurism
+generative art
+geometric abstract art
+glitch art
+graffiti art
+gothic art
+gutai group
+happening
+harlem renaissance
+heidelberg school
+hudson river school
+hurufiyya
+hypermodernism
+hyperrealism
+impressionism
+incoherents
+institutional critique
+international gothic
+international typographic style
+japonisme
+japanese art
+jugendstil
+kinetic art
+kinetic pointillism
+kitsch movement
+land art
+les nabis
+letterism
+light and space
+lowbrow
+lyco art
+lyrical abstraction
+magic realism
+mail art
+makonde art
+mannerism
+massurrealism
+maximalism
+metaphysical painting
+mingei
+minimalism
+modular constructivism
+naive art
+neoclassicism
+neo-dada
+neo-expressionism
+neo-fauvism
+neo-figurative
+neo-primitivism
+neo-romanticism
+net art
+new objectivity
+new sculpture
+northern landscape style
+northwest school
+nuclear art
+nueva figuracion
+objective abstraction
+op art
+orphism
+photorealism
+panfuturism
+paris school
+pixel art
+plein air
+pointillism
+pop art
+post-impressionism
+postminimalism
+precisionism
+pre-raphaelitism
+primitivism
+private press
+process art
+progressive art movement
+psychedelic art
+purism
+qajar art
+qinglu shanshui
+quito school
+rasquache
+rayonism
+regionalism
+remodernism
+renaissance
+retrofuturism
+rinpa school
+rococo
+romanesque
+samikshavad
+san ildefonso school
+serial art
+shanshui
+shin hanga
+shock art
+site-specific art
+skeuomorph
+sosaku hanga
+socialist realism
+sots art
+space art
+street art
+stuckism
+studio style
+sumatraism
+superflat
+suprematism
+surrealism
+synchromism
+synthetism
+tachisme
+temporary art
+tingatinga
+toyism
+transgressive art
+tonalism
+ukiyo-e
+underground comix
+vancouver school
+vanitas
+verdadism
+video art
+viennese actionism
+vorticism
+womens art movement
+young british artists
+young poland
+zhe school
+aeropittura
+anime and manga
+augmented reality art
+biomorphic abstraction
+bricolage
+ceramics and porcelain
+chiaroscuro
+collage
+comics and sequential art
+computer art
+costume design
+danse macabre
+day of the dead
+digital painting
+dye and pigment
+earth art
+encaustic painting
+figurative abstraction
+fresco
+frottage
+glaze
+grisaille
+gilding and gold leaf
+glass art
+gold leaf
+guilloche
+hard edge painting
+illuminated manuscript
+impasto
+installation art
+intermedia
+lithography
+monotype
+mosaic
+needlework
+oil painting
+optical art
+ornament
+palaeography
+papier-mache
+pastel
+performance art
+photography
+porcelain
+printmaking
+public art
+sand animation
+sgraffito
+tempera
+tessellation
+textile art
+trompe l'oeil
+typeface design
+woodcut
+xylography
+
+# --- literature, theatre, film and music currents ---
+acmeism
+conceptual poetry
+cyberpunk
+ego-futurism
+experimental literature
+flarf poetry
+imagism
+language poets
+neoavanguardia
+nouveau roman
+oulipo
+slam poetry
+ultraismo
+visual poetry
+zaum
+free jazz
+free improvisation
+minimal music
+drone music
+industrial music
+noise music
+post-rock
+serialism
+totalism
+twelve-tone technique
+microtonal music
+musique concrete
+cinema pur
+dogme 95
+epic theatre
+experimental theatre
+modernist film
+poetic realism
+postdramatic theatre
+remodernist film
+structural film
+theatre of the absurd
+theatre of cruelty
+film noir
+pulp noir
+underground film
+trickfilm
+vaporwave
+cyberdelic
+hanzelka
+metacinema
+nouvelle vague
+cartoons
+anime
+hauntology in music
+film score
+musical theatre
+opera
+shadow puppetry
+puppetry
+magic lantern
+cabaret
+burlesque
+mime
+circus
+sideshow
+vaudeville
+court masque
+tableau vivant
+futurama
+happenings
+
+# --- aesthetics of place and tradition ---
+african aesthetic
+ancient aesthetic
+indian aesthetic
+japanese aesthetic
+medieval aesthetic
+renaissance aesthetic
+byzantine aesthetic
+islamic aesthetic
+christian aesthetic
+buddhist aesthetics
+hindu aesthetics
+chinese aesthetics
+korean aesthetics
+islamic philosophy of art
+the venerable and the antique
+tea ceremony
+flower arranging
+incense and ritual
+gravestone and memorial art
+graffiti and tagging
+street photography
+vernacular architecture
+folk medicine and craft
+tattoo
+textile and weaving
+feast and banquet
+gardens and landscape design
+the sublime and the picturesque
+beauty of ruins
+weather and atmosphere
+light and shadow
+water and reflection
+the mirror
+colour and pigment
+sound and silence
+rhythm and repetition
+symmetry and pattern
+fractal and recursion
+the algorithm as image
+artificial intelligence art
+cybernetics and art
+systems art
+conceptualism
+situationist international
+lettrism
+ultra-lettrism
+neo-conceptual art
+conceptual art in fiction
+metamodernism
+post-internet art
+degenerate art
+propaganda art
+monumentalism
+commemorative art
+state-sponsored art
+outsider art
+naive art outside school
+art brut outside asylum
+the amateur
+the folk tradition
+popular culture
+mass culture
+kitsch as a category
+the readymade
+the everyday as art
+dust and decay
+rust and ruin
+patina
+the archive
+the museum and its display
+curation
+restoration
+forgery
+authenticity and the fake
+the signature
+the catalogue
+ownership and collecting
+patronage
+commission
+salon and academy
+exhibition
+biennale
+naming
+taxonomy
+classification
+the encyclopedia
+translation
+adaptation
+quotation
+homage
+appropriation and remix
+
+# --- perception, emotion and the senses ---
+aesthetic emotion
+aesthetic judgement
+aesthetic taste
+aesthetic illusion
+aesthetic experience
+aesthetic distance
+aesthetic disinterestedness
+aesthetic education
+applied aesthetics
+psychological aesthetics
+neuroscience of art
+evolutionary aesthetics
+aesthetics of science
+theological aesthetics
+aesthetic medicine
+aesthetic dentistry
+food aesthetics
+gastronomic aesthetics
+the aesthetics of the body
+beauty ideal
+the gaze
+the look
+fascination
+seduction
+charm
+nostalgia
+melancholy
+longing
+yearning
+solitude in art
+crowds and the public
+the individual and the mass
+silence and stillness
+sound and noise
+texture and touch
+smell and memory
+sleep and dreams
+dreamwork
+the uncanny
+the marvellous
+wonder
+the ridiculous
+absurdity
+grotesque
+caricature
+parody
+pastiche
+satire and irony
+sarcasm
+wit
+pun
+verbal play
+onomatopoeia
+rhythm in prose
+diction
+register
+the plain style
+the sublime style
+the ornate
+economy of means
+restraint
+abundance
+excess
+maximalist prose
+minimalist prose
+elision
+silence in dialogue
+the unsaid
+subtext
+implication
+foreshadowing
+repetition and variation
+motif and refrain
+symbol and allegory
+motif and pattern
+narrative pleasure
+suspense and delay
+surprise
+reversal
+closure
+beginnings and endings
+description
+characterisation
+point of view
+interiority
+action
+dialogue
+the scene and summary
+time and duration
+sequence
+simultaneity
+memory and recollection
+forgetting
+nostalgia and loss
+the archive and erasure
+testimony and doubt
+authority and evidence
+interpretation
+meaning
+ambiguity
+the definite article
+naming of parts
+taxonomy of things
+measurement and scale
+number
+geometry
+symmetry
+chaos
+order and disorder
+pattern and noise
+entropy
+information
+the copy and the original
+translation and loss
+the archive and reconstruction
+fragments
+ruins and wholeness
+shade
+chiaroscuro of narrative
+lightness and weight
+pace and stillness
+drama and tension
+suspense and release
+climax
+denouement
+subplot
+ensemble cast
+the protagonist
+the antagonist
+the trickster
+the witness
+the narrator who lies
+unreliable perception
+the limits of seeing
+blindness
+vision and its failure
+the gaze of the reader
+sympathy and distance
+identification
+empathy and its limits
+the ethics of feeling
+moral feeling
+the aesthetic and the ethical
+art and power
+art and money
+art and law
+art and belief
+art and suffering
+art and healing
+art and death
+art and memory
+art and exile
+art and home
+art and migration
+art and the body
+art and illness
+art and medicine
+art and religion
+art and nature
+art and industry
+art and technology
+art and the machine

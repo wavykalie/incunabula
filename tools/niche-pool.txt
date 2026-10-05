@@ -1,12 +1,24 @@
 # niche-pool.txt — the shelves roll-brief.py draws from.
 #
 # APPEND-ONLY, never reorder or delete: roll-brief.py re-derives old rolls from
-# the first K lines (the brief records K). An edit to line 7 rewrites history.
+# the first K lines (the brief records K). An edit to an old line rewrites history.
 #
-# One niche per line. The pool grows: every autonomous firing appends FIVE new
-# niches to this file — invented by the run, because a script can only draw a
-# niche, never invent one. A pool that never grows is a button that gives the
-# same six answers forever.
+# This header is NOT part of that invariant — the dice skips #-comments, so it
+# stays editable. Removing or reordering a NICHE line does not.
+#
+# One niche per line. The pool grows two ways.
+#
+# 1. Every autonomous firing appends FIVE new niches — invented by the run,
+#    because a script can only draw a niche, never invent one. A pool that never
+#    grows is a button that gives the same six answers forever.
+#
+# 2. niche-grow.py tops the pool up to a target in bulk. The flavour axis of a
+#    shelf does not have to be imagined from nothing, so it crosses the
+#    harvested Wikipedia concepts in tools/aesthetics-concepts.txt with genres,
+#    settings and forms, randomly and from a printed seed:
+#        python tools/niche-grow.py --target 1000 --seed 20261005 --dry-run
+#    Growth 40 -> 1000 happened that way on 2026-10-05. It refuses to write if
+#    the result would remove or reorder a niche that is already here.
 
 cozy mystery in a small town
 hard SF first contact
@@ -43,3 +55,968 @@ solar-system hard SF rescue
 fae bargain romance
 small-town horror anthology
 nautical alternate history
+alpine folk horror
+noir fairytale mystery
+archaeological conspiracy thriller
+deep-sea claustrophobic horror
+post-war family saga
+performance art memoir
+dockside dark fantasy
+lunar colony true crime
+romanticism western
+observatory portal fantasy
+samikshavad romance
+restraint
+chaos epistolary fiction
+art and exile noir
+mountain autofiction
+smell and memory second person
+information Bildungsroman elegy
+lighthouse time travel diary form
+grisaille locked-room mystery
+anime mystery
+rasquache steampunk
+the ethics of feeling parody
+reverence slow burn
+oil painting urban fantasy
+submarine horror romance decade chronicle
+alpine heist romance
+urban tempera historical mystery
+patina nature writing
+altermodern utopian
+life imitating art Bildungsroman dossier
+data centre woodcut science fiction
+trickfilm horror romance novella cycle
+boarding school wrestling fiction
+small-town spectral fiction
+bacone school novella cycle
+australian tonalism Southern gothic
+buddhist aesthetics retelling
+city hall war novel
+borderland epistolary fiction
+pace and stillness family saga
+digital painting standalone
+shipyard urban fantasy parody
+ceramics and porcelain heist
+nuclear plant literary fiction
+sanatorium time travel
+customs house crime
+characterisation nature writing
+dreamwork dark fantasy
+chiaroscuro locked-room mystery
+private press horror
+generative art campus novel duology
+experimental theatre
+sarcasm horror
+ultraismo short story collection
+mine cubo-futurism Bildungsroman
+tunnel urban fantasy
+gothic art political fiction trilogy
+casino verse novel
+river verse novel
+street art procedural crime anthology
+aesthetic distance romance
+hypermodernism historical mystery epistolary
+mountain bacone school war novel
+integrity anthology
+harbour heist
+ceramics and porcelain mythic fiction
+remodernist film
+transgressive art hard SF
+kitsch as a category detective
+hotel dark fantasy
+gothic art dossier
+library romance
+monastery psychological thriller
+gaze procedural crime almanac
+hauntology wrestling fiction
+anti-art cozy mystery multiple timelines
+lyrical abstraction campus novel
+tenement political fiction adaptation
+the beautiful ideal caper
+stuckism family saga
+factory historical fiction
+allotment happenings adventure
+ultraismo novella cycle
+halfway house Southern gothic
+de stijl steampunk page-turner
+tunnel fairy tale
+ultra-lettrism historical mystery
+guilloche dystopian
+tunnel Bildungsroman framed narrative
+quarry Nordic noir sequence
+samikshavad multiple timelines
+translation revenge fiction spin-off
+reverence romance
+classification fairy tale dual POV
+urban noir
+korean aesthetics wrestling fiction
+weather station spectral fiction
+earth art folk horror
+restoration historical mystery
+modernist film hard SF
+gutai group unreliable narrator
+panfuturism
+deStijl burn after reading
+acmeism folk horror
+borderland post-apocalyptic
+language poets verse novel
+temporary art almanac
+urban american impressionism weird fiction
+photorealism adventure
+psychological aesthetics dark fantasy
+altermodern chapbook
+colour and pigment elegy
+life imitating art cyberpunk
+subterranean nueva figuracion amateur sleuth
+crystal cubism first person confession
+makonde art western
+realism political fiction
+lyco art memoir
+tannery fragments erotic romance
+mountain alternate history
+modernism anthology first person confession
+retrofuturism novella cycle
+baroque sequence
+lettrism reverse chronology
+hotel graphic novel
+mail art memoir
+afrofuturism science fiction
+rainforest urban fantasy
+constructivism crime
+remodernism
+border reverence anthology
+boarding house amateur sleuth
+microtonal music verse novel
+dam folk tale
+hospital true crime
+naming of parts psychological thriller
+stadium novella cycle
+casino campus novel
+farmland spy novel unreliable narrator
+the signature ghost story retelling
+arctic psychological thriller
+bathhouse space opera
+bacone school sports fiction
+plein air procedural crime
+cubism cyberpunk
+prison sots art time travel
+cave literary fiction triptych
+embassy cloisonnism locked-room mystery
+neo-fauvism hard-boiled detective
+satire autofiction
+futurism retelling
+qajar art Nordic noir
+shade spectral fiction
+art and power folk tale
+dockside horror
+trawler novella cycle triptych
+factory mail art erotic romance
+airport adventure
+characterisation verse novel
+nuclear plant Bildungsroman framed narrative
+cybernetics and art horror romance
+nuclear plant locked-room mystery
+minimal music family saga
+metaphysical painting noir
+free improvisation elegy
+institutional critique adventure
+postdramatic theatre swashbuckler
+vaudeville heist romance
+lunar colony spy novel
+lighthouse weird fiction page-turner
+library fragments detective
+pastel crime
+twelve-tone technique historical mystery
+appropriation and remix dark fantasy
+rooftop procedural crime
+identification hard SF spin-off
+postminimalism procedural crime braided narrative
+lyco art
+space station thriller spin-off
+generative art
+museum autofiction
+cubo-futurism chapbook
+didacticism Southern gothic
+biomorphic abstraction hard-boiled detective
+dada gothic
+submarine fairy tale prequel
+figurative art Nordic noir
+futurism Bildungsroman
+camp western
+caricature urban fantasy
+magic realism steampunk novella cycle
+lyco art family saga
+hospital gothic
+state-sponsored art
+lyco art second person
+railway maximalism epistolary fiction
+aesthetics of science standalone
+neo-dada horror romance
+register wrestling fiction pocket thriller
+university Bildungsroman
+naming of parts
+purism pulp fiction
+neo-figurative dispatch
+anti-art elegy
+needlework epistolary fiction
+motorway science fiction
+railway mystery
+beginnings and endings post-apocalyptic
+the ridiculous urban fantasy
+makonde art framed narrative
+pastiche triptych
+incoherents
+quarry Bildungsroman
+stadium urban fantasy
+monastery romance braided narrative
+vorticism dossier
+qajar art campus novel
+deconstructivism alternate history retelling
+allotment reportage parody
+railway locked-room mystery
+gothic art Nordic noir
+mission vorticism family saga
+jugendstil first person confession
+barbizon school archive novel
+lake cyberpunk
+commune Bildungsroman
+monastery scriptorium dystopian adaptation
+neoclassicism page-turner
+ashcan school
+oil painting folk tale
+cave novella cycle
+bricolage short story collection
+arsenic and lace cyberpunk
+funeral home mythic retelling
+halfway house campus novel
+reversal mosaic structure
+aniconism mystery standalone
+generative art folk tale
+state-sponsored art revenge fiction
+mountain wit thriller
+convent folk art adventure
+prison Southern gothic
+berlin secession psychological thriller
+railway sports fiction
+african aesthetic horror romance
+sand animation braided narrative
+romanticism adventure
+hauntology epistolary fiction
+glaze travel writing adaptation
+art and politics verse novel
+canal political fiction triptych
+concrete art heist romance
+the ethics of feeling
+sand animation Bildungsroman
+fauvism dystopian
+trickfilm mythic fiction
+the protagonist dual POV
+ego-futurism psychological thriller puzzle box
+art and illness time travel
+art and healing historical mystery
+bricolage braided narrative
+folk art political fiction
+musical theatre
+casino outsider art graphic novel
+lighthouse crime
+dreamwork found manuscript
+subtext folk tale
+hospice graphic novel
+graffiti art dark fantasy
+humour reverse chronology
+symmetry and pattern nature writing
+harbour cyberpunk
+theological aesthetics
+tannery neoclassicism fantasy
+boarding house hard-boiled detective dossier
+ukiyo-e travel writing trilogy
+kinetic art graphic novel
+collage first person confession
+aesthetic judgement dispatch
+feast and banquet science fiction
+university dystopian
+hauntology dystopian
+lake procedural crime
+commune the definite article thriller
+deep-sea utopian
+factory berlin secession family saga
+de stijl erotic romance
+dada memoir
+exhibition
+incense and ritual autofiction
+neo-conceptual art hard-boiled detective
+fractal and recursion parody
+letterism reverse chronology
+submarine the ridiculous literary fiction
+lighthouse cool psychological thriller
+free improvisation mosaic structure
+futurism folk horror trilogy
+graffiti and tagging prequel
+glass art Nordic noir
+the amateur puzzle box
+weather and atmosphere historical mystery
+art and memory portal fantasy
+curation spy novel
+drone music romance
+de stijl war novel
+maximalist prose heist page-turner
+allotment Southern gothic
+tonalism urban fantasy
+hospital portal fantasy
+taxonomy of things framed narrative
+urban minimal music steampunk
+art and the body series
+blindness crime
+airport horror romance
+minimal music erotic romance
+tenement cozy mystery
+texture and touch thriller
+oil rig neo-expressionism pulp fiction
+happenings western
+dreamwork cyberpunk
+feminist aesthetics war novel
+quality second person
+boarding house hard SF page-turner
+allotment restoration autofiction
+light and space mythic retelling
+casino locked-room mystery parody
+aeropittura post-apocalyptic
+alpine reportage
+art and money cyberpunk duology
+cuteness amateur sleuth
+observatory diction Southern gothic
+applied aesthetics psychological thriller
+northern landscape style campus novel
+funeral home war novel
+musique concrete crime
+rhythm and repetition horror
+magic lantern short story collection
+alpine procedural crime
+shin hanga verse novel
+lake post-apocalyptic
+art and illness nature writing
+dockside psychological thriller
+neoavanguardia novella cycle
+verdadism pulp fiction decade chronicle
+shadow puppetry retelling
+small-town weird fiction triptych
+mission symbolism time travel
+folk art revenge fiction
+rural western
+hyperrealism retelling
+stuckism utopian
+lighthouse simultaneity memoir
+academic art utopian
+ultra-lettrism amateur sleuth
+taste
+shadow puppetry second person
+art and morality thriller
+rainforest memoir
+funeral home applied aesthetics caper
+mine dystopian
+closure
+the plain style mythic retelling
+flower arranging chamber piece
+hyperrealism steampunk
+dockside epistolary fiction braided narrative
+alpine popular culture literary fiction
+vineyard chamber piece
+life imitating art mythic retelling
+womens art movement diary form
+beauty of ruins autofiction
+aesthetic dentistry post-apocalyptic
+allotment noir multiple timelines
+classicism locked-room mystery
+humour spectral fiction
+textile art mystery
+library adventure
+assemblage multiple timelines
+entropy trilogy
+boarding house sumatraism portal fantasy
+serial art portal fantasy chapbook
+lighthouse graphic novel reverse chronology
+integrity adventure
+sound and noise anthology
+black arts movement
+subplot mythic retelling
+embassy graphic novel
+farmland literary fiction found manuscript
+taxonomy cyberpunk
+cabaret crime
+dialogue time travel pocket thriller
+sanatorium war novel
+oil rig spectral fiction
+conceptual art mythic fiction
+hotel locked-room mystery
+theosophy historical fiction
+freight yard glaze psychological thriller
+ensemble cast first person confession
+ambiguity campus novel adaptation
+university heist
+bridge travel writing decade chronicle
+concrete art cozy mystery
+alpine nostalgia war novel
+silence in dialogue
+land art epistolary fiction
+rococo political fiction second person
+les nabis science fiction
+airport amateur sleuth
+northern landscape style swashbuckler
+objective abstraction gothic
+viennese actionism fairy tale
+vineyard dystopian
+archive psychological thriller
+bathhouse fascination nature writing
+lunar colony epistolary fiction
+les nabis pulp fiction
+lo-fi pulp fiction decade chronicle
+orchard ghost story
+city hall swashbuckler
+nuclear plant naming historical fiction
+renaissance utopian parody
+cruise ship political fiction
+dust and decay utopian
+musical theatre true crime
+puppetry literary fiction
+monastery autofiction
+boring anthology slow burn
+toyism Southern gothic dual POV
+mission memoir
+beginnings and endings
+light and space spy novel
+folk art procedural crime
+quality weird fiction
+description folk horror
+bengal school of art
+tessellation adventure prequel
+hindu aesthetics gothic
+bookbindery portal fantasy triptych
+weather station graphic novel
+university fairy tale
+black arts movement swashbuckler
+river literary fiction anthology
+mingei gothic multiple timelines
+blindness psychological thriller
+halfway house dystopian standalone
+intermedia urban fantasy framed narrative
+seduction pocket thriller
+suprematism chapbook
+cartoons reportage
+small-town heist
+rhythm in prose
+musique concrete epistolary fiction
+neo-dada
+art and illness Bildungsroman adaptation
+tunnel locked-room mystery
+mountain fairy tale
+hanzelka Southern gothic
+casino folk horror
+totalism memoir
+trawler graphic novel
+textile art nature writing
+neo-dada casebook
+digital painting historical mystery
+rinpa school short story collection
+cultural hegemony horror
+drone music spy novel
+stadium japonisme reportage
+post-rock
+laboratory Southern gothic
+orchard verse novel
+convent historical mystery
+canal avant-garde folk tale
+flower arranging page-turner
+hyperrealism reportage
+samikshavad standalone
+landfill young poland historical mystery
+dau-al-set dossier
+freight yard detective
+art and death spin-off
+sideshow true crime
+frottage time travel decade chronicle
+aesthetic experience fantasy mosaic structure
+salon and academy chamber piece
+ancient aesthetic first person confession
+the readymade fairy tale
+laboratory gothic
+pattern and noise spectral fiction
+railway crime archive novel
+simultaneity historical fiction
+dau-al-set elegy
+sound and noise swashbuckler
+desert historical fiction
+submarine dark fantasy
+prison true crime
+observatory novella cycle
+danube school pulp fiction
+boarding house cabaret graphic novel
+border romance
+action painting
+chiaroscuro standalone
+aestheticism fantasy anthology
+neuroscience of art horror romance
+urban Bildungsroman
+weather station adventure
+sand animation chamber piece
+woodcut mystery spin-off
+the ridiculous standalone
+tannery locked-room mystery
+theatre of cruelty hard-boiled detective
+courthouse anthology
+mill horror romance
+tragedy nature writing
+the limits of seeing anthology
+maximalist prose folk horror
+bookbindery literary fiction
+hospital the look space opera
+biomorphic abstraction portal fantasy chapbook
+post-impressionism braided narrative
+mass culture war novel
+popular culture anthology
+embassy hard SF pocket thriller
+ensemble cast romance
+bathhouse cyberpunk
+onomatopoeia heist romance dossier
+minimal music archive novel
+intermedia prequel
+free improvisation spy novel
+drone music reportage
+nuclear waste site war novel
+order and disorder western
+stadium chamber piece
+papier-mache autofiction found manuscript
+epic theatre portal fantasy
+harmony decade chronicle
+classical realism folk horror
+exhibition steampunk
+experimental theatre caper
+sanatorium spy novel novella cycle
+deep-sea les nabis post-apocalyptic
+the catalogue locked-room mystery
+point of view space opera
+memory and recollection mythic fiction
+halfway house psychological thriller dispatch
+neo-expressionism
+weather station weird fiction elegy
+allotment anthology
+cruise ship psychological thriller
+bacone school anthology
+the readymade political fiction
+art and the body horror
+bookbindery cool campus novel
+laboratory gothic almanac
+submarine identification space opera
+romanesque crime
+vanitas cyberpunk
+waterworks optical art detective
+happening graphic novel
+beginnings and endings memoir
+lighthouse adventure
+art and memory noir
+cubism anthology pocket thriller
+mimesis procedural crime
+sanatorium cyberpunk
+symbolism Bildungsroman
+motorway grisaille romance
+court masque Bildungsroman
+shipyard mythic retelling decade chronicle
+city hall graphic novel triptych
+diction folk horror duology
+nuclear art science fiction
+lyco art heist romance
+woodcut adaptation
+sand animation locked-room mystery triptych
+feminine beauty horror romance
+care home spy novel
+intermedia folk tale unreliable narrator
+puppetry mythic fiction
+rasquache utopian
+rainforest graffiti art family saga
+hospice amateur sleuth
+submarine noir
+mime
+ruins and wholeness Southern gothic
+customs house Bildungsroman
+forest Nordic noir
+video art Nordic noir
+humour hard SF retelling
+art and power time travel
+satire hard-boiled detective
+court masque spectral fiction
+tundra pulp fiction
+beauty of ruins chamber piece
+onomatopoeia wrestling fiction triptych
+convent true crime
+metaphysical painting
+aesthetic taste dark fantasy
+research station epistolary fiction
+black arts movement chamber piece
+dansaekhwa folk horror
+tonalism erotic romance
+site-specific art science fiction
+river cyberpunk
+convent crime
+cinema pur chamber piece
+baroque detective
+glass art caper
+danube school hard-boiled detective
+mill procedural crime casebook
+landfill panfuturism hard-boiled detective
+subplot amateur sleuth archive novel
+care home reportage
+casino anthology
+subterranean campus novel page-turner
+acmeism
+fantastic realism utopian
+encaustic painting adaptation
+bridge Southern gothic
+marxist aesthetics parody
+hotel japanese aesthetic fairy tale
+bathhouse portal fantasy
+tempera alternate history
+viennese actionism portal fantasy dossier
+new sculpture pocket thriller
+tunnel campus novel multiple timelines
+the folk tradition second person
+masculine beauty series
+vineyard erotic romance prequel
+anime
+casino novella cycle
+art manifesto campus novel
+customs house historical mystery
+earth art standalone
+quito school urban fantasy
+landfill romance puzzle box
+theatre of cruelty fairy tale
+ferry crime
+laboratory harmony adventure
+magic realism
+cyberdelic amateur sleuth
+trompe l'oeil romance anthology
+pastiche epistolary
+economy of means noir sequence
+the limits of seeing post-apocalyptic
+prairie weird fiction
+monastery erotic romance
+tachisme epistolary fiction
+rust and ruin folk horror
+subplot revenge fiction triptych
+neo-conceptual art literary fiction
+the unsaid chamber piece
+american impressionism war novel
+small-town mythic retelling
+incoherents chapbook
+authority and evidence puzzle box
+mime travel writing
+rainforest steampunk
+railway novella cycle
+solitude in art utopian
+moral feeling crime
+primitivism spectral fiction
+symmetry
+fin de siecle linked stories
+alpine post-apocalyptic
+digital art
+video art duology
+superflat dark fantasy retelling
+motif and pattern swashbuckler
+boarding school new objectivity romance
+dockside steampunk
+vaudeville historical fiction archive novel
+danube school fairy tale
+canal amateur sleuth
+constructivism sports fiction
+ferry horror romance
+stuckism dossier
+quarry ghost story triptych
+circus horror romance elegy
+psychoanalysis adventure
+artificial intelligence art graphic novel
+byzantine aesthetic
+pastel dystopian
+post-internet art campus novel duology
+museum porcelain verse novel
+vineyard american realism crime
+trompe l'oeil chamber piece
+the archive and erasure dystopian
+lightness and weight gothic elegy
+guilloche novella cycle
+applied aesthetics anthology
+abstract art folk horror chapbook
+authenticity archive novel
+folk medicine and craft caper
+rococo dark fantasy
+tenement alternate history
+cave nature writing
+conceptualism parody
+the ornate science fiction
+mine mythic retelling
+care home hard-boiled detective
+suprematism sequence
+renaissance puzzle box
+denouement chamber piece
+metaphysical painting Bildungsroman
+mine ghost story
+futurism anthology
+japanese art literary fiction chapbook
+pastel mystery almanac
+weather station sports fiction
+forgetting elegy
+customs house memoir
+situationist international space opera
+reverence fairy tale
+exhibition family saga
+unreliable perception puzzle box
+desert fairy tale
+city hall detective
+aesthetic medicine heist
+climax swashbuckler
+brutalism portal fantasy
+degenerate art wrestling fiction
+harbour kinetic art romance
+rainforest sports fiction
+rust and ruin hard SF
+skeuomorph campus novel
+harlem renaissance hard SF
+urban war novel triptych
+aesthetic education utopian
+subterranean post-apocalyptic second person
+embassy travel writing puzzle box
+canal nature writing
+submarine gothic
+vineyard western almanac
+halfway house reportage
+satire and irony spectral fiction
+library modernist film Bildungsroman
+performance art locked-room mystery
+beginnings and endings amateur sleuth
+korean aesthetics campus novel
+systems art
+island anthology
+pace and stillness novella cycle
+subterranean heist braided narrative
+polar station nature writing
+lowbrow travel writing
+railway adventure
+railway dansaekhwa wrestling fiction
+sosaku hanga spin-off
+transgressive art anthology pocket thriller
+coastal simultaneity graphic novel
+reverence and the sacred prequel
+earth art duology
+description
+nuclear art hard-boiled detective
+fragments reportage
+weather station historical fiction
+generative art fairy tale
+sumatraism nature writing
+trawler dreamwork swashbuckler
+neo-romanticism dark fantasy
+blindness steampunk dossier
+slam poetry alternate history
+arctic science fiction standalone
+renaissance aesthetic folk horror
+restoration spy novel
+photography science fiction spin-off
+orchard epistolary fiction
+classical realism heist
+chinese aesthetics memoir casebook
+naming of parts western
+elision swashbuckler
+commune time travel
+trawler caper
+museum color field Bildungsroman
+papier-mache horror
+deStijl spy novel
+museum procedural crime
+court masque casebook
+empathy and its limits parody
+cuteness puzzle box
+solitude in art campus novel
+taste adventure
+geometric abstract art noir
+young poland swashbuckler
+film noir anthology
+alpine fantasy
+land art mythic fiction
+mannerism multiple timelines
+epic theatre autofiction
+seduction historical fiction
+fragments sports fiction
+border exoticism historical fiction
+pace and stillness elegy
+farmland Bildungsroman
+embassy register dystopian
+tundra historical mystery
+photography Nordic noir linked stories
+neo-dada thriller mosaic structure
+monastery scriptorium spy novel
+eroticism thriller
+bricolage slow burn
+dam mystery
+new objectivity dossier
+experimental theatre triptych
+hudson river school gothic standalone
+tannery amateur sleuth
+beauty folk horror
+quarry family saga slow burn
+arsenic and lace post-apocalyptic
+abundance
+borderland graphic novel
+new sculpture epistolary fiction
+identification war novel
+rasa hard-boiled detective
+minimalist prose triptych
+art and belief parody
+denouement heist
+wit historical fiction
+theological aesthetics novella cycle
+gutai group revenge fiction
+barbizon school family saga
+pointillism chamber piece
+the look memoir unreliable narrator
+remodernism sports fiction spin-off
+shin hanga
+hyperrealism
+dau-al-set portal fantasy
+hard edge painting caper
+coastal dystopian
+post-rock noir braided narrative
+circus pulp fiction
+drone music true crime
+needlework dossier
+islamic philosophy of art detective
+oil rig dansaekhwa mythic fiction
+net art trilogy
+the uncanny puzzle box
+chosonhwa first person confession
+quarry steampunk first person confession
+depiction
+city hall anthology duology
+boarding school autofiction
+borderland Nordic noir
+motorway dystopian trilogy
+hotel kitsch movement true crime
+young poland multiple timelines
+wonder cozy mystery
+afrofuturism travel writing framed narrative
+metropolitan spectral fiction
+bauhaus steampunk
+ambiguity science fiction spin-off
+dada wrestling fiction
+makonde art
+bricolage standalone
+vineyard horror romance framed narrative
+embassy ghost story
+bathhouse war novel
+elegance romance
+mimesis caper archive novel
+style horror
+surprise spectral fiction slow burn
+cave verse novel
+skeuomorph epistolary fiction
+geometric abstract art
+modernism folk tale novella cycle
+sound and noise procedural crime
+light and space epistolary fiction
+dansaekhwa romance
+rooftop dark fantasy
+fractal and recursion spin-off
+subterranean hard SF
+san ildefonso school novella cycle
+state-sponsored art erotic romance
+aesthetic dentistry campus novel
+care home steampunk
+nuclear waste site thriller
+river swashbuckler
+puppetry folk tale
+figurative art psychological thriller
+dam sound and noise heist
+lighthouse cyberpunk spin-off
+nuclear plant family saga
+parody travel writing
+arctic pulp noir spy novel
+oulipo family saga
+neuroscience of art folk tale
+kitsch epistolary fiction retelling
+bathhouse street art novella cycle
+aesthetic judgement
+bridge marxist aesthetics detective
+graffiti art caper
+monastery crime
+the definite article Southern gothic
+zhe school dual POV
+skeuomorph mythic fiction
+mosaic pulp fiction found manuscript
+commune classical realism historical mystery
+verbal play wrestling fiction
+experimental literature steampunk
+rural romance
+danube school verse novel trilogy
+typeface design travel writing
+popular culture mosaic structure
+metropolitan locked-room mystery
+coastal mythic fiction framed narrative
+renaissance gothic ensemble cast
+cubo-futurism cozy mystery
+river political fiction
+mountain post-apocalyptic
+tenement noir
+small-town fragments erotic romance
+shadow puppetry horror
+dansaekhwa family saga
+bricolage multiple timelines
+dam psychological thriller
+surrealism novella cycle
+night market the marvellous autofiction
+tenement sports fiction
+sympathy and distance Bildungsroman sequence
+boarding school wrestling fiction epistolary
+cruise ship campus novel page-turner
+the ethics of feeling fantasy
+narrative pleasure science fiction
+primitivism chamber piece
+bookbindery time travel slow burn
+art and migration
+experimental literature gothic
+mission lithography urban fantasy
+experimental theatre science fiction trilogy
+cubism thriller multiple timelines
+prison erotic romance
+oil rig folk horror
+authenticity crime retelling
+forest monumentalism mythic fiction
+nostalgia decade chronicle
+harbour gothic
+neo-expressionism decade chronicle
+fresco time travel
+forest analytical art thriller
+trawler hard-boiled detective
+sideshow wrestling fiction ensemble cast
+aesthetics of science travel writing
+shadow puppetry travel writing
+convent historical fiction
+rural horror epistolary
+library the plain style Bildungsroman
+borderland travel writing
+the witness political fiction chapbook
+burlesque
+funeral home spectral fiction
+minimalism Bildungsroman archive novel
+the mirror second person
+camp ensemble cast
+gaze dispatch
+measurement and scale cyberpunk
+ego-futurism locked-room mystery
+artistic merit utopian
+the encyclopedia chamber piece anthology
+ensemble cast hard SF
+rural graphic novel
+mine Nordic noir
+american realism archive novel
+cultural hegemony adventure
+city hall post-impressionism detective
+patina chamber piece
+courthouse revenge fiction pocket thriller
+monastery scriptorium urban fantasy

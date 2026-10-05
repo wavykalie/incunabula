@@ -118,8 +118,31 @@ PYEOF
   done
 fi
 
-# 4. Improvement mode -------------------------------------------------------------
-echo "4. improvement mode"
+# 4. The dice ---------------------------------------------------------------------
+# roll-brief.py and niche-grow.py decide what a run is about, and a run against a
+# broken dice produces a book plus a RUN_REPORT nobody can re-derive. Both have a
+# self-test; both are cheap; neither reads a manuscript, so neither is frozen.
+echo "4. the dice"
+if command -v python >/dev/null 2>&1; then
+  for t in roll-brief niche-grow; do
+    if [ -f "$ROOT/tools/$t.py" ]; then
+      out=$(python "$ROOT/tools/$t.py" --self-test 2>&1)
+      rc=$?
+      if [ $rc -eq 0 ]; then
+        row "$t --self-test" PASS "$(printf '%s' "$out" | tail -1)"
+      else
+        row "$t --self-test" FAIL "exit $rc - the dice cannot be trusted to reproduce a roll"
+      fi
+    else
+      row "$t --self-test" SKIP "$t.py not found at tools/ - no dice to test"
+    fi
+  done
+else
+  row "roll-brief --self-test" FAIL "python not found; the dice cannot be checked"
+fi
+
+# 5. Improvement mode -------------------------------------------------------------
+echo "5. improvement mode"
 if [ -f "$ROOT/SELF_IMPROVEMENT.md" ]; then
   mode=$(grep -m1 -E "^\s+mode:" "$ROOT/SELF_IMPROVEMENT.md" | sed -E "s/.*mode:\s*([a-z]+).*/\1/")
   case "$mode" in

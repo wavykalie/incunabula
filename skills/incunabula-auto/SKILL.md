@@ -22,7 +22,11 @@ brief is rolled, not given:
 2. **The pool grows.** After rolling, the run appends **five new niches** to
    `tools/niche-pool.txt` — invented, because a script can draw a niche but
    never invent one. A pool that never grows is a button that gives the same
-   answers forever.
+   answers forever. Five per firing is slow, so `tools/niche-grow.py` can top the
+   pool up to a target in bulk from the harvested Wikipedia concepts in
+   `tools/aesthetics-concepts.txt` (`--target 1000 --seed N --dry-run`). It is
+   append-only by construction and refuses to write if a niche already here
+   would be removed or reordered.
 3. Scaffold and register: `python tools/init-book.py --path <slug> --title
    "<working title>" --status autonomous --floor <rolled> --ceiling <rolled>`.
    `status: autonomous` in BOOKS.yaml means a run in flight: the registry

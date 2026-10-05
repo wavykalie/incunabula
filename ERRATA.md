@@ -1481,3 +1481,22 @@ Found by running every gate across every book (`incunabula/SUITE-2026-10-01.md`)
 - **state:**    observed
 - **proposes:** none. Recorded in `finished-manuscripts/hollow-bridge/RUN_REPORT.md`;
                not repaired post-publication.
+
+### 2026-10-05 — an append-only file rewritten end to end by a text-mode write
+- **row:**      brief | delegation
+- **observed:** `tools/niche-grow.py` grew the niche pool correctly but wrote it with
+               Python's default text mode, which on Windows rewrites every `\n` as `\r\n` —
+               so a growth that added 960 lines and removed none showed in git as 1010
+               added and 45 deleted, and the append-only guarantee was a fiction in the one
+               file where it is load-bearing for published rolls.
+- **n:**        1 tool, 1 pool, 1 growth
+- **evidence:** `git diff --numstat tools/niche-pool.txt` reading `1010 45` after a run whose
+               own prefix check had passed; `file` reporting CRLF terminators on a repo that
+               stores LF. Found by running the tool, not by reading it.
+- **motive:**   aesthetic
+- **state:**    observed
+- **proposes:** none, and the fix is in the tool rather than in a registry: `newline=""`
+               on read, `newline="\n"` on write. Worth noting that a prefix check comparing
+               *raw lines* is also too strict — it would have made the pool header
+               uneditable, since the dice skips `#`-comments and the header is not part of
+               the invariant. The check now compares parsed niche lines.
