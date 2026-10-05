@@ -1500,3 +1500,27 @@ Found by running every gate across every book (`incunabula/SUITE-2026-10-01.md`)
                *raw lines* is also too strict — it would have made the pool header
                uneditable, since the dice skips `#`-comments and the header is not part of
                the invariant. The check now compares parsed niche lines.
+
+### 2026-10-05 — a pool grown without a concept budget reads as depth and is padding
+- **row:**      brief | delegation
+- **observed:** The first growth to 1000 niches drew each aesthetic concept
+               independently, so 202 concepts appeared more than once and the
+               worst — cyberpunk — appeared 14 times, which is one shelf with the
+               dice loaded, not fourteen. A pool is a set; this was a distribution
+               wearing a set's clothes. The same run also shipped 19 bare concept
+               names ("incoherents", "systems art") that describe no book at all.
+- **n:**        1 pool, 960 grown niches, 636 concepts available
+- **evidence:** counting the longest harvested concept per niche across the grown
+               region: 202 reused, max 14, against 424 distinct concepts used.
+               Sibling defect found in the same pass: five entries in
+               `tools/aesthetics-concepts.txt` (cyberpunk, parody, adaptation,
+               ensemble cast, sequence) are also genre or form words, so one word
+               could be drawn from two axes and spend the budget on a collision.
+- **motive:**   aesthetic
+- **state:**    observed
+- **proposes:** none — the fix is a `CONCEPT_BUDGET = 2` in the grower and dropping
+               the bare-concept shape, not a threshold anybody adopted. The grown
+               region was rebuilt under them (seed 20261006) after checking that the
+               only published roll records `pool_size: 35`, so no niche beyond the
+               35th has ever been drawn and nothing published could be invalidated.
+               Max reuse 14 -> 2, bare concepts 19 -> 0, "art" entries 86 -> 74.

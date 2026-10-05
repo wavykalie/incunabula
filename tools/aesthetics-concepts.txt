@@ -347,7 +347,6 @@ xylography
 # --- literature, theatre, film and music currents ---
 acmeism
 conceptual poetry
-cyberpunk
 ego-futurism
 experimental literature
 flarf poetry
@@ -500,7 +499,6 @@ taxonomy
 classification
 the encyclopedia
 translation
-adaptation
 quotation
 homage
 appropriation and remix
@@ -551,7 +549,6 @@ the ridiculous
 absurdity
 grotesque
 caricature
-parody
 pastiche
 satire and irony
 sarcasm
@@ -595,7 +592,6 @@ action
 dialogue
 the scene and summary
 time and duration
-sequence
 simultaneity
 memory and recollection
 forgetting
@@ -632,7 +628,6 @@ suspense and release
 climax
 denouement
 subplot
-ensemble cast
 the protagonist
 the antagonist
 the trickster

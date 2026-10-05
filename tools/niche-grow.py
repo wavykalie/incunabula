@@ -116,10 +116,17 @@ SHAPES = [
     ("{concept} {genre} {form}", 12),
     ("{setting} {concept} {genre}", 9),
     ("{setting} {genre} {form}", 7),
-    ("{concept}", 4),
 ]
 
 MAX_WORDS = 5
+
+# How many niches one concept may contribute. A pool is a set of SHELVES, and
+# "cyberpunk hard SF" twice is one shelf with the dice loaded. The first growth
+# to 1000 had no budget and spent 14 of its slots on cyberpunk, 11 on parody and
+# 9 on realism: 202 concepts appeared more than once, which is padding wearing
+# the costume of depth. Two is enough for a concept to feel like a through-line
+# and few enough that the pool stays a set rather than a distribution.
+CONCEPT_BUDGET = 2
 
 
 def read_lines(path):
@@ -143,12 +150,46 @@ def read_niches_from(lines):
 
 
 def load_concepts(path):
-    return read_lines(path)
+    """Concepts minus anything that collides with another axis.
+
+    Five entries in the harvested file are also genre or form words (cyberpunk,
+    parody, adaptation, ensemble cast, sequence). Left in, the same word can be
+    drawn twice from two axes and the concept budget is spent on a collision.
+    """
+    axis_words = set()
+    for group in (GENRES, SETTINGS, FORMS):
+        axis_words.update(group)
+    return [c for c in read_lines(path) if c.lower() not in axis_words]
+
+
+def concept_of(niche, cset):
+    """Longest harvested concept appearing in a niche, or None."""
+    toks = niche.split()
+    best = None
+    for i in range(len(toks)):
+        for length in range(min(5, len(toks) - i), 0, -1):
+            key = " ".join(toks[i:i + length]).lower()
+            if key in cset:
+                if best is None or length > len(best.split()):
+                    best = key
+                break
+    return best
+
+
+def concept_usage(niches, cset):
+    used = {}
+    for n in niches:
+        key = concept_of(n, cset)
+        if key:
+            used[key] = used.get(key, 0) + 1
+    return used
 
 
 def build(concepts, existing, target, rng):
     """Return (new_entries, stats). Never touches `existing`."""
     have = {n.lower() for n in existing}
+    cset = {c.lower() for c in concepts}
+    used = concept_usage(existing, cset)
     fresh, rejected = [], 0
     weights = [w for _, w in SHAPES]
     shapes = [s for s, _ in SHAPES]
@@ -173,6 +214,12 @@ def build(concepts, existing, target, rng):
         if len({w.lower().strip(",") for w in words}) != len(words):
             rejected += 1
             continue
+        ck = concept_of(niche, cset)
+        if ck and used.get(ck, 0) >= CONCEPT_BUDGET:
+            rejected += 1
+            continue
+        if ck:
+            used[ck] = used.get(ck, 0) + 1
         have.add(key)
         fresh.append(niche)
     return fresh, {"drawn": len(fresh), "rejected": rejected,
@@ -207,6 +254,20 @@ def self_test():
     c2, s2 = build(concepts, filled, len(filled) + 5, random.Random(7))
     assert s2["rejected"] > 0, "the filter must reject, or it is not filtering"
     assert not (set(c2) & set(filled)), "a full pool must not be re-filled"
+    # the concept budget must hold, and must count what is ALREADY in the pool
+    cset = {c.lower() for c in concepts}
+    spent = ["rasa small town", "cozy mystery"]          # rasa already used once
+    r1, _ = build(concepts, spent, 12, random.Random(3))
+    assert concept_usage(r1, cset).get("rasa", 0) <= CONCEPT_BUDGET - 1, \
+        "the budget must count the concept already spent in the pool"
+    r2, _ = build(concepts, [], 12, random.Random(3))
+    assert concept_usage(r2, cset).get("rasa", 0) <= CONCEPT_BUDGET, \
+        "the budget must hold from an empty pool too"
+    # a word that is both a concept and a genre must not be loaded as a concept
+    if os.path.exists(DEFAULT_CONCEPTS):
+        loaded = {c.lower() for c in load_concepts(DEFAULT_CONCEPTS)}
+        collisions = [w for g in GENRES + FORMS + SETTINGS for w in [g] if w in loaded]
+        assert not collisions, f"concept file still collides with an axis: {collisions}"
     # growth must be a no-op when the target is already met
     assert build(concepts, pool, len(pool), random.Random(7))[0] == []
     # a grown pool must survive the next growth without rewriting the first part
