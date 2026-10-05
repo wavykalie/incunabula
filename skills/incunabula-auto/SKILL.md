@@ -14,17 +14,19 @@ brief is rolled, not given:
 
 1. `python tools/roll-brief.py` — rolls language, niche, tone, and length from
    `tools/niche-pool.txt`, plus two premise seeds. The dice choose the shelf,
-   not the story: the run invents the premise from the seeds. The language draw
-   is **English-weighted** (80/12/8 over English, German, Spanish) because this
-   harness's gates, voice contracts and calibration corpus are English — it is a
-   book-production pipeline, not a localisation engine. Languages that were
-   never fired at were removed rather than down-weighted. `--seed N
+   not the story: the run invents the premise from the seeds. **The language is
+   English and is no longer drawn.** This harness is a book-production pipeline,
+   not a localisation engine: its gates, voice contracts and calibration corpus
+   are English, and a run in another language is a run whose instruments are a
+   guess. German and Spanish were in the table briefly and were cut again, on the
+   ground that "delivered once" is not "supported". A book in another language is
+   still written by a person; the button just stops promising more. `--seed N
    --pool-size K --dice 2` reproduces any roll made under the current dice
    exactly (the pool grows, so the brief records K and draws from the pool as it
    was). **A roll made before 2026-10-05 needs `--dice 1`**, because that is the
-   table and draw method that produced it; the seed alone no longer does.
-   Record the seed, the pool size and the dice in the book's PROJECT_STATE.yaml
-   so the run can be re-derived.
+   table and draw method that produced it; the seed alone no longer does. Record
+   the seed, the pool size and the dice in the book's PROJECT_STATE.yaml so the
+   run can be re-derived.
 2. **The pool grows.** After rolling, the run appends **five new niches** to
    `tools/niche-pool.txt` — invented, because a script can draw a niche but
    never invent one. A pool that never grows is a button that gives the same
@@ -110,6 +112,10 @@ a Cyrillic word is still a word and `check-length` counts it.
 
 It reads each book's declared language from `PROJECT_STATE.yaml`, so a book must
 declare one. `**bold**` is counted, not judged: bold in a draft is a convention.
+
+Books already written in another language stay, and stay checkable: the dice
+stopped rolling non-English, which is a statement about what the instruments
+support, not a retraction of the two books that exist in German and Spanish.
 
 ## Where projects live
 

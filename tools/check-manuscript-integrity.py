@@ -43,6 +43,17 @@ import os
 import re
 import sys
 
+# This tool prints manuscript text back to the operator, and manuscript text is
+# exactly the thing a console is least able to print. On Windows a cp1252 stdout
+# raises UnicodeEncodeError on the first umlaut or accented vowel, and the tool
+# dies with a traceback INSTEAD OF REPORTING THE CONTAMINATION IT EXISTS TO
+# FIND. Found by running it, on the first Spanish chapter, 2026-10-05.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):        # already a text stream, or locked
+        pass
+
 def _build_allowed():
     """Every character that can legitimately appear in a European manuscript.
 

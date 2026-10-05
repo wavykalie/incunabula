@@ -41,20 +41,25 @@ DEFAULT_POOL = os.path.join(HERE, "niche-pool.txt")
 # breaks the one promise this tool makes. Dice 1 is how the pension-winter run
 # (seed 779398044) still re-derives.
 #
-# Dice 2 is the current one. It is weighted toward English, because this is a
-# book-production harness and not a localisation engine: the pipeline's gates,
-# its voice contracts and its calibration corpus are English, and a run in
-# another language is a run whose instruments are a guess. Languages that were
-# never fired at are gone rather than down-weighted - Japanese, French and
-# Korean had never been run, so their presence in the table was a claim about
-# coverage the harness could not honour. German and Spanish stay because both
-# have been delivered from this pool and are in BOOKS.yaml.
+# Dice 2 is the current one, and there is nothing left to draw.
 #
-# A future run in a language this harness has never carried is a change to this
-# table and a new dice version, not a new entry in a weights dict.
+# This is a book-production harness, not a localisation engine. Its gates, its
+# voice contracts, its calibration corpus and its calibration METHOD are English,
+# and a run in another language is a run whose instruments are a guess - a German
+# or Spanish book is produced by a human who happens to read German or Spanish,
+# not by instruments that were ever calibrated for it. So the language is English
+# and there is no draw.
+#
+# German and Spanish were briefly in dice 2 at 12% and 8% before being cut again,
+# on the ground that "delivered once" is not "supported". Two books exist in
+# those languages and they are in BOOKS.yaml; what was removed is the promise
+# that the button will make more of them. Neither is a downgrade of the finished
+# work - a book already written is not made less real by the dice moving on.
+#
+# A future run in another language is a change to the CALIBRATION first and to
+# this table second, in that order, and a new dice version either way.
 LANGUAGES = ["English", "Japanese", "Spanish", "French", "German", "Korean"]
-LANGUAGES_V2 = ["English", "German", "Spanish"]
-LANGUAGE_WEIGHTS = [80, 12, 8]
+LANGUAGES_V2 = ["English"]
 TONES = ["lyrical", "propulsive", "spare", "baroque", "comic",
          "elegiac", "noir", "warm", "unsettling", "satirical"]
 # (label, floor words, ceiling words) — feeds init-book.py --floor/--ceiling.
@@ -106,7 +111,9 @@ def roll(seed, pool, pool_size=None, dice=2):
     if dice == 1:
         language = rng.choice(LANGUAGES)
     elif dice == 2:
-        language = rng.choices(LANGUAGES_V2, weights=LANGUAGE_WEIGHTS, k=1)[0]
+        # no draw: one entry, and drawing from a one-entry table would only be
+        # a way of pretending there is still a choice
+        language = LANGUAGES_V2[0]
     else:
         raise ValueError(f"unknown dice version {dice}; this tool ships dice 1 and 2")
     return {
@@ -171,15 +178,17 @@ def self_test():
     # and the two dices must be genuinely different draws, not the same table twice
     assert {roll(s, ["x"], dice=1)["language"] for s in range(50)} != \
            {roll(s, ["x"], dice=2)["language"] for s in range(50)}
-    # dice 2 must never reach a language the harness has never carried
-    assert all(roll(s, ["x"], dice=2)["language"] in LANGUAGES_V2 for s in range(300))
-    # and it must be English-dominant, which is the point of the change
-    tally = {}
-    for s in range(2000):
-        lang = roll(s, ["x"], dice=2)["language"]
-        tally[lang] = tally.get(lang, 0) + 1
-    assert tally.get("English", 0) > 3 * sum(v for k, v in tally.items() if k != "English"), \
-        f"dice 2 must be English-dominant, got {tally}"
+    # dice 2 must NEVER reach any language but English - over a wide sample, and
+    # including the seed that produced the Spanish run, which must still be
+    # reachable and must now be unreachable
+    assert all(roll(s, ["x"], dice=2)["language"] == "English" for s in range(2000))
+    assert roll(594517907, ["x"], dice=2)["language"] == "English"
+    # and that same seed under the old dice is still the Spanish run, exactly
+    legacy = roll(594517907, ["tea ceremony second person"], dice=1)
+    assert legacy["language"] == "Spanish", \
+        f"dice 1 must still re-derive the La merienda roll, got {legacy['language']}"
+    assert legacy["niche"] == "tea ceremony second person"
+    assert legacy["tone"] == "warm" and legacy["length"].startswith("novella")
     try:
         roll(1, ["x"], dice=9)
         assert False, "an unknown dice version must not be silently accepted"
