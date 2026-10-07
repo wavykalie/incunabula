@@ -92,7 +92,7 @@ gate is added for this.
 
 Measured with the gate's own tokenizer, which is what produced the ten numbers above:
 
-    python incunabula/tools/prose/check-uniformity.py "D:/KDP Books/marrow-light"
+    python C:/Users/screa/incunabula/tools/prose/check-uniformity.py "C:/Users/screa/incunabula/test-books/marrow-light"
 
 ## What this is not
 

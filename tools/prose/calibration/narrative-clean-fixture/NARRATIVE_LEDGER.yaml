@@ -14,11 +14,11 @@ meta:
   chapters_tracked: [1, 2, 3, 4, 5]
 
 beats:
-  - { chapter: 1, arc: "shock -> denial -> numbness", source: "fixture" }
-  - { chapter: 2, arc: "suspicion -> discovery -> dread", source: "fixture" }
-  - { chapter: 3, arc: "warmth -> betrayal -> withdrawal", source: "fixture" }
-  - { chapter: 4, arc: "standoff -> confession -> reckoning", source: "fixture" }
-  - { chapter: 5, arc: "loss -> resolve -> departure", source: "fixture" }
+  - { chapter: 1, arc: "shock -> denial -> numbness", mechanism: "solitary walk", source: "fixture" }
+  - { chapter: 2, arc: "suspicion -> discovery -> dread", mechanism: "archive search", source: "fixture" }
+  - { chapter: 3, arc: "warmth -> betrayal -> withdrawal", mechanism: "an honest row", source: "fixture" }
+  - { chapter: 4, arc: "standoff -> confession -> reckoning", mechanism: "third-party intervention", source: "fixture" }
+  - { chapter: 5, arc: "loss -> resolve -> departure", mechanism: "the work itself", source: "fixture" }
 
 scenes:
   - { chapter: 2, scene: "the archive", function: "plot turn", words: 1100 }
@@ -27,6 +27,6 @@ scenes:
 
 debt:
   - { id: D-001, kind: mystery, description: "who falsified the dosimetry", opened: "ch-01:p4", status: RESOLVED, resolution: "the forger confesses in ch-04", resolved_at: "ch-04:p31", deferred_reason: null }
-  - { id: D-002, kind: promise, description: "she promised to bring her sister home", opened: "ch-02:p10", status: RESOLVED, resolution: "the sister is on the dock in ch-05", resolved_at: "ch-05:p12", deferred_reason: null }
+  - { id: D-002, kind: promise, description: "she promised to bring her sister home", opened: "ch-02:p10", fire_by: 5, status: RESOLVED, resolution: "the sister is on the dock in ch-05", resolved_at: "ch-05:p12", deferred_reason: null }
   - { id: D-003, kind: clock, description: "the reactor restart window", opened: "ch-03:p2", status: RESOLVED, resolution: "the restart happens in ch-05", resolved_at: "ch-05:p2", deferred_reason: null }
   - { id: D-004, kind: character, description: "the harbour master's silence", opened: "ch-03:p18", status: DEFERRED, resolution: null, resolved_at: null, deferred_reason: "series hook for volume two; recorded with the author's consent" }

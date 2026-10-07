@@ -74,6 +74,13 @@ characters:
       eye_color: { value: "brown", source: "ch-02:p14" }
       age: { value: 34, at_chapter: 1, source: "ch-01:p1" }
       distinguishing: [{ value: "chin scar", source: "ch-04:p8" }]
+      aesthetic:            # from intake Round 4 (intake-schema.md) - audited, not inferred
+        frame: { value: "...", source: "intake" }
+        muscle: { value: "...", source: "intake" }
+        beauty_register: { value: "...", source: "intake" }
+        movement: { value: "...", source: "intake" }
+        anti_tropes: [{ value: "excluded signifier", source: "intake" }]
+        sensory_signature: [{ value: "...", source: "intake" }]
     traits:
       - { trait: "left-handed", source: "ch-02:p19", mutable: false }
     voice_markers: { ref: "voice-matrix.md#character" }
@@ -115,7 +122,12 @@ organizations:
 `ch-XX:pYY`. Object status runs open (introduced, unresolved), closed (paid off),
 background, destroyed, or lost. Knowledge methods are exactly one of the five listed.
 Traits marked immutable are permanent (handedness); mutable traits may change (a fear, an
-addiction). Ages carry the chapter they were stated in, because ages move.
+addiction). Ages carry the chapter they were stated in, because ages move. The
+`physical.aesthetic` block comes from intake Round 4's Physique & Aesthetic Contract and
+is the one physical block that may carry `source: intake` — a drafting model fills an
+unspecified physique from stereotype, so the contract is written before the prose and
+checked against it afterwards: a chapter that reintroduces an anti-trope is a continuity
+error like any other.
 
 ---
 

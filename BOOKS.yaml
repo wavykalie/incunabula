@@ -12,7 +12,9 @@
 # PROJECT_STATE.yaml; this file carries only pointers and stage. Duplicating
 # contracts here would create two places for a number to drift.
 #
-# status vocabulary: concept | drafting | complete | published | fixture
+# status vocabulary: concept | drafting | complete | published | fixture | autonomous
+#   autonomous = the random button (tools/roll-brief.py): a rolled niche, no author at
+#   the wheel, checkpoints approved by subagent vote. Judged at its own gates.
 # expected_manuscript: does the suite's prose gates apply to it?
 #
 # A book may exist on disk but be deliberately absent from this list (a private
@@ -75,3 +77,22 @@ books:
     status: concept
     expected_manuscript: false
     note: "Concept stage, no manuscript; prose gates do not apply."
+
+  - path: kagiroi-drift
+    title: "Kagiroi Drift"
+    status: complete
+    expected_manuscript: true
+    note: "Adult sci-fi yuri novella, 6 chapters, 11,636 words, swept and completed. (2026-10-03)"
+
+
+  - path: pension-winter
+    title: "Pension Winter (WORKING TITLE)"
+    status: autonomous
+    expected_manuscript: true
+    note: "Autonomous run (random button) - rolled by tools/roll-brief.py, no author at the wheel. German psychological noir novella, 8 chapters, 16,786 words; delivered end-to-end same day (3 checkpoints, critic-role-pass). EPUB/DOCX render pending. (2026-10-04)"
+
+  - path: la-merienda
+    title: "La merienda"
+    status: autonomous
+    expected_manuscript: true
+    note: "Autonomous run (random button) - rolled by tools/roll-brief.py, no author at the wheel. (2026-10-05)"

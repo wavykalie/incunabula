@@ -30,7 +30,7 @@ Also frozen, because they change what the gates *see* rather than what they asse
 
 - `tools/prose/calibration/CALIBRATION.md` — every measurement behind the numbers
 - `PRINTERS_COPY.md` — 25 rejected measures, 6 confirmed
-- `ERRATA.md` — 32 entries
+- `ERRATA.md` — 49 entries
 - `skills/` — the prose skills that generate the text under test
 
 ## Load-bearing thresholds at this freeze
@@ -968,9 +968,9 @@ and the next proposal to add a *corpus* row still owes a corpus.
 
 | file | sha256 (first 16) | role |
 |---|---|---|
-| `tools/prose/check-narrative.py` | `74ef6d9819031279` | N1 debt (gates) / N2 beat repetition / N3 scene function / N4 ledger conformance (gates); reads no prose — the contract row, L1's class (re-keyed at the second update; see below) |
+| `tools/prose/check-narrative.py` | `3bf0bf46f318ab2c` | N1 debt (gates) / N2 beat repetition / N3 scene function / N4 ledger conformance (gates); reads no prose — the contract row, L1's class (re-keyed at the second update and Freezes 14–15; see below) |
 | `tools/prose/check-figurative.py` | `53962ce04c430d4f` | G1/G2 figurative pile-up reporter; report-only (re-keyed at the fourth update) |
-| `tools/prose/check-dialogue-tags.py` | `b5a0d9a899230169` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second and fourth updates) |
+| `tools/prose/check-dialogue-tags.py` | `b646cff207ef723f` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second, fourth and Freeze 16 updates) |
 | `tools/prose/check-quantities.py` | `4cc4a538dde7309e` | Q1–Q4 quantity extraction, spread, sanity notes, counted-noun conflicts; report-only (re-keyed at the third and fourth updates) |
 
 Also frozen, because they change what the gates see or what the skills declare:
@@ -1195,7 +1195,8 @@ so in those words. This is the other half, one run, end to end:
 
 **`ALL CONTROLS PASS`, exit 0, zero skips — including control 3**, which has reported
 `skip` in every run recorded above because no AI control path was supplied. The control
-book is the private one (`Hollow Bridge` — the de-identified stand-in, whose real title is held only in the gitignored `.registry-private`),
+book is the private one (`Hollow Bridge` — the de-identified stand-in, whose real title
+is held only in the gitignored `.registry-private`),
 found through `.registry-private` and read at its archived path under
 `finished-manuscripts/`: the maintenance protocol's stub at the old book root is what
 made the path findable, which is the stub doing exactly its job. Its discrimination is
@@ -1259,3 +1260,257 @@ and nothing else — the demo books are three books it had never seen, and they 
 all three tools at once. These are report rows and could fail no book, which is
 exactly why the class was shipped report-only first: the noise was found by a
 regression sweep instead of by a writer being told their correct prose was wrong.
+
+## Freeze 14 — 2026-10-05: the ledger learns what resolved the chapter
+
+Raised during the Kagiroi Drift production review, on author direction. One row moves;
+one contract file and both controls move with it.
+
+**The finding.** A book passed N2 with eight distinct declared beat arcs while one
+interpersonal circuit — overload, anchoring, intimacy, calm — resolved four consecutive
+chapters. N2 compares declared arc strings; the arcs were phrased differently while the
+same move worked underneath them. The declaration was honest and the check was reading
+the label instead of the mechanism.
+
+**What moved.** `beats[].mechanism` joins the ledger schema (free text, deliberately not
+a closed list, compared after normalisation): the interpersonal resolution that
+actually worked in each chapter. N2 reports any mechanism succeeding more than twice in
+consecutive chapters, and reports a book that declares no mechanisms at all.
+Report-only, exactly like the rest of N2 — a repeated circuit is sometimes deliberate,
+and no corpus of published resolution sequences exists from which a cap could be
+derived. N1, N3 and N4 are untouched and the exit-code contract is unchanged.
+
+| file | Freeze 13 | Freeze 14 | why it moved |
+|---|---|---|---|
+| `check-narrative.py` | `74ef6d9819031279` | `926289cb61bcf7f8` | N2 mechanism-circuit report + a note when no mechanisms are declared; docstring rows updated. No gate row changed: the new lines are report rows, and the exit codes are unchanged on every control |
+
+Also moved, in the "changes what the gates see" sense:
+
+- `skills/incunabula-codex/references/narrative-ledger-schema.md` — `beats.mechanism`
+  documented, including why it is free text where every other field is a closed list.
+- `tools/prose/calibration/narrative-debt-fixture/` — the positive control now carries
+  a three-chapter mechanism circuit (chapters 1–3, "anchored by touch"), so the new row
+  is seen to fire; the N1/N4 FAIL rows the fixture exists for are unchanged.
+- `tools/prose/calibration/narrative-clean-fixture/` — five distinct mechanisms, so the
+  row is also seen NOT to fire. Both directions, as always.
+
+**Verification.** Control 13: the fixture still exits 1 with N1 and N4 both firing.
+Control 14: the clean fixture still exits 0 with no circuit line. Control 15: exit 4
+mid-draft, exit 1 finished — unchanged. `kagiroi-drift` runs exit 0 and reports its own
+gap honestly: no mechanisms declared, because its ledger predates the field.
+`verify-freeze.sh` holds at the new row.
+
+Recorded as a hand-mode act on author direction, from the Kagiroi Drift critique: the
+craft channel moved, the measurement channel did not. Held-out comparison has not
+judged the new rubric line; it is adopted on author direction, not on falsification,
+and this sentence is so nobody later mistakes it for the other.
+
+**Also recorded, retroactively: the intake aesthetic contract.** Earlier the same day,
+`skills/incunabula-codex/references/intake-schema.md` gained Round 4 — the Physique &
+Aesthetic Contract (frame, muscle, beauty register, movement, anti-tropes, sensory
+signature) — and `skills/case-keeper/SKILL.md` mirrored it into `physical.aesthetic` in
+ENTITY_STATE. The ERRATA entry "a character brief with no aesthetic contract filled
+itself in from trope" is the record of why. skills/ is on the also-frozen list, so the
+edit is named here. No gate reads it; nothing measured moved.
+
+## Freeze 15 — 2026-10-05: a wound carries the chapter it must fire by
+
+Second entry of the same session, on author direction, from the same review. N1 gains
+a timing report; the gate rows are again untouched.
+
+**The finding.** The Minato-9 pod trauma — the strongest psychological anchor in the
+foundation, with full sensory specificity — sat as passive backstory for six chapters
+and was fired only when a structural revision staged it. N1 would have caught it at
+delivery: OPEN debt cannot ship. Nothing flags a crucible that has not yet trapped
+anyone while the book is still fixable cheaply.
+
+**What moved.** `debt.fire_by` joins the ledger schema: an optional integer chapter,
+the chapter by which the story must re-stage the wound (the pre-climax chapter by
+default). N1 reports any OPEN entry whose `fire_by` has passed, and reports a `fire_by`
+that is not a chapter number rather than ignoring it — an ignored field is a check
+that never fires. Report-only: the delivery gate is unchanged, a book may fire late on
+purpose, and the report exists to make "late" visible while it is still a choice.
+
+| file | Freeze 14 | Freeze 15 | why it moved |
+|---|---|---|---|
+| `check-narrative.py` | `926289cb61bcf7f8` | `3bf0bf46f318ab2c` | N1 timing report for `fire_by`; docstring row updated. No gate row changed |
+
+Also moved, in the "changes what the gates see" sense:
+
+- `skills/incunabula-codex/references/narrative-ledger-schema.md` — "When a wound
+  fires" section; `fire_by` in the debt example and beside the closed vocabularies.
+- `tools/prose/calibration/narrative-debt-fixture/` — D-001 carries `fire_by: 3` and is
+  still OPEN at chapter 6, so the timing line is seen to fire; the N1/N4 FAIL rows the
+  fixture exists for are unchanged.
+- `tools/prose/calibration/narrative-clean-fixture/` — D-002 carries `fire_by: 5` and
+  was RESOLVED at ch-05, so the line is also seen NOT to fire on a wound that fired on
+  time. Both directions.
+
+**Verification.** Control 13: still exits 1, N1 and N4 both firing. Control 14: still
+exits 0, no timing line. Control 15: exit 4 mid-draft and exit 1 finished, unchanged.
+`kagiroi-drift` runs exit 0 with zero timing lines — its ledger predates the field and
+its one trauma is RESOLVED. `verify-freeze.sh` holds at the new row.
+
+Same channel ruling as Freeze 14: craft moved on author direction, measurement did
+not. One entry per channel per book is the rate limit in `SELF_IMPROVEMENT.md` and this
+is the same channel as the entry above it — recorded together as one promotion of the
+narrative contract, split across two instrument versions only because the smoke tests
+were run between them.
+
+## Freeze 16 — 2026-10-05: the register question gets the map it needs
+
+Third entry of the same session, on author direction, from the same review.
+
+**The finding.** Outside intimate scenes the romantic leads collapsed into breathless,
+poetic whispering while secondary characters held sharp, grounded, technical voices.
+The tag layer showed it first: V1/V2 was built from exactly this failure (F-04) and
+reports each character's breath-family share — but a book-level share cannot tell a
+reader WHICH scenes to check, and the register question is about scenes.
+
+**What moved.** V2 gains the per-chapter breath map: for each character with enough
+tagged lines, the chapters where 50% or more of tags are breath-family (three-tag
+minimum), listed as `ch-N b/n`. The listing parameters are parameters, not caps —
+same as every other number in this tool. Alongside it, the `proof-panel` Hostile gains
+the question the map exists for: *do the leads keep a working register outside the
+intimate scenes?* — with the map named as its evidence. Report-only, and the rubric
+question is a judgment; nothing here can fail a book.
+
+| file | Freeze 15 | Freeze 16 | why it moved |
+|---|---|---|---|
+| `check-dialogue-tags.py` | `b5a0d9a899230169` | `b646cff207ef723f` | V2 per-chapter breath map; docstring rows updated. Report rows only |
+
+Also moved, in the "changes what the gates see" sense:
+
+- `skills/proof-panel/SKILL.md` — the Hostile's working-register question, and the
+  Phase 4 beat-arc declaration now also declares `mechanism` (closing the writer-side
+  half of Freeze 14, which updated the schema but not the skill that feeds it).
+
+**Verification.** Control 16 unchanged: the report rows fire on the fixture and none
+can fail it. The map is seen to fire on synthetic input (6 tagged lines, 5 breath —
+`ch-1 5/6`) and seen NOT to fire on `kagiroi-drift` (whose breath tags were already
+purged in revision), `demo-magician` and `marrow-light` — the out-of-domain sweep this
+directory learned to run at the fourth update. `verify-freeze.sh` holds at the new row.
+
+Same channel ruling as Freezes 14–15: craft moved on author direction, measurement did
+not; the rubric line is adopted without held-out comparison and says so.
+## Freeze 17 — 2026-10-05: the rule table gets a drafting-time surface
+
+**No manifest row moved. `verify-freeze.sh` holds, unchanged.**
+
+**The finding.** `deslop-check.sh` is a book scanner. It takes a directory and returns
+counts, and its 36 rules live in one table at the top of the script — a hard cap on
+em-dashes, a per-pattern density tier, a two-sentence opener limit. The author's own
+experience of drafting under that table was to run the scanner at the end, receive a line
+saying the chapter ran at 25.00 per 1k, and then spend twenty minutes hunting the span by
+eye. The scanner's answer is correct and its location is missing. Nothing here was a gate
+failure: it was that the instrument had no cheap surface for the one moment when the fix
+is still cheap, which is while the chapter is a file rather than a book.
+
+**What moved.** `tools/lint-chapter.py` — one chapter in, every rule hit out with a
+`line:col` span and the matched text. It holds no rules of its own: the table is parsed
+out of `deslop-check.sh` at runtime, and if the table cannot be read it exits 3 and says so
+rather than checking against a stale copy. Case handling mirrors the scanner (HARD and
+WARN_ONLY matched case-insensitively, density tiers case-sensitively) and the density
+arithmetic is the scanner's own integer form, `n*aw > an*words`, so a hit here is the same
+hit there. `--caps` prints the table it is about to use.
+
+It is not a gate and adds no row. Exit 0 clean, 1 nothing checkable, 2 over cap, 3 rule
+table unreadable. It reads one file the author is already holding and asserts nothing about
+a book.
+
+| file | Freeze 16 | Freeze 17 | why it moved |
+|---|---|---|---|
+| `tools/prose/deslop-check.sh` | `20e1976d20312974` | `20e1976d20312974` | unchanged — the rules are read live, so nothing was edited to teach the linter them |
+
+`tools/lint-chapter.py` is a new file outside `tools/prose/`, so the manifest has no row
+for it and none was invented. It is named here for the two reasons that actually bind it:
+`skills/` is on the also-frozen list and `skills/setting/SKILL.md` is in it; and this
+tool's behaviour is determined by a row that did *not* move, so any future re-key of the
+rule table changes the linter's output silently. The one thing a drafting aid must not be
+is a second set of thresholds.
+
+Also moved, named rather than hashed:
+
+- `skills/setting/SKILL.md` — the per-chapter test now runs the linter on the chapter file
+  before moving on. A prose skill on the frozen list changed; it generates no new prose.
+- `README.md` — the lint paragraph sits directly under the prose-gate table it serves, so
+  the aid is findable from the place a reader looks for gates.
+
+**Verification.** 36 rules parsed from the scanner's table. A synthetic offender exits 2
+with exact spans — `5:18 ' leverage '`, `5:38 ', feeling'` — and P1 opener spans
+`3:1, 3:22, 3:43, 7:1, 7:22`, and rates at 25.00 per 1k against the scanner's own 25.00 on
+the same bytes. That agreement is the actual test: a linter that ranks differently from the
+gate it front-runs is worse than no linter, because it would send the author to fix the
+wrong line. The real `kagiroi-drift` chapters exit 0, agreeing with `deslop-check.sh` run
+over the same files. A missing file and a bare invocation both exit 1.
+`verify-freeze.sh` holds, `sync-skills.py` reports no drift, `preflight.sh` passes.
+
+Same instrument class as `tools/preflight.sh` in the make-ready layer: it answers a
+question about which instrument will run, not a question about a book. No corpus, no
+threshold, no held-out comparison, nothing to adopt on measurement grounds. Author
+direction; the author asked for spans and this is spans.
+## Freeze 18 — 2026-10-05: a lint run that outlives the terminal
+
+**No manifest row moved. `verify-freeze.sh` holds, unchanged.** The fourth freeze of this
+session, and the first with no instrument in it at all.
+
+**The finding.** Freeze 17's linter was run over all eight `kagiroi-drift` chapters and
+disagreed with `deslop-check.sh` on exactly one rule, across three chapters, on eight
+occurrences — and the disagreement was in the frozen scanner, not the book. The finding
+was real and then nearly lost, because the evidence for it was 200 lines of terminal
+output. Nothing in a book project survives a scrollback: next session the number is gone,
+the reader is none, and the only surviving trace is a gate row that says PASS. That is the
+failure this freeze addresses — not the bug, which is now an ERRATA entry, but the fact
+that finding an instrument defect is a thing a project can lose.
+
+**What moved.** Two top-level sections in `NARRATIVE_LEDGER.yaml`: `lint_run` (a map —
+the linter, the file it reads its rules from, the run date, the freeze number, the
+book's own reading, chapters over cap, words measured) and `lint` (a list of one-line flow
+maps — `rule`, `state`, `observed`, `note`). Two sections rather than one because the
+parser's accepted subset has no nested maps, and the ledger's strictness is not negotiable
+to make a convenience feature comfortable.
+
+`state` is the field that earns the block. `book` is a craft finding the author may act
+on. `instrument` is a finding about the gate, and the schema says those must also be
+raised in `ERRATA.md` and not quietly patched — a frozen gate that changes without a
+freeze entry cannot be attributed to anything, which is the sentence this whole file
+exists to enforce.
+
+The `freeze` key is not decoration. A density number is meaningless without the
+instrument version that produced it, which is the same reason every row in this manifest
+carries a hash.
+
+| file | Freeze 17 | Freeze 18 | why it moved |
+|---|---|---|---|
+| `tools/prose/check-narrative.py` | `3bf0bf46f318ab2c` | `3bf0bf46f318ab2c` | unchanged — the parser reads both sections; N1–N4 deliberately ignore them |
+
+Also moved, in the "changes what the gates see" sense:
+
+- `skills/incunabula-codex/references/narrative-ledger-schema.md` — a "The lint block"
+  section documenting the shape, the two-section split and the `state` vocabulary. While
+  in there, the `scenes.function` row was restored to the closed-vocabulary table it was
+  orphaned from during the Freeze 15 edit — a table row stranded below a paragraph reads
+  as prose and is invisible to anyone scanning the vocabularies.
+- `ERRATA.md` — the A23 entry, `state: proposed`, and the manifest's "32 entries" line
+  brought up to date at 49.
+- `kagiroi-drift/NARRATIVE_LEDGER.yaml`, `kagiroi-drift/RUN_REPORT.md` — the run itself.
+
+The A23 defect is deliberately left unfixed, and the evidence for why it is *not* a
+one-character fix is in that entry: measured read-only over the installed calibration
+corpus, the frozen regex matches 561 of the 1,159 occurrences the rule is written to
+match. Under the intended reading the worst fiction chapter is 6.03/1k, and the
+scanner's own stated rule — cap = ~1.5x the worst calibration document — would then put
+the cap near 9/1000 rather than 3/1000. Fixing the regex without re-deriving the cap
+would fail published Hardy and Eliot. `deslop-check.sh` is untouched.
+
+**Verification.** `check-narrative.py` on `kagiroi-drift` parses the new sections and
+still exits 0: N1 clean, N4 conformant. Two things were tried and one was refused — a
+single `lint:` section holding both scalars and a findings list fails N4 at the parse
+("list item under non-list section"), because the parser only promotes a section to a
+list when it is still empty. The refusal is correct and the two-section shape is what
+survived it. `check-errata.py` exits 0 at 49 entries. Controls 13–16 unchanged, since no
+gate moved.
+
+Same instrument class as Freezes 16–17: no threshold, no corpus, no held-out comparison,
+nothing that could fail a book. What moved here is a place to write a number down so that
+the next session can check it.

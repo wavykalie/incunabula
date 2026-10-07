@@ -238,7 +238,10 @@ sentence loses both. One image per sensation, fully committed, beats two competi
 **Per-chapter test.** Read it aloud for rhythm. Find three sentences that deserve
 underlining; if none exist, the prose is functional but anonymous. Find three sentences
 carrying fat and cut them. Confirm at least one concrete image per page. Confirm the
-paragraph lengths vary.
+paragraph lengths vary. Before moving to the next chapter, run
+`tools/lint-chapter.py` on the chapter file: it renders `deslop-check.sh`'s rule table
+as `line:col` spans while the fix is still cheap. The scanner is the gate; the lint is
+the map.
 
 ---
 

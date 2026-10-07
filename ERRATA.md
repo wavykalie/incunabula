@@ -1550,3 +1550,151 @@ Found by running every gate across every book (`incunabula/SUITE-2026-10-01.md`)
                **Markup is counted, not judged** — bold in a draft is a convention,
                and reporting it put 103 FAILs across clean books. A check that
                fails on everything has no signal left to give.
+
+---
+
+## 2026-10-05 — Kagiroi Drift production review
+
+Four observations from the production and revision of one short novel. All n=1, all
+`observed`, none promoted: a book that trips something writes a line, it does not move
+the gate.
+
+### 2026-10-05 — declared-arcs diversity passed while one resolution circuit ran four times
+- **row:**      N2 (beat arcs) | resolution mechanisms
+- **observed:** A book passed N2 with eight distinct declared beat arcs while executing one
+               interpersonal resolution circuit — sensory overload, physical anchoring,
+               intimacy, calm — across four consecutive chapters. N2 compares declared arc
+               strings, so any declaration phrased distinctly passes while the same
+               mechanism repeats underneath.
+- **n:**        1 book (kagiroi-drift), 8 chapters, 4 consecutive repetitions
+- **evidence:** kagiroi-drift/RUN_REPORT.md — N2 reported "8 distinct chapter arcs" PASS
+               against a recorded fourfold circuit; the circuit was broken only when a
+               structural revision staged its deliberate failure in chapter 3.
+- **motive:**   aesthetic — the author's account: the book having one scene four times is
+               not variety, and a gate that reads declared labels cannot see it
+- **state:**    observed
+- **proposes:** give each declared beat arc a `resolution_mechanism` field in
+               NARRATIVE_LEDGER.yaml, and have N2 report any mechanism succeeding more
+               than twice consecutively. Report-only, like N2 itself: a repeated circuit
+               is sometimes deliberate, and no corpus of published resolution sequences
+               exists from which a cap could be derived.
+
+### 2026-10-05 — a character brief with no aesthetic contract filled itself in from trope
+- **row:**      intake schema (Phase 0) | case-keeper (ENTITY_STATE)
+- **observed:** Given "fit, muscular female salvor in a hard-SF yuri novel", the drafting
+               model defaulted to heavy, clunky, butch signifiers — broad shoulders, heavy
+               thighs, coarse odours, masculine mass — where the stated aesthetic was
+               slender athletic femininity with defined muscle. The intake schema had
+               nowhere to record physique, muscle tone, or excluded stereotypes, so the
+               drift was invisible until the prose existed.
+- **n:**        1 book (kagiroi-drift), 8 chapters rewritten
+- **evidence:** kagiroi-drift chapter-01 through chapter-08 rewrites; manual purging of
+               the heavy/butch signifier set against a brief that named the intended
+               athletic-feminine aesthetic.
+- **motive:**   aesthetic — the author's account: the brief named the aesthetic and the
+               model still defaulted; a contract with no slot for the body is a contract
+               that outsources it to the training distribution
+- **state:**    observed
+- **proposes:** add a Physique & Aesthetic Contract round to
+               `skills/incunabula-codex/references/intake-schema.md` — frame, muscle
+               definition, beauty register, and an explicit anti-trope list per named
+               character — mirrored into ENTITY_STATE.yaml so case-keeper carries it and
+               collator can audit the manuscript against it.
+
+### 2026-10-05 — a foundational wound sat as lore until it was forced
+- **row:**      N1 (narrative debt) | foundation trauma
+- **observed:** The Minato-9 pod trauma — the strongest psychological anchor in
+               foundation.md, with full sensory specificity — sat as passive backstory
+               texture for six chapters and was fired only when a structural revision
+               staged it. N1 would have caught it at delivery; nothing flags a crucible
+               that has not yet trapped anyone mid-book.
+- **n:**        1 book (kagiroi-drift)
+- **evidence:** kagiroi-drift/NARRATIVE_LEDGER.yaml D-001, resolved only by the chapter 7
+               rewrite (Skiff Lock Omega); RUN_REPORT.md item 1.
+- **motive:**   aesthetic — the author's account: a wound the story never re-opens is
+               scenery with a tragic press release
+- **state:**    observed
+- **proposes:** foundation-declared wounds carrying sensory tokens enter the ledger as
+               wound-class obligations with a `fire_by` milestone (pre-climax by default),
+               and check-narrative N1 reports a wound still unfired past its milestone.
+               The delivery gate is unchanged — it already forbids shipping OPEN debt, so
+               this is a timing signal, not a new failure.
+
+### 2026-10-05 — leads lost their working register outside the scenes that justified it
+- **row:**      V2 (dialogue register)
+- **observed:** Outside intimate scenes the romantic leads collapsed into breathless,
+               poetic whispering, while secondary characters held sharp, grounded,
+               technical voices. The tag layer showed it first and is not the whole of it.
+- **n:**        1 book (kagiroi-drift), 2 leads, chapters 3 and 6 audited
+- **evidence:** kagiroi-drift dialogue audits (RUN_REPORT.md item 4);
+               `tools/prose/check-dialogue-tags.py` V1/V2 was built from this failure and
+               reports the breath-family share — it sees the tags, not the register range.
+- **motive:**   aesthetic — the author's account: two people who work a salvage rig
+               together should be able to argue about hydraulics without reverence
+- **state:**    observed
+- **proposes:** two moves, both unenforced: (1) the Phase 4 evaluation asks explicitly
+               whether each lead pair holds a peer-to-peer workaday register — technical
+               jargon, dry banter, irritation — distinct from the intimate register; (2)
+               V2 extends to per-character breath-family share per chapter so the audit
+               has the table. No corpus of per-character register range exists, so
+               nothing here may gate.
+### 2026-10-05 — a slop rule that could only see half of English
+- **row:**      A23 (parenthetical dash) in `tools/prose/deslop-check.sh`
+- **observed:** The rule's regex is `—[^—\n]{1,70}—`. In POSIX ERE a backslash inside a
+               bracket expression is a literal backslash, not an escape, so the class is
+               em-dash, backslash, and the letter `n` — not "em-dash or newline". The
+               rule can therefore only fire on a parenthetical dash containing neither
+               `n` nor a backslash, which is most parenthetical dashes in English. The
+               drafting linter `tools/lint-chapter.py` reads the same table and hands the
+               regex to Python, where `[^—\n]` means what it was meant to mean, so the two
+               instruments disagree — and the disagreement is in the frozen scanner.
+- **n:**        1 rule. Measured on 449 chapter files / 2,562,491 words of the installed
+               calibration corpus, the frozen regex matches 561 of the 1,159 occurrences
+               the rule is written to match — it cannot see 51.6% of them. Fiction only
+               (306 files): 421 of 855, so 49% unseen. In kagiroi-drift: 0 of 8 chapters
+               flagged, containing 4 occurrences the scanner cannot see.
+- **evidence:** kagiroi-drift NARRATIVE_LEDGER.yaml `lint` section, rows A23; the four
+               occurrences are ch-01 `—clean copper and bitter neuro-balm—`, ch-04
+               `—the sudden, irreversible loss of their lifeline to the station—`, ch-05
+               `—warm metal, ozone, bitter glycol—` and `—the ghost of Saito's frozen
+               limbs—`, every one containing an `n`. Scanner output: `A23 parenthetical
+               dash 0.00 per 1k` on all three chapters while the linter reports 0.49,
+               0.50 and 0.80. Isolated test: `grep -cE '—[^—\n]{1,70}—'` returns 0 on
+               each of the four and 1 on `—oh, wow—`. Corpus counts by regex reading,
+               measured read-only at `tools/prose/calibration/corpus/`:
+
+               | subset | intended | frozen regex | worst chapter |
+               |---|---|---|---|
+               | all 449 files | 1,159 hits, 0.45/1k | 561 hits, 0.22/1k | 6.03 vs 2.48 /1k |
+               | fiction, 306 files | 855 hits, 0.70/1k | 421 hits, 0.34/1k | 6.03 vs 2.48 /1k |
+               | nonfiction, 143 files | 304 hits, 0.23/1k | 140 hits, 0.10/1k | 1.68 vs 2.24 /1k |
+- **motive:**   aesthetic — the author's account: a rule that cannot see most of what it
+               was written to see is worse than no rule, because the book is certified
+               clean against an instrument that was not looking
+- **state:**    proposed
+- **proposes:** re-derive A23 before fixing it, then fix it — and treat the two as one
+               change, because the numbers make a naive fix worse than the bug. Three
+               things are wrong at once:
+               (1) **The blind spot.** The bracket needs `[^—\\n]` in a POSIX context, or
+               the whole rule should be restated as a form grep cannot misread.
+               (2) **The cap.** `deslop-check.sh` states its own rule — cap = ~1.5x the
+               worst calibration document. Under the reading the rule was *meant* to have,
+               the worst fiction chapter on the installed corpus is 6.03/1k, so that
+               arithmetic wants a cap near 9/1000, three times the present 3/1000. Fixing
+               the regex while keeping the cap would fail published Hardy and Eliot; fixing
+               it and quietly keeping the old number would be a silent loosening dressed
+               as a bug fix. Neither is acceptable. The cap has to be set from a stated
+               corpus.
+               (3) **The provenance.** `CALIBRATION.md` records A23 as "85 occurrences,
+               1.79/1k" from "the 48 narrative documents" and gives no path. That figure is
+               not reproducible from any subset installed here (fiction 421, nonfiction
+               140, montgomery alone 54), so the number that makes the cap trustworthy
+               cannot currently be checked by anyone. An unattributable measurement is the
+               defect this whole directory was built to prevent, and it is a second entry
+               in its own right.
+               So the order is: identify the derivation corpus, re-measure under the
+               corrected regex, set the cap from that, then re-key `deslop-check.sh` in
+               GATE_FREEZE.md and re-run the controls. Until then nothing moves —
+               `tools/prose/deslop-check.sh` is untouched at `20e1976d20312974`.
+               Nothing in kagiroi-drift changes either way: its worst true reading is
+               0.80/1k against the current cap, and 0.80 against a re-derived one too.

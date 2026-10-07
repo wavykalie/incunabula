@@ -35,7 +35,7 @@ import shutil
 import sys
 from pathlib import Path
 
-REPO = Path("D:/KDP Books/incunabula/skills")
+REPO = Path(__file__).resolve().parent.parent / "skills"   # incunabula/skills/, wherever incunabula lives
 CLAUDE = Path.home() / ".claude" / "skills"
 AGENTS = Path.home() / ".agents" / "skills"
 QUARANTINE = Path.home() / "_skills-quarantine-20260929"
@@ -141,9 +141,9 @@ def main():
         (dest / "_SUPERSEDED_BY").write_text(
             "%s\nMoved 2026-09-29 by tools/sync-skills.py.\n"
             "The v4 name is superseded. The live successor is in\n"
-            "D:/KDP Books/incunabula/skills/.\n"
+            "%s.\n"
             "Full v4 history: D:/KDP Books/_archive/hollow-bridge/book-genesis-v4/\n"
-            % succ,
+            % (succ, REPO),
             encoding="utf-8",
         )
         print("   quarantined %-20s -> %s" % (old, dest))

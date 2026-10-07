@@ -37,8 +37,10 @@ WHAT IT CANNOT DO
 ROWS (all report-only; the tool exits 0 on any content)
   V1  per-character tag table: tagged lines, distinct verbs, top verb + share,
       breath-family share (whisper, gasp, breathe, pant, murmur, moan, sigh, ...)
-  V2  observations: shared top verbs between characters, tag collapse, and the
-      unattributed share
+  V2  observations: shared top verbs between characters, tag collapse, the
+      unattributed share, and the per-chapter breath map - which chapters carry the
+      breath-heavy tags - so the register question can be asked of the right scenes
+      rather than of the book in general
 
 EXIT CODES
   0  ran and reported (findings or not - findings are never a failure here)
@@ -155,6 +157,10 @@ def check(label, chapters):
     print(f"## {label}   {len(chapters)} chapters")
     print("=" * 67)
     verbs = defaultdict(Counter)     # speaker -> verb counts
+    # speaker -> chapter number -> [tagged spans, breath-family spans]. The map V2
+    # reports: the field failure (F-04) was leads breathing outside the scenes that
+    # justified it, and a book-level share cannot tell a reader WHICH scenes to read.
+    per_ch = defaultdict(lambda: defaultdict(lambda: [0, 0]))
     whole = "\n".join(t for _, t in chapters)
     # Words that appear lowercase ANYWHERE in the book. A real name does not; a
     # common word does. This is the strongest of the three name filters and it is
@@ -170,7 +176,14 @@ def check(label, chapters):
             if not vm:
                 continue
             verb = vm.group(1).lower()
-            verbs[speaker or "(unattributed)"][verb] += 1
+            sp = speaker or "(unattributed)"
+            verbs[sp][verb] += 1
+            cm = CHAPTER.search(name)
+            if cm:
+                slot = per_ch[sp][cm.group(1)]
+                slot[0] += 1
+                if verb in BREATH:
+                    slot[1] += 1
 
     if not verbs:
         print("   --   V1  no tagged dialogue found. Either the book is not dialogue-")
@@ -216,6 +229,16 @@ def check(label, chapters):
             print(f"   --   V2  {speaker}: {100.0 * breath / n:.0f}% of tags are breath-"
                   f"family (whisper/gasp/pant/...). In context this is voice; out of")
             print(f"          context it is register flattening. Check the scenes, not the table.")
+            printed = True
+        heavy = {ch: (nt, b) for ch, (nt, b) in per_ch[speaker].items()
+                 if nt >= 3 and b / nt >= 0.5}
+        if heavy:
+            listed = ", ".join(f"ch-{ch} {b}/{nt}"
+                              for ch, (nt, b) in sorted(heavy.items(),
+                                                       key=lambda kv: int(kv[0])))
+            print(f"   --   V2  {speaker} breath-heavy chapters: {listed}")
+            print(f"          The map the register question needs: are these the intimate")
+            print(f"          scenes? A breath-heavy chapter that is not is the field failure.")
             printed = True
     if not printed:
         print("   --   V2  no collapse, no shared top tags at the listing lines.")

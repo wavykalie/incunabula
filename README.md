@@ -261,6 +261,13 @@ The last two are opposite failures and both are needed. `deslop-check.sh` never 
 chapters at once, so it cannot see a book's shape; and a book can pass every per-chapter
 cap while being one of two different books.
 
+While a chapter is being drafted, `tools/lint-chapter.py` renders the scanner's rule
+table at drafting speed: every rule hit as a `line:col` span in the chapter just written,
+so the leverage trap and the participle run get fixed before assembly instead of after
+the book is compiled. It reads the rules out of `deslop-check.sh` at runtime and holds
+none of its own — where the two disagree, the scanner is right. It is a drafting aid and
+gates nothing.
+
 - **Thresholds are measured, never chosen.** A rule may be zero-tolerance only if
   published prose never does it — literally zero occurrences in the calibration corpus.
   Everything else gets a density cap. The measurements are in

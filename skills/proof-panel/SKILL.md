@@ -75,6 +75,16 @@ same anchor, same release, same quiet — more than twice in the book? Individua
 good scenes that share one circuit are the book having one scene several times.
 - Is there a chapter that is merely competent — no scene anyone would quote, nothing wrong
 with it either? Published books have those. A book with none of them is suspicious.
+- **Do the leads keep a working register outside the intimate scenes?** Two people who
+share a job share a vocabulary: they can argue about the work in the words of the work,
+be bored, be irritated, be funny at someone's expense. A pair who can only speak in
+breathless reverence whenever they are not in bed is a pair the author has been
+romancing instead of listening to. Secondary characters holding sharp grounded voices
+while the leads whisper is the tell.
+
+For the last question, run `tools/prose/check-dialogue-tags.py` and read its V2 breath
+map: it names which chapters carry the breath-heavy tags, so the question can be asked
+of the right scenes instead of of the book in general.
 
 Run `tools/check-uniformity.py` and put its output in the report. A panel that praises every
 chapter individually and never compares them has not read the book; it has read the chapters.
@@ -111,10 +121,14 @@ The panel's read produces two declarations that outlive the report, written into
 and folded into case-keeper's file on its next UPDATE:
 
 1. **One beat arc per chapter** — a single line in `->` form (e.g.
-   `overload -> anchored by touch -> release -> calm`). Judge the chapter's actual
-   emotional circuit; the repetition check downstream (`check-narrative.py` N2) only
-   works if the lines are honest summaries rather than variations written to look
-   different.
+   `overload -> anchored by touch -> release -> calm`) — **plus the `mechanism`**: the
+   interpersonal resolution that actually worked in that chapter (e.g.
+   `anchored by touch`). The arc is the label; the mechanism is the move. Judge the
+   chapter's actual emotional circuit; the repetition checks downstream
+   (`check-narrative.py` N2, which reports a mechanism succeeding more than twice
+   consecutively) only work if the lines are honest summaries rather than variations
+   written to look different — and a book once passed N2 with eight distinct arcs
+   while one circuit ran four chapters, so declare the mechanism too.
 2. **Each extended scene's function** from the closed list: relationship shift, theme
    payoff, plot turn, character revelation, pure texture. Two scenes declaring the same
    function is a reportable observation (N3), not a defect — the point is that the

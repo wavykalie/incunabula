@@ -40,8 +40,11 @@ WHY IT MAY GATE WITHOUT A CORPUS (read this before trusting the exit code)
   It may never end as silence.
 
 THE ROWS
-  N1  narrative debt       GATES   every obligation RESOLVED or DEFERRED-with-reason
-  N2  beat repetition      reports declared per-chapter emotional arcs that repeat
+  N1  narrative debt       GATES   every obligation RESOLVED or DEFERRED-with-reason;
+                           reports an OPEN wound past its declared fire_by chapter
+  N2  beat repetition      reports declared per-chapter emotional arcs that repeat, and
+                           declared resolution mechanisms (beats[].mechanism) that
+                           succeed more than twice in consecutive chapters
   N3  scene function       reports declared scene functions that duplicate
   N4  ledger conformance   GATES   schema validity, status discipline, staleness
 
@@ -51,6 +54,12 @@ THE ROWS
   number, and there is no corpus of published beat maps from which one could be derived.
   A repeated arc is a fact about this book, and the author judges it - which is the
   correct division of labour, because a repeated circuit is sometimes deliberate.
+
+  The mechanism row exists because declared-arc diversity once passed a book running
+  ONE interpersonal circuit four chapters straight: the arcs were phrased differently
+  while the same move resolved every chapter underneath them. Arc strings measure the
+  label; the mechanism is what actually worked. It is still report-only for the same
+  reason the rest of N2 is.
 
 EXIT CODES (mirroring check-length.py, because the same absences mean the same things)
     0  the ledger covers the book, conforms, and owes nothing at delivery
@@ -349,7 +358,8 @@ def _norm_arc(arc):
 
 
 def beats_rows(beats):
-    """N2, report-only. Exact duplicates, near-duplicate pairs, consecutive runs."""
+    """N2, report-only. Exact duplicates, near-duplicate pairs, consecutive runs,
+    and resolution mechanisms succeeding more than twice consecutively."""
     rows = [b for b in beats if isinstance(b, dict)
             and isinstance(b.get("chapter"), int) and b.get("arc")]
     rows.sort(key=lambda b: b["chapter"])
@@ -375,6 +385,27 @@ def beats_rows(beats):
         runs.append(list(run))
     for r in runs:
         lines.append(f"   --   N2  consecutive chapters {r} share one arc shape")
+    mech = [(b["chapter"], _norm_arc(b["mechanism"]))
+            for b in rows if str(b.get("mechanism") or "").strip()]
+    mrun, mruns = [], []
+    for ch, m in mech:
+        if mrun and m == mrun[-1][1] and ch == mrun[-1][0] + 1:
+            mrun.append((ch, m))
+        else:
+            if len(mrun) > 2:
+                mruns.append(mrun)
+            mrun = [(ch, m)]
+    if len(mrun) > 2:
+        mruns.append(mrun)
+    for r in mruns:
+        lines.append(f"   --   N2  resolution mechanism \"{r[0][1]}\" succeeds in chapters "
+                     f"{[c for c, _ in r]} consecutively - one circuit that many times is "
+                     f"the book having one scene again. Reported, not failed: a repeated "
+                     f"mechanism is sometimes deliberate.")
+    if rows and not mech:
+        lines.append("   --   N2  no resolution mechanisms declared (beats[].mechanism) - ")
+        lines.append("          declared arc diversity can pass while one circuit runs ")
+        lines.append("          underneath it, which is what the field failure looked like.")
     for i in range(len(rows)):
         for j in range(i + 1, len(rows)):
             a, b = _tokens(rows[i]["arc"]), _tokens(rows[j]["arc"])
@@ -453,6 +484,20 @@ def check(label, book_root, chapters_on_disk, tracked_hint):
     for d in open_debt:
         print(f"   --   N1  OPEN   {d.get('id')}  [{d.get('kind')}] "
               f"{d.get('description')}  (opened {d.get('opened')})")
+    covered = max(tracked) if tracked else 0
+    for d in open_debt:
+        fb = d.get("fire_by")
+        if fb is None:
+            continue
+        if not isinstance(fb, int):
+            print(f"   --   N1  timing  {d.get('id')} has a fire_by that is not a chapter "
+                  f"number - ignored, and an ignored field is a check that never fires")
+        elif covered >= fb:
+            print(f"   --   N1  timing  {d.get('id')} declared fire_by ch-{fb:02d} and is "
+                  f"still OPEN at chapter {covered} - the story has passed the chapter "
+                  f"that was supposed to re-stage it. Reported, not failed: N1's delivery")
+            print(f"          gate already forbids shipping it OPEN, and a book may fire "
+                  f"late on purpose. A wound that never fires is another matter.")
     for d in deferred:
         print(f"   --   N1  DEFERRED {d.get('id')}  {d.get('deferred_reason')}")
     n1_status = "FAIL" if open_debt else "ok"

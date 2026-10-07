@@ -45,7 +45,7 @@ same thing.
 ## Running it
 
 ```bash
-cd "D:/KDP Books/incunabula"
+cd ~/incunabula
 
 python tools/sync-skills.py            # quarantine superseded names, sync, verify
 python tools/sync-skills.py --check    # report only; changes nothing; exit 1 on drift

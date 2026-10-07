@@ -34,7 +34,7 @@ from datetime import date
 HERE = os.path.dirname(os.path.abspath(__file__))
 TOOLS_DIR = HERE                                      # incunabula/tools
 FRAMEWORK = os.path.dirname(TOOLS_DIR)                # incunabula/
-DEFAULT_WORKSPACE = os.path.dirname(FRAMEWORK)        # D:\KDP Books (parent of incunabula/)
+DEFAULT_WORKSPACE = os.path.join(FRAMEWORK, "test-books")  # incunabula/test-books/ (production workspace since 2026-10-07)
 REGISTRY = os.environ.get("BOOKS_REGISTRY", os.path.join(FRAMEWORK, "BOOKS.yaml"))
 
 STATUSES = {"concept", "drafting", "complete", "published", "fixture", "autonomous"}

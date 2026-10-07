@@ -103,13 +103,49 @@ voice_contract:
     inference: {}
 ```
 
-## Round 4 — Persistence
+## Round 4 — What people look like
 
-15. Should state update itself after every session, chapter, revision, or audit?
-16. May superseded working documents be archived automatically? Default: yes, archive —
+A character brief that says only "muscular" or "athletic" is under-specified, and the
+under-specified half gets filled from stereotype rather than from the story. This round
+makes the aesthetic a decision made at intake, where a person can see it, instead of a
+drift discovered in chapter three that somebody has to purge.
+
+15. For each named character who appears on the page: their frame and build — height
+    impression, bone structure, how mass is distributed.
+16. Muscle definition and where it shows. "Defined" is not "bulky"; say which one, and
+    say what the prose should notice (sculpted core, slender waist, graceful limbs).
+17. The beauty register the prose should land — pretty, striking, plain, severe, boyish,
+    delicate — and how the character moves (graceful, blunt, precise, loose).
+18. The **anti-tropes**: the stereotypes explicitly excluded from this character. This is
+    the operative half. Naming what the character is does not stop a model from reaching
+    for the nearest trope; naming what they are *not* does. Write the excluded signifiers
+    out (e.g. "broad shoulders, heavy thighs, clunky mass, coarse odours"), because the
+    list is read against the manuscript, not admired.
+19. The recurring physical tokens that identify the character — scent, warmth, texture,
+    the sensory signature a scene can return to.
+
+```yaml
+aesthetic_contract:
+  character-slug:
+    frame: ""
+    muscle: ""
+    beauty_register: ""
+    movement: ""
+    anti_tropes: []
+    sensory_signature: []
+```
+
+Mirror this into `ENTITY_STATE.yaml` under `physical.aesthetic` (case-keeper schema) so
+the contract survives to the chapters that will violate it. A reintroduced anti-trope is
+a continuity error like any other.
+
+## Round 5 — Persistence
+
+20. Should state update itself after every session, chapter, revision, or audit?
+21. May superseded working documents be archived automatically? Default: yes, archive —
     never delete without saying so.
-17. Which files or decisions are frozen unless you approve a change.
-18. Are there existing project files to upgrade? If so, where.
+22. Which files or decisions are frozen unless you approve a change.
+23. Are there existing project files to upgrade? If so, where.
 
 ```yaml
 persistence:
@@ -127,7 +163,9 @@ Once the answers are in:
 2. Write or update `PROJECT_STATE.yaml`.
 3. Produce the foundation and architecture artifacts the active phase calls for.
 4. Write the voice contract, or extend the one that already exists.
-5. Seed `CANON_LEDGER.yaml` from the decisions, foundation, outline, existing manuscript,
+5. Mirror each character's Physique & Aesthetic Contract into `ENTITY_STATE.yaml` under
+   `physical.aesthetic`, anti-trope list included.
+6. Seed `CANON_LEDGER.yaml` from the decisions, foundation, outline, existing manuscript,
    research, and entity state — keeping the provenance of each entry.
-6. Register every imported file in the document registry.
-7. For an upgrade rather than a new project, write `maintenance/MIGRATION_REPORT.md`.
+7. Register every imported file in the document registry.
+8. For an upgrade rather than a new project, write `maintenance/MIGRATION_REPORT.md`.

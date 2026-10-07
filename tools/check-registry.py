@@ -25,8 +25,10 @@ Usage:
     python tools/check-registry.py [workspace_root]
     python tools/check-registry.py --paths     # print registered paths (for loops)
 
-The workspace root defaults to the parent of the incunabula directory this
-file lives in, which is how the repository is laid out in production.
+The workspace root defaults to test-books/ inside the incunabula directory
+this file lives in — the production layout since 2026-10-07, when the book
+projects moved in under incunabula/ and incunabula itself moved to its own
+device-level location. Every registered path is relative to that root.
 """
 
 import os
@@ -132,7 +134,7 @@ def main(argv=None):
             print(b["path"])
         return 0
 
-    workspace = argv[0] if argv else os.path.dirname(os.path.dirname(HERE))
+    workspace = argv[0] if argv else os.path.join(os.path.dirname(HERE), "test-books")
 
     problems = []
 

@@ -185,12 +185,13 @@ def default_roots():
     """Every registered book on disk that has chapters. Empty list is honest.
 
     The registry lives at incunabula/BOOKS.yaml — one level ABOVE tools/, which is
-    where this file sits. Getting that wrong returns an empty scan, and an empty
-    scan that prints nothing is the exact failure this tool exists to catch.
+    where this file sits, and its paths are relative to incunabula/test-books/
+    (the production workspace). Getting that wrong returns an empty scan, and an
+    empty scan that prints nothing is the exact failure this tool exists to catch.
     """
     here = os.path.dirname(os.path.abspath(__file__))
     incunabula = os.path.dirname(here)
-    workspace = os.path.dirname(incunabula)
+    workspace = os.path.join(incunabula, "test-books")
     registry = os.path.join(incunabula, "BOOKS.yaml")
     roots = []
     if os.path.exists(registry):

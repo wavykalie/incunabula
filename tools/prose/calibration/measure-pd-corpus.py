@@ -48,7 +48,9 @@ import statistics as st
 ONELINE_FAIL, ONELINE_WARN = 35.0, 50.0
 PARACV_FAIL, PARACV_WARN = 55.0, 75.0
 
-DEFAULT_CORPUS = os.path.join("..", "..", "..", "..", "vermillion-study", "corpus", "human")
+# Absolute: incunabula moved out of the books workspace (2026-10-07), so no
+# relative climb reaches vermillion-study from here any more.
+DEFAULT_CORPUS = "D:/KDP Books/vermillion-study/corpus/human"
 
 
 def sentences(text):

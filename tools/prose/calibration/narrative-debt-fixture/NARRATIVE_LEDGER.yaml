@@ -12,7 +12,9 @@
 #
 # Deliberate defects, each targeting a row:
 #   N1  D-001 and D-002 are OPEN at delivery        -> must FAIL
+#   N1  D-001 is past its fire_by (ch-03)            -> the timing line must be reported
 #   N2  chapters 1, 2, 4, 6 declare the same arc    -> must be reported
+#   N2  chapters 1-3 resolve by one mechanism        -> the circuit line must be reported
 #   N3  three scenes declare "theme payoff"          -> must be reported
 #   N4  D-003 is DEFERRED with no deferred_reason    -> must FAIL
 meta:
@@ -22,12 +24,12 @@ meta:
   chapters_tracked: [1, 2, 3, 4, 5, 6]
 
 beats:
-  - { chapter: 1, arc: "overload -> anchored by touch -> release -> calm", source: "fixture" }
-  - { chapter: 2, arc: "overload -> anchored by touch -> release -> calm", source: "fixture" }
-  - { chapter: 3, arc: "discovery -> doubt -> decision", source: "fixture" }
-  - { chapter: 4, arc: "overload -> anchored by touch -> release -> calm", source: "fixture" }
-  - { chapter: 5, arc: "crisis -> cost -> resolve", source: "fixture" }
-  - { chapter: 6, arc: "overload -> anchored by touch -> release -> calm", source: "fixture" }
+  - { chapter: 1, arc: "overload -> anchored by touch -> release -> calm", mechanism: "anchored by touch", source: "fixture" }
+  - { chapter: 2, arc: "overload -> anchored by touch -> release -> calm", mechanism: "anchored by touch", source: "fixture" }
+  - { chapter: 3, arc: "discovery -> doubt -> decision", mechanism: "anchored by touch", source: "fixture" }
+  - { chapter: 4, arc: "overload -> anchored by touch -> release -> calm", mechanism: "verbal grounding", source: "fixture" }
+  - { chapter: 5, arc: "crisis -> cost -> resolve", mechanism: "technical competence", source: "fixture" }
+  - { chapter: 6, arc: "overload -> anchored by touch -> release -> calm", mechanism: "anchored by touch", source: "fixture" }
 
 scenes:
   - { chapter: 2, scene: "the bath", function: "theme payoff", words: 1400 }
@@ -36,7 +38,7 @@ scenes:
   - { chapter: 5, scene: "the burn", function: "plot turn", words: 900 }
 
 debt:
-  - { id: D-001, kind: trauma, description: "the Minato pod - forty hours, three corpses", opened: "ch-01:p12", status: OPEN, resolution: null, resolved_at: null, deferred_reason: null }
+  - { id: D-001, kind: trauma, description: "the Minato pod - forty hours, three corpses", opened: "ch-01:p12", fire_by: 3, status: OPEN, resolution: null, resolved_at: null, deferred_reason: null }
   - { id: D-002, kind: character, description: "Mizore delivers the plot and exits in a log entry", opened: "ch-03:p8", status: OPEN, resolution: null, resolved_at: null, deferred_reason: null }
   - { id: D-003, kind: mystery, description: "who falsified the dosimetry", opened: "ch-02:p3", status: DEFERRED, resolution: null, resolved_at: null, deferred_reason: null }
   - { id: D-004, kind: clock, description: "the Jovial transit window", opened: "ch-01:p2", status: RESOLVED, resolution: "the window closes on the page in ch-06", resolved_at: "ch-06:p40", deferred_reason: null }

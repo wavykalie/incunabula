@@ -32,15 +32,13 @@ meta:
   chapters_tracked: [1, 2, 3]
 
 beats:
-  - { chapter: 1, arc: "overload -> anchored by touch -> release -> calm", source: "proof-panel" }
+  - { chapter: 1, arc: "overload -> anchored by touch -> release -> calm", mechanism: "anchored by touch", source: "proof-panel" }
 
 scenes:
   - { chapter: 2, scene: "the bath", function: "theme payoff", words: 1400, source: "outline" }
 
 debt:
-  - { id: D-001, kind: trauma, description: "the Minato pod - forty hours, three corpses",
-      opened: "ch-01:p22", status: OPEN, resolution: null, resolved_at: null,
-      deferred_reason: null }
+  - { id: D-001, kind: trauma, description: "the Minato pod - forty hours, three corpses", opened: "ch-01:p22", fire_by: 7, status: OPEN, resolution: null, resolved_at: null, deferred_reason: null }
 ```
 
 **The parser is strict and stdlib-only** (`check-narrative.py` ships with no
@@ -61,6 +59,14 @@ conformance failure (N4).
 | `debt.status` | `OPEN` `RESOLVED` `DEFERRED` |
 | `scenes.function` | `relationship shift` `theme payoff` `plot turn` `character revelation` `pure texture` |
 
+`debt.fire_by` is an optional integer chapter number (see "When a wound fires"); it is
+not part of the closed vocabularies because a chapter number is not a vocabulary.
+
+`beats.mechanism` is the one deliberate exception: **free text, not a closed list**,
+because the resolution vocabulary of a genre is not enumerable. Comparison is after
+normalisation (case-folded, whitespace-collapsed), so "anchored by touch" and
+"Anchored by Touch" are one mechanism.
+
 ## Status discipline (this is the whole point)
 
 - **OPEN** — introduced with emphasis, not yet paid off. Every OPEN entry at delivery
@@ -75,6 +81,18 @@ conformance failure (N4).
   good — that is the author's ruling, and a deferral the author has not ruled on
   should say so in its own reason text.
 
+## When a wound fires
+
+A **core wound** — a trauma declared in `foundation.md` with sensory tokens attached,
+the pod and the freezing and the clicking purge toggle — is the book's strongest
+psychological instrument and the easiest thing in the world to leave as lore. Give it
+`fire_by`: the chapter by which the story must re-stage it (an integer, the
+pre-climax chapter by default). N1 reports any OPEN entry whose `fire_by` chapter has
+passed: the timing is the difference between a crucible and a press release. This is a
+report and never a gate — N1's delivery gate already forbids shipping OPEN debt, so a
+wound may fire late on purpose; a wound that never fires is caught at delivery, and one
+that fires on time is invisible here by construction.
+
 ## What counts as debt
 
 Anything introduced **with emphasis** that creates an expectation: mysteries, traumas
@@ -86,16 +104,58 @@ description; a false entry costs one line, a missing one costs a plot.
 
 ## Beats and scenes
 
-- **beats** — one row per chapter: a one-line emotional arc in `->` form. This is a
-  summary a reader could disagree with, which is fine: N2's repetition check is
-  report-only and a repeated circuit is sometimes deliberate. What the row buys is
-  durability — the arc is on record across sessions, so the *same* circuit appearing
-  four times becomes visible instead of living in one evaluator's memory.
+- **beats** — one row per chapter: a one-line emotional arc in `->` form, plus the
+  optional `mechanism`: the interpersonal resolution that actually *worked* in that
+  chapter ("anchored by touch", "verbal grounding", "technical competence", "rescue by
+  a third party" — or, in a chapter that breaks the circuit on purpose, what worked
+  instead). The arc is the label; the mechanism is the move. This distinction is not
+  theoretical: a book passed N2 with eight distinct declared arcs while one circuit —
+  overload, anchoring, intimacy, calm — resolved four consecutive chapters, because
+  the arcs were phrased differently while the same move worked underneath them. N2
+  reports any mechanism succeeding more than twice in consecutive chapters. The arc
+  row is a summary a reader could disagree with, which is fine: N2's repetition checks
+  are report-only and a repeated circuit is sometimes deliberate. What the row buys is
+  durability — the arc and the mechanism are on record across sessions, so a circuit
+  appearing four times becomes visible instead of living in one evaluator's memory.
 - **scenes** — one row per extended scene (a scene carrying narrative weight at length,
   roughly 800+ words), with `function` from the closed list. `words` is optional but
   makes the pure-texture share computable. Two scenes declaring the same function is
   reported (N3), never failed: duplication of function is a judgment call, and
   "pure texture" is a budget the author sets, not a cap this directory invents.
+
+## The lint block (optional, never gated)
+
+`lint_run:` and `lint:` record what `tools/lint-chapter.py` found when it was last run
+over the manuscript, and — this is the part that matters — what it found about the
+*instruments* rather than the book. Both are top-level sections like any other, so the
+strict parser reads them, and `check-narrative.py` deliberately **ignores** them: N1–N4
+have nothing to say about a density count, and a section the validator skips but does
+not reject is what "the parser is strict, the checks are scoped" has to mean in practice.
+
+It exists because the ledger is the one file that survives across sessions. A lint run
+that lives only in a terminal scrollback is a measurement nobody can audit next month,
+and the failure this section was added for is not a prose failure at all: the drafting
+linter and `deslop-check.sh` disagreed on one rule across eight chapters, and the
+disagreement was in the frozen scanner, not the book.
+
+Two sections rather than one because the parser's subset has no nested maps: `lint_run`
+is a key/value map, `lint` is a list of one-line flow maps.
+
+| `lint_run` key | meaning |
+|---|---|
+| `tool` | the linter that produced the run |
+| `source_of_truth` | the file the linter reads its rules from, live — never a copy |
+| `run` | date of the run, `YYYY-MM-DD` |
+| `freeze` | the GATE_FREEZE number the run was made under, so the numbers stay attributable |
+| `book_result` | `clean` or `over cap`, the author's own reading of the run |
+| `chapters_over_cap` | how many chapter files exceeded any cap |
+| `book_words` | words the run measured, so a rate in `lint` is checkable |
+
+Each `lint` row is `{ rule, state, observed, note }`. `state` is the field that earns the
+section: `book` means a real craft finding the author may act on; `instrument` means the
+rule itself misfired and the finding is about the gate. `instrument` rows must also be
+raised in `ERRATA.md` and not quietly patched — a frozen gate that changes without a
+freeze entry cannot be attributed to anything.
 
 ## Staleness
 
