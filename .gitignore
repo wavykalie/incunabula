@@ -20,6 +20,13 @@ __pycache__/
 # preferences, which is the correct default -- shipping it would make taste a default.
 USER_PREFERENCES.md
 
+# Book-carried copies of the calibration corpus. Same class as the corpus/ rule in
+# tools/prose/calibration/.gitignore: published commercial prose that is nobody else's
+# to ship, wherever it gets copied to. The copies stay on disk (the local controls that
+# read them keep working); they are excluded from every commit. Found by reading the
+# commit output for 96f549b, which carried 102 elaina files inside test-books/.
+test-books/**/tools/calibration/corpus/
+
 # Private registry exemptions: books on disk this public repo must not name.
 # Read by tools/check-registry.py (load_private_dirs); see BOOKS.yaml header.
 .registry-private

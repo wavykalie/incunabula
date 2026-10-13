@@ -14,7 +14,11 @@ directions, and this checks both:
     1. a registered path that no longer exists (a renamed or archived book the
        suite would silently skip), and
     2. a PROJECT_STATE.yaml on disk that is not registered (a book the suite
-       does not know about — the marrow-light failure).
+       does not know about — the marrow-light failure), and
+    3. a `complete`/`published` claim the files do not support — chapters with
+       no pass evidence, or zero gated words. Added 2026-10-13, author-directed,
+       after the audit found books reaching `status: complete` with 0 gated
+       words (quiet-hours, la-merienda) and nothing refusing the claim.
 
 Exit codes:
     0  registry and disk agree
@@ -31,6 +35,7 @@ projects moved in under incunabula/ and incunabula itself moved to its own
 device-level location. Every registered path is relative to that root.
 """
 
+import importlib.util
 import os
 import re
 import sys
@@ -105,6 +110,72 @@ def find_state_files(workspace, skip):
     return sorted(found)
 
 
+# Statuses that claim a finished book. `published` is included because it is a
+# strictly stronger claim than `complete` and would otherwise be an escape hatch
+# from this check. Every other status makes no finished claim and is exempt:
+# concept/drafting (nothing claimed yet), fixture (judged elsewhere),
+# autonomous (judged at its own gates, per the comment in BOOKS.yaml).
+CLAIMED_STATUSES = ("complete", "published")
+
+_EVIDENCE_MOD = None
+
+
+def evidence_module():
+    """check-pass-evidence.py, loaded once from beside this file.
+
+    The convention for which file evidences which chapter lives THERE and only
+    there; duplicating its regex here would give the two checkers two
+    conventions to drift apart. If the file is missing or broken, return None:
+    not-run is never a pass, and a status claim that cannot be checked is a
+    problem, not a clearance.
+    """
+    global _EVIDENCE_MOD
+    if _EVIDENCE_MOD is None:
+        path = os.path.join(HERE, "check-pass-evidence.py")
+        try:
+            spec = importlib.util.spec_from_file_location("check_pass_evidence", path)
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+        except (OSError, AttributeError, SyntaxError):
+            return None
+        _EVIDENCE_MOD = mod
+    return _EVIDENCE_MOD
+
+
+def evidence_problems(label, full, status):
+    """Refuse a finished claim the pass evidence does not support.
+
+    2026-10-13, author-directed: `status: complete` is refused when the book's
+    chapters carry no pass evidence or when gated words are zero. This extends
+    check-pass-evidence's rule to the registry's own claim. It re-judges no
+    delivered manuscript: the repair for a pre-evidence book is a truthful
+    status or the missing evaluations/*chNN*pass* files, never a re-scoring of
+    the prose.
+    """
+    mod = evidence_module()
+    if mod is None:
+        return [f"{label}: status {status} but pass evidence could not be checked "
+                f"(tools/check-pass-evidence.py missing or broken) - "
+                f"not-run is never a pass"]
+    rep = mod.evidence_report(full)
+    if "error" in rep:
+        return []  # nothing to check; the manuscript checks above already speak
+    out = []
+    if rep["missing"]:
+        out.append(
+            f"{label}: status {status} but {len(rep['missing'])} of {rep['chapters']} "
+            f"chapter(s) carry no pass evidence ({rep['gated_words']} / "
+            f"{rep['total_words']} gated words) - a claim without the artifact is "
+            f"a FAIL. Write the evaluations/*chNN*pass* files, or record a status "
+            f"that tells the truth.")
+    elif rep["gated_words"] == 0:
+        out.append(
+            f"{label}: status {status} but 0 gated words - every chapter is "
+            f"evidenced yet nothing is gated (empty chapters?). 'Complete' with "
+            f"zero gated words is the claim this check exists to refuse.")
+    return out
+
+
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     if "--paths" in argv:
@@ -163,10 +234,19 @@ def main(argv=None):
             # manuscript. An autonomous book is judged at its own gates instead.
             continue
         expects = b.get("expected_manuscript", True)
-        if expects and not has_chapters:
-            problems.append(f"{b['path']}: expected_manuscript true but no manuscript/chapters/")
+        # Only a FINISHED claim owes a manuscript on disk. A drafting book with
+        # no chapters yet is the intake state the pipeline creates (phases 0-2
+        # write no chapters), and flagging it made init-book.py's own verify
+        # step unpassable: a fresh scaffold was a registry failure the moment it
+        # was registered. The claim itself is judged in direction 3; this one
+        # says only "a finished claim with no manuscript behind it at all".
+        if status in CLAIMED_STATUSES and expects and not has_chapters:
+            problems.append(f"{b['path']}: status {status} claims a manuscript "
+                            f"but no manuscript/chapters/ exist")
         if not expects and has_chapters:
             problems.append(f"{b['path']}: expected_manuscript false but manuscript/chapters exists")
+        if status in CLAIMED_STATUSES and has_chapters:
+            problems.extend(evidence_problems(b["path"], full, status))
 
     # Direction 2: state files on disk must be registered.
     registered = {b["path"] for b in books}

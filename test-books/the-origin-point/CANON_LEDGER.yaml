@@ -1,0 +1,206 @@
+# CANON LEDGER — The Origin Point (PREMISE 2)
+# Scope: BOOK (no series planned). Required by the maintenance gate before Phase 0
+# dispatch. A mandated artifact that is absent is a FAILURE, not a to-do.
+# Provenance rule: every fact carries a source and last_verified. Nothing here may be
+# overwritten without a PRUNING_LOG entry.
+#
+# REBUILT 2026-09-27 after CONF-003 (human decision: CHANGE THE PREMISE).
+# Premise 1's ledger is preserved at archive/p1-documentary-2026-09-27/CANON_LEDGER.yaml.
+# Nothing was silently migrated. The cast is entirely different; see ARCHIVE-README.md.
+
+meta:
+  project: "the-origin-point"
+  premise: 2
+  scope: "book"
+  series: "none — standalone"
+  created: "2026-09-27"
+  last_verified: "2026-09-27"
+  authority: "premise.md and outline.md are the sources; this file is their index"
+  premise_superseded: "premise 1 (documentary engine) — FALSIFIED by /scout, archived not deleted"
+
+people:
+  - id: "P-001"
+    name: "Delphine Rusk"
+    role: "protagonist — regional fire investigator, covers a one-town county"
+    age: 37
+    canon:
+      - "Left the county at 19; her family home burned in 2019, four doors from her mother's (FACT-001)"
+      - "Was 31 in 2019 — a junior investigator four months into the post. She SIGNED the 2019 determination; the circuit reference was on the form and nobody asked her to check it (premise.md §2, CRIT-001/002)"
+      - "Has not believed the electrical determination privately for six years (OUTLINE ch 4)"
+      - "She is the only person professionally qualified to certify the 2025 fire, and she is also its most compromised witness (premise.md §2)"
+      - "Signed her own complicity out loud, in a room, to a person (OUTLINE ch 23)"
+      - "Takes the county post that keeps her in the county, ostensibly for the investigation (OUTLINE ch 29)"
+    lie: "I certify fires. I do not have a stake in what they were."
+    wound: "Six years of privately suspecting her own home, and never once being asked to look again"
+    chaos_profile:
+      irrelevant_obsessions: ["whether a burn pattern is 'right' before she has a photograph of it; she will not certify a fire she has not walked twice"]
+      cognitive_distortion: "Reads the town's helpfulness as a single coordinated thing, which makes her slow to accept that seven people can mean it separately and still arrive at the same silence"
+
+  - id: "P-002"
+    name: "Roy Halloran"
+    role: "volunteer fire chief, 61; Cora Vance's neighbour"
+    canon:
+      - "Arrived at the 2019 fire in four minutes from eleven blocks away — too fast (FACT-004, OUTLINE ch 12)"
+      - "Was the first responder in 2019 and has never described what he saw on the way (OUTLINE ch 12)"
+      - "Did not see a fire. He saw a person leaving a fire (OUTLINE ch 12)"
+      - "His kindness to Rusk occurs only when others are watching (FACT-005, OUTLINE ch 17)"
+      - "Deliberately unhelpful, in a warm way — never uncooperative (ledger item 13)"
+    lie: "I do not know anything. I put out fires and I go home."
+    wound: "He was there in 2019 and has spent six years being the reason nothing was asked"
+    chaos_profile:
+      irrelevant_obsessions: ["checks the volunteer roster every single morning, has done since 2019, has never missed a day, has never said why"]
+      cognitive_distortion: "Believes that being useful to people in a small town is a form of atonement, and has never tested whether it is"
+
+  - id: "P-003"
+    name: "Cora Vance"
+    role: "Rusk's mother, 74. Lives in the house on the street where the 2025 fire is"
+    canon:
+      - "Made the 2019 determination 'true' by not contradicting it (FACT-003, OUTLINE ch 27)"
+      - "Alone in the house the week of the 2019 fire; her son was out of the country (FACT-006, OUTLINE ch 13)"
+      - "Line, in ch 27, verbatim: 'I didn't light it. I made it true.' (premise.md §5)"
+      - "Named as a 'friend' of Terrell in his 2019 alibi, which is a lie (FACT-006, OUTLINE ch 15)"
+    lie: "What happened in that house is a private matter and the respectful thing is to let it lie."
+    wound: "She is the reason the town had a decision to make, and she made it alone, in one afternoon"
+    chaos_profile:
+      irrelevant_obsessions: ["keeps the kitchen clock eleven minutes fast; has for years; the reason is not hers to give"]
+      cognitive_distortion: "Believes her own complicity is a form of privacy. It is not. She knows it is not."
+
+  - id: "P-004"
+    name: "Terrell Vance"
+    role: "Cora's son, Cora's grandson, Rusk's nephew. The 2025 arsonist"
+    age: 36
+    age_note: "Aged DOWN from 38 by WARN-001: at 38 he was a year older than his aunt, which reads as an error. At 36 he is two years younger, which reads as entanglement — and the entanglement is the engine. Cousin-and-aunt is the right relationship for a secret this old."
+    canon:
+      - "Was 'with friends' in 2019; the alibi has an identifiable gap and the named friend is his own mother (FACT-006, OUTLINE ch 15)"
+      - "The only surviving witness to 2019 (premise.md §4)"
+      - "Set the 2025 fire on the same block, in the same room type, with the same pour signature (FACT-002)"
+      - "The motive is the inheritance, and finishing what Cora could not do herself (OUTLINE ch 24)"
+      - "CULPABILITY: responsible but not the killer. Set by orchestrator per user instruction; flagged as CONF-004 for check at the outline stage (see conflicts)"
+    lie: "I am the only one in this family who is actually angry about it."
+    wound: "He watched a 20-year-old woman let his mother take the blame and decided someone eventually would pay for it"
+    chaos_profile:
+      irrelevant_obsessions: ["keeps his grandmother's kitchen clock wound, does not know it is eleven minutes fast, has never mentioned it"]
+      cognitive_distortion: "Believes rage is a form of loyalty, and has never had anyone correct him on the difference"
+
+  - id: "P-005"
+    name: "Denny Aylward"
+    role: "mechanic, town garage. Sold the accelerant, both times"
+    canon:
+      - "Sold 340 gallons in 2019 and 260 gallons in April 2025, cash, no vehicle, no delivery address (FACT-007, OUTLINE ch 5, 16)"
+      - "Answers every question in order without being asked to (premise.md §4)"
+      - "Was told what the fuel was for. He has the name of who told him (OUTLINE ch 25)"
+      - "Has been waiting nineteen years to tell someone, and has picked the wrong moment twice (OUTLINE ch 25)"
+    lie: "I sell fuel to people. I don't ask what they do with it."
+    wound: "He was the convenience, and he has never been anything else, and he knows the difference now"
+    chaos_profile:
+      irrelevant_obsessions: ["logs every gallon in a hardback book, has since 2003, including the ones he should not have logged"]
+      cognitive_distortion: "Believes complicity is expiable by eventual disclosure. He is going to test that in ch 25."
+
+  - id: "P-006"
+    name: "Adela Iversen"
+    role: "county coroner"
+    canon:
+      - "The 2019 cause of death was NOT smoke inhalation, and ONE person died (FACT-008, OUTLINE ch 4 count planted, ch 10 stated)"
+      - "She signed that. She will say why on the record, or she will say it at all (OUTLINE ch 10)"
+      - "Suppressed finding, dated and timestamped, produced in ch 18 (ledger item 7)"
+      - "Never unkind, never helpful (premise.md §4)"
+    lie: "My job is the body. The rest of it belongs to people who were there."
+    wound: "She knew in 2019 and certified around it, because the alternative was dismantling a town she grew up in"
+    chaos_profile:
+      irrelevant_obsessions: ["the compression of the 2019 file, measured twice, in different pens"]
+      cognitive_distortion: "Believes professional neutrality is a real thing that exists, rather than a courtesy she performs"
+
+  - id: "P-007"
+    name: "Sam Okafor"
+    role: "pastor, 44"
+    canon:
+      - "Line, verbatim: 'we don't really have a fire here' (OUTLINE ch 3)"
+      - "Gives Rusk a list of who was in that house the night of 2019. The list has one name too many (FACT-009, OUTLINE ch 14)"
+      - "Knows who was in the building that night, and who wasn't (premise.md §4)"
+    lie: "People are not lying. They are just not saying it yet."
+    wound: "He has been holding a list for six years and has been waiting for permission to hand it over"
+    chaos_profile:
+      irrelevant_obsessions: ["knows every family in the county by which child was baptised when, and recites it under his breath while cooking"]
+      cognitive_distortion: "Believes a withheld truth is still a kindness, if you are gentle about the timing"
+
+places:
+  - id: "PL-001"
+    name: "The 2025 house"
+    canon: ["Three inside. Origin in a room with no beds. Poured, not spread (FACT-002)"]
+  - id: "PL-002"
+    name: "The 2019 house"
+    canon: ["Rusk's family home. Same street, same room type, same pour signature (FACT-001)", "ONE PERSON DIED HERE, 2019 (FACT-008, CRIT-004)", "Origin in the study — renamed from 'records room' by WARN-002; 'records' is premise 1's ghost noun"]
+  - id: "PL-003"
+    name: "The garage"
+    canon: ["Denny's. Bulk fuel accounts, 2019 and 2025 (FACT-007)"]
+  - id: "PL-004"
+    name: "The coroner's office"
+    canon: ["Where the suppressed finding lives, dated and timestamped (FACT-008)"]
+  - id: "PL-005"
+    name: "The county"
+    canon: ["One town. Inland, rural — set per F2, the rising heartland signal"]
+
+documents:
+  - id: "D-001"
+    name: "The 2019 determination"
+    canon: ["Cites a circuit that is not in the file (FACT-010, ledger item 5)"]
+  - id: "D-002"
+    name: "The 2025 certification"
+    canon: ["Rusk signs it in ch 1, before walking the scene. She walks it again in ch 2"]
+  - id: "D-003"
+    name: "The suppressed finding"
+    canon: ["2019 cause of death was not smoke inhalation. Dated, timestamped, produced ch 18 (FACT-008)"]
+  - id: "D-004"
+    name: "Denny's hardback"
+    canon: ["Every gallon logged since 2003, including both fires' fuel (FACT-007)"]
+  - id: "D-005"
+    name: "Sam's list"
+    canon: ["Who was in the house the night of 2019. One name too many (FACT-009)"]
+  - id: "D-006"
+    name: "Rusk's own signature"
+    canon: ["On the reopened 2019 determination, as the investigator. Last line of the book (OUTLINE ch 30)"]
+
+facts:
+  - {id: "FACT-001", claim: "The 2019 fire was the Rusk family home, determination 'electrical'", source: "premise.md §2", last_verified: "2026-09-27"}
+  - {id: "FACT-002", claim: "The 2025 fire shares origin-point signature and pour pattern with 2019 — same perpetrator", source: "outline.md ch 8, 20", last_verified: "2026-09-27"}
+  - {id: "FACT-003", claim: "Cora made the 2019 determination true by not contradicting it", source: "outline.md ch 27", last_verified: "2026-09-27"}
+  - {id: "FACT-004", claim: "Roy reached the 2019 fire in four minutes from eleven blocks — too fast", source: "outline.md ch 12", last_verified: "2026-09-27"}
+  - {id: "FACT-005", claim: "Roy's kindness to Rusk occurs only when observed", source: "outline.md ch 17", last_verified: "2026-09-27"}
+  - {id: "FACT-006", claim: "Terrell's 2019 alibi has a gap; its named friend is Cora, his mother", source: "outline.md ch 15", last_verified: "2026-09-27"}
+  - {id: "FACT-007", claim: "340 gal 2019 / 260 gal April 2025, cash, no vehicle, no address", source: "outline.md ch 5, 16", last_verified: "2026-09-27"}
+  - {id: "FACT-008", claim: "2019 cause of death was not smoke inhalation; Iversen signed and suppressed. ONE PERSON DIED in 2019 — the count is explicit and is required by CONF-004", source: "outline.md ch 4 (count), ch 10, 18", last_verified: "2026-09-27"}
+  - {id: "FACT-009", claim: "Sam's list of who was in the house that night contains one name too many", source: "outline.md ch 14", last_verified: "2026-09-27"}
+  - {id: "FACT-010", claim: "The 2019 determination cites a circuit absent from the file", source: "outline.md ch 4", last_verified: "2026-09-27"}
+  - {id: "FACT-011", claim: "2019 and 2025 are the same perpetrator, six years apart, same block", source: "user decision 2026-09-27 (same crime revisited)", last_verified: "2026-09-27"}
+  - {id: "FACT-012", claim: "Terrell is the 2025 arsonist", source: "premise.md §4", last_verified: "2026-09-27"}
+
+assumptions_in_force:
+  - {id: "A3-P2", claim: "A small-town ensemble mystery in which the investigator's professional access collides with her own complicity, and the town is the antagonist, is a viable market position", status: "OPEN — honestly weaker than premise 1's claim; Paper Cage proves the lane works and this book competes inside it, not ahead of it"}
+  - {id: "A9", claim: "The 14-item clue ledger is solvable by an attentive reader from the text alone", status: "OPEN — carried forward from premise 1 and STILL untested. An independent solve must be run before chapter 1. Premise 1 asserted this and never tested it; not repeating that."}
+  - {id: "A8", claim: "(RESOLVED AGAINST) Ending ambiguity on the protagonist's culpability will be received as fair play", status: "CONCEDED — user decided 2026-09-27 to give the reader closure on Rusk. Resolved on the page at ch 23. The town is not resolved, and that is the single remaining latitude."}
+
+conflicts:
+  - id: "CONF-003"
+    status: "CLOSED — human decided 2026-09-27: CHANGE THE PREMISE"
+    question: "Proceed as-is, reposition, or change the premise?"
+    resolution: "CHANGE THE PREMISE. Documentary engine abandoned. Premise 2 written from the Phase 1 findings. Premise 1 archived at archive/p1-documentary-2026-09-27/ with an ARCHIVE-README explaining what survives (content_boundaries, the 80-95k length contract, the pre-flight CV method). CONF-001 died with premise 1's outline, unasked."
+
+  - id: "CONF-004"
+    status: "OPEN — flagged at outline stage per user instruction"
+    scope: "ch 22-24, the ending"
+    question: "Is Terrell's 'responsible but not the killer' framing going to read as fair play, or as a cheat?"
+    why_open: "User instruction was explicit: the orchestrator decides, then flags it for check at the outline stage. Set as responsible-but-not-killer in outline.md ch 24. This is the SAME fork that killed premise 1's CONF-001 unasked, so it is being raised while the outline still exists and can be changed."
+    specific_risk: "The concessions already made: Rusk's complicity is resolved on the page (ch 23) per A8. If the reader gets closure on the investigator and then discovers the antagonist was let off, the ending reads as protecting a sympathetic character. F5 (the trade wants closure) cuts against leniency for Terrell specifically, because he is the least sympathetic person in the book."
+    proposed_fix_if_it_cheats: "OUTLINE ch 23 is the shortest structural distance between verdict and reader verdict, and it is the place to add the consequence. Ch 23 is currently 1,700 words and is the natural place to make the cost explicit."
+    raised: "2026-09-27"
+    owner: "human"
+    blocks: "Phase 3 drafting of ch 22-30. Does NOT block Phase 1.5, 2.5, 2.7, 2.8."
+
+  - id: "CONF-005"
+    status: "OPEN — housekeeping, deliberate"
+    scope: "Phase 3 precondition"
+    question: "Rename the project? 'A Matter of Record' described premise 1's records premise and describes nothing in premise 2."
+    why_open: "A directory rename on Windows fails loudly and late — in PROJECT_STATE.yaml paths and in any gate run against the old path. Doing it mid-run is worse than doing it explicitly. A new title has to be derived first, and a title is a human-facing commercial artifact."
+    raised: "2026-09-27"
+    owner: "human"
+    blocks: "Phase 3. Must be closed before any gate is run against the renamed book."

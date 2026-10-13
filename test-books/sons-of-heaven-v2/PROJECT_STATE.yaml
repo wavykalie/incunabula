@@ -1,0 +1,57 @@
+project:
+  title: "Sons of Heaven, Students of Dust"
+  subtitle: "Eleven Rulers and the Philosophers Who Explained Them"
+  genre: "Narrative nonfiction"
+  subgenre: "Popular history of China / history of ideas"
+  target_audience: "General adult readers of trade history; armchair historians; ideas-curious non-specialists"
+  word_count_target: 30000
+  # The range this run's architecture specifies (artifacts/02-architecture.md).
+  # Declared explicitly so the L1 row can be ENFORCED rather than advisory:
+  # a single figure would require inventing a tolerance to fail against.
+  target_floor_words: 28000
+  target_ceiling_words: 32000
+  positioning: "nonfiction"
+  language: "en"
+  device: "mirror"
+  created: "2026-09-27"
+  updated: "2026-09-27"
+
+# Provenance. This is a SECOND run of the same brief. incunabula-test/ holds the first,
+# 15 chapters, marked gate_passed, never observed being built. That book is the baseline
+# this run is measured against, not a template to copy: the point is to watch a run
+# end to end and see whether the sixteen phases hold together past chapter nine.
+run:
+  kind: "observed-end-to-end"
+  baseline: "C:/Users/screa/incunabula/test-books/incunabula-test"
+  gate_freeze: "C:/Users/screa/incunabula/GATE_FREEZE.md"
+  freeze_verified: true
+  note: >
+    Gates were frozen and hashed before any prose was written. A gate that changes
+    after this point ends the freeze for FUTURE runs only - this book stays a test
+    against the manifest as recorded. Run `bash tools/prose/verify-freeze.sh` and paste
+    the output into RUN_REPORT.md before trusting any gate reading below.
+
+phase:
+  current: 6
+  status: "complete"
+  history:
+    - { phase: 5.5, status: "completed", date: "2026-09-30", notes: "Autonomous pass: chapter-end Guidance apparatus added to all 11 chapters from each chapter's own material, kept quiet to every frozen row. A25 antithesis (ch11), D2 tricolons (ch02) and A22b canon-guard residue (ch05/07/10) fixed in the prose, never in the gate. Deslop PASS with zero warnings; uniformity U1 21.7% advisory, U3 0/11, U6 36% warn (narrator stall, recorded and left)." }
+    - { phase: 6, status: "completed", date: "2026-09-30", notes: "Complete. 11 chapters + guidance, measured against the current freeze. L1 satisfied (28,133 words against declared 28-32k, plus guidance apparatus)." }
+
+gates:
+  # Recorded at freeze. These are what the book will actually be judged against, and
+  # three of them are advisory or report-only, so a green run is partly a statement that
+  # nothing was gated.
+  scoped:
+    U1: "advisory (positioning: nonfiction)"
+    U4: "advisory (positioning: nonfiction)"
+    U5: "advisory (positioning: nonfiction)"
+  report_only: ["D1", "D2", "S1", "S2", "S3", "S4", "R1", "R2", "R3", "R4", "R5", "R6"]
+  known_blind_spots:
+    - "A1 does not detect the AI control (Coldbrook scores 0.533, inside the human range)"
+    - "D1 reads 0.00/1k on our own books - they spell a dash --, so the row measures encoding"
+    - "the drift floor misses roughly one real voice change in eight"
+    - "corpus is 1813-1905 English prose; nothing commercially recent is in it"
+
+errata:
+  mode: "hand"

@@ -1,0 +1,59 @@
+# NARRATIVE_LEDGER.yaml - what this book promised the reader.
+# Built for Kagiroi Drift (Short Novel Edition: 8 Chapters).
+# Schema: incunabula-codex/references/narrative-ledger-schema.md
+# Validated by: tools/prose/check-narrative.py (rows N1-N4).
+
+meta:
+  version: "1.0"
+  last_updated: "2026-10-05"
+  last_updated_by: "case-keeper; revised for short-novel expansion; lint block added by hand"
+  chapters_tracked: [1, 2, 3, 4, 5, 6, 7, 8]
+
+beats:
+  - { chapter: 1, arc: "vacuum panic -> sensory collision -> tentative shelter", source: "Phase 4 declaration" }
+  - { chapter: 2, arc: "harmonic spike -> somatic pressure -> disciplined release", source: "Phase 4 declaration" }
+  - { chapter: 3, arc: "complication arrives -> anchoring fails -> anger -> tactical solidarity", source: "Phase 4 declaration" }
+  - { chapter: 4, arc: "tether breach -> disorientation -> survival heat -> raw intimacy", source: "Phase 4 declaration" }
+  - { chapter: 5, arc: "standoff -> trauma exposed -> mutual defiance -> pact", source: "Phase 4 declaration" }
+  - { chapter: 6, arc: "crushing burn -> sensory telemetry -> evasion -> weightlessness", source: "Phase 4 declaration" }
+  - { chapter: 7, arc: "decompression trap -> paralysis -> reversal: Sakuya anchors -> breakthrough", source: "Phase 4 declaration" }
+  - { chapter: 8, arc: "orbital silence -> earned dawn -> shared warmth -> future open", source: "Phase 4 declaration" }
+
+scenes:
+  - { chapter: 1, scene: "the airlock pump-down", function: "character revelation", words: 2029, source: "Phase 4 declaration" }
+  - { chapter: 2, scene: "the disciplined anchoring", function: "relationship shift", words: 1662, source: "Phase 4 declaration" }
+  - { chapter: 3, scene: "the failed anchoring and conduit repair", function: "plot turn", words: 2293, source: "Phase 4 declaration" }
+  - { chapter: 4, scene: "the reactor bay emergency", function: "relationship shift", words: 1940, source: "Phase 4 declaration" }
+  - { chapter: 5, scene: "the standoff with Mizore and the Minato confession", function: "character revelation", words: 2422, source: "Phase 4 declaration" }
+  - { chapter: 6, scene: "the high-g burn in liquid couches", function: "plot turn", words: 1122, source: "Phase 4 declaration" }
+  - { chapter: 7, scene: "the airlock trap and Sakuya anchoring reversal", function: "theme payoff", words: 2749, source: "Phase 4 declaration" }
+  - { chapter: 8, scene: "the Lagrangian dawn in the cupola", function: "theme payoff", words: 1569, source: "Phase 4 declaration" }
+
+debt:
+  - { id: D-001, kind: trauma, description: "the Minato-9 pod - forty hours, three corpses; Kaname core wound", opened: "ch-01:p22", status: RESOLVED, resolution: "Sakuya anchors Kaname during the emergency airlock trap in ch-07, reversing the somatic circuit and pulling Kaname out of the decompression flashback", resolved_at: "ch-07:p45", deferred_reason: null }
+  - { id: D-002, kind: character, description: "Yoiduki Mizore - introduced with emphasis, delivers the plot, returns in the back half to force the Minato truth open and secure her cut", opened: "ch-03:p14", status: DEFERRED, resolution: null, resolved_at: null, deferred_reason: "deliberately open as series fuel for Book Two - Mizore departs in ch-08 burning for the Jovian transit with her cut of the Akegata salvage" }
+  - { id: D-003, kind: threat, description: "Natsume Combine gun-cutters - scuttle the hull with railgun fire", opened: "ch-03:p39", status: RESOLVED, resolution: "the cutter breaks off during the high-g burn in ch-06 when blinded by the hydrogen exhaust plume", resolved_at: "ch-06:p32", deferred_reason: null }
+  - { id: D-004, kind: clock, description: "four hours before the Akegata-Maru hits the thermal boundary", opened: "ch-03:p39", status: RESOLVED, resolution: "the tow and coolant extraction happen inside the window in ch-04 and ch-05", resolved_at: "ch-05:p28", deferred_reason: null }
+  - { id: D-005, kind: object, description: "thirty-six canisters of neuro-grade coolant secured in Sakuya vault", opened: "ch-06:p5", status: RESOLVED, resolution: "thirty-six canisters are locked in Sakuya vault in ch-08, ensuring five years of neural shunt stability and station monitoring", resolved_at: "ch-08:p12", deferred_reason: null }
+  - { id: D-006, kind: object, description: "canister arithmetic reconciliation - exactly forty canisters total on the Akegata-Maru (four consumed for emergency shunt injection in ch-04, thirty-six secured in Shin-Murakumo vault in ch-05/08)", opened: "ch-03:p27", status: RESOLVED, resolution: "manifest arithmetic reconciled across all chapters: exactly 40 canisters total on the wreck (4 used on Sakuya in ch-04 + 36 secured in vault in ch-05/08 = 40 total)", resolved_at: "ch-05:p35", deferred_reason: null }
+
+# ---------------------------------------------------------------------------
+# lint_run / lint - what the drafting linter found, and what it found about the
+# instruments. Schema: narrative-ledger-schema.md, "The lint block". Optional,
+# never gated: check-narrative.py parses both sections and has nothing to say
+# about either. A section the validator skips but does not reject is what
+# "the parser is strict, the checks are scoped" has to mean in practice.
+lint_run:
+  tool: "tools/lint-chapter.py"
+  source_of_truth: "tools/prose/deslop-check.sh"
+  run: "2026-10-05"
+  freeze: 17
+  book_result: "clean"
+  chapters_over_cap: 0
+  book_words: 15480
+
+lint:
+  - { rule: A23, state: instrument, observed: "0 occurrences under deslop-check.sh, 4 under the linter", note: "the rule's bracket class is the em dash, a literal backslash and the letter n, so in POSIX ERE it can only fire on an n-free parenthetical dash; all four occurrences contain one (neuro, sudden, ozone, frozen)" }
+  - { rule: A23, state: book, observed: "4 occurrences, worst ch-05 at 0.80/1k", note: "cap is 3/1000, so nothing would have failed even if the rule could see them" }
+  - { rule: D3, state: instrument, observed: "3 lexical false positives of 117 hits (assembly, firefly x2)", note: "the regex is any word of 4+ lowercase letters ending in -ly, adverb or not; both instruments share it, so this is rule precision and not disagreement" }
+  - { rule: A22b, state: book, observed: "2 warnings in ch-04, both true negatives", note: "absorbed the kinetic shock / shock-absorbing silicone - the mechanical sense, not the emotional sense the canon guard watches; WARN_ONLY firing and correctly costing nothing" }

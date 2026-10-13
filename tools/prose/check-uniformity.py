@@ -122,7 +122,8 @@ that: it runs paragraphs where the argument runs, and a low share of one-line pa
 in it is a property of the form, not of a machine. Scoping the row is the honest response
 to a corpus with no nonfiction in it. The moment a nonfiction corpus is added under
 calibration/, these two rows can be given real thresholds and the scope lifted. Until
-then a book that declares `positioning: nonfiction` in PROJECT_STATE.yaml has U4 and U5
+then a book that declares `mode: nonfiction` (or the legacy `positioning: nonfiction`) in
+PROJECT_STATE.yaml has U4 and U5
 reported and explained but not failed - and the numbers stay on the page so the trend is
 visible rather than hidden.
 
@@ -147,6 +148,8 @@ import re
 import sys
 import glob
 import statistics as st
+
+import conventions
 
 MIN_CHAPTERS = 4          # fewer than four chapters cannot show a distribution
 # Chapter-length CV. The floor is 1.5x below the worst published ENGLISH FICTION volume
@@ -265,20 +268,19 @@ def declare_convention(book_root):
     to the market row, or get the number reported and the market signal anyway.
     """
     path = os.path.join(book_root, "PROJECT_STATE.yaml")
+    declared_mode = conventions.mode_of(book_root)
     convention = "default"
-    if os.path.isfile(path):
-        with open(path, encoding="utf-8", errors="ignore") as fh:
-            head = fh.read(4000)
-        if re.search(r"^\s*(positioning|genre)\s*:\s*\"?[^\n]*nonfiction", head, re.I | re.M):
-            convention = "nonfiction"
-        else:
-            # An explicit opt-in, declared by the book. Only "commercial-dialogue"
-            # reinstates the gate; any other value is a declaration of something else
-            # and leaves U4 advisory.
-            m = re.search(r"^\s*paragraph_convention\s*:\s*\"?([^\n\"]*)", head, re.I | re.M)
-            if m and m.group(1).strip().lower().replace("_", "-") in ("commercial-dialogue",
-                                                                       "commercial dialogue"):
-                convention = "commercial-dialogue"
+    if declared_mode == "nonfiction":
+        convention = "nonfiction"
+    elif path and os.path.isfile(path):
+        # An explicit opt-in, declared by the book. Only "commercial-dialogue"
+        # reinstates the gate; any other value is a declaration of something else
+        # and leaves U4 advisory.
+        head = conventions.read_head(book_root)
+        m = re.search(r"^\s*paragraph_convention\s*:\s*\"?([^\n\"]*)", head, re.I | re.M)
+        if m and m.group(1).strip().lower().replace("_", "-") in ("commercial-dialogue",
+                                                                   "commercial dialogue"):
+            convention = "commercial-dialogue"
     return convention
 
 

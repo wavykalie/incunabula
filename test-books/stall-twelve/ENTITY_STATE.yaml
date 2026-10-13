@@ -1,0 +1,77 @@
+# ENTITY_STATE.yaml — Stall Twelve (autonomous run, seed 22525761)
+# case-keeper BUILD from foundation + outline.
+
+characters:
+  - name: "Delia Marsh"
+    role: POV / dumpling stall 12
+    age: 56
+    traits: ["oil temperature by sound", "wipes surfaces when anxious", "files eviction letters unopened by date", "Ray's thumb on a seal"]
+    wound: "husband Ray died 6 years ago owing suppliers; kept the stall, never the grief"
+    status: alive
+  - name: "Harold Pye"
+    role: founder-ghost, stall 12
+    traits: ["municipal Edwardian collapsing to vernacular when oil hot", "tic 'Clause—'", "margarine-vs-butter schism", "points, never touches"]
+    wound: "died 1974 with the lease lost"
+    rules: ["remembers only when fryers on", "can't touch paper, only point", "can't leave market footprint"]
+    status: dead (1974)
+  - name: "Mr. Fenn"
+    role: council jobsworth / counter-force
+    age: 48
+    traits: ["conditional smoothness", "kind to pigeons", "knows every pitch", "lets silence bill"]
+    wound: "father lost pitch 3"
+    status: alive
+  - name: "Big Connie"
+    role: jerk-chicken rival-turned-ally
+    age: 60
+    traits: ["volume + proverbs", "feeds everyone", "money-talk plain"]
+    status: alive
+  - name: "Leo Marsh"
+    role: grandson, 16, camera / future holder
+    traits: ["'Say that again' + records", "quiet-competent under pressure"]
+    status: alive
+  - name: "Dr. Shah"
+    role: health inspector
+    traits: ["'Schedule 4'", "secretly feeds pigeons"]
+    status: alive
+
+places:
+  - name: "the night market (12 stalls)"
+    description: "shutters, steam, rent books; footprint Pye cannot leave"
+    chapters: [1-20]
+  - name: "stall 12 (dumplings)"
+    description: "Delia's; Pye's haunt; cold fryer / warm stall wrongness ch1"
+    chapters: [1-20]
+  - name: "the health-cert archive"
+    description: "where the 1962 indenture was misfiled in 1974"
+    chapters: [5, 14, 16]
+
+objects:
+  - name: "unopened eviction letters (filed by date)"
+    chapters: [1, 4, 15, 18]
+  - name: "the 1962 indenture (lost; renewal clause)"
+    chapters: [2, 7, 16, 20]
+  - name: "rent books (stall 12's missing)"
+    chapters: [4, 17]
+  - name: "oil drums + fryer steam (memory medium)"
+    chapters: [1, 2, 7, 10, 16, 19]
+  - name: "pigeons (Fenn/Shah mercy motif)"
+    chapters: [9, 15, 17, 20]
+
+timeline:
+  - { chapter: 1, when: "day 30 to eviction, pre-dawn", event: "fold; cold fryer warm stall; Pye flickers" }
+  - { chapter: 2, when: "day 30, fryers on", event: "rules stated; indenture named, location unknown" }
+  - { chapter: 4, when: "day 29", event: "Fenn serves 30-day notice on stage; whip-round starts" }
+  - { chapter: 15, when: "day 8", event: "bailiff paper: 7 days" }
+  - { chapter: 16, when: "day 7", event: "location: health-cert archive, filed by Fenn's father" }
+  - { chapter: 18, when: "day 3", event: "grief said aloud" }
+  - { chapter: 20, when: "eviction day", event: "indenture produced; traders buy freehold" }
+
+world_rules:
+  - "close third on Delia; present tense market action, past for Pye-memory"
+  - "Pye's 3 rules stated ch2, never broken"
+  - "no naked exposition; chapters end on image/gag-withdrawn, never moral"
+
+knowledge_flow:
+  - "Delia does not know Ray's debt truth until ch11 (suppliers, not rent)"
+  - "Fenn does not know his father filed the indenture until ch16"
+  - "Leo does not know Pye waves at cameras until ch12"

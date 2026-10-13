@@ -96,3 +96,10 @@ books:
     status: autonomous
     expected_manuscript: true
     note: "Autonomous run (random button) - rolled by tools/roll-brief.py, no author at the wheel. (2026-10-05)"
+
+
+  - path: stall-twelve
+    title: "Stall Twelve (WORKING TITLE)"
+    status: autonomous
+    expected_manuscript: true
+    note: "Autonomous run (random button) - rolled by tools/roll-brief.py, no author at the wheel. (2026-10-11)"

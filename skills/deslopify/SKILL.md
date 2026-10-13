@@ -40,5 +40,5 @@ So deslopify a single passage one way, and a manuscript another:
   interchangeable will not be repaired by polishing them one at a time.
 
 The measured numbers behind those checks, and the controls that keep them honest, are in
-`tools/check-uniformity.py` and `tools/deslop-check.sh` (rules `A24`, `A25`, `F1`, `U1-U3`).
+`tools/prose/check-uniformity.py` and `tools/prose/deslop-check.sh` (rules `A24`, `A25`, `F1`, `U1-U3`).
 The guide states the principle; the tools enforce it.

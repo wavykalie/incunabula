@@ -9,3 +9,9 @@ calibration-report.txt.tmp
 # `bash deslop-check.sh calibration/<dir>` once fetch-multivolume.py has run. The
 # measurements it supports are recorded in CALIBRATION.md; the text is not ours to ship.
 pd-chapter-scan.txt
+
+# Same class for the prescriptive sweep (CALIBRATION.md section 20): a raw scanner run
+# and the full per-rule report over corpus/prescriptive, regenerable with
+# `bash deslop-check.sh corpus/prescriptive` and `python sweep-rows.py corpus/*`.
+prescriptive-scan.txt
+sweep-report.txt

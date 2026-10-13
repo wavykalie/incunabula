@@ -35,7 +35,7 @@ The gate is the **Platen** — the lowest dimension of the Incunabula Score, not
 
 Also required before the chapter may advance:
 
-- **Prose gate:** the calibrated scanner (`tools/deslop-check.sh`) passes. A passing scan is never
+- **Prose gate:** the calibrated scanner (`tools/prose/deslop-check.sh`) passes. A passing scan is never
   evidence that the prose is good — it is an input, not a verdict.
 - **Passing Reader:** if the verdict is "would not keep reading," treat it as CRITICAL regardless of
   score. This overrides the floor.

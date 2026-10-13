@@ -8,7 +8,10 @@
 #
 # Every past failure class this project recorded is one of its rows: a stale installed
 # skill copy (meaningless measurements), a broken freeze (unattributable results), a
-# state file that would not parse (KF-004), and a stray CR that hid from grep (KF-005).
+# state file that would not parse (KF-004), a stray CR that hid from grep (KF-005),
+# and a book carrying its own stale copy of the instruments (a verdict nobody can
+# attribute - the copy now under test-books/incunabula-test/_archive/ failed U1 at
+# 30% where the frozen instrument fails at 22%).
 # A check that has never been seen to fail is not yet known to work — so every row here
 # names its own state, including the states where it could not look.
 #
@@ -17,7 +20,9 @@
 #
 #   With no project root, the state-hygiene rows are reported SKIPPED, not passed.
 #   With one or more roots (a book directory or a books root), every canonical state
-#   file found there is checked.
+#   file found there is checked. The embedded-instrument row always scans the whole
+#   workspace (test-books/) plus any given roots - that failure class lives wherever
+#   the books live, whether or not a session passed a root.
 #
 # EXIT
 #   0  every row PASS or SKIPPED (skips are named in the output)
@@ -155,6 +160,34 @@ if [ -f "$ROOT/SELF_IMPROVEMENT.md" ]; then
 else
   row "improvement.mode" FAIL "SELF_IMPROVEMENT.md not found"
 fi
+
+# 6. Embedded instruments --------------------------------------------------------
+# A book that carries its own copy of the gates can be measured by a stale one:
+# test-books/incunabula-test/_archive/tools/check-uniformity.py (quarantined
+# 2026-10-13) fails U1 at 30% while the frozen copy fails at 22% (recorded in
+# tools/run-gates.sh). run-gates.sh never runs
+# a book-embedded copy, but a human with a shell might, and a result must be
+# attributable to one known instrument. The scan matches by instrument NAME: a
+# book's own tool (track_words.py, build-epub.py) is its apparatus and is left
+# alone; a copy of THE instruments is the trap. Quarantining (_archive/) or
+# deleting the copy is the author's call - this row deletes nothing.
+echo "6. embedded instruments"
+inst_names=$(find "$ROOT/tools" -maxdepth 3 -type f \( -name '*.py' -o -name '*.sh' -o -name '*.tsv' \) 2>/dev/null | sed 's#.*/##' | sort -u)
+hits=$(for base in "$ROOT/test-books" "$@"; do
+  [ -d "$base" ] || continue
+  find "$base" \( -name _archive -o -name archive -o -name dist -o -name __pycache__ -o -name .git -o -name .agents \) -prune -o -type f \( -name '*.py' -o -name '*.sh' -o -name '*.tsv' \) -print 2>/dev/null
+done | sort -u)
+found_inst=0
+while IFS= read -r f; do
+  [ -n "$f" ] || continue
+  case "$f" in "$ROOT/tools/"*) continue ;; esac   # the instruments themselves
+  n=$(basename "$f")
+  if printf '%s\n' "$inst_names" | grep -qxF "$n"; then
+    row "$(dirname "${f#$ROOT/}")" FAIL "$n is a book-carried copy of the instrument - a stale copy mis-measures, run-gates never runs it but a shell might. Quarantine under _archive/ or delete."
+    found_inst=1
+  fi
+done <<< "$hits"
+[ $found_inst -eq 0 ] && row "embedded instruments" PASS "no book carries a copy of the instruments"
 
 echo
 if [ $fails -gt 0 ]; then

@@ -48,6 +48,10 @@ brief is rolled, not given:
    answer every reason, then dispatch a fresh critic. **Loop until APPROVE.**
    Record every verdict — date, verdict, reasons — in PROJECT_STATE.yaml. A
    denied round that vanishes from the record is a round nobody learns from.
+   Where no subagent dispatcher exists in the harness, there is no fresh critic
+   to dispatch: the three checkpoints belong to the human, and the run waits.
+   A critic-role self-vote stands in for nobody — one mind on both sides of a
+   verdict is a wish, and the loop only promotes on falsifiers.
 5. Deliver as usual. The book sits in the registry as `status: autonomous`;
    the author can promote it (edit the status by hand) or archive it.
 
@@ -91,6 +95,13 @@ avenging a murdered family. Language and idea travel together.
 Before dispatching, run `bash tools/preflight.sh` at the pipeline root and confirm every
 row is PASS or a named SKIP. A FAIL is fixed or reported before the run starts — a book
 drafted against a stale instrument is not a book.
+
+Before checkpoint two (the manuscript is approved) and checkpoint three (the book is
+delivered), run `bash tools/run-gates.sh <book-root>` and record its verdict with the
+checkpoint. A FAIL (exit 1) or a NOT CLEAR (exit 2) blocks the checkpoint exactly as a
+denied critic vote would: the run revises until the runner returns CLEAR. Checkpoint one
+precedes any chapters — there is nothing to gate yet, and the runner is not run for the
+sake of running it.
 
 On invocation, dispatch the orchestrator immediately with the user's full input and the
 instruction to run the entire pipeline autonomously, pausing only at the three checkpoints.

@@ -1,0 +1,323 @@
+# ENTITY_STATE.yaml — Case Tracking (BUILD, Phase 2.7)
+#
+# Single source of truth for continuity. Built BEFORE Chapter 1 was written, from
+# CANON_LEDGER.yaml + artifacts/02-story-engine.md + artifacts/03-characters.md +
+# artifacts/05-outline.md.
+#
+# `status: planned` = known from the outline, not yet on the page.
+#
+# ---------------------------------------------------------------------------
+# CAST DECLARATION FORMAT — inherited from muzzle-and-marrow, and load-bearing
+# ---------------------------------------------------------------------------
+# The frozen gate `check-names.py` reads cast from `canonical_name:` lines and splits each
+# on whitespace: parts[0] is a FIRST name, parts[1] a SURNAME. Probed on the pilot:
+#
+#   "Duke Rocky of Cavalton"   -> first="Duke",      surname="Rocky"
+#   "Mittens the 7th"          -> IGNORED (single bare part)
+#
+# So each character is declared twice. `canonical_name` is what the parser reads and is
+# always two ordinary parts. `called_in_prose` is what the manuscript prints. They happen
+# to be the same in this book — this is a contemporary romance, so the names ARE the
+# names — but the two fields are kept separate because the probe result is a property of
+# the PARSER, not of the pilot's world, and a future entry into this world with pet names
+# in it would silently lose characters from the gate.
+#
+# The frozen gate is NOT modified and no prose is bent to satisfy a parser.
+
+meta:
+  mode: "BUILD (Phase 2.7), then UPDATE after each block of 5-10 chapters"
+  built: "2026-09-29"
+  sources: [CANON_LEDGER.yaml, artifacts/02-story-engine.md, artifacts/03-characters.md, artifacts/05-outline.md]
+  last_update: "2026-09-29"
+  update_note: "Initial build. No chapter drafted yet. Chapters listed are PLANNED appearances from the outline."
+
+# --------------------------------------------------------------------------- characters
+characters:
+  - id: CHR-001
+    canonical_name: "Ines Varga"
+    called_in_prose: "Ines"
+    age: 38
+    role: protagonist
+    profession: "cave explorer, decommissioned; sells technical equipment at Renn and Daughters"
+    wound: "the 2022 Vell survey ended in a collapse in the fourth chamber; her partner Solveig Havelock died in it; Ines was fifteen metres away on the line and did not go back in"
+    want: "to be asked to do something difficult by someone who is not pitiable"
+    need: "to be caught - to have the true sentence held by somebody who will not put it down"
+    lie: "'the cave took something from me', rather than 'I went back eleven times in nine weeks and was two chambers too deep when the water came'"
+    contradiction: "the most reliable person anyone will work with, lying about the single most important thing about herself"
+    voice: "flat, procedural, exact. Kit lists and times and nobody's emotions. 'Mm' for yes. Answers the question actually asked. Under pressure gets shorter, not louder. Raises her voice exactly once in the book."
+    planned_chapters: [1,2,3,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,22,25,26,27,28,29,30,33,34,36,37,38,39,40,41,42,44,45]
+    status: planned
+
+  - id: CHR-002
+    canonical_name: "Ottoline Marrow"
+    called_in_prose: "Ottoline"
+    age: 22
+    role: protagonist
+    profession: "film-school student, second year"
+    wound: "her mother Vera Marrow filmed the Vell in 1994, made one film that was not the film, and stopped; nobody who was there ever told Ottoline why"
+    want: "to make this film - not a film, this one"
+    need: "to be the person somebody tells the true thing to"
+    lie: "that documenting a thing is the same as understanding it"
+    contradiction: "honest to the point of cruelty, and has been filming people without asking since she was fifteen - she takes without consent the exact thing Ines most needs to give"
+    voice: "fast, over-explicit, edits herself mid-sentence. Uses 'like' as a hinge. Asks questions that are statements. Under pressure gets MORE talkative, the opposite of Ines."
+    planned_chapters: [1,2,3,5,7,9,11,14,15,16,17,18,19,20,21,22,23,24,25,26,28,30,32,33,36,37,38,39,41,42,43,44]
+    status: planned
+
+  - id: CHR-003
+    canonical_name: "Fabiola Renn"
+    called_in_prose: "Fabiola"
+    age: 61
+    role: "secondary; the equipment business Ines works for"
+    wound: "ran Renn and Daughters with Solveig for nineteen years; sold Ines the kit for the eleventh descent and asked no questions and has not worked out since whether that was restraint or cowardice"
+    want: "to keep the shop open and Ines employed, in that order, and she knows the order is wrong"
+    need: "to be told she was right"
+    lie: "'I'm not responsible for where people go'"
+    contradiction: "funds the film, blocks the descent, sells both women the gear for the descent, and drives to the car park at four in the morning. All four consistent with her; only one honest."
+    voice: "dry, unsentimental, deals in totals. Does not raise her voice. Deprecating warmth. The only person who can make Ines laugh, and never once at a good moment."
+    planned_chapters: [1,2,6,29,31,34,42,43,44,45]
+    status: planned
+
+  - id: CHR-004
+    canonical_name: "Marisol Trent"
+    called_in_prose: "Marisol"
+    age: 45
+    role: "secondary; film-school supervisor who objects to the shoot"
+    wound: "was on the panel that cleared Vera Marrow's 1994 Vell permit, the last such thing she did before leaving industry for teaching. She has never seen the resulting film, because there wasn't one."
+    want: "to stop Ottoline, specifically and on the record, so that when it goes wrong there is a document"
+    need: "to be the person who was right"
+    lie: "'this is unsafe' - true, and a hiding place. Right about every fact, and the rightness is doing work she cannot look at directly."
+    contradiction: "blocks the shoot for nine months and then releases the whole archive in an afternoon, and does not know why, and the book does not resolve it for her"
+    voice: "sentence-complete, warm, entirely reasonable. No contractions when she is being firm. Asks the question she already knows the answer to and waits."
+    planned_chapters: [3,5,22,30,37,44]
+    status: planned
+
+  - id: CHR-005
+    canonical_name: "Tove Marsk"
+    called_in_prose: "Tove"
+    age: 34
+    role: "secondary; the surveyor who goes first on the line"
+    profession: "holds the current Vell contract - the survey Ines would have had"
+    wound: "none visible, which is the point. She is the professional Ines would have been if Ines had not gone back eleven times, and has never said it aloud because saying it is the same as saying 'I got there because you did not'"
+    want: "to do the survey properly and finish it"
+    need: "to be the one who finds out what actually happened in 2022 - she would rather have the answer than the film and has not admitted the ordering"
+    lie: "'I don't have a stake in this' - she has read the incident report forty-one times, and the number is specific"
+    contradiction: "the only person who will tell Ines to her face that she does not belong on this rope, and the only person who goes first when it matters, and she goes first because otherwise Ines will"
+    voice: "technical, unfussy, much funnier dry than she is credited for. Uses Ines's own professional language at her, accurately - the closest thing to intimacy available to her."
+    planned_chapters: [7,8,9,13,19,24,25,26,28,32,35,37,38,40,42]
+    status: planned
+
+  - id: CHR-006
+    canonical_name: "Hana Vogel"
+    called_in_prose: "Hana"
+    age: 29
+    role: "secondary; the surface contact who cannot come underground"
+    profession: "rescue cave technician"
+    wound: "was second on the Vell call in 2022 and reached Solveig eleven minutes after the roof stopped moving. She has done the job of putting that behind her and the 'mostly' is load-bearing for this book."
+    want: "to be competent on the line"
+    need: "to be told the truth by somebody who trusts her life - the specific service she provides and the specific thing nobody has ever given her"
+    lie: "'it's just a job' - it is the job; what she wants underneath is to be in a hole with Ines again, and that is not the job"
+    contradiction: "she is the safety margin of the entire book and she is also a character who wants the dangerous thing. She reads the gauge. She is the one on the surface when the water comes up."
+    voice: "brisk, procedural, completely unafraid, in the way of someone who has decided to be the last voice you hear. Second person plural professionally; drops it exactly once."
+    planned_chapters: [4,18,29,31,32,33,37,38,40,41,42,45]
+    status: planned
+
+# ---------------------------------------------------------------------- off-page
+off_page_figures:
+  - id: OFF-001
+    canonical_name: "Solveig Havelock"
+    age: 41
+    role: "d. 2022, the Vell fourth chamber. Ines's partner. Nineteen years of partnership with Fabiola."
+    note: >
+      Not a ghost and not a device. She is in the equipment, the back room, the invoice
+      history, and one nine-minute video that nobody in the book has watched in four
+      years. The book's job is to make the reader want to watch it before the characters
+      do. She is FUNNY on tape. That is the whole tragedy: she is funny, so the loss is of
+      a specific person and not of an atmosphere.
+    planned_chapters: [2,6,7,12,28,43]
+    status: planned
+    revised: >
+      2026-09-29, ch 7. Named on the 1994 survey header as a member of the team, which
+      places her in the Vell in 1994 - 28 years before the collapse - and makes her a
+      colleague of both Vera Marrow and Ines Varga. A 28-year working span in the same
+      system is ordinary for this trade and is why the association still has her on its
+      books as somebody who could be asked.
+
+  - id: OFF-002
+    canonical_name: "Vera Marrow"
+    age: 68
+    role: "Ottoline's mother. Surveyed and filmed the Vell 1994-95. Made one film that was
+            not the film. Stopped working in 1997."
+    note: >
+      Not the villain and not the answer. She is a warning with the same face as a role
+      model, which is the specific thing Ottoline cannot metabolise. She appears on screens
+      and down telephones only, and is NEVER in the same room as Ines. The prohibition is
+      not dramatic: the two women are each what the other one would have to become, and the
+      book does not think that is survivable. That remains true in the last scene.
+    revised: >
+      2026-09-29, during drafting of chapter 7. The 1994 survey credits are revealed on the
+      page as "V. Marrow, B. Ostrowski, and S. Havelock" - which puts Vera and SOLVEIG ON
+      THE SAME TEAM, 28 years before the collapse. This was not in the foundation and it
+      was not planned. It is recorded here as a DRAFTING DISCOVERY rather than quietly
+      absorbed, because it changes the book's central coincidence and a later session
+      must be able to see that it arrived late and on purpose.
+      Why it is kept: it makes the 1994 archive the SAME generation of people as the 2022
+      event rather than a parallel one, which is what turns the archive from a mystery into
+      a family. It also means Ines and Vera were colleagues, which is the strongest
+      available reason for Ines to have read the 1994 material before ch 17 and to have
+      said nothing - and it is consistent with the premise's wound on Ottoline, which
+      required somebody who WAS there to have told her and not done so.
+    planned_chapters: [7,17,20,21,23,44]
+    status: planned
+
+  - id: OFF-003
+    canonical_name: "B. Ostrowski"
+    role: "third name on the 1994 Vell survey credits. Present on the page once, in chapter
+            7, as a word in a header. Never speaks, never appears again, and is not
+            developed."
+    note: >
+      Minted in ch 7 because a three-name survey credit is what a survey credit looks like,
+      and a two-name credit would have read as a private arrangement. Kept deliberately
+      minor: the book is about two women and the third name is load-bearing ONLY as
+      evidence that the 1994 team was a team. Do not develop. A revision pass that gives
+      Ostrowski a scene is adding a character to a book that does not have room for one.
+    status: planned
+
+# ---------------------------------------------------------------------------- places
+locations:
+  - id: LOC-001
+    name: "Renn and Daughters"
+    note: "The equipment shop. Eleven kilometres from the Vell entrance. Back room, counter, the gauge on the wall behind the counter. Setting of chs 1, 2, 6, 27, 28, 43, 44."
+    status: planned
+  - id: LOC-002
+    name: "The Vell"
+    note: "Limestone system, eastern karst. ~4 km mapped. One entrance, wide enough for a person with a full rack, not for two abreast (WR-002). Deep section under-surveyed. Setting of chs 9, 11, 14, 15, 16, 19, 21, 25, 26, 33, 38-42."
+    status: planned
+  - id: LOC-003
+    name: "The fourth chamber"
+    note: "Below the second pitch. Where Solveig Havelock died in 2022. Never entered in this book - the descent in Block V goes as deep as the second pitch and no further, on purpose."
+    status: planned
+  - id: LOC-004
+    name: "The headland"
+    note: "Above the Vell entrance. Film base, radio point, the surface end of the line. Hana works from here. Setting of chs 11, 13, 18, 32, 38, 40, 41."
+    status: planned
+
+# ----------------------------------------------------------------------------- objects
+objects:
+  - id: OBJ-001
+    name: "The gauge"
+    note: >
+      Brass, hand-painted, nailed to the wall fifty metres inside the Vell entrance. Marked
+      in hours since the last known rise. Nine appearances in the book: ch 1 (furniture,
+      four words, unnoticed), 12 (in the report), 21 (in 1994 frame, legible, unremarked
+      by any character), 25 (said in the middle of a paragraph about something else), 26
+      (stilled and measured), 33 (the reading that breaks the book), 38 (read correctly by
+      Hana, out loud, to nobody), 45 (the last line of dialogue in the novel). It is a
+      number. That is the whole horror of it.
+    status: planned
+  - id: OBJ-002
+    name: "The rack"
+    note: "What Ines wears. Worn underground and not above ground. First put on for the film in ch 11; a small event. Unbearable in ch 16. A relief in ch 41, unremarked. The book never explains this and the reader is the only one keeping track."
+    status: planned
+  - id: OBJ-003
+    name: "The line"
+    note: "Fifty metres of wool between them for most of the book. Soft, which is why they can talk through it. The only technology in the book better than it should be, and the reason the romance is possible at all."
+    status: planned
+  - id: OBJ-004
+    name: "The nine-minute video"
+    note: "Solveig Havelock, back room of Renn and Daughters, on a laptop, unviewed for four years. Introduced ch 2, referred to nine times, watched in full ch 43 in front of witnesses."
+    status: planned
+  - id: OBJ-005
+    name: "The 1994 tape"
+    note: "Vera Marrow's Vell material. Beautiful. Not the film. Contains a legible gauge reading that is WRONG - worn, misread, or copied from a plate that was itself copied. Released by Marisol in ch 22. This object is the book's evidence and its misreading is the book's whole plot."
+    status: planned
+  - id: OBJ-006
+    name: "Incident 2022/114"
+    note: "The incident report. Contains the water reading and the descent count. Read aloud in ch 12. Cross-checked against the 1994 frame in ch 33. The reader is given both numbers and the book does not do the sum."
+    status: planned
+
+# ------------------------------------------------------------------------- world rules
+world_rules:
+  - id: WR-001
+    rule: "A survey of a tight system needs two people on separate ends of a line. A PHYSICAL constraint, not a metaphor. The plot depends on it and the book lets it be physical for as long as possible before anyone in it says something about the other thing."
+    enforced_in: [11, 14, 15, 19, 38, 39, 41]
+  - id: WR-002
+    rule: "The Vell has one entrance large enough for a person with a full rack and not large enough for two people abreast. Everyone goes in one at a time."
+    enforced_in: [9, 11, 19, 39, 42]
+  - id: WR-003
+    rule: "The collapse was caused by WATER, not rock, and this is knowable from the start. Nothing in the book turns on the reader not knowing it. The tension is not WHAT happened - it is that four years later nobody will say the word, and the one person who was there is selling bolts eleven kilometres away. There is no last-minute doubt. Nobody says 'maybe it wasn't the water.' The doubt was in 1994 and it was wrong then too."
+    enforced_in: [12, 26, 33, 38, 45]
+
+# ------------------------------------------------------------- relationship pressure
+# Built as pressure between people, not fondness, per the foundation rules.
+relationships:
+  - pair: [CHR-001, CHR-002]
+    name: "Ines / Ottoline"
+    dynamic: "A woman who will not be filmed and a woman who cannot stop filming. Every scene is a negotiation over access conducted in the register of two professionals, which is the only register either of them can survive. The romance happens in the ACCOMMODATIONS - who goes first down the rope, who holds the camera, who is standing in the rain at the wrong end of it."
+    first_touch: 1
+    first_honesty: 36
+    note: "Nobody says anything directly until chapter 36, and when they do it is about something smaller than the truth."
+  - pair: [CHR-001, CHR-005]
+    name: "Ines / Tove"
+    dynamic: "Professional jealousy with no villain. The same skill at different points on one curve, and neither will say so."
+    first_touch: 7
+    decisive: 35
+  - pair: [CHR-001, CHR-003]
+    name: "Ines / Fabiola"
+    dynamic: "Nineteen years of a business and a grief. Fabiola is the only person Ines cannot lie to successfully, because Fabiola already knows and is waiting for the sentence rather than the fact."
+    first_touch: 1
+    decisive: 34
+  - pair: [CHR-001, CHR-006]
+    name: "Ines / Hana"
+    dynamic: "The unresolved professional relationship, and the book's most patient one. Four years of Hana waiting."
+    first_touch: 4
+    decisive: 31
+  - pair: [CHR-002, CHR-004]
+    name: "Ottoline / Marisol"
+    dynamic: "Teacher and student in genuine, well-meant, mutually lethal opposition. Marisol is right. Ottoline is going anyway. Neither is the villain of it."
+    first_touch: 3
+    decisive: 30
+  - pair: [CHR-002, CHR-006]
+    name: "Ottoline / Hana"
+    dynamic: "The one uncomplicated thing in the book - and the chapter that establishes it is going to be taken away is chapter 29."
+    first_touch: 4
+    decisive: 29
+  - pair: [CHR-002, CHR-005]
+    name: "Ottoline / Tove"
+    dynamic: "Tove is the professional Ottoline is becoming and has no patience for yet. Tove takes her seriously in chapter 24 and this is the chapter that turns the book."
+    first_touch: 7
+    decisive: 24
+
+# ------------------------------------------------------------------ carried threads
+carried_threads:
+  - id: THREAD-01
+    name: "The eleven descents"
+    owed_in: [3, 12, 27, 34, 36, 45]
+    note: "Ines went back too many times. The reader is given the COUNT in ch 12 without being given the MEANING. The meaning arrives in ch 34, from a delivery date, from Fabiola."
+  - id: THREAD-02
+    name: "The gauge"
+    owed_in: [1, 12, 21, 25, 26, 33, 38, 45]
+    note: "Eight appearances. A number. The last line of the novel."
+  - id: THREAD-03
+    name: "The ambiguous clause"
+    owed_in: [2, 22, 44]
+    note: "The contract's one unclear term, about material neither party owns. Legal ambiguity in Block I, a DIFFERENT ambiguity in Block III, resolved badly in a car park in Block IV. Deliberately two ambiguities, not one recurring one."
+  - id: THREAD-04
+    name: "The rack"
+    owed_in: [9, 11, 16, 39, 41]
+    note: "Small event in ch 11. Unbearable in ch 16. Relief in ch 41, unremarked. Never explained."
+  - id: THREAD-05
+    name: "Ottoline filming without asking"
+    owed_in: [3, 14, 20, 25, 36]
+    note: "Her habit since she was fifteen. Treated by the book as a lie about consent. Chapter 36 is where she stops."
+  - id: THREAD-06
+    name: "Vera Marrow"
+    owed_in: [17, 20, 21, 23, 44]
+    note: "On screens and down telephones. Never in the same room as Ines, including in the last scene."
+  - id: THREAD-07
+    name: "Tove's forty-one readings"
+    owed_in: [13, 24, 28, 35]
+    note: "The count is specific. A person does not count about a document they are indifferent to."
+  - id: THREAD-08
+    name: "The nine-minute video"
+    owed_in: [2, 6, 28, 43]
+    note: "Introduced, referred to nine times, watched once."

@@ -35,7 +35,7 @@ Score each **1–10** and cite the exact text you are scoring. A score without a
 **Pull is not required of every chapter, and that is the point.** A book where all eleven
 chapters end on a line engineered to make the next one feel necessary does not read as
 tense. It reads as a metronome, and it is the clearest mechanical signature a finished book
-can carry. Check `tools/check-uniformity.py` before scoring: published prose closes **0 of 50**
+can carry. Check `tools/prose/check-uniformity.py` before scoring: published prose closes **0 of 50**
 chapters on an explanatory coda, and the books this system produced close 15 of 25 on one.
 
 So: score the Pull of a chapter *against what that chapter is for*. A quiet chapter that

@@ -25,7 +25,9 @@ fit — the ones that did not fit are how the file gets better.
 ## Round 1 — What the book is
 
 1. What kind of book? Novel, novella, short novel, memoir, biography, essay collection,
-   prescriptive nonfiction, narrative nonfiction, a hybrid, or something else.
+   prescriptive nonfiction, narrative nonfiction, a hybrid, or something else. From the
+   answer, declare the book's **mode** — `fiction` or `nonfiction` — in the schema below;
+   it routes which gate conventions apply (see `tools/prose/conventions.py`).
 2. Working title, and the idea in one sentence.
 3. Who is it for, and what should that reader feel, understand, or do by the end.
 4. Standalone, or part of a series? If a series, list the volumes in order and say what
@@ -36,6 +38,9 @@ fit — the ones that did not fit are how the file gets better.
 book:
   type: ""
   subtype: ""
+  mode: ""                   # fiction | nonfiction - REQUIRED. Routes the prose-gate
+                             # conventions; legacy positioning/genre text is honoured
+                             # as a fallback but mode is the primary declaration.
   working_title: ""
   language: ""
   market: ""

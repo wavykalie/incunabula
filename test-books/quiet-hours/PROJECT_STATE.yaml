@@ -1,0 +1,26 @@
+# PROJECT_STATE.yaml - quiet-hours
+#
+# NF-mode demo book: a short prescriptive guide to bedtime routines, staged to
+# exercise the full nonfiction pipeline end to end (CALIBRATION.md §20-§21).
+# This is the first staged book to declare the mode through the PRIMARY `mode:`
+# field (Freeze 19) rather than the legacy positioning/genre fallback.
+
+project:
+  slug: quiet-hours
+  title: "Quiet Hours: A Short Book on Bedtime"
+  # fiction | nonfiction - REQUIRED (intake-schema.md Round 1)
+  mode: nonfiction
+  status: complete
+  # Declared length contract, judged by check-length.py L1. Delivered: ~1,963 words.
+  target_floor_words: 1850
+  target_ceiling_words: 2250
+  word_count_target: 2050
+
+chapters:
+  planned: 5
+  drafted: 5
+  published: 0
+
+notes:
+  - "A10a register hits are deliberate and scoped (report-not-fail) under mode: nonfiction; see CALIBRATION.md §21 and conventions.py NF_SCOPED."
+  - "Every other frozen row is live and enforced."

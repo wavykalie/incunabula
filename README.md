@@ -1,14 +1,15 @@
 # Incunabula
 
 A book-production pipeline for AI-assisted writing. It turns a one-line idea into a
-manuscript with a foundation, a continuity ledger, calibrated quality gates, and an
+manuscript with a plan, a continuity ledger, calibrated quality checks, and an
 editorial package.
 
 The system takes its vocabulary from the letterpress shop that made the first printed
 books — the platen, the quoin, the forme, the case, the pull, the colophon. An
 *incunabulum* is a book printed before 1501. The names are not decoration: every term
-below maps to a specific artifact or gate, and the full mapping lives in
-[`INCUNABULA_LEXICON.md`](INCUNABULA_LEXICON.md).
+maps to a specific tool or step, and the full mapping — **with plain-English meanings
+for every word** — lives in [`INCUNABULA_LEXICON.md`](INCUNABULA_LEXICON.md). If any
+word here confuses you, that file is the dictionary.
 
 ---
 
@@ -18,23 +19,23 @@ below maps to a specific artifact or gate, and the full mapping lives in
 
 | Skill | What it is | Role |
 |---|---|---|
-| **`incunabula`** | The production engine. 17 phases, a self-contained 32 KB entrypoint that dispatches every specialist skill and enforces every gate. Never writes prose itself. | the machine that does the work |
+| **`incunabula`** | The production engine. 17 phases, a self-contained 32 KB entrypoint that runs every specialist skill and enforces every quality check. Never writes prose itself. | the machine that does the work |
 | **`incunabula-codex`** | The contract layer. Almost no prose of its own — 19 reference files: intake schema, canon ledger schema, maintenance protocol, evaluator protocol, and a prompt per phase. Plus an optional 8-phase compact pipeline. | the durability around the work |
 
 `incunabula-codex` supplies what has to survive between sessions and between agents:
-guided intake, voice contracts, canon tracking with provenance, safe pruning, and
+guided intake, voice contracts, canon tracking with recorded sources, safe pruning, and
 migration of projects that already exist. It runs in three modes — **NEW**,
 **RESUME**, and **UPGRADE** (bring an existing book project into the system in place,
 without erasing the files it finds).
 
 The full engine then runs inside that layer, reading the same contracts. This is why the
-two are shipped as a pair and why `incunabula`'s entrypoint tells you to read codex's
+two ship as a pair, and why `incunabula`'s entrypoint tells you to read codex's
 schemas before phase one.
 
 **When to use the compact pipeline instead:** only when a project deliberately selects it.
-It runs the same gates in 8 phases rather than 17, and drops the specialist-skill
+It runs the same checks in 8 phases rather than 17 and drops the specialist-skill
 dispatch. Reach for it on a small project or a quick run, not by default — and never as a
-silent substitution for the full engine, which the pipeline explicitly forbids.
+silent substitute for the full engine, which the pipeline explicitly forbids.
 
 ### About the name
 
@@ -47,9 +48,9 @@ that requires Codex, nothing in this repository does.
 
 ## Install
 
-Every skill lives under `skills/`. The gates live under `tools/prose/`. **You need
-both** — the skills are the instructions, the gates are what enforces them, and the
-skills refer to the gates by path in every quality check they run.
+Every skill lives under `skills/`. The checking tools live under `tools/prose/`.
+**You need both** — the skills are the instructions, the checks are what enforces them,
+and the skills refer to the checks by path in every quality check they run.
 
 ```bash
 # global (Claude Code, Codex, and other file-aware agents)
@@ -59,35 +60,36 @@ mkdir -p ~/.agents/skills && cp -r skills/* ~/.agents/skills/
 mkdir -p .agents/skills && cp -r skills/* .agents/skills/
 ```
 
-The gates stay where they are, in the clone's `tools/prose/`, and every command below is
+The checks stay where they are, in the clone's `tools/prose/`, and every command below is
 run from the repository root. You do not copy `tools/` anywhere — the skills name those
 paths relative to where you cloned, and that is how they are meant to be called.
 
 If you keep the clone somewhere other than your working directory, use the absolute path
-in the gate commands. That is the only thing that needs to change.
+in the check commands. That is the only thing that needs to change.
 
 Then invoke `incunabula`. The contract layer in `incunabula-codex` is read by the engine
 during the run — you do not have to invoke it separately, and the full engine will not
 run phase one until those contracts exist.
+
 No dependencies, no build step, no packages to fetch. The skills are plain Markdown and
-YAML; the gates are Python 3 and bash, using only the standard library.
+YAML; the checks are Python 3 and bash, using only the standard library.
 
 ```
 skills/incunabula/            the full 17-phase engine (SKILL.md + the lexicon)
 skills/incunabula-codex/      the contract layer: schemas, protocols, phase prompts
                               (and the optional 8-phase compact pipeline)
 skills/deslopify/             the anti-AI style guide the scanner is built on
-tools/prose/                  the gates every skill calls
-INCUNABULA_LEXICON.md         the term map used across every skill and artifact
+tools/prose/                  the checks every skill calls
+INCUNABULA_LEXICON.md         the plain-English dictionary of every term
 ```
 
 ### Supplying a calibration corpus (the one setup step with a decision in it)
 
-The thresholds in `tools/prose/` were measured against published prose that is
-**deliberately not shipped** — it is somebody else's copyright. Until you supply your
-own reference corpus, the gates still run and still catch synthetic slop, but the caps
-are **unverified against human prose**: `validate-controls.sh` exits 2 and says so in
-those words. It never pretends otherwise.
+The limits in `tools/prose/` were measured against published prose that is **deliberately
+not shipped** — it is somebody else's copyright. Until you supply your own reference
+corpus, the checks still run and still catch machine-written slop, but the limits are
+**unverified against human prose**: `validate-controls.sh` exits 2 (meaning "not run")
+and says so in those words. It never pretends otherwise.
 
 Supply a corpus and the same command fully validates the instrument:
 
@@ -109,17 +111,17 @@ VOLUME_CORPUS="calibration/corpus/<name>" \
 #    confusion is Freeze 10's recorded failure.
 ```
 
-Which caps are affected: every threshold in `deslop-check.sh`, `check-uniformity.py`
-and `check-drift.py`. `check-length.py` needs no corpus (it compares a book to what
-that book declared); the registry checks need none.
+Which limits are affected: every threshold in `deslop-check.sh`, `check-uniformity.py`
+and `check-drift.py`. `check-length.py` needs no corpus (it compares a book to what that
+book declared); the registry checks need none.
 
 ### Demo books (runnable fixtures)
 
-Three complete books produced by this pipeline ship under [`demo-books/`](demo-books/)
-— manuscripts, state files, and the phase artifacts — so every gate can be run against
+Three complete books produced by this pipeline ship under [`demo-books/`](demo-books/) —
+manuscripts, state files, and the phase artifacts — so every check can be run against
 real books before you trust it on your own:
 
-- **`demo-magician`** — *The Trick*, a 1930s conjuring mystery (34 chapters). The clean run: complete, swept, colophon built.
+- **`demo-magician`** — *The Trick*, a 1930s conjuring mystery (34 chapters). The clean run: complete, swept, editorial package built.
 - **`muzzle-and-marrow`** — the from-scratch pilot. Its `U1`/`L1` failures are deliberately kept findings.
 - **`marrow-light`** — 38 chapters; the book whose silent omission from a hand-typed suite list created the registry.
 
@@ -138,12 +140,12 @@ The files tell you which they are:
 | order | file | kind | why |
 |---|---|---|---|
 | 1 | `README.md` (this file) | framework | what the system is |
-| 2 | `INCUNABULA_LEXICON.md` | framework | the vocabulary everything else uses |
+| 2 | `INCUNABULA_LEXICON.md` | framework | the dictionary — every term in plain words |
 | 3 | `tools/prose/` + `tools/check-registry.py` | framework | the instrument; every skill calls these by path |
 | 4 | `BOOKS.yaml` | framework (your copy will differ) | the registry the suite reads; `init-book.py` maintains it |
 | 5 | `DRAFTING_FRAMEWORK.md` | framework + rulings | the production rules, with the reasoning attached |
-| 6 | `GATE_FREEZE.md` | framework, append-only | why results are attributable; the protocol for changing any gate |
-| 7 | `ERRATA.md` / `PRINTERS_COPY.md` / `KNOWN_FINDINGS.md` | record | how thresholds earn changes; what was tried and rejected; what the author declined to fix |
+| 6 | `GATE_FREEZE.md` | framework, append-only | why results are traceable; the protocol for changing any check; starts with a plain-English guide |
+| 7 | `ERRATA.md` / `PRINTERS_COPY.md` / `KNOWN_FINDINGS.md` | record | how limits earn changes; what was tried and rejected; what the author declined to fix |
 | 8 | `COMMONPLACE.md`, `SELF_IMPROVEMENT.md` | framework + record | the taste channel and what may promote itself without a person |
 
 **The rule of thumb:** if a file records a *decision someone made*, it is evidence of
@@ -157,10 +159,10 @@ schemas in `incunabula-codex`, and the protocols; everything else is the log.
 bash tools/prose/verify-freeze.sh
 ```
 
-`FREEZE HOLDS` means the gates are present and byte-identical to the ones every published
-result in this repository was measured against. **Run this first.** A gate that has been
-edited is the single most dangerous thing that can happen to this harness, and this is
-the check that catches it.
+`FREEZE HOLDS` means the checks are present and byte-identical to the ones every published
+result in this repository was measured against. **Run this first.** An edited check is the
+single most dangerous thing that can happen to this harness, and this is the check that
+catches it.
 
 Then prove it works, which needs no corpus and no setup of any kind:
 
@@ -175,7 +177,8 @@ If that does not FAIL, your scanner is blind and nothing else matters until it d
 ## The specialist skills
 
 The orchestrator never writes prose. It dispatches specialised skills, each named from
-the print shop, and each responsible for exactly one job.
+the print shop, and each responsible for exactly one job. (Plain-English descriptions of
+every name are in the lexicon.)
 
 | Job | Skill |
 |---|---|
@@ -241,55 +244,62 @@ share the context that wrote the chapter, or the evaluation is worthless.
 
 ## The gates
 
-Two gates are **required at every phase**; a third — the narrative gate — is required at
-evaluation and at delivery. None is skippable, and none is satisfied by work that was
-never run.
+A **gate** is an automatic check that can fail the book. Two gates are **required at
+every phase**; a third — the narrative gate — is required at evaluation and at delivery.
+None is skippable, and none is satisfied by work that was never run.
 
 ### The prose gate
 
-Manuscript prose is checked by three tools — `tools/prose/`, shipped with the pipeline —
+Manuscript prose is checked by four tools — `tools/prose/`, shipped with the pipeline —
 before a chapter counts as drafted, before a score is reported, and before a package is
-built. All three run at every phase boundary; none subsumes another.
+built. All four run at every phase boundary; none replaces another.
 
 | tool | unit | what it fails |
 |---|---|---|
-| `deslop-check.sh` | one chapter | slop: per-1k rules, anaphora, duplication, fragment runs, and the closing coda as a *position* |
+| `deslop-check.sh` | one chapter | slop: per-1k rules, anaphora, duplication, fragment runs, and the closing coda as a *position* (never allowed, not counted) |
 | `check-uniformity.py` | the whole book | monotony: chapter-length variance, rhythm spread, coda distribution, signature-frame spread, paragraph layout |
-| `check-drift.py` | the whole book | a voice shift: stylometric step and trend between the first chapters and the last |
+| `check-drift.py` | the whole book | a voice shift: a measurable change in sentence habits between the first chapters and the last |
+| `check-arc.py` | the whole book | a flat emotional arc — a book whose direction never reverses (`A1`) |
 
-The last two are opposite failures and both are needed. `deslop-check.sh` never holds two
-chapters at once, so it cannot see a book's shape; and a book can pass every per-chapter
-cap while being one of two different books.
+Uniformity and drift fail on opposite problems, and both are needed. `deslop-check.sh`
+never holds two chapters at once, so it cannot see a book's shape; and a book can pass
+every per-chapter limit while still being two different books stitched together. Arc asks
+its own question: does the story's emotional direction ever change?
 
-While a chapter is being drafted, `tools/lint-chapter.py` renders the scanner's rule
-table at drafting speed: every rule hit as a `line:col` span in the chapter just written,
-so the leverage trap and the participle run get fixed before assembly instead of after
+Plain meanings of every row ID a run can print (`U1`, `A1`, `N4`, …) are in
+[`INCUNABULA_LEXICON.md`](INCUNABULA_LEXICON.md).
+
+While a chapter is being drafted, `tools/lint-chapter.py` shows the scanner's rule
+hits at drafting speed: every hit as a `line:col` span in the chapter just written, so
+the leverage trap and the participle run get fixed before assembly instead of after
 the book is compiled. It reads the rules out of `deslop-check.sh` at runtime and holds
 none of its own — where the two disagree, the scanner is right. It is a drafting aid and
 gates nothing.
 
-- **Thresholds are measured, never chosen.** A rule may be zero-tolerance only if
-  published prose never does it — literally zero occurrences in the calibration corpus.
-  Everything else gets a density cap. The measurements are in
+- **Limits are measured, never chosen.** A rule may be zero-tolerance only if published
+  prose never does it — literally zero occurrences in the calibration corpus. Everything
+  else gets a density limit. The measurements are in
   `tools/prose/calibration/CALIBRATION.md`, which also records what was **tested and
   rejected**, so nobody re-derives a metric expecting a rule and finds noise.
-- **Validation is seven-sided.** Human prose must pass all three tools; a synthetic slop
-  fixture must fail the scanner; a uniform manuscript must fail the uniformity gate; a
-  book whose voice changes must fail the drift gate. `tools/prose/validate-controls.sh`
-  re-runs all seven and exits nonzero if any misbehaves.
+- **Validation is seven-sided.** Published prose must pass three controls (the scanner,
+  the uniformity check, the drift check); a synthetic slop fixture must fail the scanner;
+  machine-written prose must not all pass; a uniform manuscript must fail the uniformity
+  check; a book whose voice changes must fail the drift check.
+  `tools/prose/validate-controls.sh` re-runs all seven and exits nonzero if any misbehaves.
 - **Not-run is never pass.** An empty scan is a failure, and when the calibration corpus
-  is absent the control runner exits **2** rather than reporting success.
+  is absent the control runner exits **2** ("not run") rather than reporting success.
 - **Planning documents are exempt.** Outlines, scene packets, and state files need
-  precision; their register sits above the prose caps by design.
+  precision; their register sits above the prose limits by design.
 
-Passing the gate is necessary and never sufficient. It cannot see voice, rhythm, a dead
-metaphor, or one argument restated ten ways. The read-aloud pass stays in force.
+Passing the gate is required, and never enough on its own. It cannot see voice, rhythm, a
+dead metaphor, or one argument restated ten ways. The read-aloud pass stays in force.
 
 ### The narrative gate
 
 The prose gate measures the surface of sentences; the narrative gate measures the shape
 of story. One declared file — `NARRATIVE_LEDGER.yaml` at the book root — checked by
-`tools/prose/check-narrative.py`, which reads no prose at all:
+`tools/prose/check-narrative.py`, which reads no prose at all. (It is the book's record
+of what it owes: set-ups to pay off, beats, scene functions.)
 
 | row | what it asks | tier |
 |---|---|---|
@@ -298,7 +308,7 @@ of story. One declared file — `NARRATIVE_LEDGER.yaml` at the book root — che
 | `N3` scene function | do extended scenes declare the same function; `pure texture` is a budget the author sets | reports |
 | `N4` ledger conformance | schema, status discipline (RESOLVED without a resolution is a defect), staleness — a chapter the ledger never saw cannot be shown to owe nothing | **gates** |
 
-An unexamined setup is a failure, not a loose end — the structural analogue of
+An unexamined set-up is a failure, not a loose end — the story-level version of
 "not-run is never pass". The ledger is fed by declarations: `case-keeper` extraction
 pass 6 records debt, `proof-panel` declares each chapter's beat arc and each extended
 scene's function at Phase 4, `collator` audits the ledger against the text in both
@@ -307,7 +317,7 @@ directions. Three prose-reading companions — `check-figurative.py`,
 stands behind them, so they report and cannot fail anything. The narrative gate gates
 with no corpus for the same reason `check-length.py` does: it compares a book to the
 obligations that book declared for itself, and there is no population it can false-fail.
-And it says what it cannot see: an unrecorded setup passes this gate perfectly.
+And it says what it cannot see: an unrecorded set-up passes this gate perfectly.
 
 Schema: `incunabula-codex/references/narrative-ledger-schema.md`. Provenance: Freeze 13
 in `GATE_FREEZE.md`.
@@ -320,9 +330,9 @@ dispatched and **after** it finishes.
 - The layer exists before the first phase, not built up later. `CANON_LEDGER.yaml`
   (series and book scope), the active voice contracts, and
   `maintenance/PRUNING_LOG.md` are prerequisites of Phase 0.
-- **Never resolve a contradiction silently.** Keep both values with their provenance,
-  attach a conflict record, and escalate anything that touches content boundaries,
-  ending ambiguity, or a character's core identity.
+- **Never resolve a contradiction silently.** Keep both values with their recorded
+  sources, attach a conflict record, and escalate anything that touches content
+  boundaries, ending ambiguity, or a character's core identity.
 - **A skipped step is recorded as skipped.** An absent artifact is a failure reported
   as a failure, not a to-do item.
 - **State claims are verified against files**, and a state file that will not parse is
@@ -344,9 +354,9 @@ The **Incunabula Score** is the *floor* across seven dimensions, not an average:
 6. Emotion
 7. Configurable (market, worldbuilding, epistolary, humor, or custom)
 
-**The Platen** is the principle behind it: the lowest dimension presses the whole score
-down, because a book is only as strong as its weakest impression. Six dimensions at 9.0
-and one at 7.0 is a 7.0.
+**The Platen** is the principle behind it — the weakest-link rule: the lowest dimension
+presses the whole score down, because a book is only as strong as its weakest impression.
+Six dimensions at 9.0 and one at 7.0 is a 7.0.
 
 Two commercial indices sit on top:
 
@@ -394,7 +404,7 @@ A run produces a self-contained project directory:
   STATE.yaml / PROJECT_STATE.yaml   the source of truth (parsed, never eyeballed)
   ASSUMPTIONS.md                    every inference labelled as an inference
   RUN_REPORT.md                     the exact unfinished task and resume step
-  CANON_LEDGER.yaml                 facts with provenance and conflict records
+  CANON_LEDGER.yaml                 facts with recorded sources and conflict records
   NARRATIVE_LEDGER.yaml             what the book owes: debt, beat arcs, scene functions
   foundation.md  outline.md  voice-matrix.md  readership.md
   manuscript/chapters/              one file per chapter
@@ -408,7 +418,7 @@ A run produces a self-contained project directory:
 
 ## What the system will not do
 
-- It will not report a gate as passed when the gate was never run.
+- It will not report a check as passed when the check was never run.
 - It will not resolve a contradiction by quietly picking a side.
 - It will not let the agent that wrote a chapter also score it.
 - It will not claim a phase finished on the strength of a chat message. Files prove
@@ -431,7 +441,7 @@ emergent preferences distilled from three agreeing choices. `tools/preflight.sh`
 stack's static half before a session starts.
 
 Three channels — measurement, craft, taste — with a firewall: evidence from one may never
-move another. Thresholds still need a named corpus. Declared preferences in
+move another. Limits still need a named corpus. Declared preferences in
 `USER_PREFERENCES.md` are immutable to the loop. And the loop's only external signals are
 the controls, the corpus, and reader outcomes; prediction error is the fitness, because a
 system with no outcome channel becomes more confident, not better.

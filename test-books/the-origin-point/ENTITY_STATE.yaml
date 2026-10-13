@@ -1,0 +1,315 @@
+# ENTITY_STATE — The Origin Point
+# Phase 2.7, /case-keeper, BUILD (SEED mode).
+#
+# MODE AND ITS CONSEQUENCE, READ THIS FIRST
+# ==========================================
+# case-keeper Rule 6 requires every entry to carry a source of the form ch-XX:pYY.
+# THIS FILE HAS NOT ONE. There are no chapters. This is a SEED, built from
+# premise.md, outline.md and CANON_LEDGER.yaml before Phase 3, and every source
+# below points at one of those instead.
+#
+# That is not a technicality. A seeded entry says "this is what the plan intends."
+# An extracted entry says "this is what the text says." Only the second kind can
+# catch a writer who contradicted the plan, and that is the whole job of this file.
+# So: this file can catch *plan-internal* contradictions before drafting. It CANNOT
+# catch a draft that drifts from the plan. That capability arrives at Phase 3.7
+# (UPDATE mode) and /collator must not treat this file as if it already has it.
+#
+# WHY SEED mode and not a hand-built substitute: premise 1 hand-built
+# CANON_LEDGER.yaml and skipped this file, and it cost the project its entire
+# continuity gate. This file is now 3 phases old debt and is being closed properly.
+
+meta:
+  version: "1.0"
+  last_updated: "2026-09-27"
+  last_updated_by: "case-keeper (SEED mode)"
+  project: "the-origin-point"
+  premise: 2
+  mode: "SEED"
+  chapters_tracked: []
+  chapters_written: 0
+  source_basis: ["premise.md", "outline.md", "CANON_LEDGER.yaml", "artifacts/02-voice-matrix.md"]
+  foundation_substitute: "foundation.md does not exist for this book. premise.md + CANON_LEDGER.yaml are its functional equivalent and were used to seed. Recorded rather than silently substituted."
+  next_run: "Phase 3.7 UPDATE mode, after ch-01 exists. Re-extract all 5 passes from text; do not trust the seeds."
+
+characters:
+
+  delphine-rusk:
+    canonical_name: "Delphine Rusk"
+    aliases: ["Del", "Rusk"]
+    importance: "major"
+    physical:
+      age: { value: 37, at_chapter: 1, birth_year: 1988, source: "CANON_LEDGER.yaml P-001" }
+    traits:
+      - { trait: "will not certify a fire she has not walked twice", source: "CANON_LEDGER.yaml P-001", mutable: false }
+      - { trait: "never states a conclusion she cannot evidence", source: "artifacts/02-voice-matrix.md#rusk", mutable: false }
+      - { trait: "becomes more procedural under threat", source: "artifacts/02-voice-matrix.md#rusk", mutable: false }
+    voice_markers:
+      ref: "artifacts/02-voice-matrix.md#rusk"
+      precision_tic: "gives exact times; says 'roughly' only when something has gone wrong"
+      single_reversion: "reverts to her mother's vocabulary once, in Act IV (voice-bank sample 10)"
+    relationships:
+      cora-vance: { type: "daughter", established: "premise.md §4", current_status: "estranged by distance, not by argument" }
+      terrell-vance: { type: "nephew", established: "premise.md §4", current_status: "affectionate; does not know what he did" }
+      roy-halloran: { type: "neighbour via Cora", established: "outline.md ch-12", current_status: "he feeds her; she cannot use it" }
+      denny-aylward: { type: "professional contact", established: "outline.md ch-05", current_status: "he is the only one who answers in order" }
+      adela-iversen: { type: "professional counterpart", established: "outline.md ch-10", current_status: "professional distance, both compromised" }
+    location_log:
+      - { chapter: 1, location: "the-2025-house", scene: "exterior then interior", travel_noted: false }
+      - { chapter: 4, location: "the-2019-house", scene: "her own childhood house", travel_noted: false, flashback: true, flashback_year: 2019 }
+      - { chapter: 19, location: "a-parked-car", scene: "she does not get out", travel_noted: false }
+    knowledge:
+      - { fact: "the 2025 origin point was poured, not spread", learned: "ch-02", method: "discovered" }
+      - { fact: "the three were found in a room with no beds", learned: "ch-06", method: "discovered" }
+      - { fact: "2019 and 2025 share an origin-point signature", learned: "ch-08", method: "discovered" }
+      - { fact: "2019 cause of death was not smoke inhalation", learned: "ch-10", method: "told_by:adela-iversen" }
+      - { fact: "Terrell's alibi names Cora", learned: "ch-15", method: "discovered" }
+      - { fact: "nobody refused to answer her, across five conversations", learned: "ch-14", method: "inferred" }
+      - { fact: "Terrell set the 2025 fire", learned: "ch-22", method: "discovered" }
+    knowledge_gap:
+      - fact: "references the 2019 determination in detail at ch-05 before ch-04 establishes she has read it 400 times"
+        used_in: "ch-05"
+        issue: "SEED-ONLY RISK. Verify at ch-04 that the reading habit is established before ch-05 relies on it. Not a real gap in the plan; a gap that would appear if ch-04 is cut short."
+    arc_notes: "From certifying a fire twenty minutes early to signing her own name onto a reopened 2019 determination; her complicity is resolved on the page at ch-23 (A8 conceded)."
+
+  roy-halloran:
+    canonical_name: "Roy Halloran"
+    importance: "major"
+    traits:
+      - { trait: "answers questions about himself with answers about other people", source: "artifacts/02-voice-matrix.md#roy", mutable: false }
+      - { trait: "becomes more helpful under pressure", source: "artifacts/02-voice-matrix.md#roy", mutable: false }
+      - { trait: "never defends himself", source: "artifacts/02-voice-matrix.md#roy", mutable: false }
+      - { trait: "checks the volunteer roster every morning since 2019", source: "CANON_LEDGER.yaml P-002", mutable: true }
+    voice_markers:
+      ref: "artifacts/02-voice-matrix.md#roy"
+      tell: "warmth; never signalled in the narration. Ch 17 states the pattern in plot, shows it in dialogue, and the narration must NOT comment on it."
+    relationships:
+      cora-vance: { type: "neighbour", established: "outline.md ch-12", current_status: "he watches her house; she knows" }
+    location_log:
+      - { chapter: 3, location: "the-2025-house", scene: "street", travel_noted: false }
+      - { chapter: 12, location: "2019 fire scene", scene: "his recollection", travel_noted: false, flashback: true, flashback_year: 2019 }
+    knowledge:
+      - { fact: "he saw a person leaving the 2019 fire, not a fire", learned: "2019", method: "witnessed" }
+    arc_notes: "The helpful one who is managing what people saw. Cleared as arsonist by ch-20; his cover-up is a separate culpability and is never fully resolved."
+
+  cora-vance:
+    canonical_name: "Cora Vance"
+    importance: "major"
+    traits:
+      - { trait: "deflects hard questions to small logistical ones", source: "artifacts/02-voice-matrix.md#cora", mutable: false }
+      - { trait: "sentences close; she finishes", source: "artifacts/02-voice-matrix.md#cora", mutable: false }
+      - { trait: "never uses anyone's name — says she, he, your father", source: "artifacts/02-voice-matrix.md#cora", mutable: false, critical: "SHARPEST Cora/Terrell separator" }
+      - { trait: "deflects to the past tense", source: "artifacts/02-voice-matrix.md#cora", mutable: false }
+    voice_markers:
+      ref: "artifacts/02-voice-matrix.md#cora"
+      marker: "the kitchen clock, eleven minutes fast"
+    relationships:
+      delphine-rusk: { type: "mother", established: "premise.md §4", current_status: "loves her; will not ask her for anything" }
+      terrell-vance: { type: "mother", established: "premise.md §4", current_status: "he acts for her; she never asked him to" }
+      roy-halloran: { type: "neighbour", established: "outline.md ch-12", current_status: "watches from the doorway, silent, every time" }
+    location_log:
+      - { chapter: 27, location: "her house", scene: "kitchen — two-hander with Rusk", travel_noted: false }
+    knowledge:
+      - { fact: "she put a fire in the file that did not happen as written", learned: "2019", method: "discovered" }
+    arc_notes: "One line of self-account in the whole book, at ch-27 of 30: 'I didn't light it. I made it true.' The theme is answered by a character, never by the narrator."
+
+  terrell-vance:
+    canonical_name: "Terrell Vance"
+    importance: "major"
+    traits:
+      - { trait: "speaks forward and conditional — when it's done, if nobody", source: "artifacts/02-voice-matrix.md#terrell", mutable: false }
+      - { trait: "sentences do not close; he trails into action", source: "artifacts/02-voice-matrix.md#terrell", mutable: false }
+      - { trait: "deflects to the future tense", source: "artifacts/02-voice-matrix.md#terrell", mutable: false }
+      - { trait: "gets warmer under pressure", source: "artifacts/02-voice-matrix.md#terrell", mutable: false, critical: "played straight, never signalled" }
+      - { trait: "winds his grandmother's clock and does not know it is eleven minutes fast", source: "CANON_LEDGER.yaml P-004", mutable: false }
+    voice_markers:
+      ref: "artifacts/02-voice-matrix.md#terrell"
+      marker: "calls her 'Del'; the only character who does, and his grandmother does too, which is the point"
+      never: ["raises his voice", "explains the fire"]
+    relationships:
+      cora-vance: { type: "son", established: "premise.md §4", current_status: "protects her absolutely" }
+      delphine-rusk: { type: "aunt", established: "premise.md §4", current_status: "the closest relationship in the book, and the reason it works" }
+    location_log:
+      - { chapter: 15, location: "not present", scene: "subject of investigation", travel_noted: false }
+      - { chapter: 24, location: "Rusk's office", scene: "motive laid out whole", travel_noted: false }
+    knowledge:
+      - { fact: "2019 and 2025 are the same hand", learned: "2019", method: "inferred" }
+      - { fact: "the 2019 fire killed people", learned: "ch-24", method: "told_by:delphine-rusk", critical: "CONF-004 REQUIRES THIS. Without it the leniency has no basis and R-04 reads it as authorial protection." }
+    arc_notes: "Set the 2025 fire; lit the 2019 fire not knowing it was occupied. Responsible but not the killer FOR 2019 ONLY — decided by orchestrator under delegation, flagged as CONF-004."
+
+  denny-aylward:
+    canonical_name: "Denny Aylward"
+    importance: "supporting"
+    traits:
+      - { trait: "answers in order, completely, without being asked the rest", source: "artifacts/02-voice-matrix.md#denny", mutable: false }
+      - { trait: "never asks a question — in the whole book", source: "artifacts/02-voice-matrix.md#denny", mutable: false, critical: "hard rule, not a tendency" }
+      - { trait: "logs every gallon in a hardback since 2003", source: "CANON_LEDGER.yaml P-005", mutable: false }
+    voice_markers:
+      ref: "artifacts/02-voice-matrix.md#denny"
+      tell: "volunteers the thing you did not ask about; numbers because numbers are safe"
+    location_log:
+      - { chapter: 5, location: "the-garage", scene: "interrogation", travel_noted: false }
+      - { chapter: 25, location: "Rusk's office", scene: "names who told him", travel_noted: false }
+    knowledge:
+      - { fact: "sold 340 gal 2019 and 260 gal April 2025", learned: "premise.md §4", method: "discovered" }
+      - { fact: "the 260 went out in a truck he does not own", learned: "ch-05", method: "witnessed", critical: "ledger item 15 — this is what excludes him as instigator" }
+    arc_notes: "Excluded as instigator by ch-20; his disclosure of who told him is the corroboration, not the reveal."
+
+  adela-iversen:
+    canonical_name: "Adela Iversen"
+    importance: "supporting"
+    traits:
+      - { trait: "answers the question asked, never the question meant", source: "artifacts/02-voice-matrix.md#adela", mutable: false }
+      - { trait: "says 'the decedent', never 'she'", source: "artifacts/02-voice-matrix.md#adela", mutable: false }
+      - { trait: "distinguishes signed from believed, unprompted", source: "artifacts/02-voice-matrix.md#adela", mutable: false }
+    voice_markers:
+      ref: "artifacts/02-voice-matrix.md#adela"
+      never: ["apologises", "uses the word 'unfortunately'"]
+    location_log:
+      - { chapter: 4, location: "the-coroners-office", scene: "cause of death, hinted", travel_noted: false }
+      - { chapter: 10, location: "the-coroners-office", scene: "stated", travel_noted: false }
+    knowledge:
+      - { fact: "2019 cause of death was not smoke inhalation", learned: "2019", method: "discovered" }
+      - { fact: "her suppression has a date and time in a system she does not control", learned: "ch-10", method: "discovered" }
+    arc_notes: "Suppressed a finding in 2019 and points Rusk at the proof in ch-10. Her culpability is distinct from the arson and is never charged."
+
+  sam-okafor:
+    canonical_name: "Sam Okafor"
+    importance: "supporting"
+    traits:
+      - { trait: "finishes other people's sentences, kindly and wrongly", source: "artifacts/02-voice-matrix.md#sam", mutable: false }
+      - { trait: "names people by their baptism", source: "artifacts/02-voice-matrix.md#sam", mutable: false }
+      - { trait: "never lies — withholds only", source: "artifacts/02-voice-matrix.md#sam", mutable: false, critical: "a single direct lie collapses the ch-14 list scene, the largest scene in the book" }
+    voice_markers:
+      ref: "artifacts/02-voice-matrix.md#sam"
+      tell: "gets warmer when frightened, so warmth in Act III is a bad sign for the reader"
+    location_log:
+      - { chapter: 3, location: "the-2025-house", scene: "street", travel_noted: false }
+      - { chapter: 14, location: "his church", scene: "five conversations", travel_noted: false }
+    knowledge:
+      - { fact: "he has held a list of who was in the 2019 house for six years", learned: "ch-14", method: "discovered" }
+    arc_notes: "Hands over the list at ch 14. It has one name too many (ledger item 11)."
+
+locations:
+  the-2025-house:
+    canonical_name: "the 2025 house"
+    facts:
+      - { fact: "three inside", source: "premise.md §2" }
+      - { fact: "origin in a room with no beds", source: "outline.md ch-06" }
+      - { fact: "on the same street as Cora's house", source: "premise.md §2" }
+  the-2019-house:
+    canonical_name: "the 2019 house"
+    aliases: ["Rusk's family home", "her mother's house"]
+    facts:
+      - { fact: "the Rusk family home; determination 'electrical'", source: "premise.md §2" }
+      - { fact: "origin in a records room, not a bedroom", source: "outline.md ch-06" }
+  the-garage:
+    canonical_name: "the garage"
+    facts:
+      - { fact: "Aylward's; holds bulk fuel accounts for both fires", source: "CANON_LEDGER.yaml PL-003" }
+  the-coroners-office:
+    canonical_name: "the coroner's office"
+    facts:
+      - { fact: "holds the suppressed 2019 finding, dated and timestamped", source: "outline.md ch-18" }
+  the-county:
+    canonical_name: "the county"
+    facts:
+      - { fact: "one town, inland and rural; F2 rising-heartland placement", source: "premise.md §1" }
+      - { fact: "the county wants the fire closed by Friday", source: "outline.md ch-09" }
+    distances:
+      - { to: "the-county-town", value: "Rusk is two hours from anywhere", source: "voice-bank sample 03" }
+  the-county-town:
+    canonical_name: "the town"
+    facts:
+      - { fact: "agreed in 2019 to stop asking and has never renegotiated", source: "outline.md ch-21" }
+  the-2019-fire-scene:
+    canonical_name: "the 2019 fire scene"
+    facts:
+      - { fact: "Roy reached it in four minutes from eleven blocks", source: "outline.md ch-12" }
+      - { fact: "a chair was moved and moved back", source: "outline.md ch-11" }
+
+organizations:
+  county-fire-investigation-office:
+    canonical_name: "the regional fire investigation office"
+    facts:
+      - { fact: "Rusk's employer; covers the county", source: "premise.md §2" }
+      - { fact: "wants the fire closed by Friday", source: "outline.md ch-09" }
+  volunteer-fire-company:
+    canonical_name: "the volunteer fire company"
+    facts:
+      - { fact: "Roy is chief; roster checked every morning since 2019", source: "CANON_LEDGER.yaml P-002" }
+  county-coroners-office:
+    canonical_name: "the county coroner's office"
+    facts:
+      - { fact: "Adela works there; records system is outside her control", source: "artifacts/02-voice-matrix.md#adela" }
+
+timeline:
+  - { chapter: 1, time: "day 1, 2025 fire", season: "winter", year: 2025, note: "February implied — Roy's 'there's always something in the oven in February'" }
+  - { chapter: 4, time: "2019 fire", season: "unknown", year: 2019, note: "retrospective interior" }
+  - { chapter: 5, time: "April 2025 fuel purchase", season: "spring", year: 2025, note: "5 months before the fire; corroborated by ch 16 receipt" }
+  - { chapter: 9, time: "day ~6, the Friday deadline", season: "winter", year: 2025, note: "six days from ch 1 per outline" }
+  - { chapter: 18, time: "day ~12", season: "winter", year: 2025, note: "all 15 ledger items planted by this chapter — the fair-play contract" }
+  - { chapter: 22, time: "day ~16", season: "winter", year: 2025, note: "the name is stated; F5 closure requirement" }
+  - { chapter: 30, time: "after", season: "later", year: 2025, note: "2019 file reopened as a homicide file" }
+
+objects:
+  origin-point-photographs:
+    introduced: "outline.md ch-08"
+    description: "photographs of both origin points, laid on a bare floor"
+    status: "chekhov_closed"
+    last_mentioned: "outline.md ch-20"
+    resolution: { chapter: 20, paragraph: 0, description: "one perpetrator, two fires — the book's central confirmation" }
+  aylwards-hardback:
+    introduced: "outline.md ch-05"
+    description: "hardback log of every gallon sold since 2003; rota on the back of the relevant page"
+    status: "chekhov_closed"
+    last_mentioned: "outline.md ch-25"
+    resolution: { chapter: 25, paragraph: 0, description: "Denny names who told him what the fuel was for" }
+  the-suppressed-finding:
+    introduced: "outline.md ch-10"
+    description: "Iversen's 2019 finding, suppressed 11 March, dated and timestamped"
+    status: "chekhov_closed"
+    last_mentioned: "outline.md ch-22"
+    resolution: { chapter: 22, paragraph: 0, description: "produced in ch-18, used to close the name at ch-22" }
+  sams-list:
+    introduced: "outline.md ch-14"
+    description: "the list of who was in the 2019 house that night"
+    status: "chekhov_closed"
+    last_mentioned: "outline.md ch-21"
+    resolution: { chapter: 21, paragraph: 0, description: "the extra name is the town's collective answer" }
+  the-moved-chair:
+    introduced: "outline.md ch-11"
+    description: "a chair moved and moved back, identically, in both fires"
+    status: "chekhov_closed"
+    last_mentioned: "outline.md ch-20"
+    resolution: { chapter: 20, paragraph: 0, description: "habit signature — confirms same perpetrator before the investigator confirms it" }
+  the-kitchen-clock:
+    introduced: "premise.md §4"
+    description: "Cora's clock, eleven minutes fast so she is never early"
+    status: "chekhov_closed"
+    last_mentioned: "voice-bank sample 10"
+    resolution: { chapter: 27, paragraph: 0, description: "carries the theme; Terrell winds it without knowing why" }
+  the-2019-determination:
+    introduced: "outline.md ch-04"
+    description: "four lines; cites a circuit that is not in the file"
+    status: "chekhov_closed"
+    last_mentioned: "outline.md ch-30"
+    resolution: { chapter: 30, paragraph: 0, description: "reopened as a homicide file with Rusk's name last on it" }
+  the-2025-certification:
+    introduced: "outline.md ch-01"
+    description: "signed in ch 1 twenty minutes early, before the scene is walked"
+    status: "chekhov_open"
+    last_mentioned: "outline.md ch-01"
+    resolution: null
+    note: "OPEN at seed. The book opens on a document Rusk signs that she will have to re-sign at ch 30. Check at collator that it is not left dangling."
+
+world_rules:
+  - { rule: "No character in this book ever refuses Rusk a question. Not once, not in a minor part. This is a plant (ledger item 13), not a coincidence.", source: "artifacts/02-voice-matrix.md" }
+  - { rule: "Close third, past tense, locked to Rusk. No exceptions.", source: "artifacts/02-voice-matrix.md" }
+  - { rule: "Cora never uses a personal name; Terrell never finishes a sentence. Neither may be broken to accommodate a scene.", source: "artifacts/02-voice-matrix.md" }
+  - { rule: "Register is quiet, not gentle. Nobody performs grief. Flatness is intentional.", source: "research/bestseller-dna.md §F rule 4" }
+  - { rule: "The three 2025 deaths and the 2019 death are never graphically depicted (content_boundaries).", source: "PROJECT_STATE.yaml content_boundaries" }
+  - { rule: "No sexual content involving minors. The 2019 death is off-page.", source: "PROJECT_STATE.yaml content_boundaries" }
+  - { rule: "Institutional corruption is real but individual; no character is a pure villain.", source: "PROJECT_STATE.yaml content_boundaries" }
+
+conflicts: []

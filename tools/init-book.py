@@ -7,10 +7,16 @@ book directory exists and the registry does not know about it. Every book the
 pipeline starts goes through here.
 
 What it does:
-    1. creates <workspace>/<path>/ with the directories the pipeline expects
-    2. writes a PROJECT_STATE.yaml with the declared length contract and status
-    3. appends the book to BOOKS.yaml (the registry the suite reads)
-    4. runs tools/check-registry.py so the result is verified, not assumed
+    1. validates the declaration: a floor above its ceiling, or a contract the
+      plan contradicts, is refused BEFORE anything is created. A contract with
+      nothing to check it against is how L1 got disarmed (2026-10-13 audit);
+      intake is the one moment both numbers are in front of a person
+    2. creates <workspace>/<path>/ with the directories the pipeline expects
+    3. writes a PROJECT_STATE.yaml with the declared length contract, the plan,
+      and the status
+    4. appends the book to BOOKS.yaml (the registry the suite reads)
+    5. runs tools/check-registry.py and verifies THIS registration - problems
+      naming other books are reported as pre-existing debt, not failures here
 
 What it does NOT do:
     - choose a length contract. A floor of 0 means "not declared"; the gate
@@ -19,7 +25,12 @@ What it does NOT do:
 
 Usage:
     python tools/init-book.py --path my-novel --title "My Novel" \
-        [--status drafting] [--floor 80000] [--ceiling 95000] [--concept]
+        [--status drafting] [--floor 80000] [--ceiling 95000] [--concept] \
+        [--chapters-planned 30 --words-per-chapter 3000]
+
+    --chapters-planned / --words-per-chapter  the plan. Their product must sit
+        inside the declared band or intake refuses; tools/check-progress.py C1
+        re-checks exactly this agreement on the book from then on.
 
     --concept  scaffolds the book but declares expected_manuscript: false;
                prose gates will not apply until it is promoted by editing
@@ -66,6 +77,11 @@ def main(argv=None):
     ap.add_argument("--floor", type=int, default=0,
                     help="target_floor_words; 0 declares no length contract yet")
     ap.add_argument("--ceiling", type=int, default=0)
+    ap.add_argument("--chapters-planned", type=int, default=0,
+                    help="planned chapter count; goes with --words-per-chapter")
+    ap.add_argument("--words-per-chapter", type=int, default=0,
+                    help="planned average words per chapter; with --chapters-planned "
+                         "this is the plan check-progress.py C1 checks the contract against")
     ap.add_argument("--concept", action="store_true",
                     help="shorthand for --status concept (no manuscript expected)")
     args = ap.parse_args(argv)
@@ -75,6 +91,29 @@ def main(argv=None):
     book_path = args.path.strip("/").replace("\\", "/")
     if not book_path or book_path.startswith("."):
         ap.error("--path must be a plain relative path like 'my-novel'")
+
+    # 0. validate the declaration BEFORE anything exists on disk.
+    if bool(args.chapters_planned) != bool(args.words_per_chapter):
+        ap.error("--chapters-planned and --words-per-chapter go together - "
+                 "half a plan is not a plan")
+    if args.chapters_planned < 0 or args.words_per_chapter < 0:
+        ap.error("plan numbers must be positive")
+    floor, ceiling = args.floor, args.ceiling
+    if floor and not ceiling:
+        ceiling = int(floor * 1.15)
+    if ceiling and not floor:
+        floor = int(ceiling * 0.9)
+    if floor and ceiling and floor > ceiling:
+        ap.error(f"--floor {floor} is above --ceiling {ceiling} - "
+                 f"a contract nothing can land inside")
+    plan_product = args.chapters_planned * args.words_per_chapter
+    if plan_product and (floor or ceiling) and not (floor <= plan_product <= ceiling):
+        ap.error(
+            f"the plan ({args.chapters_planned} chapters x {args.words_per_chapter} = "
+            f"{plan_product:,} words) does not sit within the declared contract "
+            f"[{floor:,}, {ceiling:,}]. Intake will not write a contract the plan "
+            f"contradicts: a band rewritten to fit what the book happens to be is "
+            f"the disarm the 2026-10-13 audit found. Fix the plan or the contract.")
 
     workspace = os.environ.get("BOOKS_WORKSPACE", DEFAULT_WORKSPACE)
     book_root = os.path.join(workspace, book_path)
@@ -89,12 +128,8 @@ def main(argv=None):
     for d in ("artifacts", "maintenance", "research"):
         os.makedirs(os.path.join(book_root, d), exist_ok=True)
 
-    # 2. state file with the declared contract (or the explicit absence of one)
-    floor, ceiling = args.floor, args.ceiling
-    if floor and not ceiling:
-        ceiling = int(floor * 1.15)
-    if ceiling and not floor:
-        floor = int(ceiling * 0.9)
+    # 2. state file with the declared contract, the plan (or the explicit
+    # absence of each), and the status
     with open(os.path.join(book_root, "PROJECT_STATE.yaml"), "w", encoding="utf-8") as fh:
         fh.write(
             "# ============================================================================\n"
@@ -123,6 +158,22 @@ def main(argv=None):
                 "  # here at intake if the book is to be governed by L1.\n"
                 "  target_range_words: [0, 0]\n\n"
             )
+        if plan_product:
+            fh.write(
+                "  # ---- PLAN (read by tools/check-progress.py C1) ----\n"
+                "  # Validated at intake against the contract above. When the outline\n"
+                "  # lands, its per-chapter targets become the plan C1 prefers; these\n"
+                "  # keys are the fallback and must then agree with it.\n"
+                f"  chapter_count_planned: {args.chapters_planned}\n"
+                f"  average_words_per_chapter_planned: {args.words_per_chapter}\n\n"
+            )
+        else:
+            fh.write(
+                "  # ---- NO PLAN YET (read by tools/check-progress.py C1) ----\n"
+                "  # With no plan here and no per-chapter targets in outline.md, C1\n"
+                "  # cannot check the contract against anything and reports NOT RUN -\n"
+                "  # a self-declared contract is the gap the 2026-10-13 audit found.\n\n"
+            )
 
     # 3. register
     if expected_manuscript:
@@ -130,16 +181,43 @@ def main(argv=None):
     else:
         append_registry(book_path, args.title, args.status, False)
 
-    # 4. verify, do not assume
+    # 4. verify THIS registration, do not assume it. The workspace registry may
+    # carry pre-existing problems (books whose finished claims await their
+    # evidence) - those are named, but they are not this book's registration
+    # failing, and folding them together would say a clean registration broke
+    # the suite. A problem naming this book is a failure; anything else is a
+    # debt the workspace already had, printed so nobody is surprised.
     import subprocess
-    rc = subprocess.call([sys.executable, os.path.join(TOOLS_DIR, "check-registry.py"), workspace])
-    if rc != 0:
-        print("init-book: the registry check did not pass after registration.")
+    proc = subprocess.run(
+        [sys.executable, os.path.join(TOOLS_DIR, "check-registry.py"), workspace],
+        capture_output=True, text=True)
+    out = (proc.stdout or "") + (proc.stderr or "")
+    problems = [ln.strip()[2:].strip() for ln in out.splitlines()
+                if ln.strip().startswith("- ")]
+    mine = [p for p in problems if book_path in p]
+    if proc.returncode == 2:
+        print("init-book: the registry itself could not be read (check-registry exit 2).")
+        print("  Nothing is verified until it can be. Fix BOOKS.yaml first.")
+        return 1
+    if mine or (proc.returncode != 0 and not problems):
+        print("init-book: the registry check flagged THIS book:")
+        for p in (mine or out.splitlines()):
+            print(f"  - {p}")
         print("  Fix the registry by hand before running the suite.")
         return 1
+    if problems:
+        print(f"init-book: this book's registration is verified. The workspace registry")
+        print(f"  still reports {len(problems)} pre-existing problem(s), none of them this book:")
+        for p in problems:
+            print(f"  - {p}")
+    else:
+        print("init-book: registry verified - disk and registry agree.")
 
     print(f"init-book: created {book_root}")
     print(f"           registered in BOOKS.yaml as status {args.status}")
+    if plan_product and (floor or ceiling):
+        print(f"           intake validated: the plan ({plan_product:,} words) sits "
+              f"inside the contract [{floor:,}, {ceiling:,}].")
     if args.status in ("drafting", "autonomous"):
         print("           status: in_progress is set - L1 records until you remove it at delivery.")
     return 0

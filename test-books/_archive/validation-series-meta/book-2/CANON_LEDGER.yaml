@@ -1,0 +1,502 @@
+# CANON_LEDGER.yaml - BOOK 2 (book scope)
+#
+# Per canon-ledger-schema.md: this file holds book-scoped facts and POINTS at the series ledger for
+# series-scoped ones. It does not restate series canon. Authority precedence is declared in
+# PROJECT_STATE.yaml -> standing_rules.canon.authority_precedence.
+#
+# Created 2026-09-22 by the resume test, loading ../CANON_LEDGER.yaml and ../book-1/CANON_LEDGER.yaml.
+
+meta:
+  schema_version: "1.0"
+  project_id: "validation-series"
+  book_id: "book-2"
+  updated: "2026-09-24"
+  primary_state_file: "PROJECT_STATE.yaml"
+  maintenance_run: 5
+  series_ledger: "../CANON_LEDGER.yaml"
+  book_1_ledger: "../book-1/CANON_LEDGER.yaml"
+  note: >-
+    Loaded FROM the series ledger and Book 1's ledger, not re-derived. Facts that are series-scoped
+    (the structural decisions, the naming rule, the no-wink rule, the beings' inability to explain, the
+    exclusion rule) live in ../CANON_LEDGER.yaml and are cited by reference. Facts recorded here are
+    book-scoped or are pointers.
+
+# ================================================================================= book 2 facts
+
+facts:
+
+  book-2.location:
+    subject: "book-2"
+    predicate: "location_is"
+    value: "THE UNFINISHED THING. Everyone is building one enormous thing. Nobody says what it is for, because everybody who lives there already knows and Merope is the only one who arrived. It will not be finished in any lifetime present. Every person there is genuinely essential, which is why nobody leaves: leaving stops it. Merope is handed a tool and told the work needs it held - the need is real and impersonal."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2 }
+    sources:
+      - { file: "artifacts/location-and-delta-options.md", anchor: "Location 3", evidence: "one of three options written up for the location decision, with a non-canon sample", observed: "2026-09-23" }
+      - { file: "PROJECT_STATE.yaml", anchor: "decisions (2026-09-23)", evidence: "Author selected Location 3 from the three offered.", observed: "2026-09-23" }
+    supersedes: ["book-2.scoped-change.location"]
+    conflicts: []
+    last_verified: "2026-09-23"
+    notes: >-
+      AUTHOR DECISION, from options offered without a recommendation. This satisfies the pre-registered
+      scoped change "new location": the change was registered before Book 1 finished and the content is
+      now chosen, so it remains LEGITIMATE and must not be flagged as a contradiction. The world's
+      concrete mechanics - what the thing is, what happens when the work stops, how long anyone has been
+      there - are NOT decided here: they are Phase 2 decisions issued as R-013 onward. Nothing on this
+      planet is named.
+
+  book-2.scoped-change.location:
+    subject: "book-2"
+    predicate: "introduces_scoped_change"
+    value: "new location - RECOGNISED from ../CANON_LEDGER.yaml -> series.book-2.scoped-change. The CONTENT of the location was undecided at the resume; it is now decided and lives in book-2.location."
+    kind: "plot"
+    status: "superseded"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2 }
+    sources:
+      - { file: "../CANON_LEDGER.yaml", anchor: "series.book-2.scoped-change", evidence: "pre-registered before Book 1 was finished", observed: "2026-09-22" }
+    supersedes: []
+    superseded_by: ["book-2.location"]
+    conflicts: []
+    last_verified: "2026-09-23"
+    notes: "LEGITIMATE - it is a pre-registered scoped change and must not be flagged as a contradiction of Book 1. SUPERSEDED 2026-09-23 by book-2.location, which carries the chosen content, so it no longer reads as an open question. Retained so the registry of scoped changes still shows both that it was pre-registered and that it was consumed."
+
+  book-2.scoped-change.relationship:
+    subject: "book-2"
+    predicate: "introduces_scoped_change"
+    value: "changed Merope/Achird relationship state - RECOGNISED from the same pre-registration. The relationship state at the END of Book 1 is manuscript fact: the acknowledgement is known and unsaid (two fingers on the back of a hand; no sentence from either). What Book 2 does with that state is the content decision, now recorded in book-2.relationship-delta."
+    kind: "plot"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2 }
+    sources:
+      - { file: "../CANON_LEDGER.yaml", anchor: "series.book-2.scoped-change", evidence: "pre-registered", observed: "2026-09-22" }
+      - { file: "../book-1/manuscript/chapters/chapter-07.md", anchor: "the acknowledgement", evidence: "two fingers on the back of a hand; no sentence from either", observed: "2026-09-22" }
+    supersedes: []
+    superseded_by: ["book-2.relationship-delta"]
+    conflicts:
+      - fact_id: "book-2.relationship-delta"
+        reason: "This fact previously asserted that stating the feeling plainly 'would change a SERIES-scoped voice contract'. The author rejected that assertion on 2026-09-24: it was a pipeline inference, not a user rule. See CONF-011."
+        status: "resolved"
+    last_verified: "2026-09-24"
+    notes: >-
+      CORRECTED 2026-09-24 (CONF-011). The earlier version of this fact stated that Book 2's relationship
+      content 'is NOT reciprocation stated on the page' and that saying it plainly would change a
+      series-scoped voice contract. That prohibition was never author-given: it was the pipeline
+      extrapolating Book 1's END STATE (an acknowledgement left unsaid in ch.7) into a Book 2 RULE, and
+      then recording the rule at series scope. The author caught it. Book 1's ending is a state, not a
+      prohibition, and Book 2's content now lives in book-2.relationship-delta. The prohibition is
+      kept below as a discarded value rather than deleted, because deleting it would erase the evidence
+      that the pipeline made the inference.
+
+  book-2.relationship-delta:
+    subject: "book-2"
+    predicate: "relationship_delta_is"
+    value: "AWARENESS, AND TESTING. The author's instruction: Merope notices - she is more aware of Achird's feelings than she was - and she begins TESTING her in subtle ways. Nothing is announced; the testing is behaviour, not dialogue. Achird's side does not move first: her voice stays clipped and attending."
+    kind: "plot"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2 }
+    sources:
+      - { file: "INTAKE.md", anchor: "2.2 relationship delta", evidence: "author direction: more aware of each other's feelings; the concrete content is now fixed as noticing + testing", observed: "2026-09-24" }
+      - { file: "PROJECT_STATE.yaml", anchor: "decisions (2026-09-24)", evidence: "Author's own words: 'Merope notices and starts testing her in subtle ways.'", observed: "2026-09-24" }
+    supersedes: ["book-2.scoped-change.relationship"]
+    superseded_by: []
+    conflicts: []
+    last_verified: "2026-09-24"
+    notes: >-
+      AUTHOR DECISION, 2026-09-24, given in response to the three written delta options - which the
+      author declined, because the real delta is none of them and the 'nothing is said' framing that
+      produced them was the pipeline's own inference. Merope's deflection does not stop being
+      characterisation: what changes is that she now NOTICES the thing she used to look past, and pokes
+      at it rather than ignoring it. Testing is compatible with Achird's voice card; it is NOT a licence
+      to have either of them state the feeling plainly, but it is also NOT a rule that forbids doing so
+      - that question is now a drafting decision, not a pre-registered prohibition. See CONF-011.
+
+  book-2.population:
+    subject: "book-2"
+    predicate: "population_is"
+    value: "SOMETHING NEW - neither the Book 1 beings (COL-001) nor ordinary people-with-jobs. Author decision 2026-09-24: the inhabitants are designed as Book 2 world rules, not inherited. COL-001 stays book-1-scoped and does NOT appear in Book 2."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "decisions (2026-09-24)", evidence: "author selected 'Something new' from three options for the population", observed: "2026-09-24" }
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    last_verified: "2026-09-24"
+    notes: >-
+      AUTHOR DECISION for the CATEGORY (a new population). The concrete design of that population is a
+      Phase 2 obligation and is recorded as world rules R-013 onward in ENTITY_STATE.yaml, flagged there
+      as pipeline-proposed pending author sign-off. It is NOT the Book 1 beings: COL-001's rules
+      (cannot lie, cannot explain, never sinister, no spokesperson) are scoped to COL-001 and are not
+      inherited by a new collective.
+
+  book-2.interval:
+    subject: "book-2"
+    predicate: "interval_since_book_1_is"
+    value: "NOT LOAD-BEARING. Author instruction 2026-09-24: the elapsed time between the books is not important to this universe and is not to be specified, dated or relied on. Book 2 opens after Book 1 with no fixed interval."
+    kind: "plot"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "decisions (2026-09-24)", evidence: "author: 'does time matter for this universe really?' - i.e. no", observed: "2026-09-24" }
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    last_verified: "2026-09-24"
+    notes: >-
+      AUTHOR DECISION. Closes open decision C-4. The prose will therefore not date the gap, not count
+      elapsed time between the books, and not depend on an interval for any beat. Book 1's on-planet
+      'weeks' scale is untouched and remains book-1-scoped; it must not be reused to imply the gap.
+
+  book-2.inherited.voice-contract:
+    subject: "book-2"
+    predicate: "inherits"
+    value: "../book-1/voice-dna.md - NOT duplicated."
+    kind: "style"
+    status: "active"
+    authority: "process"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2 }
+    sources:
+      - { file: "../book-1/voice-dna.md", anchor: "whole file", evidence: "4 voice cards, differentiation matrix, anti-pattern checklist, 10 benchmark samples, chapter narration contract, 10 fact-presentation channels", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Two sources of truth for one contract is exactly the failure CONF-001 was. Book 2 cites Book 1's contract; it does not copy it."
+
+  book-2.inherited.entities:
+    subject: "book-2"
+    predicate: "inherits"
+    value: "CHR-001 Merope, CHR-002 Achird, COL-001 the beings, OBJ-001 the sleigh - IDs stable and series-scoped. Characters gain facts; they never gain a new ID."
+    kind: "character"
+    status: "active"
+    authority: "process"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 99 }
+    sources:
+      - { file: "../CANON_LEDGER.yaml", anchor: "series_persistent_elements.stable_entity_ids", evidence: "declared series-stable", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+
+  book-2.engine:
+    subject: "book-2"
+    predicate: "engine_is"
+    value: "THE WORK. A world where everyone has a job and the job is the entire point. Nobody is kept; everyone is NEEDED, constantly, and usefulness here never ends. Merope - who has never been useful to anybody - is offered a role. The inversion of Book 1: nothing is asked of you / you are asked for everything. Theme: is being needed the same as being wanted?"
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2 }
+    sources:
+      - { file: "INTAKE.md", anchor: "2.1 Engine A", evidence: "one of three options written up at Phase 0, with a non-canon sample in artifacts/engine-samples.md", observed: "2026-09-22" }
+      - { file: "PROJECT_STATE.yaml", anchor: "decisions (2026-09-23)", evidence: "Author selected Engine A from the three offered and re-confirmed the commercial contract with a raised ceiling.", observed: "2026-09-23" }
+    supersedes: ["book-2.inherited.engine-is-open"]
+    conflicts: []
+    last_verified: "2026-09-23"
+    notes: >-
+      THE AUTHOR'S DECISION, not an inference - which is the entire reason Book 2 was blocked for two
+      sessions. Three options were offered without a recommendation and A was chosen. Book 1's engine
+      (hospitality) is untouched and stays book-1-scoped: the two engines are inversions of each other
+      by design, and that opposition is the point of the installment. STILL OPEN under this engine:
+      the location's content, and the relationship delta's content.
+
+  book-2.inherited.engine-is-open:
+    subject: "book-2"
+    predicate: "has_open_decision"
+    value: "THE ENGINE. Book 1's engine is hospitality - nothing is asked of you and that is how you die. Book 2 needs a different mechanism. Three proposals in INTAKE.md 2.1: 'the work', 'the audience', 'the record'. NONE SELECTED."
+    kind: "plot"
+    status: "superseded"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2 }
+    sources:
+      - { file: "INTAKE.md", anchor: "2.1", evidence: "three options written up, none recommended", observed: "2026-09-22" }
+    supersedes: []
+    superseded_by: ["book-2.engine"]
+    conflicts: []
+    last_verified: "2026-09-23"
+    notes: >-
+      SUPERSEDED 2026-09-23 by book-2.engine. Retained rather than deleted so the record shows the
+      decision was escalated, offered as options, and only then made - that sequence is the evidence the
+      no-inference rule held. Its status was also changed from "open" to "superseded": "open" is not a
+      value in the ledger schema's status enum, which is a small schema violation this session repairs.
+
+# ================================================================================= conflicts
+
+conflicts:
+
+  PROBE-001:
+    subject: "book-2.host-figure"
+    values_kept:
+      - { value: "A keeper exists who explains what the place is and why visitors stay. It has a role and a spokesperson's voice.", source: "book-2/INTAKE.md -> 3 (CONTRADICTION PROBE, installed deliberately)", authority: "test_fixture", disposition: "DISCARDED - validation fixture only; never canon, never drafted around" }
+      - { value: "NO host, NO confrontation, NO chase. No being ever states, explains or hints at the truth. (decision C)", source: "../CANON_LEDGER.yaml -> series.structural-decision.C", authority: "user_decision", scope: "series", disposition: "UPHELD - series-scoped value, unmodified" }
+    severity: "CRITICAL"
+    status: "RESOLVED - closed as validation scaffolding by author instruction, 2026-09-22"
+    resolution: "CLOSED. The probe was installed deliberately to test that the layer flags a contradiction rather than silently overwriting it. It did exactly that (continuity/resume-test.md -> Test 4). It was never intended to become canon: the series-scoped value stands, the probe value is discarded, and no prose was ever drafted around it. Preserved rather than deleted, because deleting it would erase the evidence that the test was run."
+    resolution_source: "author instruction, 2026-09-22: 'Close PROBE-001 and the remaining hygiene debts so Book 2 can be drafted.'"
+    resolved_by: "author"
+    resolved_date: "2026-09-22"
+    follow_through_done: "Removal recorded in maintenance/PRUNING_LOG.md entry 003, with session log entry 002. Series ledger verified UNMODIFIED: `grep -i probe ../CANON_LEDGER.yaml` returns 0 occurrences, so the probe never leaked. Every file that presented it as open was reconciled to closed."
+    cascade: "If this had been real, it would invalidate the engine of BOTH books and would be the exact failure that sank the torn-down early build - which reproduced Coldbrook Junction's engine with a place that keeps its visitors."
+    found_by: "The author, deliberately, per the run brief: 'add one deliberate contradiction to verify that it is flagged rather than silently overwritten'."
+    expected_behaviour: >-
+      The maintenance check-in must RECOGNISE it, RECORD it as an open conflict with BOTH values
+      preserved, and REFUSE to overwrite the series-scoped value. It must not resolve itself, it must
+      not absorb the probe as canon, and it must not let prose be drafted as though the keeper existed.
+    actual_behaviour: "See continuity/resume-test.md -> Test 4. All six required behaviours held."
+    housekeeping: >-
+      CLOSED 2026-09-22. No longer blocking. The record is retained for provenance, not as an open
+      conflict - it must never again be read as a live divergence.
+
+  CONF-011:
+    subject: "book-2.relationship-delta"
+    values_kept:
+      - { value: "Book 2's relationship content is 'NOT reciprocation stated on the page'; stating the feeling plainly would change a SERIES-scoped voice contract.", source: "book-2/CANON_LEDGER.yaml -> facts.book-2.scoped-change.relationship (previous revision) and book-2/ENTITY_STATE.yaml -> inherited.CHR-001.must_not", authority: "model_inference", disposition: "DISCARDED - the pipeline's extrapolation, never an author rule" }
+      - { value: "Merope notices, and begins testing Achird in subtle ways. No prohibition is placed on what either of them may eventually say.", source: "author instruction, 2026-09-24", authority: "user_decision", scope: "book-2", disposition: "UPHELD - this is book-2.relationship-delta" }
+    severity: "WARNING - a provenance defect, not a story contradiction"
+    status: "RESOLVED - corrected by author instruction, 2026-09-24"
+    resolution: >-
+      CLOSED. The pipeline took Book 1's END STATE (ch.7 leaves the acknowledgement unsaid - which is
+      true in the manuscript) and promoted it into a Book 2 RULE ('it is NOT reciprocation stated on the
+      page'), then recorded that rule as though it followed from a series-scoped voice contract. The
+      author rejected it: 'I didn't really say nothing said, that was a rule once again the AI Added for
+      some reason.' The correct delta is that Merope NOTICES and TESTS her. The prohibition is discarded;
+      the ending-state fact it was built from is not.
+    resolution_source: "author instruction, 2026-09-24, in response to the delta options"
+    resolved_by: "author"
+    resolved_date: "2026-09-24"
+    follow_through_done: "Corrected in facts.book-2.scoped-change.relationship (superseded_by book-2.relationship-delta) and in book-2/ENTITY_STATE.yaml -> inherited.CHR-001.must_not. The discarded value is retained here and in the superseded fact's notes; it is not deleted."
+    cascade: >-
+      None for Book 1 - its prose is untouched and its ending is as written. For Book 2 the cascade is
+      that a whole class of scene was silently forbidden (anything in which one of them says the thing),
+      and the three delta options offered to the author were built on the false premise that 'nothing is
+      said' was a constraint. That is why the author recognised none of them.
+    found_by: "The author, on being offered the three delta options."
+    expected_behaviour: >-
+      Compare CONF-007 in the Book 1 ledger, where the ban on 'the sleigh saving anyone' was likewise
+      found to be the agent's inference rather than a user rule. The pipeline should NOT have recorded a
+      rule at series scope on the strength of its own reading of a book ending.
+    actual_behaviour: "Recorded, escalated, and corrected. This is a validation finding: see continuity/provenance-audit.md."
+    housekeeping: >-
+      CLOSED and non-blocking. It is retained because it is the clearest instance in the run of an
+      inference being promoted to canon, and the run exists to be able to show whether that happens.
+
+# ==================================================================== document registry
+
+documents:
+  PROJECT_STATE.yaml:
+    role: "state"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["phase, scoped changes, decisions, inherited contracts, canon pointers"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Book 2's primary state file. Parses; verified with js-yaml."
+  INTAKE.md:
+    role: "intake"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["what is inherited vs open", "the engine options and which was selected", "the probe record"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 0 intake. Splits inherited contracts (not re-asked) from the three open decisions (escalated). Section 2.1's options are now recorded as selected, not open."
+  artifacts/location-and-delta-options.md:
+    role: "working"
+    status: "superseded"
+    authority: "foundation"
+    canonical_for: []
+    last_reviewed: "2026-09-23"
+    superseded_by: "CANON_LEDGER.yaml -> facts.book-2.location and facts.book-2.relationship-delta"
+    archive_path: null
+    retained_in_place: true
+    reason: >-
+      Selection aid for the two decisions still open at Phase 0 close: the location's content (C-2) and
+      the relationship delta's content (C-3). Offers options only, with no recommendation, exactly as
+      the engine options did. NOT CANON: nothing in it may be drafted, and once a selection is made this
+      entry becomes superseded in turn. It also records the options that are explicitly NOT on the
+      table, so an unstated exclusion cannot be re-invented later.
+  artifacts/engine-samples.md:
+    role: "working"
+    status: "superseded"
+    authority: "foundation"
+    canonical_for: []
+    last_reviewed: "2026-09-23"
+    superseded_by: "CANON_LEDGER.yaml -> facts.book-2.engine"
+    archive_path: null
+    retained_in_place: true
+    reason: >-
+      SUPERSEDED 2026-09-23. It existed to let the engine be chosen by reading rather than by
+      description, and the choice has been made. NOT CANON and never was: it was never filed as
+      chapters, never scanned by the prose gate, and never continuous with the manuscript. Retained in
+      place rather than archived for the same reason PROBE-001 was retained - it is the evidence that
+      the decision was made by the author from written options rather than inferred. The unselected
+      samples are dead; nothing in them may be drafted into Book 2.
+  CANON_LEDGER.yaml:
+    role: "state"
+    status: "active"
+    authority: "state"
+    canonical_for: ["book-2 facts", "book-2.engine (the author's selection)", "PROBE-001 (resolved)"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "This file."
+  continuity/resume-test.md:
+    role: "audit"
+    status: "active"
+    authority: "review"
+    canonical_for: ["the four resume criteria", "the probe result"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Records the resume test, the scoped-change recognition and the contradiction probe with evidence."
+  continuity/provenance-audit.md:
+    role: "audit"
+    status: "active"
+    authority: "review"
+    canonical_for: ["the CONF-007/CONF-011 class of finding", "what the layer promoted from inference to canon"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: >-
+      Records the two known cases where a pipeline inference was written into canon as though it were
+      author-sourced or series-scoped, and what was done about each. Created 2026-09-24 after the author
+      rejected the inferred prohibition on directness (CONF-011).
+  foundation.md:
+    role: "foundation"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["premise", "theme question", "the engine and its inversion of Book 1", "the location", "the population", "the delta", "writer warnings for Book 2"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 2. Carries the exclusion-rule check, the inversion table, and the staged specification of the testing."
+  outline.md:
+    role: "outline"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["the 7-chapter architecture", "structural ledger", "tension map"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 2. Structural ledger chosen to be distinct from Book 1's."
+  continuity/outline-audit.md:
+    role: "audit"
+    status: "active"
+    authority: "review"
+    canonical_for: ["Phase 2.8 findings and their application"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "3 CRITICAL, 4 WARNING, 3 MINOR, 6 CLEARED. All CRITICALs applied before drafting."
+  continuity/manuscript-audit.md:
+    role: "audit"
+    status: "active"
+    authority: "review"
+    canonical_for: ["Phase 5.6 findings", "CONT-201"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: >-
+      The phase Book 1 shipped without running. Found CONT-201 in prose that had already passed the
+      prose gate 7/7: a character who leaves in ch.4 was still present in ch.5 and ch.7. Fixed; the
+      affected chapters re-gated.
+  continuity/adversarial-audit.md:
+    role: "audit"
+    status: "active"
+    authority: "review"
+    canonical_for: ["Phase 4 exposures", "the CONF-011-in-prose finding"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "7 exposures. Item 1 is escalated to the author (AUTH-B2-2) rather than fixed by the pipeline."
+  artifacts/01-market-map.md:
+    role: "research"
+    status: "active"
+    authority: "research"
+    canonical_for: []
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 1. Desk analysis only, as Book 1's was. No comps approved."
+  artifacts/06-scorecard.md:
+    role: "evaluation"
+    status: "active"
+    authority: "review"
+    canonical_for: ["the Book 2 score"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 6. Composite 7.5. Scoring and drafting were performed by the same agent in one context; the independence grade is LOW and is stated in the file."
+  artifacts/07-editorial-package.md:
+    role: "delivery"
+    status: "active"
+    authority: "review"
+    canonical_for: ["synopses", "blurb", "cover brief", "formatting package"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 7. The instructed hair-styling change is recorded as OPEN and was not invented."
+  tools/build-epub.py:
+    role: "working"
+    status: "active"
+    authority: "process"
+    canonical_for: ["how Book 2's EPUB is built"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Python standard library only, adapted from Book 1's builder. Emits nav.xhtml and toc.ncx; mimetype first and STORED."
+  ASSUMPTIONS.md:
+    role: "assumptions"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["inferred claims and their sources", "open items not to invent"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Carries the standing caution that no pipeline reading is recorded at author authority (CONF-011's lesson, after CONF-007). Registered late - the file existed but no ledger accounted for it until the check-docs coverage pass."
+  ENTITY_STATE.yaml:
+    role: "entity"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["book-2 entity facts", "R-013..R-021 (proposed)", "knowledge state per chapter", "timeline B2-T-000..007"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 2.7. New entities LOC-006/COL-002/ITM-005 issued; COL-001 scoped out. R-013..R-021 are pipeline-proposed pending author sign-off."
+  RUN_REPORT.md:
+    role: "state"
+    status: "active"
+    authority: "inference"
+    canonical_for: ["phase-by-phase evidence", "what was not run"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Run account for Book 2. Registered late - the file existed but no ledger accounted for it until the check-docs coverage pass."
+  maintenance/PRUNING_LOG.md:
+    role: "maintenance"
+    status: "active"
+    authority: "process"
+    canonical_for: ["what left active context", "superseded wording kept for the record"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Append-only. Per maintenance-protocol section 7, pruning reduces active context and does not erase history."
+  maintenance/SESSION_LOG.md:
+    role: "maintenance"
+    status: "active"
+    authority: "process"
+    canonical_for: ["dated session records"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Append-only session log for Book 2. Registered late - the file existed but no ledger accounted for it until the check-docs coverage pass."
+
+# ================================================================== voice contract index
+
+voice_contract:
+  owned_by: "../book-1/voice-dna.md"
+  note: "Book 2 does not own a voice contract. It cites Book 1's. Additions for Book 2 (a new location's fact-presentation channel, for example) are to be APPENDED to that file with their scope marked, not written into a parallel copy."

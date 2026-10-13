@@ -10,6 +10,17 @@ specialist skills, keeps the state honest, enforces the gates, and refuses to le
 advance on a claim that the files do not support. It never writes dialogue, prose, or
 narrative content — that is `setting`'s work.
 
+### The whole thing in plain words
+
+Incunabula is a project manager for writing a book with AI help. It breaks the work into
+17 ordered stages (research, plan, draft, review, revise, deliver), hands each stage to a
+specialist skill, and refuses to move on until the files on disk prove the stage is done.
+Along the way, automatic checks ("gates") measure the prose and the story bookkeeping and
+can fail the book. Results stay traceable because the checkers are version-locked
+("frozen" — see `GATE_FREEZE.md`): any score can be tied back to the exact tools that
+produced it. Every unusual word in this file is defined in plain English in
+`INCUNABULA_LEXICON.md`.
+
 ## The job
 
 1. Keep the project's state files current; where both state files exist, keep both.
@@ -136,10 +147,18 @@ need moments of disorder.
 
 Required at every prose phase, and never satisfied by a scan that was not run.
 
-**Two tools, two questions.** `tools/deslop-check.sh` reads one chapter against per-1k
-caps. `tools/check-uniformity.py` reads the whole manuscript and compares the chapters to
-each other. Neither replaces the other: the first cannot see uniformity, because it never
-holds two chapters at once, and the second cannot see a bad sentence. Both must be green.
+**Four tools, four questions.** `tools/prose/deslop-check.sh` reads one chapter against
+per-1k caps. `tools/prose/check-uniformity.py` reads the whole manuscript and compares the
+chapters to each other. `tools/prose/check-drift.py` reads first chapters against last for
+a voice shift. `tools/prose/check-arc.py` reads whether the emotional direction ever
+reverses. None replaces another: the scanner never holds two chapters at once, the
+cross-chapter checks never see a bad sentence, and all four must be green.
+
+**The suite runs as one command:** `bash tools/run-gates.sh <book-root>`. It runs every
+gate — prose, narrative, length, contract-vs-plan, research, pass evidence — and exits nonzero if any gate
+fails **or does not run**. Exit 0 is CLEAR; exit 1 is FAIL; exit 2 is NOT CLEAR (a gate did
+not run or declined to judge) and blocks the phase exactly like a failure. A phase may not
+claim a gate passed without a `run-gates.sh` verdict on record.
 
 - Every chapter scanned by the project's calibrated scanner and passing.
 - The manuscript passing the uniformity gate: chapter lengths varying like human prose, no shared rhythm profile across chapters, and no coda habit. This is the row the per-chapter caps structurally cannot cover.
@@ -205,13 +224,20 @@ Required at every phase, and never satisfied by a layer that was never created.
 - No contradiction resolved silently. Both values kept with provenance, a conflict record raised, and anything touching content boundaries, ending ambiguity, or a character's core identity escalated rather than decided.
 - Unresolved conflicts reported by identifier with their blocking scope, so an open conflict cannot pass as a settled fact.
 - Nothing archived or deleted without path, archive path, replacement, reason, and date. Pruning reduces active context; it does not erase history.
-- Gate evidence recorded: command, exit status, documents scanned, failing rows with rule identifiers, and the control run.
+- Gate evidence recorded: the `run-gates.sh` summary table — command, exit status, documents scanned, failing rows with rule identifiers — and the control run. A gate without a recorded verdict is a gate that did not run.
+- Every phase-level pass is complete only with its artifact file on disk: `register` leaves the blind-sort table with its verdict; `catchword` leaves hook/pull scores and the hook-type log; `quoin` leaves the operation log (at least five operations); `composing` leaves the diff-review note; `proof-panel` leaves persona verdicts, the tic scan, and the independence grade; `proof-pull` leaves the round log. A claim without the artifact is a FAIL, not a pass. (`tools/check-pass-evidence.py` verifies presence; it reads no prose and judges no manuscript.)
+- Progress is tracked as gated words — words in chapters with complete pass files. Chapters-drafted is informational.
+- No chapter under 2,000 words or 50% of its planned length without a recorded waiver (reason, outline actuals updated, session-log entry). A waiver is not a routine device: a second consecutive waiver, or one that leaves the running total behind the outline's plan (row `L2` of `tools/check-progress.py` reports that running total; row `C1` there fails a contract that contradicts the outline's plan, so the band cannot be shrunk to fit the output), is a stop-the-line event escalated to the human. A recurring waiver is itself the pattern.
+- Grade-C evaluations are diagnostic only and cannot advance phases. Where no independent critic exists, checkpoints belong to the human; self-votes stand in for nobody.
 
 ---
 
 ## Phase gates, condensed
 
-Each arrow below must be earned, not assumed.
+Each arrow below must be earned, not assumed. **Every "gate passes" below means:
+`bash tools/run-gates.sh <book-root>` returns CLEAR (exit 0) for the rows that phase
+requires.** A FAIL (1) or a NOT CLEAR (2) blocks the transition; a run that was skipped
+proves nothing and is never recorded as a pass.
 
 - **1 → 1.5** market study with comps, genre conventions, a length target, an engagement type, and explicit user approval of direction.
 - **1.5 → 2** three to five personas; a primary that drives writing and a hostile that drives evaluation; deal-breakers and triggers on each.
@@ -306,8 +332,8 @@ dialogue, tag-to-beat ratio. Narrative prose untouched.
 first and last few sentences below threshold, and never repeating the previous chapter's
 hook type.
 
-**Quoin** — `quoin`, at least five of eight operations, preserving the anchor, report saved
-to evaluations.
+**Quoin** — `quoin`, at least five of its nine operations including operation 9,
+preserving the anchor, report saved to evaluations.
 
 **Case update** — `case-keeper` in UPDATE mode after each batch.
 
@@ -507,7 +533,7 @@ than perfect.
 Neither 21 nor 22 can be counted per chapter and judged on rate alone. Both are habits of
 *placement*, and a rate that looks acceptable in each chapter individually is exactly how a
 book ends up closing fifteen of twenty-five chapters on the same rhetorical move. The
-distribution is the measurement; `tools/check-uniformity.py` takes it.
+distribution is the measurement; `tools/prose/check-uniformity.py` takes it.
 
 Prescriptive nonfiction is exempt from the patterns that are native to it — the wise
 closing, the overprint, the confident description, the aside, thematic saturation, and the
@@ -518,7 +544,9 @@ graduated reveal — and those are not penalised in that genre.
 ## Commands
 
 `start [idea]` initialise and run phase one · `status` current state and next action ·
-`phase [n]` force-advance with a gate check that will refuse · `write [n]` prepare a
+`gates` run the full suite (`bash tools/run-gates.sh <project>`, verdict recorded) ·
+`phase [n]` force-advance with a gate check that will refuse — the check is `run-gates.sh`,
+and it refuses on FAIL or on NOT CLEAR · `write [n]` prepare a
 drafting dispatch · `quoin [n]` · `evaluate [n|all]` · `revise [n]` · `score` the
 breakdown plus both indices · `deliver` phase six after its gate check · `feedback [file]` ·
 `voice-bank add [file]` · `voice-matrix` · `readership` · `continuity [outline|manuscript]` ·

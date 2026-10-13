@@ -29,9 +29,10 @@
 # caps change - that command is the gate's own check, and it exits nonzero if a
 # control misbehaves or a directory scan expands to zero files.
 # See tools/calibration/ for the corpus, the measurements and how to re-derive.
-#
-#   HARD     zero tolerance. Rule only qualifies if it has *zero* occurrences in
-#            the calibration corpus. If published prose never does it, it is a tell.
+#  #   HARD     zero tolerance. Rule only qualifies if it has *zero* occurrences in
+  #            the calibration corpus. If published prose never does it, it is a tell.
+  #            Exception: rows listed in conventions.py NF_SCOPED are reported, not
+  #            failed, for a book that declares mode: nonfiction (CALIBRATION.md §21).
 #   DENSITY  published prose does this, so it cannot be banned - only overdone.
 #            Cap = ~1.5x the worst single calibration document, so the reference
 #            passes with headroom. Caps are rational (n per w words) because
@@ -78,6 +79,9 @@ HARD=(
   'A12|despite the challenges|despite (these|its|the) (challenges|obstacles|setbacks)'
   'A13|truth-is-simple|(the (reality|truth) is (simple|simpler|clear)|history is (clear|unambiguous)|the evidence is clear)'
   'A14|stakes inflation|(fundamentally reshape|define the next era|something entirely new|change everything|the very nature of)'
+  # A10a only: scoped (report-not-fail) for a book that declares mode: nonfiction.
+  # The sweep behind that scoping is CALIBRATION.md §20; the holding record is
+  # NF_SCOPED in conventions.py. Every other row here stays live for nonfiction.
   'A15a|analytical -ing|, (highlighting|underscoring|emphasizing|symbolizing|showcasing|signaling|a reminder of)'
   'A16|vague attribution|(experts (say|argue|believe|suggest)|observers (have|noted|say)|industry reports|some critics|many would argue|several publications)'
   'A18|gerund litany|(^|[.!?] )([A-Z][a-z]+ing [^.!?]{0,40}\. ){2,}'
@@ -410,6 +414,44 @@ scan_file() {
   selfscan_root=$(dirname "$(dirname "$(dirname "$1")")")
   [ -f "$selfscan_root/SELFSCAN" ] && selfscan=1
 
+  # NF mode scoping (Freeze 20).
+  #
+  # §20 measured the frozen table over 134 files of published prescriptive prose;
+  # the only row that accuses the register at more than a stray-file rate is A10a,
+  # the row whose own name targets it. For a book that declares nonfiction, the
+  # scoped rows keep their pattern and their count and are REPORTED, not failed -
+  # the same shape the REPORT tier gives a row that cannot accuse, keyed on the
+  # same three-dirs-up book root the SELFSCAN marker uses. The list of scoped rows
+  # is held by conventions.py NF_SCOPED (guarded by its self-test), so a scanner
+  # copy of the list cannot drift from the record. Fiction mode and undeclared
+  # books ask nothing and see no change: the fixture still fails A10a as it always
+  # did, and the fiction path here is unchanged by construction.
+  nf=0
+  scoped=""
+  nf_root=$(dirname "$(dirname "$(dirname "$1")")")
+  conv=$(dirname "$0")/conventions.py
+  if [ -f "$conv" ] && [ -d "$nf_root" ]; then
+    # Pick the interpreter by PROOF, not by name: on Windows, `python3` can be the
+    # MS Store alias - `command -v` finds it and the alias never runs. A guard that
+    # never fires is the documented failure mode in this directory; the only safe
+    # detection is one that runs the interpreter once and watches it succeed.
+    NFPY=""
+    for cand in python3 python; do
+      if command -v "$cand" >/dev/null 2>&1 && "$cand" -c "pass" >/dev/null 2>&1; then
+        NFPY=$cand
+        break
+      fi
+    done
+    if [ -n "$NFPY" ]; then
+      if "$NFPY" "$conv" --nf "$nf_root" >/dev/null 2>&1; then
+        nf=1
+      fi
+      # tr strips the CR a Windows text-mode stdout appends; grep -qw still needs
+      # it gone so a scoped id never carries stray bytes into the match.
+      scoped=$("$NFPY" "$conv" --scoped-rows 2>/dev/null | tr -d '\r') || scoped=""
+    fi
+  fi
+
   for entry in "${HARD[@]}"; do
     id=${entry%%|*}; rest=${entry#*|}
     name=${rest%%|*}; re=${rest#*|}
@@ -417,6 +459,9 @@ scan_file() {
     if [ "$n" -gt 0 ]; then
       if [ "$selfscan" -eq 1 ] && [ "$id" = "A22" ]; then
         printf '   --    %-5s %-22s x%s  (self-scan: the excluded book itself - vocabulary reported, not gated)\n' "$id" "$name" "$n"
+        warn=1
+      elif [ "$nf" -eq 1 ] && printf '%s' "$scoped" | grep -qw "$id"; then
+        printf '   --    %-5s %-22s x%s  (nonfiction mode: register-construction reported, not gated - CALIBRATION.md §21)\n' "$id" "$name" "$n"
         warn=1
       else
         printf '   FAIL  %-5s %-22s x%s  (published prose: 0)\n' "$id" "$name" "$n"

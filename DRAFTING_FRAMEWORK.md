@@ -120,6 +120,18 @@ it twice.**
 
 That is the whole framework. Everything below is what follows from it in practice.
 
+**What this rule is not (added 2026-10-13).** It forbids *quotas*: writing to a number,
+padding to a band, trimming to match the neighbours. It does not forbid the *floor*. The
+maintenance engine carries a stub detector — no chapter under 2,000 words or 50% of its
+planned length without a recorded waiver — and the two are not in conflict, because the
+floor is never a target to write to. A chapter that finished its thing at 700 words is
+legitimate and takes the waiver; the waiver records *finished, and short*. A chapter that
+has none of the three symptoms above is unfinished at any length, and the floor is only
+where that becomes visible early. What the waiver is not is a routine device: a second
+consecutive waiver, or one that leaves the running total behind the outline's plan, stops
+the line and goes to a human. The rule against quotas stands; so does the rule against
+telling yourself a 300-word chapter was finished because nothing forced the question.
+
 ## What a chapter is, and therefore how long it is
 
 Chapters are not sized. They *end*. A chapter ends when the thing it was about has been
@@ -158,10 +170,14 @@ The failures this prevents, in order of how often they happen:
 
 ## Where the numbers still legitimately live
 
-Two places, and only two:
+Three places, and only three (two before 2026-10-13; the stub detector joined when the
+no-floor regime produced books half their declared length):
 
 - **The book.** A declared total length for the whole manuscript is a real contract with
   the author and it is enforced by `check-length.py`. It stays.
+- **The floor.** The 2,000-word/50% stub detector and its waiver log, judged per chapter.
+  A detector, not a target: the moment a chapter is written *to* it, the rule above is
+  right again and this paragraph is the defect.
 - **The sweep.** `check-uniformity.py` reports the actual distribution at the end, once,
   on a finished book, and it is read as *information about the book*, not as a thing to be
   optimised. A book that fails U1 is a book worth looking at. A book that passes U1 by

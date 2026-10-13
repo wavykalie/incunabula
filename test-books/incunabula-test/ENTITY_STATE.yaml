@@ -1,0 +1,99 @@
+# ENTITY_STATE.yaml — Case Tracking (BUILD, Phase 2.7)
+#
+# The type case holds every sort. This is the single source of truth that continuity
+# checks, drafting, and evaluation consume instead of rebuilding an entity list.
+# BUILT from foundation.md + outline.md before Chapter 1 was drafted. UPDATED after
+# every chapter batch (Phase 3.7 / 5.5).
+#
+# `status: planned` = known from the outline, not yet on the page.
+
+meta:
+  mode: "BUILD then UPDATE (Phase 3.7 after chs 1-5, Phase 5.5 after chs 6-11)"
+  built: "2026-09-25"
+  sources: [foundation.md, outline.md, artifacts/03-figures.md]
+  last_update: "2026-09-25"
+  update_note: "CONT-301 from the Phase 5.6 audit: birth years were missing for FIG-15, FIG-17 and FIG-18, which is what allowed three arithmetic errors into the prose. Birth years now carried for every figure whose age is stated on the page."
+
+# ------------------------------------------------------------------- figures
+figures:
+  - { id: FIG-01, name: "Qin Shi Huang (Ying Zheng)", also_known_as: ["the First Emperor"], died: "210 BCE", chapters: [1], status: planned }
+  - { id: FIG-02, name: "Li Si", died: "208 BCE", chapters: [1, 4], status: planned }
+  - { id: FIG-03, name: "Han Feizi", died: "233 BCE", chapters: [1], status: planned }
+  - { id: FIG-04, name: "Liu Bang (Han Gaozu)", died: "195 BCE", chapters: [2], status: planned }
+  - { id: FIG-05, name: "Xiang Yu", died: "202 BCE", chapters: [2], status: planned }
+  - { id: FIG-06, name: "Lu Jia", died: "c. 170 BCE", chapters: [2], status: planned }
+  - { id: FIG-07, name: "Han Wudi (Liu Che)", died: "87 BCE", chapters: [3], status: planned }
+  - { id: FIG-08, name: "Sima Qian", died: "c. 86 BCE", chapters: [3, 11], status: planned }
+  - { id: FIG-09, name: "Wang Mang", died: "23 CE", chapters: [4], status: planned }
+  - { id: FIG-10, name: "Cao Cao", died: "220 CE", chapters: [5], status: planned }
+  - { id: FIG-11, name: "Liang Wudi (Xiao Yan)", died: "549 CE", chapters: [6], status: planned }
+  - { id: FIG-12, name: "Bodhidharma", died: "traditional; legendary", chapters: [6], status: planned, note: "Interview is tradition, not transcript" }
+  - { id: FIG-13, name: "Sui Wendi (Yang Jian)", died: "604 CE", chapters: [7], status: planned }
+  - { id: FIG-14, name: "Sui Yangdi (Yang Guang)", died: "618 CE", chapters: [7], status: planned }
+  - { id: FIG-15, name: "Tang Taizong (Li Shimin)", born: "598 CE", died: "649 CE", chapters: [8], status: drafted }
+  - { id: FIG-16, name: "Wei Zheng", died: "643 CE", chapters: [8], status: planned }
+  - { id: FIG-17, name: "Wu Zetian", born: "624 CE", died: "705 CE", chapters: [9], status: drafted }
+  - { id: FIG-18, name: "Tang Xuanzong (Li Longji)", born: "685 CE", died: "762 CE", chapters: [10], status: drafted }
+  - { id: FIG-19, name: "Li Bai", died: "762 CE", chapters: [10], status: planned }
+  - { id: FIG-20, name: "Du Fu", died: "770 CE", chapters: [10], status: planned }
+  - { id: FIG-21, name: "An Lushan", died: "757 CE", chapters: [10], status: planned }
+  - { id: FIG-22, name: "Zhu Xi", died: "1200 CE", chapters: [11], status: planned }
+
+# ------------------------------------------------------------------- texts
+texts:
+  - { id: TXT-01, name: "Records of the Grand Historian (Shiji)", author: "Sima Qian", chapters: [1, 2, 3, 4, 5], status: planned }
+  - { id: TXT-02, name: "Letter to Ren An", author: "Sima Qian", chapters: [3], status: planned }
+  - { id: TXT-03, name: "Han Feizi (the essays)", author: "Han Feizi", chapters: [1], status: planned }
+  - { id: TXT-04, name: "the Confucian canon (Odes, Documents, etc.)", author: "collective", chapters: [2, 4, 11], status: planned }
+  - { id: TXT-05, name: "Zhenguan Governance (Zhenguan zhengyao)", author: "later compilation", chapters: [8], status: planned }
+  - { id: TXT-06, name: "Cao Cao's verse", author: "Cao Cao", chapters: [5], status: planned }
+  - { id: TXT-07, name: "Li Bai's and Du Fu's verse", author: "Li Bai, Du Fu", chapters: [10], status: planned }
+  - { id: TXT-08, name: "Zhu Xi's commentaries", author: "Zhu Xi", chapters: [11], status: planned }
+
+# ------------------------------------------------------------------- places
+places:
+  - { id: LOC-01, name: "Xianyang", note: "Qin capital", chapters: [1], status: planned }
+  - { id: LOC-02, name: "the Wu River (Wujiang)", note: "where Xiang Yu refused to cross", chapters: [2], status: planned }
+  - { id: LOC-03, name: "Chang'an", note: "Han and Tang capital", chapters: [3, 8, 9, 10], status: planned }
+  - { id: LOC-04, name: "Xuanwu Gate", note: "site of the 626 ambush", chapters: [8], status: planned }
+  - { id: LOC-05, name: "Mawei", note: "site of the 756 mutiny", chapters: [10], status: planned }
+  - { id: LOC-06, name: "the Grand Canal", note: "engineered line, Sui", chapters: [7, 10], status: planned }
+
+# ------------------------------------------------------------------- timeline
+# Only spans the book covers. Reign years are separate from life years on purpose.
+timeline:
+  - { id: TL-01, when: "221 BCE", event: "Qin unifies the six states; the title huangdi is created", chapters: [1] }
+  - { id: TL-02, when: "213 / 212 BCE", event: "the book burn and the buried scholars (accounts disputed)", chapters: [1] }
+  - { id: TL-03, when: "210 BCE", event: "Qin Shi Huang dies on tour", chapters: [1] }
+  - { id: TL-04, when: "202 BCE", event: "Xiang Yu dies at the Wu River; Liu Bang founds the Han", chapters: [2] }
+  - { id: TL-05, when: "c. 195 BCE", event: "Lu Jia's counsel on ruling what was conquered on horseback", chapters: [2] }
+  - { id: TL-06, when: "99 BCE", event: "Sima Qian sentenced; chooses castration to finish the Records", chapters: [3] }
+  - { id: TL-07, when: "9 CE", event: "Wang Mang takes the throne; the Xin dynasty", chapters: [4] }
+  - { id: TL-08, when: "23 CE", event: "Wang Mang dies as the capital falls", chapters: [4] }
+  - { id: TL-09, when: "184 CE", event: "Yellow Turban rebellion", chapters: [5] }
+  - { id: TL-10, when: "220 CE", event: "Cao Cao dies; the Han ends as a fiction", chapters: [5] }
+  - { id: TL-11, when: "c. 520s CE", event: "the Bodhidharma interview (traditional)", chapters: [6] }
+  - { id: TL-12, when: "549 CE", event: "Liang Wudi starves in the siege of Jiankang", chapters: [6] }
+  - { id: TL-13, when: "589 CE", event: "Sui reunifies China", chapters: [7] }
+  - { id: TL-14, when: "626 CE", event: "Xuanwu Gate; Li Shimin becomes Taizong", chapters: [8] }
+  - { id: TL-15, when: "643 CE", event: "Wei Zheng dies", chapters: [8] }
+  - { id: TL-16, when: "690 CE", event: "Wu Zetian founds her Zhou; the edict's new language", chapters: [9] }
+  - { id: TL-17, when: "705 CE", event: "Wu Zetian is deposed; the blank stele", chapters: [9] }
+  - { id: TL-18, when: "755 CE", event: "An Lushan rebels", chapters: [10] }
+  - { id: TL-19, when: "756 CE", event: "Mawei; the emperor flees to Shu", chapters: [10] }
+  - { id: TL-20, when: "960 CE", event: "Song founding; the civil-over-military settlement", chapters: [11] }
+  - { id: TL-21, when: "c. 1200 CE", event: "Zhu Xi's commentaries; the examination standard", chapters: [11] }
+
+# ----------------------------------------------------------- information flow
+# Who may act on what, and when. The drafting skill must not let a figure know
+# something before it exists.
+knowledge_gates:
+  - { id: KG-01, fact: "the Records of the Grand Historian", available_from: "after c. 91 BCE", note: "Chapters 1, 2, 4, 5 are narrated through a text written later. The narrator may use it; the figures may not." }
+  - { id: KG-02, fact: "the Bodhidharma interview", available_from: "tradition, centuries later", note: "Ch 6 must present it as tradition and say so." }
+  - { id: KG-03, fact: "the Zhenguan record", available_from: "compiled after Taizong's death", note: "Ch 8 may use it, marked as the record Taizong knew would be written." }
+  - { id: KG-04, fact: "An Lushan's casualty figures", available_from: "later estimates", note: "Ch 10 must flag the death toll as an estimate, not a count." }
+
+# ------------------------------------------------------------- open questions
+open:
+  - { id: OQ-01, question: "Wade-Giles forms (Tao, Confucius) vs pinyin in the running text", status: open, owner: author }
+  - { id: OQ-02, question: "Whether reign-year formatting is numerals (626-649) or 'in the twenty-third year of...'", status: open, owner: pipeline, note: "Pipeline proposes numerals; author may overrule." }

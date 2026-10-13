@@ -76,6 +76,8 @@ import sys
 import glob
 import statistics as st
 
+import conventions
+
 # Same extraction as the dialogue-share feature in check-drift.py, deliberately, so the
 # two tools cannot disagree about what counts as speech.
 QUOTED = re.compile(r"[\u201c\"]([^\u201d\"]{0,400})[\u201d\"]")
@@ -158,13 +160,11 @@ def resolve(arg):
 
 
 def declare_nonfiction(book_root):
-    """Surplus speech is a narrative property; nonfiction carries it as context only."""
-    path = os.path.join(book_root, "PROJECT_STATE.yaml")
-    if not os.path.isfile(path):
-        return False
-    with open(path, encoding="utf-8", errors="ignore") as fh:
-        head = fh.read(4000)
-    return bool(re.search(r"^\s*(positioning|genre)\s*:\"?[^\n]*nonfiction", head, re.I | re.M))
+    """Surplus speech is a narrative property; nonfiction carries it as context only.
+
+    The reading itself lives in conventions.py - one reader for the whole suite.
+    Unknown is not nonfiction (undeclared books keep the narrative behaviour)."""
+    return conventions.is_nonfiction(book_root)
 
 
 def measure(text):

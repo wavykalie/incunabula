@@ -1,6 +1,6 @@
 ---
 name: quoin
-description: Predictability-breaking pass for a drafted chapter. Runs after the Writer and before the Evaluator. Applies at least five of eight operations to inject human noise, cut self-explaining similes (the Overprint), and unsettle the system's compulsion toward order. It does not fix problems and it does not improve the prose — it makes the chapter less predictable. Use in Incunabula Phase 3.5.
+description: Predictability-breaking pass for a drafted chapter. Runs after the Writer and before the Evaluator. Applies at least five of its nine operations to inject human noise, cut self-explaining similes (the Overprint), and unsettle the system's compulsion toward order. It does not fix problems and it does not improve the prose — it makes the chapter less predictable. Use in Incunabula Phase 3.5.
 ---
 
 # the Quoin
@@ -30,7 +30,7 @@ draft — otherwise the wash of disruption never reaches the score.
    surprise** for this chapter, plus its structural approach.
 4. Read `foundation.md` for the character chaos profiles.
 
-## The Eight Operations
+## The Nine Operations
 
 Apply **at least five**. Apply more when the chapter reads too smoothly.
 
@@ -68,7 +68,7 @@ Apply **at least five**. Apply more when the chapter reads too smoothly.
    material wants. 
    - If the chapter's **closing move** repeats the previous chapter's — a coda, an aphorism, a
      summary of what the chapter meant — cut the coda and stop the chapter where its last scene
-     stops. See rule `F1` in `tools/deslop-check.sh`: published prose never closes a chapter on
+     stops. See rule `F1` in `tools/prose/deslop-check.sh`: published prose never closes a chapter on
      an explanatory turn.
    - If the chapter **cannot be varied** because the scene genuinely needs the length or the
      rhythm it has, say so in the report and vary a different chapter instead. A book with one

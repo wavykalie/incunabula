@@ -1,0 +1,16 @@
+# CANON_LEDGER.yaml — Stall Twelve
+facts:
+  - { id: F-001, fact: "ground lease expires in 30 days; council will not renew; developer wants flats", provenance: premise + outline ch4, status: active }
+  - { id: F-002, fact: "Pye's 3 rules: remembers only when fryers on; can't touch paper, only point; can't leave market footprint", provenance: outline ch2, status: active }
+  - { id: F-003, fact: "1962 indenture lost with renewal clause; filed in health-cert archive 1974 by Fenn's father", provenance: outline ch2/ch16, status: active }
+  - { id: F-004, fact: "stall 12's rent book missing", provenance: outline ch4, status: active }
+  - { id: F-005, fact: "Ray's debt was suppliers, not rent; Pye knew Ray", provenance: outline ch11, status: active }
+  - { id: F-006, fact: "traders buy the freehold with whip-round + Connie's stake (ch20)", provenance: outline ch6/ch13/ch20, status: active }
+conflicts: []
+supersessions: []
+documents:
+  - { path: premise.md, authority: premise, updated: 2026-10-12 }
+  - { path: foundation.md, authority: character/theme/curve, updated: 2026-10-12 }
+  - { path: outline.md, authority: chapter architecture, updated: 2026-10-12 }
+  - { path: voice-matrix.md, authority: voice prescription, updated: 2026-10-12 }
+  - { path: ENTITY_STATE.yaml, authority: entity tracking, updated: 2026-10-12 }

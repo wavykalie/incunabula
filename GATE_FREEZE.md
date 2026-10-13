@@ -1,4 +1,4 @@
-the ten controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only) |# Gate freeze
+# Gate freeze
 
 **Frozen:** 2026-09-27 · **Corpus:** 6 fiction + 6 non-fiction volumes, 5+6 authors
 **Suite status at freeze:** all ten controls pass (exit 0)
@@ -9,22 +9,91 @@ you are now looking at. Without it, a re-derived floor silently rewrites what a
 generation run was evidence for — which is exactly what happened to `U1` earlier today,
 when its published band turned out to come from a translated light novel.
 
+## This file in plain words
+
+**What a gate is.** A gate is an automatic check that reads your book and can fail it.
+Three matter most: one checks the prose — each chapter and the whole book — one checks the shape of
+the story, one checks the project's bookkeeping. The pipeline will not move past a
+failed gate. Full dictionary: `INCUNABULA_LEXICON.md`.
+
+**What a freeze is.** When the checks were found trustworthy, their files were
+fingerprinted and the fingerprints written into the manifest below. A *freeze* is that
+locked state. From then on, any change to a check must be logged in this file with a
+date and a reason. A book keeps the freeze it was written under, so every result can be
+traced back to the exact tool that produced it.
+
+**Why all the hashes.** A hash is a file's fingerprint: change one character anywhere
+and it changes completely. Comparing hashes proves the check that ran on your book is
+byte-identical to the one recorded here. Run `bash tools/prose/verify-freeze.sh`:
+`FREEZE HOLDS` is the good answer, `CHANGED` means a result from before the edit no
+longer applies.
+
+**What this file is for.** Most of it is the historical record — the evidence for why
+each number is what it is, written for whoever changes a check next. The guide and the
+table below are the parts for a first read. After them: the manifest is the list of
+locked tools, and each entry underneath tells the story of one change.
+
+## Every freeze so far, in one line each
+
+| version | date | what changed, in plain words |
+|---|---|---|
+| Freeze 1 | 2026-09-27 | The original locked set of checks. |
+| Freeze 2 | 2026-09-27 | Two bug fixes: the voice-drift checker ranked tied values wrongly, and the guidance guard's memory count grew. Books keep their original version. |
+| Freeze 3 | 2026-09-27 | Same-day updates to the guidance guard; the length check joins the locked set. |
+| Freeze 4 | 2026-09-28 | A cast-name collision check added, after the same first name appeared in two books and nothing caught it. Also fixed: a manifest row nothing was actually checking. |
+| Freeze 5 | 2026-09-28 | Two research-stage checks added: premise collisions against your own catalogue, and comp-title verification stamps. |
+| Freeze 6 | 2026-09-28 | A policy freeze with no file changes: no new checks and no new kinds of check, with the reasons written down so they are not relitigated. |
+| Freeze 7 | 2026-09-28 | Two scanner bugs fixed: stray carriage returns hid half a chapter's sentences, and one rule matched inside a word. |
+| Freeze 8 | 2026-09-28 | The length check now says *why* it cannot run: "no length declared" and "no state file" became different answers. |
+| Freeze 9 | 2026-09-28 | The self-test suite ran against real published prose for the first time: all ten controls pass. |
+| Freeze 10 | 2026-09-29 | The self-test suite fixed so a fresh clone can run the half that needs no corpus, and "not run" is never printed as "passed". |
+| (2026-09-30) |  | The make-ready layer: preflight checks, session logs, the self-improvement protocol. Process tools, deliberately not gates. |
+| Freeze 11 | 2026-10-01 | A book still being drafted is recorded rather than failed; two checks learned that state. |
+| Freeze 12 | 2026-10-01 | The private calibration book renamed to "Hollow Bridge" for the public repository. No measurement changed. |
+| Freeze 13 | 2026-10-04 | The narrative checks arrive — story debt, beat repetition, scene functions, quantities — after an outside critique showed the suite verified prose but not story. Four same-day updates fixed three detectors found mismeasuring other books. |
+| Freeze 14 | 2026-10-05 | The story ledger records *how* each chapter resolves its beats, so a repeating circuit becomes visible. |
+| Freeze 15 | 2026-10-05 | A wound in the ledger carries the chapter it must fire by, so a trauma left as backstory is flagged while fixing it is still cheap. |
+| Freeze 16 | 2026-10-05 | Dialogue tags get a per-chapter map of breathless speech, to find the scenes where a character slips register. |
+| Freeze 17 | 2026-10-05 | The style rules get a drafting-time linter that shows the exact line and column of every hit. Not a gate. |
+| Freeze 18 | 2026-10-05 | Lint runs get written into the ledger, so a finding about the tools survives the session that found it. |
+| Freeze 19 | 2026-10-07 | One shared reader for the fiction/nonfiction declaration, so two checks can no longer disagree about what a book is. |
+| Freeze 20 | 2026-10-07 | For declared nonfiction, the "filler phrase" row is reported instead of failed. |
+| Freeze 21 | 2026-10-08 | The name check learned the nonfiction case; a case-sensitivity blind spot in one style rule pinned rather than silently fixed; the freeze verifier stopped flagging history rows as if they were live. |
+| (2026-10-13) | | The manifest catches up with itself: seven frozen rows that Freeze 5 and Freeze 13 recorded inside the history sections moved into the manifest region, where the verifier can see them. No check changed and no hash moved. |
+
 ## Manifest (FREEZE 4 - current)
 
 | file | sha256 (first 16) | role |
 |---|---|---|
-| `tools/prose/deslop-check.sh` | `20e1976d20312974` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 12 - A22 self-scan re-keyed to a marker file) |
-| `tools/prose/check-uniformity.py` | `61a9b72bf86d31c7` | U1–U6 cross-chapter rows |
+| `tools/prose/deslop-check.sh` | `35ed380c20db520e` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 20 - A10a scoped to a report for mode: nonfiction, via conventions.py) |
+| `tools/prose/check-uniformity.py` | `9aa47f622e7ea61d` | U1–U6 cross-chapter rows (Freeze 19 - mode reader via conventions.py) |
 | `tools/prose/check-drift.py` | `814ca33e9e684ee7` | voice drift, size-dependent floor (Freeze 2 - Spearman tie fix) |
 | `tools/prose/check-arc.py` | `f2059aec8a9580cc` | A1 gate; A2–A4 report-only |
-| `tools/prose/check-surplus.py` | `ff9e851c6f0b91ab` | S1–S4, report-only |
+| `tools/prose/check-surplus.py` | `7107a75155e8ffb5` | S1–S4, report-only (Freeze 19 - mode reader via conventions.py) |
 | `tools/prose/check-recoverable.py` | `591c61560d8c53b3` | tic × dialogue enrichment, report-only |
 | `tools/prose/check-errata.py` | `e9724056d7a3f18c` | protocol validator, reads no prose (Freeze 3 - floor 30) |
 | `tools/prose/check-length.py` | `6dd9d862d275bff3` | declared-length row `L1` (Freeze 2 - added after the sons-of-heaven-v2 run exposed the deletion incentive; Freeze 8 - exit 3 for ungoverned) |
-| `tools/prose/check-names.py` | `6fcb3bd0dd1ae1c2` | cross-book cast-name collisions + default-name filter, reads no prose (Freeze 4 - added after the author found `Priya` in two books) |
+| `tools/prose/check-names.py` | `f5f169b0704e6e46` | cross-book cast-name collisions + default-name filter, reads no prose (Freeze 4 - added after the author found `Priya` in two books; Freeze 21 - nonfiction case via `conventions.py`) |
 | `tools/prose/calibration/NAME_FREQUENCY.tsv` | `f17e837f6f2ae0a5` | the name-frequency data `check-names.py` reads (Freeze 4) |
 | `tools/prose/calibration/NAME_FREQUENCY.md` | `75f6fa0dae36f327` | provenance + the tier reasoning; frozen because it states what the tiers mean (Freeze 4) |
-| `tools/prose/validate-controls.sh` | `d8d84fddeaddbd36` | the controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only; Freeze 13 - controls 13-16 added) |
+| `tools/prose/validate-controls.sh` | `b3346a394925788e` | the controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only; Freeze 13 - controls 13-16; Freeze 20 - control 17, NF scope arms; Freeze 21 - controls 18-19, names case + A24 pin) |
+| `tools/prose/check-premise-distinct.py` | `852541b840442e94` | premise job+engine collision vs the author's own catalogue (Freeze 5) |
+| `tools/prose/check-comps.py` | `9f47751a6a45aefa` | comp-title verification stamps; reads research/, not prose (Freeze 5) |
+| `tools/prose/calibration/PREMISE_LEDGER.tsv` | `1751102150c3ad6b` | the spent-premise data `check-premise-distinct.py` reads (Freeze 5) |
+| `tools/prose/check-narrative.py` | `3bf0bf46f318ab2c` | N1 debt (gates) / N2 beat repetition / N3 scene function / N4 ledger conformance (gates); reads no prose — the contract row, L1's class (re-keyed at the second update and Freezes 14–15; see below) |
+| `tools/prose/check-figurative.py` | `53962ce04c430d4f` | G1/G2 figurative pile-up reporter; report-only (re-keyed at the fourth update) |
+| `tools/prose/check-dialogue-tags.py` | `b646cff207ef723f` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second, fourth and Freeze 16 updates) |
+| `tools/prose/check-quantities.py` | `4cc4a538dde7309e` | Q1–Q4 quantity extraction, spread, sanity notes, counted-noun conflicts; report-only (re-keyed at the third and fourth updates) |
+Manifest completeness, 2026-10-13: the seven rows above for
+`check-premise-distinct.py`, `check-comps.py`, `calibration/PREMISE_LEDGER.tsv`,
+`check-narrative.py`, `check-figurative.py`, `check-dialogue-tags.py`, and
+`check-quantities.py` were recorded at Freeze 5 and Freeze 13 inside the history
+sections below — outside the region the verifier scans — and had never been
+checked. They are copied here with the exact hashes those freezes recorded; no
+check changed and no hash moved. `verify-freeze.sh` now fails on any frozen row
+the manifest region does not carry, so a row recorded in the wrong region cannot
+hide again.
+
 
 Also frozen, because they change what the gates *see* rather than what they assert:
 
@@ -34,6 +103,11 @@ Also frozen, because they change what the gates *see* rather than what they asse
 - `skills/` — the prose skills that generate the text under test
 
 ## Load-bearing thresholds at this freeze
+
+How to read the table: each row is one measurement a gate enforces, with its current
+value. "fail < 22%, warn < 28%" means the row fails the book below 22% and warns below
+28%; "report-only" and "advisory" rows print findings but cannot fail anything.
+"derived from" records the published prose that produced the number.
 
 | row | value | derived from |
 |---|---|---|
@@ -50,8 +124,11 @@ Also frozen, because they change what the gates *see* rather than what they asse
 | `A1` reversals per bin | size-dependent, 0.35 at ≤2 windows | 0 of 40 published novel means fall below |
 | drift | size-dependent, 3.41 at 4 ch → 1.40 at 20+ | worst published book at each chapter count |
 
-**Convention-scoped rows.** A book declaring `positioning: nonfiction` carries `U1`, `U4`
-and `U5` as advisory. A book declaring `paragraph_convention: commercial-dialogue` holds
+**Convention-scoped rows.** A book declaring `mode: nonfiction` (or the legacy
+`positioning: nonfiction`) carries `U1`, `U4`
+and `U5` as advisory, and deslop row `A10a` as reported-not-failed (Freeze 20;
+`NF_SCOPED` in conventions.py). A book declaring `paragraph_convention:
+commercial-dialogue` holds
 `U4` to the market gate. `Sons of Heaven, Students of Dust` declares
 `positioning: "nonfiction"`.
 
@@ -1514,3 +1591,156 @@ gate moved.
 Same instrument class as Freezes 16–17: no threshold, no corpus, no held-out comparison,
 nothing that could fail a book. What moved here is a place to write a number down so that
 the next session can check it.
+
+## Freeze 19 — 2026-10-07: the mode question gets one reader
+
+The fiction/nonfiction mode plumbing: a book declares its mode once at intake
+(`book.mode: fiction | nonfiction` in PROJECT_STATE.yaml), and every gate that needs
+the answer imports it from one place instead of owning a copy of the same regex.
+
+- **Added** `tools/prose/conventions.py` — `mode_of()`, `is_nonfiction()`, `read_head()`.
+  Precedence: exact `mode:` value, then legacy `positioning`/`genre` free text. Not in
+  the manifest: it holds no thresholds and reads no prose, so editing it cannot change
+  what a row asserts (same standing as the lint rule table's reader). It carries a
+  self-test (`python tools/prose/conventions.py`) with the control-10 fixture shape
+  among its cases, and it refuses to inherit a silent default — an undeclared book is
+  `None`, and each gate decides in the open what unknown means.
+- **Rewired, semantics unchanged:** `check-uniformity.py` `declare_convention()` and
+  `check-surplus.py` `declare_nonfiction()` now read through `conventions`. The three
+  regex copies (they had drifted: anchoring and case differences) are gone; the
+  `paragraph_convention: commercial-dialogue` opt-in keeps its exact old precedence.
+  Verified per-book before the controls: sons-of-heaven-v2 → nonfiction, incunabula-test
+  → nonfiction, marrow-light → commercial-dialogue, undeclared books → default, all
+  identical to the pre-plumbing readers.
+- **Contract layer:** intake schema Round 1 now asks the mode and declares it in the
+  `book:` block; the project-state schema carries `mode` with the legacy-fallback note.
+
+**Verification.** `validate-controls.sh` re-run with the rewired gates: controls 7–16
+pass, including control 10 (`6 published nonfiction volumes, none failed U1`) — which
+exercises the new reader end to end — and control 11's declared-length rows. The suite
+reports its documented PARTIAL state: the human reference corpus is external, so the
+caps-direction of the suite is UNVERIFIED on this run exactly as it was before this
+freeze; nothing about that changed here. `conventions.py` self-test 11/11.
+
+Same instrument class as Freezes 16–18: no threshold moved, no corpus changed, no cap
+re-derived. What moved is *who answers* a question the gates were already asking — and
+that is recorded because the copies it replaces had already drifted from each other,
+and two gates answering one question differently is a convention defect, not a gate
+defect.
+
+## Freeze 20 — 2026-10-07: nonfiction mode scopes A10a to a report
+
+The A10a scoping decision, implementing CALIBRATION.md §20's sweep finding (§21 holds
+the record). A book declaring `mode: nonfiction` in PROJECT_STATE.yaml has deslop row
+`A10a` ("nonfiction filler") reported, not failed — the one row the §20 sweep measured
+as accusing published prescriptive prose at more than a stray-file rate, and the one
+row whose own name targets that register. Fiction mode and undeclared books still fail
+it; their path is unchanged by construction, and control 17 now asserts that every run.
+
+| file | Freeze 19 | Freeze 20 | why it moved |
+|---|---|---|---|
+| `tools/prose/deslop-check.sh` | `20e1976d20312974` | `35ed380c20db520e` | NF detect block in `scan_file()` — keys on the same three-dirs-up book root the SELFSCAN marker uses, resolves the book's mode through `conventions.py --nf`, reads the scoped-row list from `conventions.py --scoped-rows` at runtime rather than holding a copy (a copied list can drift; the runtime read cannot). HARD loop gained the scoped branch printing `--` with the §21 pointer. Interpreter chosen by proof-run, not by name: on this platform `python3` can be the MS Store alias, which `command -v` finds and nothing runs. No pattern changed, no cap moved. |
+| `tools/prose/validate-controls.sh` | `d8d84fddeaddbd36` | `e5ecadf14e07ba9e` | Control 17: the `calibration/nf-scope-fixture.md` staged two ways. NF arm must PASS **and** print the scoped `-- A10a` line (a dark report row proves nothing); the same fixture undeclared must FAIL on `A10a` itself, not on some other row — the scope must be shown not to have widened. Control headers renumbered 16→17. |
+
+**The fixture, `tools/prose/calibration/nf-scope-fixture.md`**, is a ~310-word clean
+prescriptive chapter (bedtime-routine parenting prose) whose only gate hits are the
+exact A10a constructions. It is a control asset, not a manifest row: like the slop
+fixture, it is shipped and needs no external corpus, and it is exercised via control 17
+every suite run.
+
+**What did NOT move.** No cap re-derived, no regex changed, no new row. A19, A21, A24
+and A25 stay live for nonfiction deliberately: the §20 sweep scored them ZERO on
+prescriptive prose, which binds the question one way only — modern-register
+constructions sit behind the copyright wall, so zero published hits is a one-sided
+bound, not a clearance for a 2020s how-to book. A11a stays live at 2/134 (author-level
+glance). The zero-tolerance rows keep the gate's ability to fail the register the
+corpus could not test.
+
+**`conventions.py` is still outside the manifest, and now holds data.** Freeze 19's
+standing was "no thresholds, reads no prose". It now also holds `NF_SCOPED`, the
+scoped-row table. The class is still make-ready, not gate: the table changes which rows
+REPORT for a declared mode and can never move a cap or a pattern, the scanner holds no
+copy of it, and it carries its own self-test asserting both the in-scope and the
+refused rows. Any change that altered an answer for a frozen book still belongs here
+with a date and a reason — the self-test makes that assertion mechanical.
+
+**Verification.** Fixture verified standalone in both arms before the control was
+written (NF: exit 0 with `-- A10a x3` printed; undeclared: exit 1 with `FAIL A10a x3`).
+Full suite re-run: controls 7–17 pass, 20 ok verdicts, suite reports its documented
+PARTIAL state (human reference corpus external, exit 2 — unchanged from Freeze 19's
+run). `conventions.py` self-test green, including the NF-scoping invariant arm.
+
+## Freeze 21 — 2026-10-08: check-names gets its nonfiction case; A24's case blind spot pinned
+
+The quiet-hours demo run (RUN_REPORT.md 2026-10-08) exercised every gate under
+`mode: nonfiction` and returned two instrument findings. Freeze 21 resolves the first
+and pins the second.
+
+The first: `check-names.py` exited 2 — "Failing rather than passing on an empty read" —
+on a prescriptive guide with no named cast. That is the right behaviour for fiction,
+where an unreadable canon file must not pass, and wrong for nonfiction, whose actors are
+"you", "the child", "the grandparent" and are not cast. The gate now reports instead of
+failing when a book declares `mode: nonfiction` and declares no cast — the same shape
+surplus and arc already take. The mode read delegates to `conventions.py`
+(`is_nonfiction`), one reader for the suite; the gate keeps only the decision.
+
+The second: A24's density pass counts case-sensitively (`grep -oE`) while the HARD rows
+and F1 read case-insensitively, so the explanatory coda is invisible when a sentence
+opens with it ("This is why…") — its most natural position. Pinned rather than fixed:
+every density cap was derived on the case-sensitive reading, and a silent "fix" would
+re-price those rows against prose measured with a different instrument.
+
+| file | Freeze 20 | Freeze 21 | why it moved |
+|---|---|---|---|
+| `tools/prose/check-names.py` | `6fcb3bd0dd1ae1c2` | `f5f169b0704e6e46` | The nonfiction case, four arms wide: `mode: nonfiction` + no cast → report, exit 0, **with the report printed** (a silent pass is a gate that stopped looking); fiction and undeclared keep exit 2 (the free pass must not leak outside the mode); a nonfiction book that DOES declare cast is still checked and still collides (the scope stands aside from an absent cast, never a present one). Reads the mode through `conventions.py`; no collision rule, tier, or name-list changed. |
+| `tools/prose/validate-controls.sh` | `e5ecadf14e07ba9e` | `b3346a394925788e` | Control 18 (the names case above, all four arms, with a corpus fixture so the arms reach the cast check instead of exiting on an empty corpus) and control 19 (the A24 pin below). Control headers renumbered 13–17 to /19; the PARTIAL summary now names what shipped fixtures prove. |
+
+**The fixture pair, `tools/prose/calibration/a24-case-upper.md` and
+`a24-case-lower.md`**, is the characterization behind control 19: the same paragraph
+with the coda moved from mid-sentence to sentence start. The upper arm must read
+`ok A24 … 0.00 per 1k` and the lower must FAIL A24. This does not endorse the blind
+spot — `ERRATA.md` 2026-10-08 records it at `state: observed` — it makes repairing it a
+conscious act: when either arm flips, the response is to re-measure the density caps
+(`calibration/measure.py`) before touching a number, then rewrite the pin deliberately.
+
+**What did NOT move.** `deslop-check.sh` is untouched at `35ed380c20db520e`; the pin
+wraps the scanner, it does not repair it. No cap re-derived, no regex changed.
+`conventions.py` remains outside the manifest and gained nothing this freeze — the names
+case reads `is_nonfiction`, which has existed since Freeze 19 — and its self-test is
+unchanged and green.
+
+**The verifier itself, found by verifying this freeze.** `verify-freeze.sh` was reading
+every `file` | `hash` cell in this document, including the historical "what it was at
+Freeze N" columns of each entry table below — so every freeze entry permanently broke
+the guard, and it reported CHANGED against hashes that were stale by design (two of the
+rows it flagged during this verification came from the Freeze 20 table written
+yesterday). A guard crying wolf is worse than no guard. It now scans only the manifest
+region above the first `## Freeze` heading, and refuses to report a hold on zero rows
+scanned. `verify-freeze.sh` is deliberately not in the manifest — freezing the guard
+would make the guard's own edit a freeze event — so this moves no row. Before the fix:
+5 phantom CHANGED rows; after: `FREEZE HOLDS`, exit 0.
+
+---
+
+## 2026-10-09 — the documentation speaks plain words
+
+**No manifest row moved. `verify-freeze.sh` holds, unchanged.** No instrument, no
+number, and no recorded claim changed.
+
+**What moved, wording only:** `README.md`, `INCUNABULA_LEXICON.md` and
+`tools/prose/README.md` were rewritten in plain English — every claim, number and
+command kept, the sentences made readable for someone who just wants to write a book.
+The lexicon gained a machinery glossary (gate, freeze, hash, corpus, report-only, exit
+codes) so the check documentation has a dictionary. This file gained the plain-words
+guide and the one-line-per-freeze table above, and a stray table fragment glued to the
+title line was removed — an edit artifact duplicating the `validate-controls.sh`
+manifest row's tail, not part of the record.
+
+**Two skills edited, recorded because `skills/` is on the also-frozen list:**
+`incunabula` and `incunabula-codex` gained a short plain-English orientation near the
+top. No instruction, dispatch, gate call or prompt changed; neither skill generates
+prose, so what the gates see is unchanged.
+
+The distinction this entry exists to keep: **the record above is evidence and was not
+touched; the words around it were.** A protocol nobody can read is a protocol nobody
+follows.

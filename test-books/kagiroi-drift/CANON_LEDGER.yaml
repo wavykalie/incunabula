@@ -1,0 +1,137 @@
+meta:
+  schema_version: "1.0"
+  project_id: "kagiroi-drift"
+  updated: "2026-10-03"
+  primary_state_file: "PROJECT_STATE.yaml"
+  maintenance_run: 1
+
+facts:
+  hotarubi-kaname.identity:
+    subject: "Hotarubi Kaname"
+    predicate: "role"
+    value: "Lead EVA kinetic salvor and hull-cutter on Shin-Murakumo Relay"
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    sources:
+      - file: "foundation.md"
+        anchor: "Character Profiles"
+        evidence: "Lead hull-diver and kinetic salvor"
+        observed: "2026-10-03"
+
+  hotarubi-kaname.trauma:
+    subject: "Hotarubi Kaname"
+    predicate: "psychological_wound"
+    value: "Survived forty hours freezing in an emergency decompression pod of Minato-9, touch-starved and fearing stillness"
+    kind: "character"
+    status: "active"
+    authority: "foundation"
+    sources:
+      - file: "foundation.md"
+        anchor: "Character Profiles"
+        evidence: "Sole survivor of Minato-9 decompression"
+        observed: "2026-10-03"
+
+  kurotsuyu-sakuya.identity:
+    subject: "Kurotsuyu Sakuya"
+    predicate: "role"
+    value: "Station deep-telemetry acoustician and orbital dynamicist"
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    sources:
+      - file: "foundation.md"
+        anchor: "Character Profiles"
+        evidence: "Station telemetry acoustician"
+        observed: "2026-10-03"
+
+  kurotsuyu-sakuya.cybernetics:
+    subject: "Kurotsuyu Sakuya"
+    predicate: "implant_condition"
+    value: "Neuro-acoustic spinal shunt translates structural hull vibration directly into somatic nervous input, deteriorating without coolant"
+    kind: "character"
+    status: "active"
+    authority: "foundation"
+    sources:
+      - file: "foundation.md"
+        anchor: "Character Profiles"
+        evidence: "Spinal neuro-acoustic integration"
+        observed: "2026-10-03"
+
+  station.setting:
+    subject: "Shin-Murakumo Relay"
+    predicate: "orbital_location"
+    value: "Atmospheric siphon station in decaying sub-synchronous periapsis skimming Geryon-7"
+    kind: "world"
+    status: "active"
+    authority: "foundation"
+    sources:
+      - file: "foundation.md"
+        anchor: "Locations"
+        evidence: "Orbital siphon ring around Geryon-7"
+        observed: "2026-10-03"
+
+  geryon-7.magnetosphere:
+    subject: "Geryon-7"
+    predicate: "radio_propagation"
+    value: "Extreme magnetosphere creates complete radio blackout, necessitating acoustic structural telemetry"
+    kind: "world"
+    status: "active"
+    authority: "foundation"
+    sources:
+      - file: "foundation.md"
+        anchor: "World Rules"
+        evidence: "Acoustic telemetry required due to blackout"
+        observed: "2026-10-03"
+
+documents:
+  foundation.md:
+    role: "foundation"
+    status: "active"
+    authority: "foundation"
+    last_reviewed: "2026-10-03"
+  outline.md:
+    role: "outline"
+    status: "active"
+    authority: "outline"
+    last_reviewed: "2026-10-03"
+  voice-matrix.md:
+    role: "voice"
+    status: "active"
+    authority: "voice-matrix"
+    last_reviewed: "2026-10-03"
+  readership.md:
+    role: "readership"
+    status: "active"
+    authority: "readership"
+    last_reviewed: "2026-10-03"
+  premise.md:
+    role: "premise"
+    status: "active"
+    authority: "premise"
+    last_reviewed: "2026-10-03"
+
+voice_contract:
+  global:
+    register: "Tactile, muscular, intimate, unvarnished adult sci-fi"
+    forbidden: ["AI cliches", "overprint antitheses", "excessive em-dashes", "fade-to-black intimacy"]
+  characters:
+    hotarubi-kaname: "Short, punchy, vernacular, physical verbs, gravelly tone"
+    kurotsuyu-sakuya: "Measured, precise, acoustic vocabulary, quiet and breathless under pressure"
+    shinonome-kagari: "Weary, sarcastic, colloquial station pidgin"
+    yoiduki-mizore: "Guarded, rapid, elliptical, streetwise"
+
+maintenance:
+  last_run: "2026-10-03"
+  last_run_by: "Incunabula Orchestrator"
+  changed_files:
+    - "foundation.md"
+    - "outline.md"
+    - "voice-matrix.md"
+    - "readership.md"
+    - "premise.md"
+    - "ENTITY_STATE.yaml"
+  merged_facts: []
+  flagged_conflicts: []
+  resolved_conflicts: []
+  archived_documents: []

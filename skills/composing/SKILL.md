@@ -44,7 +44,7 @@ Also scan for: turned letters and doubled words, em-dash overuse against the cap
 dance).
 
 # 6. Uniformity -- a whole-manuscript check, not a per-chapter one
-bash tools/check-uniformity.py                 # or: python tools/check-uniformity.py <book>
+bash tools/prose/check-uniformity.py                 # or: python tools/prose/check-uniformity.py <book>
 
 # 7. Surplus -- reports, never gates. How much of the dialogue carries no plot.
 python tools/check-surplus.py <book>           # speech-turn distribution + spread across chapters

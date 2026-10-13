@@ -1,0 +1,59 @@
+# ENTITY_STATE.yaml — Pension Winter (autonomous run, seed 779398044)
+# Maintained by case-keeper. Folded at every batch, audited at phases 11-12.
+
+characters:
+  - name: "Elisabeth (Liesel) Voss"
+    role: POV
+    age: 74
+    traits: ["retired court stenographer", "collects pencil stubs", "time-stamps speech", "writes unsent complaint letters"]
+    wound: "Ruppert case, 39 years ago - transcribed the confession that closed it; the accused hanged himself two days later"
+    status: alive
+  - name: "Herr Kessler"
+    role: tenant / counter-force
+    age: 55 (16 at the time of the Ruppert case, ch-06; 'Kessler' is an assumed name)
+    traits: ["repairs others' items anonymously", "answers adjacent questions", "says 'vielleicht'"]
+    secret: "brother of the dead man in the Ruppert case; here for the doubt, not the rent"
+    status: alive
+  - name: "Frau Radke"
+    role: landlady / house clock
+    age: 61
+    traits: ["hoards hotel shampoos", "hums four bars", "keeps the boiler at 2"]
+    status: alive
+
+places:
+  - name: "Pension Winter"
+    description: "snowbound Berlin boarding house; boiler at 2; four rooms let"
+    chapters: [1-8]
+  - name: "the basement storage"
+    description: "where Liesel's old notebooks are kept"
+    chapters: [4]
+
+objects:
+  - name: "the notebooks"
+    description: "Liesel's stenographic notebooks from the Ruppert era"
+    chapters: [4, 8]
+  - name: "the radio"
+    description: "broken radio Kessler repairs; carries the tape motif; pencil name + season on the underside (deliberately unanswered - house texture, ch-05/06)"
+    chapters: [5, 6]
+  - name: "the pencil tin"
+    description: "pencil stubs by length"
+    chapters: [1, 6, 8]
+  - name: "the interrogation tapes"
+    description: "court recordings of the Ruppert confession; destroyed after the 10-year retention (ch-06); only the transcript survives"
+    chapters: [5, 6]
+
+timeline:
+  - { chapter: 1, when: "first snow, early December", event: "Kessler arrives" }
+  - { chapter: 2, when: "two days later", event: "Liesel tests him with a confession detail" }
+  - { chapter: 3, when: "day 4", event: "phone line fails" }
+  - { chapter: 4, when: "day 5", event: "notebooks retrieved; one word contradicts memory" }
+  - { chapter: 5, when: "day 6", event: "radio repaired; oblique talk" }
+  - { chapter: 6, when: "day 8", event: "the confession conversation" }
+  - { chapter: 7, when: "day 10", event: "storm; Radke falls ill" }
+  - { chapter: 8, when: "day 14, thaw", event: "Kessler leaves; the word is rewritten" }
+
+world_rules:
+  - "German, past tense, first person on Liesel - the book IS her written record (declaration said 'close third'; corrected at phase 12 to match the realized manuscript)"
+  - "one image per sensation; imagery only cold / paper / sound"
+  - "Elisabeth never says 'wir'; never uses slang"
+  - "Kessler never says his brother's name aloud"

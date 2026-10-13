@@ -15,7 +15,7 @@ prose_gate:
   enforced_during: ["phase_3_drafting", "phase_4_devils_audit", "phase_6_final_score", "phase_7_colophon"]
   covers: "manuscript prose only - outlines, scene packets and state files are exempt"
   thresholds: "derived from published prose; banned outright only at zero corpus hits, otherwise capped as fractions"
-  caps_query: "tools/deslop-check.sh --caps"
+  caps_query: "tools/prose/deslop-check.sh --caps"
   control_run: "tools/validate-controls.sh"
   control_expectations:
     human_corpus: "zero failing rows"

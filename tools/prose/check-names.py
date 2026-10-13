@@ -52,13 +52,16 @@ USAGE
   (it has a premise, outline, or CANON_LEDGER), excluding the book under test. Pass it
   explicitly to check against a specific set instead.
 
-  Exit 0 pass (warnings allowed), 1 fail on a collision, 2 could not read the book.
+  Exit 0 pass (warnings allowed) or reported on a nonfiction book with no named cast,
+  1 fail on a collision, 2 could not read the book.
 """
 
 import argparse
 import os
 import re
 import sys
+
+import conventions
 
 # A cast name as it appears in the ledgers. Deliberately conservative: a capitalised word
 # that is not a sentence-initial word, not a month, not a weekday, not a known proper noun
@@ -262,6 +265,19 @@ def corpus_names(corpus_dirs):
     return full, firsts, surnames
 
 
+def declare_nonfiction(book_root):
+    """Does this book declare mode: nonfiction?
+
+    The reading itself lives in conventions.py - one reader for the whole suite.
+    This gate keeps only the decision: a prescriptive guide has no named cast to
+    check ("you", "the child", "the grandparent" are not cast), so an empty read
+    on a nonfiction book is REPORTED, while on a fiction or undeclared book it
+    stays a failure - a novel whose canon file reads as empty must not pass
+    silently. First used by test-books/quiet-hours (RUN_REPORT.md 2026-10-08).
+    """
+    return conventions.is_nonfiction(book_root)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -301,6 +317,12 @@ def main(argv=None):
 
     b_full, b_first, b_sur = harvest_canon(book)
     if not b_first:
+        if declare_nonfiction(book):
+            print("check-names: no named cast to check - reported, not run.")
+            print("  A nonfiction book's actors are \"you\", \"the child\", \"the grandparent\";")
+            print("  cross-book name collisions are a property of named cast, and this")
+            print("  book declares none. A fiction book with an empty read still fails.")
+            return 0
         print("check-names: no cast names found in the book. "
               "Is CANON_LEDGER.yaml present? Failing rather than passing on an empty read.",
               file=sys.stderr)

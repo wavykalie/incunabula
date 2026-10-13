@@ -1,0 +1,64 @@
+# CANON LEDGER - The Trick (DEMO / not yet a book)
+# Only here so check-names.py can read the cast. The naming REASONING is in
+# artifacts/02-naming-the-troop.md; this file is the machine-readable index, and the two
+# are kept apart on purpose so the gate reads names and never reads meaning.
+
+meta:
+  project: "the-trick"
+  scope: "demo"
+  created: "2026-09-28"
+  last_verified: "2026-09-28"
+  authority: "premise.md and artifacts/ are the sources; this file is their index"
+  demo_not_a_book: true
+  premise: 1
+  invention_level: "level 1 - real world, invented practice (artifacts/01-the-corbeau-school.md)"
+
+people:
+  - id: "P-001"
+    name: "Elsa Reiner"
+    role: "protagonist - working conjurer, 34; never took a stage name"
+    stage_name: "none - unchanged from birth name"
+    convention: "declines the second name"
+    note: "German 'Reiner' = cleaner. Refused a stage name in a trade built on misdirection."
+
+  - id: "P-002"
+    name: "Rask"
+    role: "old conjurer, 50s; the best Corbeau living; declines the FIRST name"
+    stage_name: "none at all"
+    convention: "none"
+    note: "Estonian surname; no meaning claimed, deliberately. Plain-name decline for the book."
+
+  - id: "P-003"
+    name: "Sigrid Voll"
+    role: "northern tent performer; never inflated her name"
+    stage_name: "Sigrid Voll (unchanged)"
+    convention: "northern tent - austerity"
+    note: "Sigrid = victory-beautiful (verified); voll = field (verified). A complete name in a trade that inflates."
+
+  - id: "P-004"
+    name: "Halvard Grens"
+    role: "northern tent performer"
+    stage_name: "Halvard Grens (unchanged)"
+    convention: "northern tent - austerity"
+    note: "Halvard = rock guardian (verified); grens = border/limit (plausible reading, not established)."
+
+  - id: "P-005"
+    name: "Corbeau"
+    stage_name: "Le Corbeau"
+    role: "the killer; birth name never established"
+    convention: "salle, applied in all three countries - the tell"
+    note: "French for raven. Kept ONE name across three incompatible conventions; each is a near-miss. Learned each convention from a book: vocabulary right, grammar wrong."
+
+  - id: "P-006"
+    name: "Anouk Soldano"
+    role: "salle performer; keeps the dossiers - the one job needing trust with paper"
+    stage_name: "L'Ombriere"
+    convention: "continental salle - the grand manner"
+    note: "Anouk = grace, diminutive of Anna (verified); soldano from a small Venetian coin (plausible). Ombriere = covered walkway/canopy (verified)."
+
+  - id: "P-007"
+    name: "Brynjar Sigmundsson"
+    role: "port performer; the most hybrid name in the troop"
+    stage_name: "La Furette"
+    convention: "southern and colonial ports - borrowed and mangled"
+    note: "Furette = little ferret (verified, established French diminutive). Norse birth name under a French ferret."

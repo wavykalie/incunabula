@@ -1,0 +1,76 @@
+project:
+  title: "Muzzle and Marrow"   # WORKING TITLE - deferred to the author
+  subtitle: null
+  genre: "Comic fantasy"
+  subgenre: "Quest / adventure with comic voice"
+  target_audience: "Adult readers of comic fantasy; readers who like a party of unlikeable-but-likable adventurers; literary-fantasy readers who will accept a joke that is also a wound"
+  positioning: "fiction"
+  word_count_target: 24000
+  target_floor_words: 22000
+  target_ceiling_words: 28000
+  chapter_count_planned: 10
+  language: "en"
+  device: "mirror"          # the Orb carries out the sentence; nothing is cheated
+  comp_titles: []           # candidates only, none approved
+  created: "2026-09-29"
+  updated: "2026-09-29"
+
+# NOTE ON LENGTH
+# This is the ONE number in the project and it is a book-level contract with the
+# author, enforced by check-length.py. There is no per-chapter target anywhere.
+# The delivered manuscript is 16,686 words against a 22,000 floor: the book as
+# drafted is three-quarters of the contract, and the contract is not met.
+#
+# That is recorded rather than fixed by padding. See PILOT.md, "The finding".
+
+phase:
+  current: 6
+  status: "complete"
+  history:
+    - { phase: 5.5, status: "completed", date: "2026-09-30", notes: "Autonomous pass. U6 FAIL (antithesis frame 50%) CLEARED by fixing 4 narrative 'X is not Y. It is Z' formulas in the prose; two spoken formulas (ch07 door to/of the centre, ch08 the party on the route) left standing as voice and recorded. A24 narrative clause (ch07 'which is why') rewritten. D2 warns left: report-only, inside the published envelope. Chapter lengths deliberately untouched: the pilot's U1 result IS the evidence." }
+    - { phase: 6, status: "completed", date: "2026-09-30", notes: "COMPLETE. U1 FAIL (CV 12.1%) and L1 FAIL (5,314 short of a late-declared 22,000 floor) are the pilot's findings and are carried in FINISHED.md as fact. Recorded, not papered over; the outline's 'recorded, not repaired' position stands." }
+    - { phase: 0,   status: "completed", date: "2026-09-29", notes: "Intake. The pilot's purpose is the framework test, not the novel. Brief, foundation, outline, entity state, cast declaration format." }
+    - { phase: 2,   status: "completed", date: "2026-09-29", notes: "Foundation and architecture. Theme held as a question: what does it cost to get the sentence you asked for." }
+    - { phase: 2.7, status: "completed", date: "2026-09-29", notes: "Case tracking BUILD. Cast declared in the parser-facing two-part form after probing the frozen name gate; verified by _verify_cast.py." }
+    - { phase: 3,   status: "completed", date: "2026-09-29", notes: "All 10 chapters drafted from scratch with no per-chapter targets of any kind. 16,686 words. Prose gate PASS (exit 0). Uniformity gate FAILS U1 at CV 12.1%." }
+    - { phase: 3.1, status: "skipped",    date: "2026-09-29", notes: "SKIPPED AND RECORDED AS SKIPPED. The cast is six characters with distinct registers; a Blind Sort was not run before the measurement that matters." }
+    - { phase: 4,   status: "pending",    date: "2026-09-29", notes: "Not run. The U1 failure is a framework finding and is written up before any revision is attempted." }
+
+chapters:
+  total_planned: 10
+  completed:
+    - { number: 1,  title: "Mittens the 7th",        word_count: 1322, status: "drafted", structural_approach: "cold open, in medias res" }
+    - { number: 2,  title: "Four Directions",        word_count: 1866, status: "drafted", structural_approach: "two threads, cut" }
+    - { number: 3,  title: "The Oath",               word_count: 1633, status: "drafted", structural_approach: "dialogue-forward, single room" }
+    - { number: 4,  title: "Down",                  word_count: 1666, status: "drafted", structural_approach: "chase" }
+    - { number: 5,  title: "What the Last Party Wished For", word_count: 1400, status: "drafted", structural_approach: "document" }
+    - { number: 6,  title: "Camp",                   word_count: 1705, status: "drafted", structural_approach: "rest / no plot pressure" }
+    - { number: 7,  title: "The Door",               word_count: 1799, status: "drafted", structural_approach: "set piece" }
+    - { number: 8,  title: "Ahead",                  word_count: 1530, status: "drafted", structural_approach: "POV shift, single character" }
+    - { number: 9,  title: "Four",                   word_count: 1736, status: "drafted", structural_approach: "wide, fast, arithmetic" }
+    - { number: 10, title: "The Orb",                word_count: 2029, status: "drafted", structural_approach: "set piece, cold" }
+  drafted_total: 10
+  manuscript_words: 16686
+
+gates:
+  deslop:        { exit: 0, result: "PASS with warnings", note: "A25 0.00/1k. D2 over the advisory line, reported not gated." }
+  uniformity:    { exit: 1, result: "FAIL", rows_failed: 2, note: "U1 CV 12.1% (fail under 22%). U6 antithesis frame in 5/10 chapters (fail above 40%)." }
+  drift:         { exit: 0, result: "OK", note: "D1 voice-step 1.31 warn. D2 fw_it rho +0.92 warn." }
+  length:        { exit: 3, result: "UNGOVERNED at time of run", note: "State file created after the first run; the gate correctly reported UNGOVERNED rather than passing." }
+  names:         { exit: 0, result: "see PILOT.md", note: "Cast declared in the parser-facing form; the frozen gate was not modified." }
+  length_gate:   "FAIL"   # 16,686 against a 22,000 floor. Recorded, not papered over.
+
+# What this book is evidence for, and what it is not.
+# Stated before any revision, so a later session cannot read the numbers as
+# support for something they do not support.
+evidence:
+  proves: >
+    A book drafted from scratch under DRAFTING_FRAMEWORK.md passes the prose gate
+    (exit 0, A25 at 0.00/1k with no repairs) and holds one voice end to end
+    (drift exit 0).
+  does_not_prove: >
+    It does not show that drafting under the framework PRODUCES a chapter spread.
+    It shows the opposite: CV 12.1% against a published band of 33.4-45.1%, on a
+    book written with no per-chapter targets of any kind. This is the first
+    from-scratch test of the framework's central claim and the claim did not hold.
+    See PILOT.md.

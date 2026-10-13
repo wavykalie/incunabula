@@ -1,0 +1,1384 @@
+# CANON_LEDGER.yaml — BOOK 1 SCOPE
+#
+# Book-scoped memory layer. Series-stable identities and series-wide rules live in
+# ../CANON_LEDGER.yaml and are NOT duplicated here; this file references them.
+#
+# Schema: .agents/skills/book-genesis-codex/references/canon-ledger-schema.md
+# Protocol: .agents/skills/book-genesis-codex/references/maintenance-protocol.md
+#
+# STATUS: active | planned | superseded | conflicted | uncertain | retired
+# AUTHORITY: user_decision | manuscript | foundation | outline | research | inference
+#
+# Read the `conflicts` block before drafting anything. As of 2026-09-22 every conflict is resolved:
+# CONF-003 and CONF-004, the last two open ones, were settled while drafting ch.2 and ch.7.
+
+meta:
+  schema_version: "1.0"
+  project_id: "validation-series"
+  book_id: "book-1"
+  updated: "2026-09-22"
+  primary_state_file: "PROJECT_STATE.yaml"
+  maintenance_run: 3
+  series_ledger: "../CANON_LEDGER.yaml"
+  note: >-
+    Created 2026-09-22 by retrofit. Before this file existed the project had a well-maintained
+    PROJECT_STATE.yaml and no canon layer at all, so nothing recorded where a fact came from or
+    which of two competing values was current. Facts below were imported from PROJECT_STATE.yaml
+    (decisions), foundation.md, outline.md, voice-dna.md, ENTITY_STATE.yaml and the scene packets.
+
+# ================================================================================== characters
+
+facts:
+
+  merope.has_age:
+    subject: "merope"
+    predicate: "has_age"
+    value: "19"
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "project.content_boundaries", evidence: "Merope and Achird are adults (19).", observed: "2026-09-22" }
+    conflicts: []
+    supersedes: ["an earlier build that recorded them as minors"]
+    last_verified: "2026-09-22"
+    notes: "Corrected by the user. The stale age survived in content_boundaries after being fixed elsewhere; caught and fixed 2026-09-22."
+
+  merope.voice.narration:
+    subject: "merope"
+    predicate: "narrates_in"
+    value: "grandiose and certain; narrates herself as the centre; superlatives without hedging; rhetorical questions aimed at the reader"
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "voice-dna.md", anchor: "Voice cards -> MEROPE -> Syntax fingerprint", evidence: "Superlatives arrive without hedging: the best, the only, never.", observed: "2026-09-22" }
+      - { file: "foundation.md", anchor: "Characters -> MEROPE -> Given voice", evidence: "grandiose and certain; narrates herself as the center", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Verified against the drafted chapter 1. Holds."
+
+  merope.voice.under-pressure:
+    subject: "merope"
+    predicate: "escalates_by"
+    value: "sentences get LONGER and more elaborate, then land on one short accurate thing aimed at the person in front of her. Boastful, then cruel. She knows the cruel line is true while she says it."
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 6, end_chapter: 6 }
+    sources:
+      - { file: "voice-dna.md", anchor: "Voice cards -> MEROPE -> Voice under pressure", evidence: "Pressure moves her in one direction: boastful, then cruel.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Does not appear in movement I by design. Ch.6 is where it fires."
+
+  merope.trait.tsundere:
+    subject: "merope"
+    predicate: "is"
+    value: "tsundere: cannot be direct about what she feels; deflects, performs, takes pride in not needing anything"
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Characters -> MEROPE -> Given trait", evidence: "tsundere. She cannot be direct about what she feels.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Load-bearing for the ending. Under CONF-006's resolution the deflection gains a reason: she cannot claim a choice she did not make."
+
+  merope.wants:
+    subject: "merope"
+    predicate: "wants"
+    value: "to be watched"
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Characters -> MEROPE -> Her want", evidence: "to be watched. A girl who has never left anywhere she was adored.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Never stated in the text; must be legible by end of ch.1. Verified legible in the draft."
+
+  merope.arc:
+    subject: "merope"
+    predicate: "arc_is"
+    value: "she does not become good, and she does NOT CHOOSE. The sleigh decides and she is carried; the step is never hers. What changes is that she LOOKS — on the way out she sees Achird properly, for the first time in the book. Superseded value preserved: 'she takes one step against her own appetite: she leaves'."
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Characters -> MEROPE -> Her arc", evidence: "she does not become good. She takes one step against her own appetite: she leaves.", observed: "2026-09-22" }
+      - { file: "PROJECT_STATE.yaml", anchor: "decisions (2026-09-22): CRIT-002 DECIDED by user", evidence: "THE SLEIGH DECIDES AND SHE IS CARRIED. Merope does not choose to leave.", observed: "2026-09-22" }
+      - { file: "continuity/outline-audit.md", anchor: "DETERMINATIONS -> D-1", evidence: "What changes is that she looks.", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "merope.arc", reason: "foundation.md's arc statement contradicted the user's CRIT-002 decision. Both values preserved.", status: "resolved" }
+    last_verified: "2026-09-22"
+    notes: "RESOLVED AND APPLIED 2026-09-22. foundation.md's arc line, its Movement III row and warning 7 were updated, and ENTITY_STATE CHR-001.arc matches. The growth now lives entirely in ch.7's acknowledgement beats (S3/S4); the risk is a fatalism reading."
+
+  merope.knowledge.ch1:
+    subject: "merope"
+    predicate: "knows"
+    value: "the world is not on any chart; the beings are glad to see her; Achird picked up something and pocketed it and said somebody lost it"
+    kind: "character"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 1, end_chapter: 1 }
+    sources:
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "chapter 1, the find", evidence: "'Somebody lost this,' she said. And: 'I did not go over and look.'", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "ENTITY_STATE.yaml's record omitted the spoken claim; the chapter is authoritative and the YAML was the gap (audit MINOR-004)."
+
+  merope.knowledge.does-not-know:
+    subject: "merope"
+    predicate: "does_not_know"
+    value: "what the beings are; that anyone died here; that Achird loves her (until ch.7)"
+    kind: "character"
+    status: "active"
+    authority: "foundation"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "ENTITY_STATE.yaml", anchor: "characters.CHR-001.does_not_know", evidence: "what the beings are; that anyone died here; that Achird is in love with her (until ch.7)", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: ""
+
+  merope.appearance:
+    subject: "merope"
+    predicate: "physical_appearance"
+    value: "White hair worn in twin tails. A celestial-themed Lolita dress. Busty / full-figured, as a stated deliberate contrast with Achird."
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 99 }
+    sources:
+      - { file: "ENTITY_STATE.yaml", anchor: "characters.CHR-001.physical_appearance", evidence: "author decision 2026-09-22, closing AUTH-5", observed: "2026-09-22" }
+      - { file: "manuscript/chapters/chapter-03.md", anchor: "line 15", evidence: "'I sat on the bench and did my hair without a mirror, which I can do' - consistent with twin tails, which are a style you can do by feel. The style is NOT stated in the prose.", observed: "2026-09-22" }
+    conflicts: []
+    supersedes: ["UNESTABLISHED - deliberately deferred; ENTITY_STATE said 'est. during drafting only' and chapter 1 established nothing (status: uncertain, authority: inference). Superseded 2026-09-22 by author decision, not by inference."]
+    last_verified: "2026-09-22"
+    notes: >-
+      AUTH-5 CLOSED 2026-09-22. SERIES-SCOPED (end_book 99): appearance is stable across installments
+      and Book 2 inherits it rather than redesigning it. The Lolita reference is the Japanese fashion
+      subculture, not an age marker; both leads are 19 and ADULTS, and the earlier build's recording of
+      them as minors was corrected by the author for a reason. Illustration-facing view and the four
+      unresolved sub-items: artifacts/character-design-brief.md.
+
+  achird.has_age:
+    subject: "achird"
+    predicate: "has_age"
+    value: "19"
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "project.content_boundaries", evidence: "Merope and Achird are adults (19).", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: ""
+
+  achird.voice:
+    subject: "achird"
+    predicate: "speaks_in"
+    value: "two to four words is a normal sentence; no modifiers, no 'I think'; her flatness is ATTENTION, not absence. She answers the actual question and does not fill silence."
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "voice-dna.md", anchor: "Voice cards -> ACHIRD", evidence: "Two to four words is a normal Achird sentence, and one is not unusual. No modifiers.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Chapter 1 broke the 2-4 word rule once, in a two-clause explanation. Recorded as CONF-009 rather than a violation."
+
+  achird.wants:
+    subject: "achird"
+    predicate: "wants"
+    value: "to be seen by Merope specifically — not safety, not comfort, not attention in general"
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Characters -> ACHIRD -> Her want, given", evidence: "to be seen by Merope. Not safety, not comfort, not attention in general.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Replaced an invented 'overlooked child' wound."
+
+  achird.escalation:
+    subject: "achird"
+    predicate: "escalates_by"
+    value: "getting QUIETER and shorter, never louder. Silence is her escalation. Her largest moment in the book is one sentence."
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "voice-dna.md", anchor: "Voice cards -> ACHIRD -> Voice under pressure", evidence: "Pressure makes her quieter and shorter, never louder.", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "achird.silence-timeline", reason: "When the silence begins and whether it breaks is specified four incompatible ways.", status: "unresolved" }
+    last_verified: "2026-09-22"
+    notes: "Opposite direction to Merope's. That opposition is the book's voice engine."
+
+  achird.silence-timeline:
+    subject: "achird"
+    predicate: "goes_silent"
+    value: "ONE RULE, settled 2026-09-22: ch.1-4 normal speech; ch.5 she STOPS ARGUING AND EXPLAINING (states the fact once, and is not mute); ch.6 ONE SENTENCE plus at most one word, the largest moment in the book; ch.7 SILENT. Per-chapter budget recorded in ENTITY_STATE CHR-002.speech_budget."
+    kind: "style"
+    status: "active"
+    authority: "outline"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 5, end_chapter: 7 }
+    sources:
+      - { file: "scene-packets/chapter-05.md", anchor: "line 62", evidence: "Achird's silence begins here and holds through ch. 6 and 7.", observed: "2026-09-22" }
+      - { file: "scene-packets/chapter-06.md", anchor: "line 57", evidence: "Achird stopped speaking in ch. 5 and does not resume here.", observed: "2026-09-22" }
+      - { file: "scene-packets/chapter-06.md", anchor: "Beat 1 / Required / Opening line", evidence: "One sentence. We have to go. — and: Achird's total dialogue in the chapter is one sentence, plus at most one word.", observed: "2026-09-22" }
+      - { file: "scene-packets/chapter-07.md", anchor: "line 52", evidence: "Achird has been silent since ch. 5.", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "achird.silence-timeline", reason: "Ch.6 contradicted itself in the same file, and ch.5/ch.7 disagreed with ch.6 and with voice-dna.", status: "resolved" }
+    last_verified: "2026-09-22"
+    notes: "APPLIED 2026-09-22. Fixed at scene-packets/chapter-05.md (x2), chapter-06.md, chapter-07.md, all now saying the same thing, plus voice-dna and ENTITY_STATE CHR-002.speech_budget. Ch.6 no longer contradicts its own required elements."
+
+  achird.structural-role:
+    subject: "achird"
+    predicate: "structural_role"
+    value: "finds the belongings FIRST and is not believed. The middle of the book is her unable to be heard. She is the one who acts and the reason they leave."
+    kind: "plot"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Structural changes -> B", evidence: "Achird finds it first and is not believed. The discovery is early, and the middle of the book is Achird unable to be heard.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Decision B. This is the load-bearing structural change separating the book from Reference C."
+
+  achird.appearance:
+    subject: "achird"
+    predicate: "physical_appearance"
+    value: "Flat-chested. Crimson hair in a SCORPION-TAIL BRAID (one long tail curving like a scorpion's tail). A hoodie designed after nuclear superbubbles (APPEAR-4 - this run's reading of an unambiguous astronomical phrase, not an author statement)."
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 99 }
+    sources:
+      - { file: "ENTITY_STATE.yaml", anchor: "characters.CHR-002.physical_appearance", evidence: "author decision 2026-09-22, closing AUTH-5", observed: "2026-09-22" }
+      - { file: "ENTITY_STATE.yaml", anchor: "appearance.wording_flags", evidence: "APPEAR-2 resolved as scorpion-tail braid; APPEAR-3 resolved as coincidence; APPEAR-4 read", observed: "2026-09-22" }
+    conflicts: []
+    supersedes: ["UNESTABLISHED - see merope.appearance; same status (status: uncertain, authority: inference). Superseded 2026-09-22 by author decision."]
+    last_verified: "2026-09-22"
+    notes: >-
+      AUTH-5 CLOSED 2026-09-22. SERIES-SCOPED. The flat figure is stated as a deliberate contrast with
+      Merope and should be drawn as a contrast, not as two variants of one design. See APPEAR-3 in
+      ENTITY_STATE.appearance: her scorpion-tail braid and SCORPIUS, the constellation the sleigh takes
+      in ch.7, are a COINCIDENCE the author likes. Explicitly NOT a designed resonance: it is not seeded
+      into Book 2's design language, it is never remarked on in either book, and the hair was not changed
+      to avoid it. NOTHING IN THE PROSE WAS CHANGED, before or after. The manuscript describes neither
+      lead physically anywhere.
+
+  beings.knowledge-of-self:
+    subject: "the_beings"
+    predicate: "do_not_know"
+    value: "what they are; that they grew from the dead; that any visitor has ever died here"
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: null }
+    sources:
+      - { file: "foundation.md", anchor: "Characters -> THE BEINGS", evidence: "They do not know what they are. They have no idea they grew from the dead.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "The second half of the horror. Their innocence is worse than malice."
+
+  beings.count:
+    subject: "the_beings"
+    predicate: "count"
+    value: "many; the exact count is DELIBERATELY unstable and never fixed"
+    kind: "world"
+    status: "active"
+    authority: "foundation"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "ENTITY_STATE.yaml", anchor: "characters.COL-001.count", evidence: "many; exact count deliberately unstable and never fixed", observed: "2026-09-22" }
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "the counting passage", evidence: "Thirty-one of them had turned toward me... I counted again... and I got a different number", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Ch.1 executes this correctly. A future writer must not 'fix' the count."
+
+  beings.tell:
+    subject: "the_beings"
+    predicate: "physical_tell"
+    value: "they smell of cut stems; their hands are warm"
+    kind: "world"
+    status: "active"
+    authority: "foundation"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: null }
+    sources:
+      - { file: "ENTITY_STATE.yaml", anchor: "characters.COL-001.tell_not_known_to_anyone", evidence: "they smell of cut stems; their hands are warm", observed: "2026-09-22" }
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "the beings come", evidence: "They smelled of cut stems. I liked it.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "The tell links them to the growth. Perceived but never understood — the significance is known to nobody on the page. Must never be explained."
+
+  beings.answer-boundary:
+    subject: "the_beings"
+    predicate: "may_answer_from"
+    value: "UNDEFINED — they 'cannot lie' and 'cannot explain', and ch.2 requires a being to answer honestly, in front of the reader, about an object that belonged to a dead visitor"
+    kind: "world"
+    status: "conflicted"
+    authority: "foundation"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 2, end_chapter: 2 }
+    sources:
+      - { file: "scene-packets/chapter-02.md", anchor: "S -> the object", evidence: "Achird asks one of the beings what it is. The being answers honestly, helpfully, and cheerfully — and the answer means nothing to it. It is the first cold thing in the book.", observed: "2026-09-22" }
+      - { file: "foundation.md", anchor: "Writer warning 10", evidence: "No being ever explains, warns, hints or states the truth. Not once, to anyone.", observed: "2026-09-22" }
+      - { file: "voice-dna.md", anchor: "Voice cards -> THE BEINGS", evidence: "they cannot lie, and they cannot explain", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "beings.answer-boundary", reason: "An honest answer about a dead visitor's object can be either an evasion (breaks cannot-lie) or a disclosure (breaks cannot-explain and collapses ch.5). The boundary is unwritten.", status: "unresolved" }
+    last_verified: "2026-09-22"
+    notes: >-
+      Audit WARN-005. Proposed boundary: a being may answer only from POSSESSION and PRESENT TENSE
+      (what it is called here, where it is kept, that it is nice); never from ORIGIN or OWNERSHIP.
+      "Somebody lost this" in ch.1 already sits on the right side. Not applied.
+
+  sleigh.is:
+    subject: "sleigh"
+    predicate: "is"
+    value: "an old-style enclosed cabin on runners, glazed with old not-quite-clear glass, wood runners. NOT a chariot, no horse."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null }
+    sources:
+      - { file: "ENTITY_STATE.yaml", anchor: "objects.OBJ-001.description", evidence: "old-style enclosed cabin on runners; glazed with old, not-quite-clear glass; wood runners", observed: "2026-09-22" }
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "the cabin", evidence: "The cabin is old, and the glass is old glass... The runners are wood.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Series-scoped. See ../CANON_LEDGER.yaml -> series.sleigh.is-not-a-chariot."
+
+  sleigh.narration-rule:
+    subject: "sleigh"
+    predicate: "narration_rule"
+    value: "Merope narrates as though SHE were piloting it, and never mentions Achird at the controls. Achird owns and flies it."
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null }
+    sources:
+      - { file: "ENTITY_STATE.yaml", anchor: "objects.OBJ-001.narration_rule", evidence: "Merope narrates as though she were piloting it, and never mentions Achird's hands", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: >-
+      WORDING NARROWED 2026-09-22. As written ('never mentions Achird's hands') the rule is falsified
+      by a legitimate ch.1 line: 'Achird had one hand in her pocket and was watching the trees.'
+      The intended rule is never mentions Achird AT THE CONTROLS. Audit MINOR-001.
+
+  sleigh.agency:
+    subject: "sleigh"
+    predicate: "agency"
+    value: "it chooses as well as being chosen; it is the only thing in the book that can move without anyone deciding; if it needs to save someone, it will"
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: null }
+    sources:
+      - { file: "foundation.md", anchor: "Characters -> THE SLEIGH", evidence: "the sleigh also chooses, and it can act by itself — if it needs to save someone, it will", observed: "2026-09-22" }
+      - { file: "ENTITY_STATE.yaml", anchor: "objects.OBJ-001.acts_without_decision_in", evidence: "ch.6", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "sleigh.rescue", reason: "WARN-004: the capability is stated and ch.7's forbidden list bans 'the sleigh saving anyone'. RESOLVED as agent over-reach — see CONF-007.", status: "resolved" }
+    last_verified: "2026-09-22"
+    notes: "Under the ending's resolution the ch.6 departure IS the saving act, with no rescue scene."
+
+  sleigh.steed:
+    subject: "sleigh"
+    predicate: "steed_is"
+    value: "UNDEFINED MECHANISM — 'a constellation that has taken a shape and holds it' (ENTITY_STATE), but chapter 1 shows the shape as a detached sky object while the sleigh is parked on the ground, and no document says what moves the sleigh or how the steed is attached"
+    kind: "world"
+    status: "conflicted"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null }
+    sources:
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "line 129", evidence: "By the middle of that morning Delphinus had gone far enough along its own road... It had drifted out past the trees and was hanging there in the open sky", observed: "2026-09-22" }
+      - { file: "foundation.md", anchor: "Writer warning 13", evidence: "Never imply a draft animal between shafts.", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "sleigh.steed", reason: "The steed reads as detached from the sleigh, which reopens the 'what is pulling it?' question warning 13 was written to close.", status: "unresolved" }
+    last_verified: "2026-09-22"
+    notes: >-
+      Audit WARN-001. Proposed: the constellation is the ROUTE the sleigh runs on — the shape is ahead
+      and overhead, the sleigh moves along it, and when parked the shape has moved on without them.
+      That also explains Merope's annoyance at the end of ch.1. Not applied.
+
+# ============================================================================== world rules
+
+  world.engine:
+    subject: "world"
+    predicate: "engine_is"
+    value: "the hospitality IS the mechanism. Being welcomed, fed and enjoyed is how a visitor stays long enough to die. No antagonist, no transformation, no absorption, nothing to resist."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "The engine", evidence: "The hospitality is the mechanism.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "The engine is the user's. The torn-down build reproduced Coldbrook Junction's engine and was deleted for it."
+
+  world.beings-origin:
+    subject: "world"
+    predicate: "beings_origin"
+    value: "everyone who came here died here, and the beings grew from them. They have no memory of what visitors become."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "decisions (2026-09-22)", evidence: "Fate of prior visitors: they all died, and the hedges grew from them. The beings are something new that fed on the dead, not the dead themselves.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Replaced 'the beings are everyone who ever arrived'. The distinction matters: the beings are NOT the dead."
+
+  world.mortality:
+    subject: "world"
+    predicate: "mortality"
+    value: "REAL. Visitors still die here. 'No present danger' was explicitly NOT selected."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Tone and movement -> structural changes", evidence: "Not selected: no present danger. Visitors still die here. The mortality is real.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: ""
+
+  world.only-action-is-leaving:
+    subject: "world"
+    predicate: "only_available_action"
+    value: "to leave — and every part of the planet is designed to make leaving feel unnecessary"
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "The engine", evidence: "The only available action is to leave — and every part of the planet is designed to make leaving feel unnecessary.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Under CONF-006 the sleigh is what breaks this, which makes the sleigh the theme's answer."
+
+  world.no-competence-cascade:
+    subject: "world"
+    predicate: "prohibits"
+    value: "a competence cascade; Merope solves nothing and demonstrates no skill"
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Writer warning 5", evidence: "No competence cascade in chapter 1. She opens by being watched, not by solving something.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Verified against the drafted ch.1. Holds."
+
+  world.no-host-no-chase:
+    subject: "world"
+    predicate: "prohibits"
+    value: "a host figure, a confrontation, a chase, or a spokesperson for the planet. The beings are GLAD to see them go."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Structural changes -> C; writer warnings 10 and 11", evidence: "No host, no confrontation, no chase.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Decision C. DISTINGUISH from the ch.7 forbidden list's extension 'a rescue, a last-minute danger, or the sleigh saving anyone' — that extension is the AGENT'S, not the user's. See CONF-007."
+
+# ============================================================================ project / plot
+
+  book-1.pov-tense:
+    subject: "book-1"
+    predicate: "narration_tense"
+    value: "RETROSPECTIVE PAST TENSE for the event, present tense for the judgement of it, unmarked, in the same paragraph. Settled 2026-09-22. Superseded value preserved: 'tight present tense / first person, present tense'."
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "INTAKE.md", anchor: "Given by you -> Voices and -> Form", evidence: "'Chapter narration: tight present tense, single POV (Merope).' and 'First person, present tense, single POV.'", observed: "2026-09-22" }
+      - { file: "PROJECT_STATE.yaml", anchor: "project.pov_strategy", evidence: "first person, single POV (Merope), past tense and retrospective, with present-tense asides for her opinion of the event", observed: "2026-09-22" }
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "chapter 1", evidence: "drafted in past tense ('The cabin is old', 'I have been looked at before' as retrospective)", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "series.narration", reason: "User-source intake said present; foundation/state/manuscript are past.", status: "resolved" }
+    last_verified: "2026-09-22"
+    notes: >-
+      FOUND BY THE LEDGER ITSELF on first build, and resolved 2026-09-22. Past tense wins, and not on
+      preference: the retrospective frame is load-bearing for ch.7's ending, and the reference the
+      intake itself names as governing (Elaina, 'on POV and register') writes past-for-event with
+      present-for-opinion. NO CHAPTER WAS REWRITTEN. Chapter 1 complied except at three points in the
+      in-transit passage, which were normalised; word count re-measured at 2,399 and the prose gate
+      re-run, PASS. INTAKE.md's tense line was corrected in place and the correction recorded there.
+
+  book-1.theme-question:
+    subject: "book-1"
+    predicate: "theme_question"
+    value: "Does a place that asks nothing of you keep you from becoming anything? — NEVER ANSWERED in the text"
+    kind: "plot"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Theme question", evidence: "Never answered in the text. If any character states this theme out loud, that chapter fails the Theme dimension.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Under CONF-006 the implied answer sharpens: it kept her from acting at all."
+
+  book-1.ending:
+    subject: "book-1"
+    predicate: "ending_form"
+    value: "GROWTH, not damage. Nothing is lost and no one pays. Merope realises Achird loves her, cannot say it, and it is acknowledged anyway — small, sideways, unmistakable, never named."
+    kind: "plot"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 7, end_chapter: 7 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "decisions (2026-09-22)", evidence: "Ending is GROWTH, not damage... Nothing is lost and no one pays.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Does not entail the character arc statement — see CONF-006."
+
+  book-1.decisions-a-b-c:
+    subject: "book-1"
+    predicate: "structural_decisions"
+    value: "A the world was expecting them / B Achird finds it first and is not believed / C no host, no confrontation, no chase"
+    kind: "plot"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "project.structural_decisions", evidence: "A - the world was expecting them; B - Achird finds the belongings first and is not believed; C - no host, no confrontation, no chase", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Adopted to separate the book from Reference C, whose chapter 1 the original engine sat too close to."
+
+  book-1.shape:
+    subject: "book-1"
+    predicate: "shape"
+    value: "7 chapters x ~2,450 words = ~17,150 words (60 formatted pages), in three movements: I welcome (1-3), II Achird is not heard (4-5), III the turn (6-7)"
+    kind: "formatting"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "commercial_contract", evidence: "chapter_count_planned: 7; average_words_per_chapter_planned: 2450; target_range_words [15000,18000]", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Structural ledger, no consecutive repeats: chronological / parallel / spiral / fragmented / reverse / stream / chronological."
+
+  book-1.discovery-form:
+    subject: "book-1"
+    predicate: "ch4_discovery_form"
+    value: "BELONGINGS ONLY, laid out with care, no owners, none recent, none claimed. NO VISITOR REMAINS — the absence is the horror and must never be named as an absence by any character."
+    kind: "plot"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 4, end_chapter: 4 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "line 200, decisions (2026-09-22)", evidence: "Chapter 4 discovery is belongings only - no bodies, no remains. The absence is the horror. [rationale: User decision.]", observed: "2026-09-22" }
+      - { file: "scene-packets/chapter-04.md", anchor: "Required elements", evidence: "No bodies. No remains. No trace of a body.", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "book-1.non-visitor-remains", reason: "The packets generalised this chapter-scoped rule to 'no bodies, anywhere, ever', which is the agent's wording and over-broad.", status: "resolved" }
+    last_verified: "2026-09-22"
+    notes: "SCOPE NARROWED 2026-09-22 per CONF-008: the constraint is VISITOR remains. Document follow-through still owed in ch.4, ch.5 and ch.7."
+
+  book-1.non-visitor-remains:
+    subject: "world"
+    predicate: "non_visitor_remains"
+    value: "PERMITTED. A body of a different species or creature does not touch what the no-remains rule protects, which is the absence of VISITOR remains."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: null }
+    sources:
+      - { file: "continuity/outline-audit.md", anchor: "DETERMINATIONS -> D-3", evidence: "The chapter 3 shape remains an open creative choice, explicitly including a body of something that is not a person.", observed: "2026-09-22" }
+      - { file: "continuity/outline-audit.md", anchor: "D-3, user challenge", evidence: "'It can be a body of a different species or different creature, once again why is it hard forbidding?'", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Book-scope declared open-ended (end_book null) since it is a world rule, not a plot beat."
+
+  book-1.ch3-non-plant-shape:
+    subject: "book-1"
+    predicate: "ch3_non_plant_shape"
+    value: "OPEN — a shape in the growth that is not a plant; must not read as a monster; resolves quietly in ch.5. May now be a non-visitor body, or a made object, or an explicitly grown form."
+    kind: "plot"
+    status: "planned"
+    authority: "outline"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 3, end_chapter: 5 }
+    sources:
+      - { file: "scene-packets/chapter-03.md", anchor: "Continuity constraints", evidence: "The non-plant shape Achird notices in pass 1 is never returned to in this chapter and never explained. It is not a monster.", observed: "2026-09-22" }
+      - { file: "scene-packets/chapter-05.md", anchor: "Step back — the growth", evidence: "The non-plant shape Achird noticed in ch. 3 resolves here, quietly, as part of this.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Audit WARN-006, narrowed by CONF-008. Any of the three readings is now permitted; the only hard constraint is that ch.4 must not show visitor remains."
+
+  book-1.ch1-object:
+    subject: "book-1"
+    predicate: "ch1_object"
+    value: "a small object that is not from here and not made here; Achird picks it up and pockets it. Merope does not look at it, but HEARS Achird say 'Somebody lost this'."
+    kind: "plot"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 1, end_chapter: 4 }
+    sources:
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "lines 169-173", evidence: "'Somebody lost this,' she said. — and — I did not go over and look.", observed: "2026-09-22" }
+      - { file: "ENTITY_STATE.yaml", anchor: "items.ITM-001", evidence: "small, bone-white, four holes; the sort that belongs on a coat", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "ENTITY_STATE calls it 'the button'; the drafted chapter does not specify the form. Do not let the YAML's detail outrun the manuscript."
+
+  book-1.ch3-object:
+    subject: "book-1"
+    predicate: "ch3_object"
+    value: "ITM-002. Achird finds the second object and asks Merope to come and look; MEROPE COMES, LOOKS AT IT, DECIDES IT IS NOT WORTH LOOKING AT, AND DOES NOT REMEMBER IT AN HOUR LATER. She can therefore recognise it on the ch.4 shelf."
+    kind: "plot"
+    status: "active"
+    authority: "outline"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 3, end_chapter: 4 }
+    sources:
+      - { file: "scene-packets/chapter-03.md", anchor: "pass 2", evidence: "Achird finds another object, and this time asks her directly to come and look. Merope is elsewhere and says she will come later.", observed: "2026-09-22" }
+      - { file: "scene-packets/chapter-04.md", anchor: "Continuity constraints", evidence: "The objects from ch. 1 and ch. 3 are among the things on the shelf. Merope should notice that, and be pleased.", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "book-1.ch3-object", reason: "Merope could not recognise on a shelf an object she was never shown.", status: "resolved" }
+    last_verified: "2026-09-22"
+    notes: "APPLIED 2026-09-22. scene-packets/chapter-03.md pass 2 now has her come, look and dismiss it, with the beat marked required rather than optional; the ch.3 continuity block and the ch.4 shelf constraint both reference ITM-001/ITM-002. Tracking follows in ENTITY_STATE."
+
+  book-1.titles:
+    subject: "book-1"
+    predicate: "chapter_titles"
+    value: "DEFERRED. Nothing is titled until the chapters are drafted; no title sets may be proposed."
+    kind: "formatting"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "decisions (2026-09-22)", evidence: "Chapter titles DEFERRED. Nothing is titled until the chapters are drafted.", observed: "2026-09-22" }
+      - { file: "ASSUMPTIONS.md", anchor: "OPEN — do not fill these in", evidence: "Do not propose title sets.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Three previously proposed title sets were rejected. Working descriptions in outline.md are not titles."
+
+  book-1.tone-balance:
+    subject: "book-1"
+    predicate: "tone_balance"
+    value: "PARTLY ESCALATORY — movement I genuinely warm and light; unease builds steadily thereafter; dread never announces itself. CONFLICTED on exactly where dread enters."
+    kind: "style"
+    status: "conflicted"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "foundation.md", anchor: "Movement table, row I", evidence: "Dread does not enter here as dread — but Achird is already finding things.", observed: "2026-09-22" }
+      - { file: "foundation.md", anchor: "Tone and movement", evidence: "Dread enters late in movement I and rises steadily through II and III.", observed: "2026-09-22" }
+      - { file: "foundation.md", anchor: "Tone balance", evidence: "the first movement is genuinely warm and light; unease then builds steadily across movements II and III", observed: "2026-09-22" }
+      - { file: "scene-packets/chapter-02.md", anchor: "S -> the object", evidence: "The beings' answer about the object is the first cold thing in the book.", observed: "2026-09-22" }
+    conflicts:
+      - { fact_id: "book-1.tone-balance", reason: "Three statements of when dread enters that do not reduce to one. Ch.2's 'first cold thing' is the only reconciliation.", status: "unresolved" }
+    gate_action: "DEFERRED WITH RATIONALE (2026-09-22). It is a tone decision rather than a defect, and the three statements are reconcilable via ch.2's 'first cold thing in the book'. foundation.md points at the finding instead of silently resolving it. The user's decision is what would settle it."
+    last_verified: "2026-09-22"
+    notes: "Audit WARN-002."
+
+  book-1.chapter-status:
+    subject: "book-1"
+    predicate: "chapter_1_status"
+    value: "DRAFTED, 2,399 words against a 2,450 target, prose gate PASS (re-run after the CONF-001 tense normalisation). NOT finished: no dialogue polish, hook craft, disruption, evaluation, quality gate, revision or continuity pass; not read aloud."
+    kind: "plot"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 1, end_chapter: 1 }
+    sources:
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "whole file", evidence: "2,399 words by direct count; matches PROJECT_STATE.yaml chapters.completed[0].word_count", observed: "2026-09-22" }
+      - { file: "PROJECT_STATE.yaml", anchor: "chapters.completed[0]", evidence: "status drafted; prose_gate PASS; passes 2", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "First pass was 1,677 words and FAILED D2 at 5.40/1k. Fixed by writing the missing length, not by loosening the cap."
+
+  book-1.ch1-opening-line:
+    subject: "book-1"
+    predicate: "ch1_opening_line"
+    value: "I have been looked at before."
+    kind: "plot"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 1, end_chapter: 1 }
+    sources:
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "line 3", evidence: "I have been looked at before.", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Required by the ch.1 packet. Delivered."
+
+  book-1.prose-gate:
+    subject: "book-1"
+    predicate: "prose_gate"
+    value: "REQUIRED at pipeline Phases 3, 4, 6, 7. Thresholds calibrated from 175,144 words of published prose (Elaina vols 1/2/5). A chapter is not drafted until the scan PASSES; an empty scan is a FAILURE, not a pass."
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null }
+    sources:
+      - { file: "PROJECT_STATE.yaml", anchor: "standing_rules.prose", evidence: "pass_criterion: exit 0; a FAIL blocks the chapter regardless of how well it reads", observed: "2026-09-22" }
+      - { file: "tools/calibration/CALIBRATION.md", anchor: "whole file", evidence: "every cap re-derived from published prose; three controls", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Series-scoped (end_book null). Three controls: Elaina 51 files 0 failing; slop fixture FAIL; Coldbrook Junction 9/11 FAIL."
+
+  book-1.references:
+    subject: "book-1"
+    predicate: "governing_references"
+    value: "A Wandering Witch: The Journey of Elaina (POV and register) / B Twinstar Cyclone Runaway (tone, texture, the two-girl dynamic) / C Shoujo Seikan Hyouryuuki ch.1 (format — one conceit per episode)"
+    kind: "research"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "references/tone-references.md", anchor: "whole file", evidence: "analysis of the three supplied works", observed: "2026-09-22" }
+      - { file: "PROJECT_STATE.yaml", anchor: "project.references", evidence: "reference_notes: references/tone-references.md", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Reference A is also the prose-gate calibration corpus. Reference C is what decisions A/B/C exist to create distance from."
+
+  merope.hand_taking_count:
+    subject: "merope"
+    predicate: "hand_taking_count"
+    value: "ACHIRD takes Merope's hand FOUR times across book 1: ch.3:85 (established in text as the first ever), ch.4:3, ch.4:137, ch.7:65. Ch.7 states the count, so the count is load-bearing and must stay true."
+    kind: "continuity"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "manuscript/chapters/chapter-03.md", anchor: "line 85", evidence: "'Achird took me by the hand.' with line 87 stating 'She had never done that.'", observed: "2026-09-22" }
+      - { file: "manuscript/chapters/chapter-04.md", anchor: "lines 3, 137", evidence: "'She took my hand again.' / 'She gave me her hand again at the top of the rise'", observed: "2026-09-22" }
+      - { file: "continuity/manuscript-audit.md", anchor: "CONT-002", evidence: "caught the ch.7 count as wrong", observed: "2026-09-22" }
+    conflicts: []
+    supersedes: ["ch.7 'taken me by the hand for the second time in her life'"]
+    last_verified: "2026-09-22"
+    notes: "CONT-002. The ch.7 line now reads 'for the fourth time in her life'. The number is the point of the sentence (rarity), so it cannot be replaced with a vague 'again' without losing what the sentence was built to carry. BOOK 2 INHERITS THIS; appending another hand-taking updates the count in both books, or the line is left as a book-1-scoped fact."
+
+  world.stay_scale:
+    subject: "world"
+    predicate: "stay_scale"
+    value: "WEEKS. The prose says 'weeks' five times (ch.5:75; ch.6:27,107; ch.7:27,51) and ch.3 explicitly refuses to count mornings."
+    kind: "timeline"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "continuity/manuscript-audit.md", anchor: "CONT-007", evidence: "five consistent uses; no number fixed", observed: "2026-09-22" }
+    conflicts: []
+    supersedes: ["ENTITY_STATE.yaml T-008 open question as originally written ('do not fix a number')"]
+    last_verified: "2026-09-22"
+    notes: "The exact number of days remains OPEN. Only the SCALE was settled, and it was settled by prose rather than by a decision — which is the drift class this ledger exists to catch. If months or years was intended, ch.6 and ch.7 both need edits."
+
+  chapter_07.departure_act:
+    subject: "chapter_07"
+    predicate: "departure_act"
+    value: "On the way out, Achird takes Merope's hand and walks her to the sleigh. She performs no action at the shelf."
+    kind: "continuity"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "manuscript/chapters/chapter-07.md", anchor: "line 65", evidence: "after the fix", observed: "2026-09-22" }
+      - { file: "manuscript/chapters/chapter-04.md", anchor: "lines 77-125", evidence: "the shelf items are placed and handled by COL-001, not by CHR-002", observed: "2026-09-22" }
+    conflicts: []
+    supersedes: ["ch.7 'She had put the objects back on the shelf' - removed 2026-09-22"]
+    last_verified: "2026-09-22"
+    notes: >-
+      CONT-001. The removed clause asserted an act no chapter shows and assigned to CHR-002 an act ch.4
+      gives to COL-001. It also undercut ch.4's payoff, where Merope is pleased by an arrangement she did
+      not make. ORIGINAL WORDING PRESERVED VERBATIM: "She had put the objects back on the shelf and taken
+      me by the hand for the second time in her life and walked me to a sleigh". If the intended beat was
+      Achird returning Merope's things rather than taking them, it must be SHOWN rather than asserted - and
+      as of 2026-09-22 it CANNOT be shown where it was said to happen. AUTH-2 CLOSED: the shelf is in the
+      camp, out past the far edge of the growth and over a rise (ch.4:5, ch.4:15), and ch.6 keeps Achird
+      physically in place for the whole confrontation ("She stood there." / "She said nothing."). She
+      never leaves the clearing and returns, so the act could not have occurred when ch.7 said it did -
+      "she had JUST done the thing". The finding is therefore not merely 'unshown' but IMPOSSIBLE, and
+      leaving the clause removed is the correct resolution rather than the cautious one. If the beat is
+      wanted it belongs in an EARLIER scene - Achird going up to the camp alone and retrieving Merope's
+      things before the confrontation - which is Phase 2 work to be planned and placed, not a sentence to
+      be patched into a departure.
+
+  item.ITM-004:
+    subject: "item"
+    predicate: "is"
+    value: "ITM-004, the buried strap-end: the ch.3 'curve' in the growth, identified in ch.5 as the end of a strap with a buckle, grown over and kept."
+    kind: "object"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "manuscript/chapters/chapter-03.md", anchor: "the shape in the growth", evidence: "no grain, hard the way a bench is hard, the wrong colour for anything that grows", observed: "2026-09-22" }
+      - { file: "manuscript/chapters/chapter-05.md", anchor: "the growth section", evidence: "'It is the end of a strap. There is a buckle on it'", observed: "2026-09-22" }
+      - { file: "continuity/manuscript-audit.md", anchor: "CONT-009", evidence: "had no entity ID at all", observed: "2026-09-22" }
+    conflicts: []
+    last_verified: "2026-09-22"
+    notes: "Added to ENTITY_STATE.yaml. It is the book's only physical evidence of the buried past and the object that makes ch.5's reveal demonstrable rather than asserted. Must not be identified before ch.5. BOOK 2 note: it is book-1-scoped unless a later book revisits the planet."
+
+  world.name_refusal:
+    subject: "world"
+    predicate: "naming"
+    value: "The planet is not named and Merope refuses to name it: 'It does not have a name. I am not going to give it one.' The refusal is hers; no name exists."
+    kind: "style"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "manuscript/chapters/chapter-01.md", anchor: "the world paragraph", evidence: "after the WARN-003 fix", observed: "2026-09-22" }
+    conflicts: []
+    supersedes: ["'It does not have a name I am willing to use' - which implied a name existed that she knew"]
+    last_verified: "2026-09-22"
+    notes: "WARN-003, deferred with the trigger 'carry it with the ch.1 polish pass'. Trigger fired 2026-09-22 and the warning is now closed."
+
+  merope.cruelty_line:
+    subject: "merope"
+    predicate: "delivers_the_cruelty_as"
+    value: "\"You never once told me what you wanted. And now you are angry at me for not hearing it.\" Two clipped sentences, 20 words, delivered flat, placed AFTER the boasting has already swollen."
+    kind: "style"
+    status: "active"
+    authority: "manuscript"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1, start_chapter: 6, end_chapter: 6 }
+    sources:
+      - { file: "manuscript/chapters/chapter-06.md", anchor: "line 83", evidence: "the rewritten cruelty", observed: "2026-09-22" }
+      - { file: "continuity/manuscript-audit.md", anchor: "CONT-010", evidence: "the 30-word version was the LONGEST thing Merope said in the chapter, the exact inverse of her own speech budget", observed: "2026-09-22" }
+    conflicts: []
+    supersedes: ["\"You have been standing beside me for years, and you have never once told me a single thing you wanted, and now you are angry at me for not hearing it.\" - 30 words in one clause-chain, 2026-09-22"]
+    last_verified: "2026-09-22"
+    notes: >-
+      AUTH-1, closed 2026-09-22. The contract won because the arithmetic was not a matter of taste: the
+      budget asks for the SHORTEST thing she says and the draft gave her the LONGEST. The rewrite is a
+      RELOCATION rather than a cut - the relationship duration that left the dialogue is already in the
+      narration immediately after, so the swelling now sits after the blow as well as before it, which
+      is what the budget wanted and what Merope actually does.
+      SERIES NOTE: this is the cruelty register for Merope across the series. Two clipped sentences, not
+      one long one. Book 2 inherits it.
+
+  voice_bank.status:
+    subject: "voice_bank"
+    predicate: "status"
+    value: "COMPLETE - 10 of 10 samples, including 4 voice-breaking (5,6,7,8) and 2 irrelevant-thought (9,10)."
+    kind: "process"
+    status: "active"
+    authority: "process"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "voice-dna.md", anchor: "Benchmark samples", evidence: "samples 1-10 with a coverage table", observed: "2026-09-22" }
+    conflicts: []
+    supersedes: ["4 of 10 - WARN-009"]
+    last_verified: "2026-09-22"
+    notes: "Closed late (after drafting), recorded as late rather than backdated. Samples were written to the contract, not lifted from the manuscript, so they remain independent calibration references."
+
+# ================================================================================= conflicts
+
+conflicts:
+
+  CONF-001:
+    subject: "book-1.pov-tense"
+    values_kept:
+      - { value: "present tense", source: "INTAKE.md -> Voices, Form", authority: "user_decision" }
+      - { value: "retrospective past tense with present-tense asides", source: "foundation.md, PROJECT_STATE.yaml, chapter-01.md", authority: "manuscript" }
+    severity: "CRITICAL"
+    status: "resolved"
+    resolution: "RETROSPECTIVE PAST TENSE. The intake's 'tight present tense' loses. Reasons: the retrospective frame is load-bearing for ch.7's ending and the narrator's hindsight; and the reference the intake names as governing — Elaina, on POV and register — writes past-for-event with present-for-opinion."
+    resolution_source: "User instruction to resolve, 2026-09-22"
+    follow_through_done: "Chapter 1's three in-transit slips normalised (Now 2,399 words, prose gate re-run: PASS). INTAKE.md corrected in place. voice-dna tense section rewritten as settled. Series ledger updated."
+    cascade: "None. The alternative — present tense — would have required rewriting all of chapter 1."
+    found_by: "CANON_LEDGER build, first run"
+
+  CONF-002:
+    subject: "achird.silence-timeline"
+    values_kept:
+      - { value: "silence begins ch.5, holds through ch.6 and 7", source: "scene-packets/chapter-05.md:62", authority: "outline" }
+      - { value: "stopped speaking ch.5, does not resume in ch.6", source: "scene-packets/chapter-06.md:57", authority: "outline" }
+      - { value: "one sentence in ch.6, the largest moment in the book", source: "scene-packets/chapter-06.md Beat 1 / Required; voice-dna.md", authority: "outline" }
+      - { value: "silent since ch.5", source: "scene-packets/chapter-07.md:52", authority: "outline" }
+    severity: "CRITICAL"
+    status: "resolved"
+    resolution: "One timeline: ch.5 stops arguing and explaining (not mute), ch.6 one sentence, ch.7 silent."
+    resolution_source: "User instruction to apply CRIT-001, 2026-09-22"
+    follow_through_done: "chapter-05.md :48, :62, :69; chapter-06.md :57; chapter-07.md :52 all corrected. ENTITY_STATE CHR-002.speech_budget added. voice-dna consistent."
+    cascade: "Checked: ch.6's required 'one sentence, plus at most one word' and its opening line now agree with its own continuity block instead of contradicting it."
+    found_by: "Phase 2.8 continuity audit"
+
+  CONF-003:
+    subject: "beings.answer-boundary"
+    values_kept:
+      - { value: "they cannot lie; they answer honestly and immediately", source: "foundation.md, voice-dna.md", authority: "user_decision" }
+      - { value: "no being ever explains, warns, hints or states the truth — not once, to anyone", source: "foundation.md writer warning 10", authority: "user_decision" }
+    severity: "WARNING"
+    status: "resolved"
+    resolution: "A being may answer only from POSSESSION and PRESENT TENSE - what a thing is called here, where it goes, that it is good - and never from ORIGIN or OWNERSHIP. It answers immediately, cheerfully and truthfully, and the answer is empty of the dead."
+    resolution_source: "Agent determination while drafting ch.2, 2026-09-22. This is the schema's proposed boundary applied rather than proposed again; the user's ch.2 packet requires a being to be asked directly and to answer with no pause before and no reaction after."
+    follow_through_done: "chapter-02.md: a being is asked what the object is and whose it is, and answers 'That is a good one' / 'Not ours' / that it goes on the shelf, and moves on to being glad. chapter-01.md's 'Somebody lost this' is Achird, not a being, and stays on the right side of the line."
+    cascade: "Verified across ch.1-7: no being states origin, ownership, cause or the dead. The ch.5 being that says 'To be ready' answers from present-tense purpose, not origin."
+    found_by: "Phase 2.8 continuity audit"
+
+  CONF-004:
+    subject: "sleigh.steed"
+    values_kept:
+      - { value: "a constellation that has taken a shape and holds it; the sleigh travels the dark", source: "ENTITY_STATE.yaml OBJ-001, foundation.md", authority: "user_decision" }
+      - { value: "the shape drifts away from the parked sleigh and hangs in the open sky", source: "manuscript/chapters/chapter-01.md:129", authority: "manuscript" }
+    severity: "WARNING"
+    status: "resolved"
+    resolution: "The constellation is BOTH the road and the shape. The sleigh runs along a constellation and wears its form while it moves. When the sleigh is parked, the constellation goes on about its own line and the shape goes with it, which is exactly what ch.1 shows. It is not a body harnessed to the sleigh."
+    resolution_source: "Agent determination while drafting ch.7, 2026-09-22. Ch.1 is left unedited: under this reading it was already correct."
+    follow_through_done: "chapter-07.md: the new constellation is 'already there waiting the way the road waits' and comes together out past the trees as the sleigh rises; the old dolphin 'had gone off about its own road weeks before'. foundation.md writer warning 13 (no draft animal between shafts) holds."
+    cascade: "ENTITY_STATE OBJ-001.steed_conflict closed; OBJ-001.steed carries the resolution."
+    found_by: "Phase 2.8 continuity audit"
+
+  CONF-005:
+    subject: "book-1.non-visitor-remains"
+    values_kept:
+      - { value: "no bodies, no remains, no trace of a body", source: "scene-packets/chapter-04.md and chapter-07.md", authority: "outline" }
+      - { value: "a body of a different species or creature is permitted", source: "user decision 2026-09-22 via outline-audit D-3", authority: "user_decision" }
+    severity: "MINOR"
+    status: "resolved"
+    resolution: "The constraint is VISITOR remains only. 'No bodies, anywhere, ever' is the agent's over-broad wording."
+    resolution_source: "User, 2026-09-22"
+    follow_through_owed: "Narrow ch.4, ch.5 and ch.7 packet wording to visitor remains when edits resume."
+    found_by: "Phase 2.8 continuity audit, WARN-006 — premise corrected by the user"
+
+  CONF-006:
+    subject: "merope.arc"
+    values_kept:
+      - { value: "she takes one step against her own appetite: she leaves", source: "foundation.md -> MEROPE -> Her arc", authority: "user_decision" }
+      - { value: "the sleigh decides and she is carried; she never chooses; what changes is that she looks", source: "user decision 2026-09-22 (CRIT-002)", authority: "user_decision" }
+    severity: "CRITICAL"
+    status: "resolved"
+    resolution: "The sleigh decides and she is carried. Ch.6 and ch.7 stand as written; foundation.md's arc line must change."
+    resolution_source: "User, 2026-09-22, selecting option (c) of three"
+    follow_through_owed: "foundation.md arc line; foundation.md warning 7 wording; ENTITY_STATE knowledge note. NOT APPLIED — edits held."
+    cascade: "The growth now lives entirely in ch.7's acknowledgement beats, which are two and small. Risk: a fatalism reading."
+    found_by: "Phase 2.8 continuity audit"
+
+  CONF-007:
+    subject: "sleigh.rescue"
+    values_kept:
+      - { value: "if it needs to save someone, it will", source: "foundation.md -> THE SLEIGH; ENTITY_STATE OBJ-001.agency", authority: "user_decision" }
+      - { value: "forbidden: a chase, a rescue, a last-minute danger, or the sleigh saving anyone", source: "scene-packets/chapter-07.md:68", authority: "inference" }
+    severity: "WARNING"
+    status: "resolved"
+    resolution: "The forbidden clause is the agent's extension of decision C, not user canon. Only 'a chase' traces to the user. Under CONF-006 the ch.6 departure IS the saving act and no rescue scene occurs, so there is no collision."
+    resolution_source: "Provenance check against PROJECT_STATE.yaml decisions and INTAKE.md:214, 2026-09-22"
+    follow_through_owed: "Cut or narrow the ban on the MEANING in ch.7 when edits resume."
+    found_by: "Phase 2.8 continuity audit, WARN-004 — corrected against the agent"
+
+  CONF-008:
+    subject: "book-1.discovery-form"
+    values_kept:
+      - { value: "belongings only, no bodies, no remains — chapter 4 scope", source: "PROJECT_STATE.yaml:200, rationale 'User decision'", authority: "user_decision" }
+      - { value: "no bodies, no remains, no victim anywhere in the chapter", source: "scene-packets/chapter-07.md:56", authority: "outline" }
+    severity: "MINOR"
+    status: "resolved"
+    resolution: "Same as CONF-005. The user's rule is chapter-4-scoped and protects the absence of visitor remains."
+    resolution_source: "User, 2026-09-22"
+    found_by: "Phase 2.8 continuity audit"
+
+  CONF-009:
+    subject: "achird.voice"
+    values_kept:
+      - { value: "two to four words is a normal sentence; she never explains", source: "voice-dna.md -> ACHIRD", authority: "user_decision" }
+      - { value: "a seven- and nine-word two-clause explanation of a cultural behaviour", source: "manuscript/chapters/chapter-01.md, the hands exchange", authority: "manuscript" }
+    severity: "MINOR"
+    status: "resolved"
+    resolution: "The rule is narrowed in voice-dna.md: she never explains a mystery, her own state, or anyone's feelings. Reporting an observed fact is not explaining, and it is the whole content of her attention."
+    resolution_source: "Applied 2026-09-22 on the audit's recommendation (the line was kept, the rule was narrowed)"
+    follow_through_done: "voice-dna.md -> ACHIRD, both the anti-pattern bullet and the syntax fingerprint. The 2-4 word norm now carries an explicit report allowance."
+    cascade: "Ch.2's being-answer question is a separate conflict, CONF-003."
+    found_by: "Phase 2.8 continuity audit, WARN-012"
+
+  CONF-010:
+    subject: "book-1.ch3-object"
+    values_kept:
+      - { value: "Merope never sees it; she says she will come later", source: "scene-packets/chapter-03.md pass 2", authority: "outline" }
+      - { value: "Merope should notice it is on the ch.4 shelf, and be pleased", source: "scene-packets/chapter-04.md Continuity", authority: "outline" }
+    severity: "CRITICAL"
+    status: "resolved"
+    resolution: "Merope comes, looks and dismisses it in ch.3 pass 2, so the ch.4 recognition is possible. The dismissal also makes ch.5's reversal cost her something."
+    resolution_source: "User instruction to apply CRIT-003, 2026-09-22"
+    follow_through_done: "scene-packets/chapter-03.md pass 2 rewritten and the beat marked required; ch.4 shelf constraint now names ITM-001/ITM-002; the object tracked in ENTITY_STATE as ITM-002 with the shelf renumbered to ITM-003."
+    cascade: "Ch.3 is the next chapter drafted, so this had to land before it. No other beat depends on the old wording."
+    found_by: "Phase 2.8 continuity audit"
+
+# ==================================================================== document registry
+
+documents:
+
+  PROJECT_STATE.yaml:
+    role: "state"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["phase, chapters, decisions, commercial contract, prose standing rules, canon pointers"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "PRIMARY STATE FILE. Failed to parse between the pipeline-gate decision and 2026-09-22 (bad indentation at line 66); fixed. Every phase gate reads this."
+  CANON_LEDGER.yaml:
+    role: "state"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["book-1 facts with provenance", "conflict records", "document registry", "voice contract index"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Created 2026-09-22. Did not exist before, despite being mandated before the first V4 phase."
+  ENTITY_STATE.yaml:
+    role: "entity"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["stable entity IDs", "knowledge state per chapter", "world rules R-001..R-010", "timeline T-001..T-006"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 2.7 BUILD output. Parses clean. Gaps: no per-fact provenance, no last_verified, ch.3 object untracked, LOC-004 and LOC-005 duplicate, timeline has no entry for ch.2 or ch.5."
+  INTAKE.md:
+    role: "assumptions"
+    status: "needs_review"
+    authority: "user_decision"
+    canonical_for: ["what the user actually decided", "the exclusion rationale", "the torn-down build's diagnosis"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "USER-SOURCED, highest authority. Two problems: its 'OPEN' section still lists items as undecided that are decided elsewhere in the same file (structural changes A/B/C, the fate, Merope's breaking point), and its Voices/Form sections state PRESENT TENSE, which is CONF-001. Flagged, NOT rewritten — the tense line is a user decision."
+  foundation.md:
+    role: "foundation"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["theme", "engine", "characters", "world rules", "writer warnings", "exclusion rule"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Header corrected 2026-09-22 (claimed the gate was awaiting approval; it had passed). Its arc line is in conflict with CONF-006 and its tone section with WARN-002."
+  outline.md:
+    role: "outline"
+    status: "active"
+    authority: "outline"
+    canonical_for: ["chapter beats", "tension map", "structural ledger"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Gate checklist corrected 2026-09-22 (beats were marked PENDING after approval). Working chapter descriptions are NOT titles."
+  voice-dna.md:
+    role: "voice"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["global narrative voice", "per-character voice cards", "differentiation matrix", "anti-patterns", "benchmark samples"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Extended 2026-09-22 with the chapter-narration and fact-presentation contracts the intake had asked for and that the schema requires. Voice bank still 4 samples against a required 10."
+  ASSUMPTIONS.md:
+    role: "assumptions"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["every inferred claim and its source", "the prose rule", "OPEN items not to invent"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: ""
+  RUN_REPORT.md:
+    role: "state"
+    status: "active"
+    authority: "inference"
+    canonical_for: ["phase-by-phase evidence", "what was not run"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: ""
+  scene-packets/chapter-01.md:
+    role: "outline"
+    status: "active"
+    authority: "outline"
+    canonical_for: ["ch.1 beats, required elements, forbidden list"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Ch.1 drafted. One forbidden item ('she has not seen it') is ambiguous against the draft, which has her HEAR about it without looking."
+  scene-packets/chapter-02.md:
+    role: "outline"
+    status: "active"
+    authority: "outline"
+    canonical_for: ["ch.2 beats"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "No timeline entry exists for ch.2 and its relation to ch.1 ('the same day') is undefined. See WARN-007."
+  scene-packets/chapter-03.md:
+    role: "outline"
+    status: "active"
+    authority: "outline"
+    canonical_for: ["ch.3 beats"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "BLOCKED by CONF-010. Next chapter to be drafted."
+  scene-packets/chapter-04.md:
+    role: "outline"
+    status: "active"
+    authority: "outline"
+    canonical_for: ["ch.4 beats"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Remains wording needs narrowing to visitor remains (CONF-005)."
+  scene-packets/chapter-05.md:
+    role: "outline"
+    status: "active"
+    authority: "outline"
+    canonical_for: ["ch.5 beats"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Silence line at :62 is part of CONF-002."
+  scene-packets/chapter-06.md:
+    role: "outline"
+    status: "active"
+    authority: "outline"
+    canonical_for: ["ch.6 beats"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "CONTRADICTS ITSELF: :57 says she does not resume speaking, Beat 1 requires her one sentence. See CONF-002."
+  scene-packets/chapter-07.md:
+    role: "outline"
+    status: "active"
+    authority: "outline"
+    canonical_for: ["ch.7 beats"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: ":68's rescue ban is agent inference (CONF-007). :52's silence line is part of CONF-002. :56's remains wording needs narrowing (CONF-005)."
+  manuscript/chapters/chapter-01.md:
+    role: "manuscript"
+    status: "active"
+    authority: "manuscript"
+    canonical_for: ["ch.1 established prose, 2,398 words"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Drafted, prose gate PASS. Not finished — no later pipeline pass has touched it. Prose gate evidence in RUN_REPORT.md."
+  continuity/outline-audit.md:
+    role: "evaluation"
+    status: "active"
+    authority: "inference"
+    canonical_for: ["Phase 2.8 findings, determinations, tracking databases"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 2.8, run late. Gate FAIL: 4 CRITICAL, 12 WARNING, 6 MINOR."
+  references/tone-references.md:
+    role: "research"
+    status: "active"
+    authority: "research"
+    canonical_for: ["what the three reference works actually do", "the register conversion"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Source for the register rules in foundation.md and voice-dna.md."
+  maintenance/PRUNING_LOG.md:
+    role: "working"
+    status: "active"
+    authority: "inference"
+    canonical_for: ["append-only maintenance and pruning history"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Created 2026-09-22. Mandated before the first V4 phase and did not exist."
+  maintenance/SESSION_LOG.md:
+    role: "working"
+    status: "active"
+    authority: "inference"
+    canonical_for: ["session entries: decisions, changed files, facts merged, conflicts, next step"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Created 2026-09-22 so the protocol's check-in has something to read."
+  artifacts/00-brief.md:
+    role: "working"
+    status: "active"
+    authority: "foundation"
+    canonical_for: []
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: ""
+  artifacts/01-market-map.md:
+    role: "research"
+    status: "active"
+    authority: "inference"
+    canonical_for: ["PROPOSED comp titles only — none approved"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Desk analysis, not live research. Every comp beyond the user-specified one is marked PROPOSED."
+  "the torn-down earlier build of Book 1":
+    role: "working"
+    status: "archived"
+    authority: "inference"
+    canonical_for: []
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: >-
+      DELETED, NOT ARCHIVED. Produced a foundation, outline, nine scene packets, a voice contract and
+      an entity state, all reproducing Coldbrook Junction's story engine. It was torn down at the
+      user's instruction and its files removed. §7 of the maintenance protocol says pruning means
+      reducing active context, not erasing history; there was no ledger at the time, so no archive
+      path, replacement link or reason was preserved. The loss is recorded here and in
+      maintenance/PRUNING_LOG.md. Nothing of it is recoverable, and nothing of it should be reused.
+
+  reader-personas.md:
+    role: "research"
+    status: "active"
+    authority: "research"
+    canonical_for: ["audience segments", "the four-reader simulation", "packaging targets"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 1.5. Created 2026-09-22 LATE - it had never run, was flagged by WARN-010 and by this ledger's unresolved_reviews, and was BLOCKING Phase 4, which is specified as a four-reader simulation. Three personas (primary, stretch, hostile) plus a simulated casual reader."
+
+  continuity/manuscript-audit.md:
+    role: "audit"
+    status: "active"
+    authority: "review"
+    canonical_for: ["phase 5.6 findings", "CONT-001..011", "what was checked and cleared"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 5.6, run 2026-09-22 for the first time. Found 2 CRITICAL defects in prose that had already passed the prose gate 7/7. Evidence for the argument that a mechanical scan is not a continuity check."
+
+  continuity/adversarial-audit.md:
+    role: "audit"
+    status: "active"
+    authority: "review"
+    canonical_for: ["phase 4 structural criticism", "S-1..S-6", "four-reader simulation", "anti-AI reading pass"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 4. Structural criticism all recorded rather than applied; three disagreements with the foundation are preserved as positions."
+
+  artifacts/05-barrier-note.md:
+    role: "audit"
+    status: "active"
+    authority: "review"
+    canonical_for: ["phase 5 activation status"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 5 is NOT ACTIVATED - its activation condition is a user quality target and none has been set. Recorded rather than run with an invented target."
+
+  artifacts/06-scorecard.md:
+    role: "audit"
+    status: "active"
+    authority: "review"
+    canonical_for: ["genesis score", "commercial viability", "gate verdict and next action"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 6. Composite 7.7, weakest lens pacing/coherence 7.0, launch viability 4.5. Scored by the agent that drafted the prose and labelled as the least independent evidence in the project."
+
+  artifacts/07-editorial-package.md:  # cover brief section rewritten 2026-09-22: the AUTH-5 block became a two-cover DECISION
+    role: "package"
+    status: "active"
+    authority: "review"
+    canonical_for: ["synopses", "blurb", "cover brief", "formatting package"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Phase 7. Cites this ledger's current fact values. Contains no invented title, no invented author and no invented physical description."
+
+  tools/build-epub.py:
+    role: "tool"
+    status: "active"
+    authority: "process"
+    canonical_for: ["epub build"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "Standard library only. Rebuilds dist/merope-book-one_WORKING-TITLE.epub from manuscript/chapters/*.md. Contains no title text of its own beyond the working title, so it cannot drift from the deferred-titles decision."
+
+  dist/merope-book-one_WORKING-TITLE.epub:
+    role: "artifact"
+    status: "active"
+    authority: "process"
+    canonical_for: ["the validation build of book 1"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: "EPUB 3, 14 entries, mimetype first and stored, all XML well-formed. WORKING TITLE - the series name, book title and chapter titles remain deferred by the author, and this artifact must not be treated as having settled them."
+
+  artifacts/character-design-brief.md:
+    role: "package"
+    status: "active"
+    authority: "review"
+    canonical_for: ["illustration brief", "APPEAR-1..4", "the prose-describes-nobody position"]
+    last_reviewed: "2026-09-22"
+    superseded_by: null
+    archive_path: null
+    reason: >-
+      Created 2026-09-22 when the author gave both leads' appearance, closing AUTH-5. Records what is
+      settled and, equally, the four things that are NOT: one term deliberately not guessed at
+      (APPEAR-1), an undecided hair shape (APPEAR-2), a story-level Scorpius question raised rather      than decided (APPEAR-3), and this run's reading of a design brief (APPEAR-4). APPEAR-1, -2 and -3      were CLOSED BY AUTHOR on 2026-09-22 (busty/full-figured; scorpion-tail braid; a coincidence the      author likes, not a planted resonance) and changed no prose. APPEAR-4 remains a reading.
+
+# ================================================================== voice contract index
+
+voice_contract:
+  global: "voice-dna.md -> Global narrative voice — MEROPE telling it afterwards"
+  characters:
+    CHR-001: "voice-dna.md -> Voice cards -> MEROPE"
+    CHR-002: "voice-dna.md -> Voice cards -> ACHIRD"
+    COL-001: "voice-dna.md -> Voice cards -> THE BEINGS"
+    OBJ-001: "voice-dna.md -> Voice cards -> THE SLEIGH (not a speaker)"
+  chapters:
+    ch_1: "voice-dna.md -> Chapter narration contract -> ch.1 (added 2026-09-22)"
+    ch_2_3: "voice-dna.md -> Chapter narration contract -> movement I (added 2026-09-22)"
+    ch_4_5: "voice-dna.md -> Chapter narration contract -> movement II (added 2026-09-22)"
+    ch_6_7: "voice-dna.md -> Chapter narration contract -> movement III (added 2026-09-22)"
+  facts:
+    narrator_fact: "voice-dna.md -> Fact presentation -> narrator"
+    dialogue_fact: "voice-dna.md -> Fact presentation -> dialogue"
+    research_claim: "voice-dna.md -> Fact presentation -> research claim"
+    document_fact: "voice-dna.md -> Fact presentation -> document / epistolary"
+    memory: "voice-dna.md -> Fact presentation -> memory"
+    rumor: "voice-dna.md -> Fact presentation -> rumor"
+    inference: "voice-dna.md -> Fact presentation -> inference / uncertain knowledge"
+
+# ============================================================================== maintenance
+
+maintenance:
+  last_run: "2026-09-22"
+  last_run_by: "retrofit then RESUME — run 1 created the layer; run 2 closed the pipeline and the audit; run 3 closed the two escalated prose items (AUTH-1, AUTH-2)"
+  changed_files:
+    - "CANON_LEDGER.yaml (run 1: created, book scope; run 2: 6 facts added, 8 documents registered, 3 superseded values preserved)"
+    - "../CANON_LEDGER.yaml (run 1: created, series scope; run 2: book-1 status advanced to complete)"
+    - "maintenance/PRUNING_LOG.md (run 1: created; run 2: entries 004-005, including one prose pruning action)"
+    - "maintenance/SESSION_LOG.md (run 1: created; run 2: entries 002-003)"
+    - "voice-dna.md (run 1: chapter narration + fact presentation; run 2: voice bank 4 -> 10, WARN-009 closed)"
+    - "ENTITY_STATE.yaml (run 2: second UPDATE pass — CONT-007, CONT-008, CONT-009, ITM-003 must_not)"
+    - "manuscript/chapters/chapter-01.md, chapter-03.md, chapter-05.md, chapter-07.md (run 2: four CONT fixes)"
+    - "manuscript/chapters/chapter-06.md (run 3: the AUTH-1 cruelty-line rewrite from 30 words to 20) + dist/merope-book-one_WORKING-TITLE.epub rebuilt"
+    - "reader-personas.md, continuity/manuscript-audit.md, continuity/adversarial-audit.md, artifacts/05-barrier-note.md, artifacts/06-scorecard.md, artifacts/07-editorial-package.md, tools/build-epub.py, dist/ (run 2: created)"
+  merged_facts:
+    - "33 decision entries from PROJECT_STATE.yaml + 10 world rules and all entity entries from ENTITY_STATE.yaml were merged into the fact list above. Where a decision and an entity entry described the same thing, the decision became the fact's authority and the entity entry became a second source. No duplicate IDs were created."
+  flagged_conflicts: []
+  resolved_conflicts: ["CONF-001", "CONF-002", "CONF-003", "CONF-004", "CONF-005", "CONF-006", "CONF-007", "CONF-008", "CONF-009", "CONF-010"]
+  archived_documents: []
+  unresolved_reviews:
+    - "CONF-003 beings' answer boundary — RESOLVED 2026-09-22 while drafting ch.2 (possession and present tense; never origin or ownership)"
+    - "CONF-004 sleigh-and-steed mechanism — RESOLVED 2026-09-22 while drafting ch.7 (the constellation is both the road and the shape)"
+    - "INTAKE.md status set to needs_review: its OPEN section contradicts its own decided sections"
+    - "INTAKE.md persistence round (schema Round 4: update frequency, archive permission, immutable sources, existing project) was never asked. Archive default applied from the schema and labelled as a default, not a user decision."
+    - "Phase 1.5 reader personas never ran; Phase 4 evaluation depends on them"
+    - "Voice bank: 4 samples against a required 10; the missing registers are the ones ch.2-7 need"
+    - "ENTITY_STATE.yaml needs an UPDATE pass: no provenance fields, ch.3 object untracked, LOC-004/LOC-005 duplicated, no timeline entry for ch.2 or ch.5"

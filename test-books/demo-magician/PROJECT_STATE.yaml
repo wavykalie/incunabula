@@ -1,0 +1,122 @@
+# PROJECT_STATE.yaml — The Trick
+#
+# REQUIRED ARTIFACT. check-length.py reads declared_target() from this file; a book with
+# no declared target FAILS L1. Declared 2026-09-28, Phase 0, before any chapter exists.
+
+meta:
+  project: "the-trick"
+  created: "2026-09-28"
+  last_verified: "2026-09-28" # freeze 15/15 local AND from clean clone
+  authority: "premise.md is the source of truth; this file is its index and its state"
+  status: "Phase 4 - 34/34 drafted and expanded, 80,394 words. Full sweep run 2026-10-01: 3 findings assigned (U1 closed KF-007, U6 fixed+closed KF-008, outline ledger L18 fixed). Termination met."
+  running_full: true
+
+premise:
+  number: 1
+  supersedes: none
+  invention_level: 1
+  invention_note: "real world, invented practice. The Corbeau school, its six canon effects and its vocabulary are invented (artifacts/01-the-corbeau-school.md). The 1930s, the physics, the towns and the trades are not."
+
+length:
+  # THE CONTRACT. Declared at Phase 0 and NOT to be lowered to match output.
+  # The measured failure on the previous book: a contract declared at 80,000-95,000
+  # against chapters drafted at 1,300-5,100, and the enforcement arrived too late.
+  # check-length.py reads target_floor_words / target_ceiling_words. This file had
+  # declared_floor / declared_target, which the gate does not look for, so L1 has
+  # never run on this book. The gate said so (exit 2, 'NOT RUN, and not a pass')
+  # and PROJECT_STATE.yaml nonetheless listed it under gates as a pass. Both keys
+  # are carried below so the file is readable by a human and by the gate.
+  declared_floor: 80000
+  declared_target: 95000
+  target_floor_words: 80000
+  target_ceiling_words: 95000
+  # DESIGNED AGAINST THE MEASURED CEILING, not against hope.
+  # The previous book hit a hard per-write output ceiling of ~2,000-2,900 words
+  # regardless of chapter target. Targets are set to what a single write can actually
+  # deliver, with the shortfall absorbed by CHAPTER COUNT rather than by over-long
+  # chapters. 34 chapters x ~2,470 = ~84,000, inside the band.
+  chapters: 34
+  # per_chapter_min was 2100 and it was WRONG. It was carried over from the previous book
+  # and it forbids the short chapters that the U1 spread band *requires*: a 33.4-45.1% CV
+  # cannot be built from chapters that all exceed 2,100 words. The floor and the spread were
+  # in direct contradiction and verify_outline.py caught it before a word was drafted.
+  #
+  # The real floor is the shortest chapter a *scene* can be. 1,700 is an arrival, a question,
+  # a refusal, or a document - all of which this book has, by design, and none of which is
+  # a stub. L1 (the sum) is the load-bearing row; this is a discipline row.
+  per_chapter_min: 1700
+  per_chapter_nominal: 2720
+  per_chapter_max: 4300
+  rationale: "Targets are honest about a single write AND bimodal by design: 17 long chapters (tour sequences, scene-shifts, set-pieces, inhabited rests) and 17 short ones (arrivals, questions, refusals, documents). The expansion pass in Phase 4 rewrites UP into per_chapter_min; it never appends, because appending re-introduces the antithesis tic the last book had to be rewritten to remove."
+
+structure:
+  act_1: "ch 1-14 - the tour. Three deaths, three countries, three orthodoxies."
+  act_2: "ch 15-24 - the assembly. The circuit is forced together; the method is understood on the page."
+  act_3: "ch 25-34 - the trial. The falsifiable prediction, in public, to people who do not share the vocabulary."
+  trial_chapters: "25-31"
+  # The killer is never in POV. Reader gets him through what he writes and what rooms do.
+  killer_pov: forbidden
+  killer_does_not_know: true
+
+artifacts:
+  premise: "premise.md"
+  canon: "CANON_LEDGER.yaml"
+  entity_state: "ENTITY_STATE.yaml"
+  research: "research/market-research.md"
+  corbeau_school: "artifacts/01-the-corbeau-school.md"
+  naming_troop: "artifacts/02-naming-the-troop.md"
+  dossier: "artifacts/03-the-dossier.md"
+  untitled_effect_test: "artifacts/04-untitled-effect-test.md"
+  clue_ledger: "artifacts/05-cold-solve.md"
+  cold_solve_verdict: "artifacts/06-cold-solve-verdict.md"
+  the_test: "artifacts/07-the-test.md"
+  voice_matrix: "artifacts/02-voice-matrix.md"
+  sample_bank: "voice-bank/10-sample-bank.md"
+  colophon: "artifacts/09-colophon.md"
+  outline: "outline.md"
+  word_tracker: "track_words.py"
+  outline_checker: "verify_outline.py"
+
+decisions:
+  - id: "CONF-001"
+    date: "2026-09-28"
+    decision: "The method is INVENTED, not a documented real conjuring effect."
+    reason: "A real effect has a published solution; the reader who looks it up collapses the reveal, and the engine is 'learn the trick to disbelieve him'. Also: real effects are performed to compliant audiences in lit rooms, and a murder is none of those things."
+    authority: "human"
+  - id: "CONF-002"
+    date: "2026-09-28"
+    decision: "Invention level 1. Real world, invented practice."
+    reason: "Level 2 (powers) removes the cost of learning, and the cost is what makes the fourth question have teeth. Level 3 (hidden rulebook) makes the reveal a declaration rather than a reconstruction."
+    authority: "human"
+  - id: "CONF-003"
+    date: "2026-09-28"
+    decision: "The sixth effect is never named on the page."
+    reason: "A name would let her recite the label instead of rebuilding the trick, which would void the fourth question. Verified by cold solve: the effect is reconstructible from the evidence without the name."
+    authority: "orchestrator, verified by cold solve"
+  - id: "CONF-004"
+    date: "2026-09-28"
+    decision: "The killer does not know a trial is coming and does not want one. Danganronpa frame, hybrid structure."
+    reason: "He has spent a career making sure no competent person is ever in a position to ask. A trial is that person. He is not performing; he is working, and he does badly at the one thing he never had to be good at."
+    authority: "human"
+  - id: "CONF-005"
+    date: "2026-09-28"
+    decision: "Elsa Reiner is a working conjurer, not a police officer."
+    reason: "If she is police the fourth question is answered by procedure. If she is a conjurer there is no procedure, and she must persuade people who do not share her vocabulary using the only currency she has."
+    authority: "orchestrator"
+  - id: "CONF-006"
+    date: "2026-09-28"
+    decision: "Invention level 1, the world is real, and the effect is an IDENTITY SUBSTITUTION rather than a physical impossibility."
+    reason: "A physical method would have to be simple to prove, which makes the fourth question trivial. The substitution makes the proof about people, and it is reversible before drafting. Recorded so reversing it is a decision, not an accident."
+    authority: "orchestrator - HUMAN RULING PREFERRED"
+  - id: "CONF-007"
+    date: "2026-09-28"
+    decision: "Cast name Anouk Soldano, not Emma Soldano. check-names.py FAILED the first draft on TIER-A."
+    reason: "Emma is the SSA top 20 - the strongest prior in the language, and exactly what a model produces for a European woman's name in the 1930s. The etymologies around it were careful and it was still a default wearing a footnote."
+    authority: "gate"
+
+gates:
+  freeze: "incunabula/GATE_FREEZE.md, 15/15"
+  names: "check-names.py - 0"
+  premise: "check-premise-distinct.py - 0"
+  comps: "check-comps.py - 0"
+  note: "A 4-book comp sample is a small sample. The comp set for this book is the WEAKEST evidence in the project and must be widened before the book is described as market-viable."

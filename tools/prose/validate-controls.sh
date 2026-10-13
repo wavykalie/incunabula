@@ -630,7 +630,7 @@ else
 fi
 
 echo
-echo "=== Control 13/16: the unresolved-debt ledger must FAIL (N1 and N4 can still fire)"
+echo "=== Control 13/19: the unresolved-debt ledger must FAIL (N1 and N4 can still fire)"
 # Freeze 13. The narrative gate is a CONTRACT row in L1's class: it reads no prose and
 # compares a book to the obligations that book declared for itself, so its control needs
 # no corpus - a SHIPPED ledger fixture with two OPEN obligations at delivery and one
@@ -668,7 +668,7 @@ else
 fi
 
 echo
-echo "=== Control 14/16: the closed narrative ledger must PASS (the gate can also stop)"
+echo "=== Control 14/19: the closed narrative ledger must PASS (the gate can also stop)"
 # The inverse arm, and it is not optional: a gate seen only to fail is as untrustworthy
 # as one never seen to fail. The fixture carries three RESOLVED obligations, one
 # DEFERRED with a recorded reason, five distinct beat arcs, and no duplicated scene
@@ -692,7 +692,7 @@ else
 fi
 
 echo
-echo "=== Control 15/16: a drafting book's open debt is recorded, not failed (N1 in-progress)"
+echo "=== Control 15/19: a drafting book's open debt is recorded, not failed (N1 in-progress)"
 # The L1 lesson (control 12) one row down. A book that says it is still being drafted
 # legitimately owes open setups, and a gate that cries during drafting is trained out of
 # its reader before delivery. Both arms are tested - the draft exits 4, and the SAME
@@ -751,7 +751,7 @@ YEOF
 fi
 
 echo
-echo "=== Control 16/16: the narrative REPORT rows must not be able to fail (G1, V1, Q3, Q4)"
+echo "=== Control 16/19: the narrative REPORT rows must not be able to fail (G1, V1, Q3, Q4)"
 # The control-8 lesson, one class down. check-figurative.py, check-dialogue-tags.py and
 # check-quantities.py measure PROSE with no corpus behind them - no caps, no fail lines -
 # and they must stay that way until a corpus is measured and the rows are re-derived.
@@ -815,6 +815,171 @@ else
 fi
 
 echo
+echo "=== Control 17/19: nonfiction mode scopes A10a to a report; fiction still fails it"
+# CALIBRATION.md §20 (Freeze 20): the prescriptive sweep found that A10a, the row
+# whose own name targets the register, is the only row accusing published advice
+# prose at more than a stray-file rate. A book declaring mode: nonfiction has it
+# reported, not failed, keyed on conventions.py NF_SCOPED. Both arms are asserted
+# because a scope that silently widened would be the kind of veil this file exists
+# to catch: the NF arm must PASS with the -- line PRINTED (a scoped row that stops
+# reporting has gone dark, which is worse than failing), and the same fixture with
+# no mode declared must still FAIL on A10a itself - not on some other row.
+if [ ! -f "$SCANNER" ] || [ ! -f "$HERE/calibration/nf-scope-fixture.md" ] || \
+   [ ! -f "$HERE/conventions.py" ]; then
+  echo "    FAIL  missing scanner, fixture or conventions.py"
+  verdicts=1
+else
+  rm -rf "$TMP/nfctl"
+  mkdir -p "$TMP/nfctl/nf/manuscript/chapters" "$TMP/nfctl/fic/manuscript/chapters"
+  cp "$HERE/calibration/nf-scope-fixture.md" "$TMP/nfctl/nf/manuscript/chapters/chapter-01.md"
+  cp "$HERE/calibration/nf-scope-fixture.md" "$TMP/nfctl/fic/manuscript/chapters/chapter-01.md"
+  printf 'book:\n  mode: nonfiction\n' >"$TMP/nfctl/nf/PROJECT_STATE.yaml"
+  nf_rc=0
+  bash "$SCANNER" "$TMP/nfctl/nf/manuscript/chapters" >"$TMP/nf-arm.txt" 2>&1 || nf_rc=$?
+  bash "$SCANNER" "$TMP/nfctl/fic/manuscript/chapters" >"$TMP/nf-fic.txt" 2>&1
+  fic_rc=$?
+  nf_bad=0
+  if [ "$nf_rc" -ne 0 ]; then
+    echo "    FAIL  a clean prescriptive chapter declaring mode: nonfiction exited $nf_rc -"
+    echo "          the scope is not wired, or the fixture is tripping some other row."
+    grep -E '^   FAIL' "$TMP/nf-arm.txt" | sed 's/^/          /'
+    verdicts=1
+  elif [ "$(grep -cE '^   --    A10a' "$TMP/nf-arm.txt" || true)" -eq 0 ]; then
+    echo "    FAIL  NF arm passed but printed no scoped A10a report - the row could be"
+    echo "          silently passing, and a dark report row proves nothing."
+    verdicts=1
+  fi
+  if [ "$fic_rc" -eq 0 ]; then
+    echo "    FAIL  the same fixture with no mode declared passed - A10a's gate was lost."
+    verdicts=1
+  elif [ "$(grep -c 'FAIL  A10a' "$TMP/nf-fic.txt" || true)" -eq 0 ]; then
+    echo "    FAIL  the undeclared arm failed on some other row; A10a itself did not fire."
+    grep -E '^   FAIL' "$TMP/nf-fic.txt" | sed 's/^/          /'
+    verdicts=1
+  fi
+  if [ "$nf_rc" -eq 0 ] && [ "$(grep -cE '^   --    A10a' "$TMP/nf-arm.txt" || true)" -gt 0 ] && \
+     [ "$fic_rc" -ne 0 ] && [ "$(grep -c 'FAIL  A10a' "$TMP/nf-fic.txt" || true)" -gt 0 ]; then
+    echo "    ok    NF arm PASSes with A10a reported; the undeclared arm still FAILs A10a"
+    grep -E '^   --    A10a' "$TMP/nf-arm.txt" | head -1 | sed 's/^/          /'
+  fi
+  rm -rf "$TMP/nfctl"
+fi
+
+echo "=== Control 18/19: a nonfiction book with no named cast is reported by check-names; fiction still fails"
+# quiet-hours (RUN_REPORT.md 2026-10-08) found check-names exiting 2 on a prescriptive
+# guide with no named cast. That is right for fiction - a novel whose canon file reads
+# empty must not pass - and wrong for a guide whose actors are \"you\", \"the child\",
+# \"the grandparent\". Freeze 21 gives the gate a nonfiction case keyed on
+# conventions.py, the same single reader the surplus and arc reports use. Four arms,
+# because each failure mode is a different lie: the NF-no-cast arm must exit 0 AND PRINT
+# its report (a silent pass is a gate that stopped looking), fiction and undeclared books
+# must still exit 2 (an empty read must not become a free pass), and a nonfiction book
+# that DOES declare cast must still collide - the scope may step around an absent cast,
+# never around a present one.
+if [ ! -f "$HERE/check-names.py" ] || [ ! -f "$HERE/conventions.py" ]; then
+  echo "    FAIL  missing check-names.py or conventions.py"
+  verdicts=1
+else
+  rm -rf "$TMP/namctl"
+  mkdir -p "$TMP/namctl/nf" "$TMP/namctl/fic" "$TMP/namctl/und" "$TMP/namctl/nfc" "$TMP/namctl/corpus"
+  printf 'book:\n  mode: nonfiction\n' >"$TMP/namctl/nf/PROJECT_STATE.yaml"
+  printf 'book:\n  mode: fiction\n' >"$TMP/namctl/fic/PROJECT_STATE.yaml"
+  printf 'book:\n  mode: nonfiction\n' >"$TMP/namctl/nfc/PROJECT_STATE.yaml"
+  # The collision arm declares cast that collides with the corpus fixture by design.
+  printf 'characters:\n  - name: "Delphine Rusk"\n' >"$TMP/namctl/nfc/CANON_LEDGER.yaml"
+  # A corpus fixture, so the gate reaches the cast check instead of exiting early on an
+  # empty corpus - without it every arm would pass for the wrong reason.
+  printf 'cast:\n  - name: "Delphine Rusk"\n  - name: "Ada Marchetti"\n' >"$TMP/namctl/corpus/CANON_LEDGER.yaml"
+  $PYTHON "$HERE/check-names.py" "$TMP/namctl/nf" --corpus "$TMP/namctl/corpus" >"$TMP/nam-nf.txt" 2>&1
+  nam_nf_rc=$?
+  $PYTHON "$HERE/check-names.py" "$TMP/namctl/fic" --corpus "$TMP/namctl/corpus" >/dev/null 2>&1
+  nam_fic_rc=$?
+  $PYTHON "$HERE/check-names.py" "$TMP/namctl/und" --corpus "$TMP/namctl/corpus" >/dev/null 2>&1
+  nam_und_rc=$?
+  $PYTHON "$HERE/check-names.py" "$TMP/namctl/nfc" --corpus "$TMP/namctl/corpus" >"$TMP/nam-nfc.txt" 2>&1
+  nam_nfc_rc=$?
+  nam_ok=1
+  if [ "$nam_nf_rc" -ne 0 ]; then
+    echo "    FAIL  a nonfiction book with no cast exited $nam_nf_rc - the report path is"
+    echo "          not wired, or the mode declaration is not being read."
+    sed 's/^/          /' "$TMP/nam-nf.txt"
+    verdicts=1
+    nam_ok=0
+  elif [ "$(grep -c 'reported, not run' "$TMP/nam-nf.txt" || true)" -eq 0 ]; then
+    echo "    FAIL  the NF arm passed but printed no report - a silent pass is a gate"
+    echo "          that stopped looking, and proves nothing."
+    verdicts=1
+    nam_ok=0
+  fi
+  if [ "$nam_fic_rc" -ne 2 ] || [ "$nam_und_rc" -ne 2 ]; then
+    echo "    FAIL  fiction (exit $nam_fic_rc) or undeclared (exit $nam_und_rc) no longer"
+    echo "          exits 2 on an empty read - the free pass leaked outside nonfiction."
+    verdicts=1
+    nam_ok=0
+  fi
+  if [ "$nam_nfc_rc" -ne 1 ] || [ "$(grep -c 'NAME COLLISION' "$TMP/nam-nfc.txt" || true)" -eq 0 ]; then
+    echo "    FAIL  a nonfiction book WITH cast exited $nam_nfc_rc without a collision -"
+    echo "          the scope swallowed the check instead of standing aside from an absent cast."
+    sed 's/^/          /' "$TMP/nam-nfc.txt"
+    verdicts=1
+    nam_ok=0
+  fi
+  if [ "$nam_ok" -eq 1 ]; then
+    echo "    ok    NF-no-cast reports (exit 0); fiction and undeclared still exit 2;"
+    echo "          a nonfiction book with cast still collides (exit 1)"
+  fi
+  rm -rf "$TMP/namctl"
+fi
+
+echo "=== Control 19/19: A24's case-sensitivity characterization stays pinned (ERRATA.md 2026-10-08)"
+# This control does not endorse the behaviour it pins. The density rows count with
+# grep -oE (case-SENSITIVE) while the HARD rows and F1 read case-insensitively, so the
+# explanatory coda - a row with a published rate behind its cap - cannot see the move
+# when a sentence opens with it ("This is why...") and counts it mid-sentence ("...and
+# that is why..."). Found by quiet-hours, 2026-10-08. Every density cap was derived on
+# the case-sensitive reading, so a silent "fix" would re-price those rows against prose
+# measured with a different instrument. If either arm below fails, the reading changed:
+# re-measure with calibration/measure.py before touching any number, then rewrite this
+# pin deliberately and say so in ERRATA.md. The fixtures are tiny on purpose and trip P1
+# at their size; the assertions are on the A24 row alone.
+if [ ! -f "$SCANNER" ] || [ ! -f "$HERE/calibration/a24-case-upper.md" ] || \
+   [ ! -f "$HERE/calibration/a24-case-lower.md" ]; then
+  echo "    FAIL  missing scanner or an a24-case fixture"
+  verdicts=1
+else
+  rm -rf "$TMP/a24ctl"
+  mkdir -p "$TMP/a24ctl/upper/manuscript/chapters" "$TMP/a24ctl/lower/manuscript/chapters"
+  cp "$HERE/calibration/a24-case-upper.md" "$TMP/a24ctl/upper/manuscript/chapters/chapter-01.md"
+  cp "$HERE/calibration/a24-case-lower.md" "$TMP/a24ctl/lower/manuscript/chapters/chapter-01.md"
+  bash "$SCANNER" "$TMP/a24ctl/upper/manuscript/chapters" >"$TMP/a24-upper.txt" 2>&1
+  bash "$SCANNER" "$TMP/a24ctl/lower/manuscript/chapters" >"$TMP/a24-lower.txt" 2>&1
+  a24_ok=1
+  if [ "$(grep -c 'A24' "$TMP/a24-upper.txt" || true)" -ne 1 ] || \
+     ! grep 'A24' "$TMP/a24-upper.txt" | grep -q 'ok    A24.*0\.00 per 1k'; then
+    echo "    FAIL  the sentence-initial coda is no longer invisible with a clean zero:"
+    grep 'A24' "$TMP/a24-upper.txt" | sed 's/^/          /'
+    echo "          The density pass learned case, or the row changed tier. A24's cap was"
+    echo "          measured on the case-sensitive reading - re-derive every density cap"
+    echo "          (calibration/measure.py) before touching a number, then rewrite this pin."
+    verdicts=1
+    a24_ok=0
+  fi
+  if [ "$(grep -c '^   FAIL  A24' "$TMP/a24-lower.txt" || true)" -ne 1 ]; then
+    echo "    FAIL  the mid-sentence coda did not FAIL A24 exactly once - the one way the"
+    echo "          row is supposed to fire no longer works."
+    grep 'A24' "$TMP/a24-lower.txt" | sed 's/^/          /'
+    verdicts=1
+    a24_ok=0
+  fi
+  if [ "$a24_ok" -eq 1 ]; then
+    echo "    ok    sentence-initial coda reads 0.00; the mid-sentence one still FAILs A24"
+    grep 'A24' "$TMP/a24-upper.txt" | head -1 | sed 's/^/          /'
+    grep 'A24' "$TMP/a24-lower.txt" | head -1 | sed 's/^/          /'
+  fi
+  rm -rf "$TMP/a24ctl"
+fi
+
+echo
 # The summary is where a partial run becomes a false claim. On a fresh clone the suite
 # cannot reach published prose, and the wording used to say "ALL CONTROLS PASS - still
 # calibrated against published prose" off the back of controls that only used fixtures
@@ -832,7 +997,11 @@ if [ "$CORPUS_ABSENT" -eq 1 ]; then
   echo "  Proven on this run: the scanner FAILS synthetic slop, the narrative gate"
   echo "  FAILS an unresolved-debt ledger and PASSES a closed one, its report rows"
   echo "  fire without being able to fail, and the uniformity, drift and arc gates"
-  echo "  still FAIL the manuscripts they are built to reject."
+  echo "  still FAIL the manuscripts they are built to reject. The nonfiction"
+  echo "  scoping holds both ways (A10a reports for a guide and still fails fiction;"
+  echo "  check-names reports for a cast-free guide and still fails an empty fiction"
+  echo "  read, and still collides on a nonfiction book with cast), and A24's case"
+  echo "  blind spot is pinned rather than quietly fixed."
   echo "  That is the harness detecting bad output, and it is the part that does not"
   echo "  depend on anyone else's copyright."
   echo

@@ -1,0 +1,192 @@
+# ENTITY_STATE — BUILD mode
+# Second run. Seeded from foundation.md and the Phase 2 architecture, not copied from
+# incunabula-test, so continuity is checked against this run's own plan.
+# `first`/`last` are the chapters the architecture assigns; any draft that contradicts
+# them is a continuity error, not a surprise.
+
+figures:
+  - id: qin-shi-huang
+    name: "Qin Shi Huang"
+    alt: ["the First Emperor", "Ying Zheng"]
+    chapters: [1, 2, 3]
+    first: 1
+    last: 3
+    voice_card: "V-qin"
+    note: "Almost no surviving voice. Every attributed line is reported through Li Si's memorials or the Shiji, and the narration must say so."
+    sources: ["Shiji", "Hanshu"]
+
+  - id: han-fei
+    name: "Han Fei"
+    chapters: [1, 5, 11]
+    first: 1
+    last: 11
+    voice_card: "V-hanfei"
+    note: "Died 233 BCE, twelve years before the empire he described. The theory predicted his own death; the book must not let this read as irony authored by the narrator."
+    sources: ["Shiji", "Hanshu"]
+
+  - id: li-si
+    name: "Li Si"
+    chapters: [1, 5]
+    first: 1
+    last: 5
+    voice_card: "V-lisi"
+    note: "The rat fable is attributed to him by the Shiji. Executed 208 BCE at Xianyang by the five punishments."
+    sources: ["Shiji"]
+
+  - id: wen-of-han
+    name: "Emperor Wen of Han"
+    chapters: [2, 6]
+    first: 2
+    last: 6
+    sources: ["Hanshu", "Shiji"]
+
+  - id: dong-zhongshu
+    name: "Dong Zhongshu"
+    chapters: [2, 3, 9]
+    first: 2
+    last: 9
+    voice_card: "V-dong"
+    note: "The one place sympathy shows without discipline. He was right about one thing at scale, which is the unsettling part."
+    sources: ["Hanshu"]
+
+  - id: sima-qian
+    name: "Sima Qian"
+    chapters: [3, 11]
+    first: 3
+    last: 11
+    voice_card: "V-simaqian"
+    note: "Refused the Imperial Secretaryship; the punishment is the chapter. Never stoic."
+    sources: ["Shiji", "Hanshu"]
+
+  - id: empress-lu
+    name: "Empress Lü"
+    chapters: [4]
+    first: 4
+    last: 4
+    voice_card: "V-lu"
+    note: "The most nearly voiceless figure. Every characterisation is inference from omission and the narration owns the inference aloud. The 'only woman' frame is banned."
+    sources: ["Shiji"]
+
+  - id: wang-mang
+    name: "Wang Mang"
+    chapters: [5, 10]
+    first: 5
+    last: 10
+    voice_card: "V-wangmang"
+    note: "Utopian in idiom. Never a fraud in Ch 5; the fraud reading belongs to Ch 10, by which point the reader should have lost the ability to use it."
+    sources: ["Hanshu"]
+
+  - id: gongyang
+    name: "The Gongyang school"
+    chapters: [5]
+    first: 5
+    last: 5
+    note: "The utopian programme. Quoted at length, paraphrased never."
+
+  - id: han-wudi
+    name: "Emperor Wu of Han"
+    chapters: [7]
+    first: 7
+    last: 7
+    voice_card: "V-hanwu"
+    note: "Administrative. Almost no interiority survives and none may be invented. He is arguing, not persecuting in general."
+    sources: ["Hanshu", "Shiji"]
+
+  - id: salt-iron
+    name: "The Salt and Iron debate"
+    chapters: [7]
+    first: 7
+    last: 7
+    note: "A document, not a doctrine. Both sides in full. Ch 7 must not end the debate."
+
+  - id: taizong
+    name: "Tang Taizong"
+    chapters: [8, 11]
+    first: 8
+    last: 11
+    voice_card: "V-taizong"
+    note: "The warmest voice in the book and the one to distrust. The bronze mirror, the Zizhi Tongjian he could not read, the AD 645 campaign. The mirror device is NAMED here and nowhere else."
+    sources: ["Old Book of Tang", "New Book of Tang", "Zizhi Tongjian"]
+
+  - id: song-examinations
+    name: "The Song examination system"
+    chapters: [9, 10]
+    first: 9
+    last: 10
+    voice_card: "V-procedure"
+    note: "Written in administrative idiom on purpose: a chapter about a machine should sound like one."
+    sources: ["Song huiyao", "Songshi"]
+
+  - id: zhu-xi
+    name: "Zhu Xi"
+    chapters: [9]
+    first: 9
+    last: 9
+    sources: ["Songshi"]
+
+places:
+  - id: xianyang
+    name: "Xianyang"
+    chapters: [1, 5]
+    note: "The Qin capital. Li Si executed in its marketplace, 208 BCE."
+  - id: changan
+    name: "Chang'an"
+    chapters: [2, 7]
+  - id: luoyang
+    name: "Luoyang"
+    chapters: [4, 6]
+  - id: the-wall
+    name: "The wall"
+    chapters: [1, 8]
+    note: "Chapter 1 opens on it. Chapter 8 returns to it as the thing Taizong read. Do not describe it twice."
+  - id: bronze-mirror
+    name: "The bronze mirror"
+    chapters: [8, 11]
+    note: "The object the device is named from. Appears in Ch 8 only; Ch 11 may refer to it without description."
+
+texts:
+  - id: shiji
+    name: "Records of the Grand Historian"
+    chapters: [1, 2, 3, 4, 5, 7, 8]
+    note: "The primary source for Ch 1-5. Every claim attributed to it is reported, never quoted as if contemporaneous."
+  - id: hanshu
+    name: "Book of Han"
+    chapters: [2, 4, 5, 7]
+  - id: zizhi-tongjian
+    name: "Comprehensive Mirror"
+    chapters: [8, 11]
+    note: "Taizong could not read it. It is the reason the bronze exists."
+  - id: lunyu
+    name: "Analects"
+    chapters: [2, 9]
+  - id: jian
+    name: "The jian genre"
+    chapters: [6]
+    note: "Advice letters. Ch 6's form is the argument; nobody knows what most of them said."
+
+doctrines:
+  - id: legalism
+    name: "Legalism (fajia)"
+    chapters: [1, 5, 11]
+    note: "Two handles. Produces a state that obeys, not one that agrees."
+  - id: recuperation
+    name: "The Confucian recuperation"
+    chapters: [2, 9]
+  - id: merit
+    name: "Merit, measured"
+    chapters: [9, 10, 11]
+    note: "The book's low point. Ch 10 finds it a rumour; Ch 11 must not repair it."
+
+devices:
+  - id: mirror
+    chapters: [3, 4, 8, 9, 11]
+    rule: >
+      Named in the prose exactly once, in Ch 8. Before Ch 8 the reader should feel it;
+      after Ch 8 the reader suspects the earlier chapters. Ch 11 may not use it without
+      the reader already knowing what it is.
+
+continuity_rules:
+  - "Ch 11 introduces no historical fact not already used."
+  - "No figure appears outside the first/last range above without a note in RUN_REPORT.md."
+  - "The rats (Ch 1) and the mirror (Ch 4) are referenced later, never re-explained."
+  - "Transliterations are italicised on first use per chapter, plain after."

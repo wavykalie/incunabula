@@ -1,0 +1,484 @@
+# CANON_LEDGER.yaml — SERIES SCOPE
+#
+# The series-level memory layer, per .agents/skills/book-genesis-codex/references/canon-ledger-schema.md
+# It does not replace the manuscript, foundation, outline, voice DNA or entity tracker. It says which
+# version of a fact is current, at what scope, and where it came from.
+#
+# AUTHORITY PRECEDENCE (schema): explicit user decision > approved manuscript text (scoped to the
+# chapter where true) > accepted revision/editor decision > foundation/outline as planned canon >
+# cited research > model inference.
+#
+# A later source does not automatically win. If two authoritative sources can both be true at
+# different chapter or book scope, KEEP BOTH WITH SCOPE. If they cannot both be true, keep the
+# earlier value, add the new value as a conflict, and request resolution.
+#
+# This file is what Book 2 loads first. Read `series_persistent_elements` and every fact with
+# scope.end_book: null before drafting Book 2. Facts scoped to book-1 only are NOT series canon.
+
+meta:
+  schema_version: "1.0"
+  project_id: "validation-series"
+  updated: "2026-09-24"
+  primary_state_file: "book-1/PROJECT_STATE.yaml"
+  maintenance_run: 4
+  mode: "created (run 1), RESUME (run 2), engine decided (run 3), then BOOK 2 DELIVERED (run 4) — run 4 executed Phases 1-7 for Book 2 and recorded CONF-011"
+  note: >-
+    The series has NO decided marketing name and NO title for either book. project_id is the
+    working directory slug, not a title. Do not treat it as a title and do not invent one.
+
+# --------------------------------------------------------------------------------- series facts
+# Series-scoped: these hold across every book. scope.end_book: null means open-ended.
+
+facts:
+
+  series.exists:
+    subject: "validation-series"
+    predicate: "is"
+    value: "a two-book sequential short-novel series; each book is a short novel / serial installment of ~60 formatted pages (~15,000-18,000 words)"
+    kind: "formatting"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null, start_chapter: null, end_chapter: null, applies_to: "series" }
+    sources:
+      - file: "book-1/PROJECT_STATE.yaml"
+        anchor: "project.positioning, project.target_range_words"
+        evidence: "positioning: short novel / serial installment; target_range_words [15000, 18000]"
+        observed: "2026-09-22"
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: "The original task brief said ~50 pages; the user raised it to 60. User decision wins."
+
+  series.protagonist:
+    subject: "merope"
+    predicate: "is_series_protagonist"
+    value: "true"
+    kind: "character"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null, start_chapter: null, end_chapter: null, applies_to: "series" }
+    sources:
+      - file: "book-1/ENTITY_STATE.yaml"
+        anchor: "characters.CHR-001"
+        evidence: "role: protagonist, first-person narrator"
+        observed: "2026-09-22"
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: "ENTITY IDs are stable series-wide: CHR-001 Merope, CHR-002 Achird, COL-001 the beings, OBJ-001 the sleigh. A character may gain facts, never a new ID."
+
+  series.narration:
+    subject: "book.narration"
+    predicate: "is_restricted_to"
+    value: "first person, Merope only, addressing the reader directly; RETROSPECTIVE PAST TENSE for the event, present tense for the judgement of it, unmarked, in the same paragraph. Settled 2026-09-22."
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null, start_chapter: null, end_chapter: null, applies_to: "series" }
+    sources:
+      - file: "book-1/INTAKE.md"
+        anchor: "Given by you -> Voices -> 'Chapter narration' and 'Form'"
+        evidence: "'Chapter narration: tight present tense, single POV (Merope).' and 'First person, present tense, single POV.'"
+        observed: "2026-09-22"
+      - file: "book-1/foundation.md"
+        anchor: "Tone and movement -> Craft notes"
+        evidence: "one-line paragraphs, present-tense asides; the Elaina register is past tense for the event and present tense for the opinion"
+        observed: "2026-09-22"
+      - file: "book-1/manuscript/chapters/chapter-01.md"
+        anchor: "chapter 1, throughout"
+        evidence: "drafted in retrospective past tense with present-tense asides ('I have been looked at before', 'The cabin is old')"
+        observed: "2026-09-22"
+    supersedes: []
+    superseded_by: []
+    conflicts:
+      - fact_id: "book-1.pov-tense"
+        reason: "User-source intake said present tense; foundation, the state file and the drafted chapter are past tense."
+        status: "resolved"
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: >-
+      RESOLVED 2026-09-22 in favour of the past-tense retrospective frame, which is what Book 2
+      inherits. The intake's "tight present tense" loses because the retrospective frame is
+      load-bearing for ch.7's ending and for the narrator's hindsight, and because the reference the
+      intake itself names as governing (Elaina, on POV and register) writes past-for-event with
+      present-for-opinion. No chapter was rewritten: chapter 1 complied except at three points in its
+      in-transit passage, which were normalised. Full record: book-1/CANON_LEDGER.yaml -> CONF-001.
+
+  series.voice.no-wink:
+    subject: "narrator"
+    predicate: "never_performs"
+    value: "self-deprecation or ironic distance; the narrator means every word"
+    kind: "style"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null, start_chapter: null, end_chapter: null, applies_to: "series" }
+    sources:
+      - file: "book-1/voice-dna.md"
+        anchor: "Global narrative voice"
+        evidence: "The one thing that must not transfer: she never winks."
+        observed: "2026-09-22"
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: "Deliberate separation from Reference A, whose narrator deflates herself. This is a series-wide voice rule, not a Book 1 accident."
+
+  series.exclusion-rule:
+    subject: "project"
+    predicate: "excludes"
+    value: "the finished novel Coldbrook Junction — its premise, engine, cast, structure, motifs and chapter-title patterns may not inform this series"
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null, start_chapter: null, end_chapter: null, applies_to: "series" }
+    sources:
+      - file: "book-1/foundation.md"
+        anchor: "EXCLUSION RULE"
+        evidence: "Coldbrook Junction is out of scope for this project. If a choice here resembles it, that resemblance is a defect."
+        observed: "2026-09-22"
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: >-
+      Coldbrook Junction is live on Amazon and FINISHED. It is a control corpus for the prose gate.
+      It is not story material. The torn-down earlier build of THIS book reproduced its engine and
+      was deleted for it.
+
+  series.naming-rule:
+    subject: "world"
+    predicate: "permits_naming_of"
+    value: "constellation names ONLY. Nothing on the planet is named; no planet name, no name for the beings."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null, start_chapter: null, end_chapter: null, applies_to: "series" }
+    sources:
+      - file: "book-1/foundation.md"
+        anchor: "Naming rule"
+        evidence: "Nothing on the planet is named. Constellation names are permitted on the page."
+        observed: "2026-09-22"
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: "Merope and Achird are themselves real star names, so constellation naming sits inside the existing logic."
+
+  series.sleigh.is-not-a-chariot:
+    subject: "sleigh"
+    predicate: "is"
+    value: "an old-style enclosed cabin on runners, glazed; NOT a chariot and NOT horse-drawn. Its steed is a constellation that has taken a shape."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null, start_chapter: null, end_chapter: null, applies_to: "series" }
+    sources:
+      - file: "book-1/PROJECT_STATE.yaml"
+        anchor: "project.vehicle"
+        evidence: "NOT a chariot; no horse. An old-style sleigh whose steed is drawn from a constellation and morphs into that constellation's shape."
+        observed: "2026-09-22"
+    supersedes:
+      - "the original brief's horse-drawn chariot, which was withdrawn"
+    superseded_by: []
+    conflicts: []
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: >-
+      The sleigh is its own character: Achird owns and pilots it, Merope narrates as though she
+      were the pilot, and it will act on its own. The sleigh/steed mechanism was settled while
+      drafting book-1 ch.7: the constellation is BOTH the road and the shape — the sleigh runs along
+      a constellation and wears its form while moving, and when parked the constellation goes on
+      about its own line and the shape goes with it. It is never a draft animal between shafts.
+      Full record: book-1/CANON_LEDGER.yaml -> conflicts.CONF-004 (resolved).
+
+  series.beings.cannot-lie-cannot-explain:
+    subject: "the_beings"
+    predicate: "cannot"
+    value: "lie, and cannot explain. They never hint, warn, withhold, or become sinister, and no individual is ever their spokesperson."
+    kind: "world"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: null, start_book: 1, end_book: null, start_chapter: null, end_chapter: null, applies_to: "series" }
+    sources:
+      - file: "book-1/foundation.md"
+        anchor: "Characters -> THE BEINGS; Writer warnings 3 and 10"
+        evidence: "They do not lie, and they do not explain. Do not give the planet a spokesperson."
+        observed: "2026-09-22"
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: >-
+      SERIES-STABLE and load-bearing for Book 2. The honest/explains boundary was settled while
+      drafting book-1 ch.2: a being may answer only from POSSESSION and PRESENT TENSE — what a thing
+      is called here, where it goes, that it is good — never from ORIGIN or OWNERSHIP, and it answers
+      immediately, cheerfully and truthfully. Full record: book-1/CANON_LEDGER.yaml ->
+      conflicts.CONF-003 (resolved).
+
+  series.book-2.scoped-change:
+    subject: "book-2"
+    predicate: "introduces_scoped_change"
+    value: "new location + changed Merope/Achird relationship state"
+    kind: "plot"
+    status: "active"
+    authority: "user_decision"
+    scope: { series_id: "validation-series", book_id: "book-2", start_book: 2, end_book: 2, start_chapter: null, end_chapter: null, applies_to: "book-2" }
+    sources:
+      - file: "book-1/PROJECT_STATE.yaml"
+        anchor: "decisions (2026-09-22): 'Book 2 scope change is new location + changed Merope/Achird relationship state'"
+        evidence: "Validation needs one legitimate book-scoped change to test scoped facts vs. contradictions."
+        observed: "2026-09-22"
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: >-
+      PRE-REGISTERED DELIBERATELY. These two changes are legitimate book-scoped facts, NOT
+      contradictions of Book 1. Book 2 must recognise them from this record rather than flagging
+      them. Any OTHER departure from a series-scoped fact IS a contradiction and must be raised.
+      BOTH NOW CONSUMED, 2026-09-24: the location is book-2.location (Location 3, 'the unfinished
+      thing') and the relationship content is book-2.relationship-delta (Merope notices and tests).
+      THE DELTA'S CONTENT WAS CORRECTED ON THE WAY: this series ledger never forbade directness, but
+      the BOOK ledger recorded a prohibition as though it followed from a series-scoped contract, and
+      the author struck it (book-2/CANON_LEDGER.yaml -> conflicts.CONF-011).
+
+  series.book-1.completed:
+    subject: "book-1"
+    predicate: "is"
+    value: "COMPLETE. 7 chapters, 15,531 words, prose gate 7/7 PASS, Phase 2.8 and 5.6 gates passed, Phase 4 audit passed, scored 7.7, editorial package written, EPUB 3 built."
+    kind: "process"
+    status: "active"
+    authority: "process"
+    scope: { series_id: "validation-series", book_id: "book-1", start_book: 1, end_book: 1 }
+    sources:
+      - { file: "book-1/PROJECT_STATE.yaml", anchor: "phase.history", evidence: "phases 1.5, 2, 2.5, 2.7, 2.8, 3, 4, 5.6, 6, 7 recorded", observed: "2026-09-22" }
+      - { file: "book-1/dist/merope-book-one_WORKING-TITLE.epub", anchor: "whole artifact", evidence: "EPUB 3, 14 entries, mimetype first and stored", observed: "2026-09-22" }
+    supersedes: []
+    superseded_by: []
+    conflicts: []
+    duplicate_of: null
+    last_verified: "2026-09-22"
+    notes: >-
+      The two changes pre-registered in series.book-2.scoped-change remain PLANNED: Book 1 does not
+      contain them. Book 2 CONSUMED both as book-scoped `planned` facts
+      (book-2/CANON_LEDGER.yaml -> facts.book-2.scoped-change.*) and introduced them in prose across the
+      seven drafted chapters (Book 2 delivered, run 4). Book 1 shipped with a WORKING TITLE by author
+      decision — the series name, the book title and the chapter titles are still deferred, and nothing
+      in this ledger should be read as having settled them.
+
+# ------------------------------------------------------------------------- persistent elements
+series_persistent_elements:
+  note: "What must survive a volume boundary. Book 2 loads these FIRST."
+  stable_entity_ids:
+    - { id: "CHR-001", name: "Merope", persists: "identity, voice, the fact that she narrates" }
+    - { id: "CHR-002", name: "Achird", persists: "identity, voice, flatness-as-attention, the escalation direction (quieter, then silent)" }
+    - { id: "COL-001", name: "the beings", persists: "collective identity, cannot lie, cannot explain, never sinister" }
+    - { id: "OBJ-001", name: "the sleigh", persists: "ownership by Achird, Merope's narration of the piloting, autonomous agency" }
+  roles_that_may_change_by_book: ["location", "relationship state", "knowledge", "age is fixed at 19 in Book 1 and should be treated as advancing only if the user says so"]
+  must_not_change: ["the exclusion rule", "the naming rule", "the narrator's no-wink rule", "the beings' inability to lie or explain"]
+
+# ------------------------------------------------------------------------------- documents
+documents:
+  CANON_LEDGER.yaml:
+    role: "state"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["series-scoped facts", "stable entity IDs", "pre-registered Book 2 scoped changes"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Series-level ledger. Created 2026-09-22; before this run no ledger existed at any level."
+  book-1/CANON_LEDGER.yaml:
+    role: "state"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["book-1 facts", "book-1 conflicts", "book-1 document registry"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Book-scoped ledger."
+  tools/deslop-check.sh:
+    role: "working"
+    status: "active"
+    authority: "research"
+    canonical_for: ["prose gate thresholds and their enforcement"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Series-level tooling. Thresholds calibrated from published prose; see tools/calibration/CALIBRATION.md."
+  tools/calibration/CALIBRATION.md:
+    role: "research"
+    status: "active"
+    authority: "research"
+    canonical_for: ["how each prose-gate cap was derived"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Evidence base for the gate. Read before disputing a threshold."
+  book-2:
+    role: "state"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["book-2 book-scoped facts", "book-2 state and scoped changes", "book-2.engine (the author's selection)", "book-2.location", "book-2.relationship-delta", "CONF-011"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: >-
+      Book 2 is DRAFTED AND DELIVERED: 7 chapters, 15,148 words, prose gate 7/7 PASS, both continuity
+      gates run, scored 7.5, editorial package written, EPUB 3 built and structurally verified. Phases
+      1-7 have all run. The author's remaining items are sign-off on the pipeline-proposed population
+      mechanics (R-013..R-021), the instructed hair-styling change, whether ch.7 should say more
+      (CONF-011's correction did not reach the prose), the titles and the comps."
+  README.md:
+    role: "state"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["the project's purpose, deliverable and current verdict"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Repo entry point. Registered late - no ledger accounted for it until the check-docs coverage pass."
+  DOC_POLICY.md:
+    role: "process"
+    status: "active"
+    authority: "foundation"
+    canonical_for: ["how the document registry is kept", "the reconciliation and prune workflow", "what each check enforces"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Created with the doc-integrity checks. The prose that tells a session how to keep the registry honest."
+  tools/check-docs.py:
+    role: "working"
+    status: "active"
+    authority: "process"
+    canonical_for: ["document registry, coverage, reference and supersession checks"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Documentation-integrity checker. See DOC_POLICY.md for what it enforces."
+  tools/check-stale-status.sh:
+    role: "working"
+    status: "active"
+    authority: "process"
+    canonical_for: ["stale status assertions in state and planning files"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Flags a document that contradicts its own status fields. Advisory tier covers README and continuity reports."
+  tools/check-structure-drift.sh:
+    role: "working"
+    status: "active"
+    authority: "process"
+    canonical_for: ["structural-ledger agreement between foundation.md and outline.md"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Book 2's ledgers drifted (spiral vs fragmented) and the Phase 2.8 read missed it; this makes it mechanical."
+  tools/run-checks.sh:
+    role: "working"
+    status: "active"
+    authority: "process"
+    canonical_for: ["the combined document and prose gate"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Runs every check and reports one combined status."
+  tools/validate-controls.sh:
+    role: "working"
+    status: "active"
+    authority: "research"
+    canonical_for: ["the prose gate's own calibration controls"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Registered late alongside the other tooling."
+  tools/calibration/slop-fixture.md:
+    role: "research"
+    status: "active"
+    authority: "research"
+    canonical_for: ["the positive-control fixture for the prose gate"]
+    last_reviewed: "2026-09-24"
+    superseded_by: null
+    archive_path: null
+    reason: "Synthetic slop used by tools/validate-controls.sh; it must FAIL the scanner. A test fixture, not prose."
+
+# ------------------------------------------------------------------------- voice contract index
+voice_contract:
+  global: "book-1/voice-dna.md -> Global narrative voice; extended 2026-09-22 with the chapter-narration and fact-presentation contracts"
+  characters:
+    CHR-001: "book-1/voice-dna.md -> Voice cards -> MEROPE"
+    CHR-002: "book-1/voice-dna.md -> Voice cards -> ACHIRD"
+    COL-001: "book-1/voice-dna.md -> Voice cards -> THE BEINGS"
+    OBJ-001: "book-1/voice-dna.md -> Voice cards -> THE SLEIGH (not a speaker)"
+  chapters:
+    book-1: "book-1/voice-dna.md -> Chapter narration contract (added 2026-09-22)"
+  facts:
+    narrator_fact: "book-1/voice-dna.md -> Fact presentation -> narrator"
+    dialogue_fact: "book-1/voice-dna.md -> Fact presentation -> dialogue"
+    research_claim: "book-1/voice-dna.md -> Fact presentation -> research claim"
+    document_fact: "book-1/voice-dna.md -> Fact presentation -> document/epistolary"
+    memory: "book-1/voice-dna.md -> Fact presentation -> memory"
+    rumor: "book-1/voice-dna.md -> Fact presentation -> rumor"
+    inference: "book-1/voice-dna.md -> Fact presentation -> inference / uncertain knowledge"
+
+# ------------------------------------------------------------------------------ maintenance
+maintenance:
+  last_run: "2026-09-24"
+  last_run_by: "Book 2 full run (run 4) — Phases 1-7 executed, Book 2 drafted and delivered, and the run's central finding recorded: CONF-011, an inference the pipeline had written into canon as a Book 2 rule at series scope, caught by the author and struck. Run 3 (engine decision), run 2 (hygiene closure) and run 1 (the retrofit that created this layer) are preserved under run_1_snapshot at the end of this block. Conflict closure for both books lives in the BOOK ledgers, deliberately: this file records series-scoped facts only."
+  changed_files:
+    - "CANON_LEDGER.yaml (created)"
+    - "book-1/CANON_LEDGER.yaml (created)"
+    - "book-1/maintenance/PRUNING_LOG.md (created)"
+    - "book-1/maintenance/SESSION_LOG.md (created)"
+    - "book-1/voice-dna.md (extended: chapter narration + fact presentation contracts)"
+    - "book-1/PROJECT_STATE.yaml (canon pointers corrected; maintenance block added)"
+    - "book-1/RUN_REPORT.md (gap recorded)"
+    - ".agents/skills/book-genesis/references/pipeline/{phases.md,manifest.yaml} (maintenance gate added)"
+    - ".agents/skills/book-genesis/SKILL.md (maintenance gate added to the phase-gate checklist)"
+    - "book-2/{CANON_LEDGER,PROJECT_STATE,ENTITY_STATE,ASSUMPTIONS,INTAKE,RUN_REPORT}.yaml|md and book-2/artifacts/engine-samples.md (2026-09-23: engine decided, contract re-confirmed, options superseded)"
+  merged_facts:
+    - "The 33 entries in PROJECT_STATE.yaml -> decisions were imported as facts and deduplicated against ENTITY_STATE.yaml and foundation.md. No duplicate fact IDs were created; where a decision and an entity entry described the same thing, the decision became the authority and the entity entry became a second source."
+  flagged_conflicts: []   # ZERO at series scope as of run 2. Book-scoped conflicts are tracked in the book ledgers, never restated here.
+  resolved_conflicts:
+    - "CONF-001..CONF-010 (book-1 scope) — ALL RESOLVED. Ledger of record: book-1/CANON_LEDGER.yaml -> maintenance.resolved_conflicts."
+    - "Book-2-scoped conflicts are recorded in book-2/CANON_LEDGER.yaml. As of 2026-09-22 that ledger has ZERO open conflicts and one resolved entry."
+  archived_documents: []
+  unresolved_reviews:
+    - "BOOK 2: DELIVERED 2026-09-24 (7 chapters, 15,148 words, gates run, scored 7.5, EPUB built). STILL THE AUTHOR'S, and none of it blocks drafting because drafting is done: sign-off on the pipeline-proposed population mechanics (R-013..R-021); the instructed hair-styling change, which is still unspecified; whether ch.7 should say more, since CONF-011's correction reached the canon but not the prose (book-2/continuity/adversarial-audit.md item 1); the titles for both books; and the comps, of which none has ever been approved."
+    - "BOOK 2'S READER PERSONAS WERE INHERITED, NOT RE-RUN, so the scorecard's casual-reader verdict is predicted rather than simulated. Recorded as a gap, not a pass."
+    - "The cover-the-name exercise has never been performed for either book. Deadline: before Phase 7."
+    - "Book 1's AUTH-3 (two prose judgement calls), AUTH-4 (every title) and AUTH-6 (the weeks scale) remain the author's; carried forward, not lost."
+    - "No chapter has been read aloud for either book, and Phase 5 (literary barrier loop) has never been activated because its activation condition — a quality target set by the author — has never been met."
+
+  run_1_snapshot:
+    note: "Preserved per maintenance-protocol.md §7: pruning reduces active context, it does not erase history. These fields were the run-1 (retrofit) snapshot and are SUPERSEDED by the current fields above, not erased. Most were resolved later the same day."
+    last_run_by: "Book Genesis maintenance check-in (retrofit — the layer did not exist before this run)"
+    changed_files:
+      - "CANON_LEDGER.yaml, book-1/CANON_LEDGER.yaml, book-1/maintenance/{PRUNING_LOG,SESSION_LOG}.md (all created)"
+      - "book-1/voice-dna.md (extended), book-1/PROJECT_STATE.yaml (canon pointers corrected), book-1/RUN_REPORT.md (gap recorded)"
+      - ".agents/skills/book-genesis/{SKILL.md, references/pipeline/} (maintenance gate added)"
+    flagged_conflicts:
+      - "CONF-001 narration tense — GATE-CRITICAL, unresolved at the time"
+      - "CONF-002 Achird's silence, four incompatible specifications — unresolved at the time"
+      - "CONF-003 the beings' honest-answer / never-explain boundary — unresolved at the time"
+      - "CONF-004 sleigh-and-steed mechanism — unresolved at the time"
+      - "CONF-005 non-visitor remains — narrowed, pending document follow-through"
+    resolved_conflicts:
+      - "CONF-006 who authorises the ending — resolved by user decision"
+      - "CONF-007 the ch.7 rescue prohibition vs the sleigh's capability — agent over-reach, not canon"
+      - "CONF-008 'no bodies anywhere' vs a non-visitor body — constraint is visitor remains only"
+      - "CONF-009 the canon pointers claiming completed files did not exist — pointers were wrong"
+    unresolved_reviews:
+      - "Phase 1.5 (reader personas) had never run. CLOSED — ran 2026-09-22."
+      - "Voice bank had 4 samples against a required 10. CLOSED — 10 of 10, late, after drafting."
+      - "The torn-down earlier build of Book 1 was DELETED rather than archived. Its facts are unrecoverable. See book-1/maintenance/PRUNING_LOG.md."
+      - "book-1/INTAKE.md's 'OPEN' section listed decided items as undecided. The tense line was corrected in place 2026-09-22."

@@ -1,0 +1,40 @@
+# ============================================================================
+# A MATTER OF RECORD - created by incunabula/tools/init-book.py
+# on 2026-10-11. The length contract below is what
+# check-length.py reads (first 8k characters). Change it here, by hand,
+# when the contract changes. status: in_progress makes L1 record rather
+# than judge; remove it at delivery.
+# ============================================================================
+
+project:
+  title: "Stall Twelve (WORKING TITLE)"
+  status: "in_progress"
+
+  # ---- LENGTH CONTRACT (read by check-length.py, first 8k chars) ----
+  target_floor_words: 95000
+  target_ceiling_words: 130000
+  target_range_words: [95000, 130000]
+  language: "en"
+
+# ---- AUTONOMOUS RUN — re-derive the roll with:
+#   python tools/roll-brief.py --seed 22525761 --pool-size 1025 --dice 2 ----
+# HUMAN OVERRIDES (user-ordered 2026-10-12, recorded not hidden): tone comic
+# (rolled elegiac), length long novel 95-130k (rolled 75-95k). Niche, seeds,
+# language per dice. Checkpoints WAIVED by human ("fully autonomous");
+# artifact-gated process (evidence files per chapter) fully applies.
+autonomous:
+  roll_seed: 22525761
+  roll_pool_size: 1025
+  roll_dice: 2
+  rolled: { language: English, niche: new objectivity ghost story, tone: elegiac, length: novel (75000-95000) }
+  overridden: { tone: comic, length: long novel (95000-130000) }
+  premise_seeds: "a night market / the lease will not be renewed"
+  premise: "Delia Marsh's night-market stall faces eviction in 30 days; stall 12's sitting tenant is founder-ghost Harold Pye, who knows the lost 1962 lease has a renewal clause but remembers only when the fryers are on."
+  checkpoints: waived-by-human
+
+phase: { current: 3, status: drafting, chapters_drafted: 3, chapters_planned: 20, words_drafted: 6160, gated_words: 6160 }
+chapters:
+  - { n: 1, title: "Fold", words: 2002, planned: 5000, status: gated, approach: STALL, anchor: custody, waiver: none }
+  - { n: 2, title: "Clause", words: 2158, planned: 5000, status: gated, approach: TALE, anchor: rules, waiver: none }
+  - { n: 3, title: "Salt", words: 2000, planned: 5000, status: gated, approach: ROOM, anchor: debt, waiver: none }
+

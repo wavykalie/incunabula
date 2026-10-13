@@ -1415,10 +1415,16 @@ prints as the published minimum.
 |---|---|---|---|
 | *Tess of the d'Urbervilles* | 60 | **33.4%** | warn |
 | *Jane Eyre* | 38 | 39.7% | warn |
-| *Dracula* | 25 | 42.2% | warn |
+| ~~*Dracula*~~ *The Turn of the Screw* | 25 | 42.2% | warn |
 | *Pride and Prejudice* | 61 | 43.0% | warn |
 | *Middlemarch* | 86 | 43.5% | warn |
 | *Wuthering Heights* | 33 | 45.1% | ok |
+
+> **Name correction (2026-10-07).** The row struck above was labelled *Dracula* because
+> the fetcher's book list pairs that label with Gutenberg id 209, and id 209 is *The Turn
+> of the Screw*. The staged files say so in their own first lines. The 25 chapters and the
+> 42.2% CV were measured on those files and **stand as measured** - what fails is the
+> attribution. Full verification of all fifteen list entries: §20, Finding 5.
 
 Two separate defects, both pointing the same way.
 
@@ -1450,3 +1456,231 @@ here: **a threshold band is only as good as the register it was measured in.** T
 thresholds in this directory have now been derived from a light novel, and both are
 load-bearing. Whenever a cap is quoted as "the human range", the first question is which
 corpus produced it.
+
+## 20. The prescriptive sweep: what the fiction rows do to advice prose - and what no public corpus can settle
+
+Section 18 swept narrative nonfiction and found `U1`. This sweeps the **prescriptive**
+register - self-help, parenting, pedagogy, the register the demo genres write in - by the
+same method: run the frozen rows over published prose of that kind and see which ones
+accuse it, before any manuscript exists. It cost one tool edit and zero books.
+
+### The corpus
+
+`fetch-multivolume.py --set prescriptive` - seven US-public-domain volumes, six authors,
+1762-1912, chosen to be books that tell the reader what to DO:
+
+| volume | Gutenberg | chapters staged |
+|---|---|---|
+| Smiles, Self-Help, 1859 | 935 | 13 |
+| Marden, Pushing to the Front, 1894 | 21291 | 66 |
+| James, Talks to Teachers, 1899 | 16287 | 18 |
+| Bennett, How to Live on 24 Hours a Day, 1908 | 2274 | 12 |
+| Montessori, The Montessori Method, 1912 | 39863 | 23 |
+| Chavasse, Advice to a Mother, 1878 | 6595 | **flat** |
+| Rousseau, Emile, 1762 | 5427 | **flat** |
+
+Five staged as 132 chapter files (590,080 words). Chavasse is a Q&A handbook and Emile a
+continuous treatise - neither has a chapter unit this corpus convention recognises, and
+Chavasse's numbered questions fall under the 600-word floor - so both stage whole as
+`__flat.txt` (373,254 words together) and are measured at whole-book granularity, never
+mixed into chapter denominators.
+
+```bash
+python tools/prose/calibration/fetch-multivolume.py \
+    tools/prose/calibration/corpus/prescriptive --set prescriptive
+python tools/prose/calibration/sweep-rows.py \
+    tools/prose/calibration/corpus/{multivolume,nonfiction,prescriptive}
+bash tools/prose/deslop-check.sh tools/prose/calibration/corpus/prescriptive
+```
+
+`sweep-rows.py` is the measurement aid (make-ready class, not a gate, not in
+`GATE_FREEZE.md`): it reads the rule table out of `deslop-check.sh` through
+`lint-chapter`'s loader and holds no rule of its own, mirrors the scanner's read path,
+and applies each row per file exactly the way the scanner gates. Raw scanner output is
+preserved as `prescriptive-scan.txt`, gitignored like `pd-chapter-scan.txt`.
+
+### Instrument changes (make-ready only; the freeze is untouched)
+
+Two edits to `fetch-multivolume.py`, both outside the frozen manifest, `verify-freeze.sh`
+still `FREEZE HOLDS`:
+
+1. the `prescriptive` set above;
+2. `PRESCRIPTIVE_HEADS` - the heading shape "I. PSYCHOLOGY AND THE TEACHING ART", needed
+   to chapter James at all. It is scoped to the prescriptive set because every attempt to
+   fold it into the shared `CHAPTER_HEADS` split published prose at prose-wrap initials:
+   a flush-left "C. C. Sprengel has shown" is roman + period + capital, and one draft of
+   the pattern staged *Wealth of Nations* into 41 chapters and *The Adventures of
+   Sherlock Holmes* into 15. The shape carries four restraints (flush-left, `[ \t]` not
+   `\s`, ALL-CAPS title, documented in the file), and fiction/nonfiction staging is
+   unchanged **by construction**, verified additionally byte-for-byte: a fresh re-fetch of
+   both sets reproduces all 303 + 143 installed files identically.
+
+### Table 1 - the deslop rows across three registers (files accused / files scanned)
+
+| row | tier | fiction 303 ch | narr. nonfiction 141 ch | prescriptive 132 ch | prescriptive 2 flat |
+|---|---|---|---|---|---|
+| `A10a` nonfiction filler | HARD | 0 | 0 | **5** (8 hits) | 1 |
+| `A11a` signposted close | HARD | 1 | 3 | 1 | 1 |
+| `A14` stakes inflation | HARD | 0 | 0 | 1 | 0 |
+| `D3` -ly adverbs | DENSITY | 0 | 6 | 1 | 0 |
+| `P1` anaphora | PATTERN | - | - | 1 | - |
+| `A19` listicle in prose | DEMOTED | 0 | 0 | **0** | 0 |
+| `A24` explanatory coda (rate) | DENSITY | 0 | 0 | **0** | 0 |
+| `A25` antithesis formula | DENSITY | 0 | 0 | 0 | 0 |
+| `D2` rule of three | REPORT | 3 | **40** | 2 | 0 |
+| `F1` closing coda (position) | POSITION | **0/303** | **0/141** | **0/132** | 0/2 |
+
+Every other row: 0 files accused in all three registers. Full per-rule rates in
+`sweep-report.txt` (regenerated by the `sweep-rows.py` command above).
+
+### Finding 1 - the fiction table transfers to advice prose
+
+134 files, 963,334 words, and the raw scanner finds **ten failing row-lines in total**
+(six `A10a`, two `A11a`, one `A14`, one `D3`, plus one `P1` anaphora on "there is" x5 in
+a short chapter). Zero-tolerance rows accusing 3-4% of published chapters is a stray
+rate, not a register failure. The one row that accuses more than a stray file is `A10a` -
+which is *named* "nonfiction filler", sits in the HARD tier at zero tolerance, and trips
+on exactly the expository filler constructions Victorian advice prose uses natively. The
+row whose name admits what it targets is the one the register trips.
+
+### Finding 2 - `F1`'s zero is now three registers wide: 0 of 576
+
+The closing-coda position rule was calibrated on "0 of 50 published chapters". It is now
+**0/303 fiction, 0/141 narrative nonfiction, 0/132 prescriptive** - 576 chapters, and
+`U3` (coda distribution, a different instrument) independently reads 0% on all five
+staged volumes. Published prose, narrative or argumentative or advisory, does not close a
+chapter on "That is why". The strongest zero-tolerance row in the scanner has the widest
+evidence base in the directory now.
+
+### Finding 3 - `U1` keeps its advisory scoping, and this register expects `U5` warns
+
+Each volume staged as an **undeclared** book root (control 10's staging minus the
+`positioning` line - the question is what the fiction-calibrated rows do, so they must be
+live):
+
+| volume | ch | `U1` CV | `U5` para CV | drift `D1` |
+|---|---|---|---|---|
+| smiles-selfhelp | 13 | 29.4% ok | 61% warn | 1.27 warn |
+| marden-pushing | 66 | 33.6% ok | 73% warn | 0.39 ok |
+| james-talks | 18 | 73.9% ok | 79% ok | 0.61 ok |
+| bennett-24-hours | 12 | 68.3% ok | 72% warn | 1.17 warn |
+| montessori-method | 23 | 49.6% ok | 83% ok | 0.51 ok |
+
+No volume is accused on any `U` row. `U1` runs 29.4-73.9% CV - only Marden sits inside
+the 33.4-45.1% fiction band, the rest straddle outside it in both directions, which is
+§18's finding again from the other side and still no basis for a prescriptive floor
+(n=5; same refusal as at n=6). `U5` warns on 3 of 5: flat paragraph layout is ordinary in
+advice prose. The row stays enforced - its detector target is machine prose, not genre -
+but a nonfiction-mode run should **expect** the warn rather than treat it as a finding.
+Drift `D1` warns on the two essay-form books (freestanding counsel chapters drift between
+halves), which is a shape of the register, not a voice failure.
+
+### Finding 4 - the rows that should misfire did not, and that is the load-bearing result
+
+`A8` ("here's the thing"), `A9` ("let's break this down"), `A19` ("the first takeaway
+is"), `A24` ("which is why") - the rows that would fight a modern self-help book - score
+**zero across 590,080 words of published advice prose**. They are constructions of the
+modern how-to register, which postdates the corpus and sits behind the copyright wall:
+Carnegie ages into the public domain in 2032. So this sweep bounds the question in ONE
+DIRECTION ONLY. Rows clean here are NOT cleared for a 2020s parenting book - and those
+rows' patterns come from the AI-tropes catalogue the scanner was derived from, the exact
+register where genre and slop are indistinguishable by construction. Victorian advice
+prose is not evidence about "How to Talk So Kids Will Listen".
+
+Consequences, and they are the point of running this before any demo prose exists:
+
+- **Do not re-derive caps from this corpus for the modern register.** Wrong population,
+  same asymmetry that kept a nonfiction `U1` floor from being set at n=6: enough to
+  refute, not enough to set.
+- **Expected hits on a modern self-help draft are ruled on per hit, by the author.** The
+  tic scan already exempts prescriptive-native patterns; `A10a`-class hits in a nonfiction
+  book are register, and the author rules rather than the cap moving.
+- **Chapter-end furniture stays in the quiet Guidance form** `COMMONPLACE.md` already
+  chose - apparatus written to be quiet to every frozen row. Section 20 now has the
+  measurement behind that choice: published advice prose closes chapters without coda
+  formulas and without listicle patterns (0/132, and `A19` at 0 hits in 590k words).
+
+### Finding 5 - side finding: the fiction set's labels are mispaired with its IDs
+
+Discovered because the sweep needed to name its baseline volumes. Eight of the fifteen
+entries in `BOOKS` carry a title/author label attached to the wrong Gutenberg ID:
+
+| ID | label says | the file is |
+|---|---|---|
+| 209 | Stoker, Dracula | **The Turn of the Screw** (James, 1898) |
+| 345 | Dickens, Oliver Twist | **Dracula** (Stoker, 1897) |
+| 1661 | Shelley, Frankenstein | **The Adventures of Sherlock Holmes** (Doyle, 1892) |
+| 98 | Twain, Tom Sawyer | **A Tale of Two Cities** (Dickens, 1859) |
+| 74 | Twain, Huckleberry Finn | **Tom Sawyer** (Twain, 1876) |
+| 25447 | Doyle, Hound of the Baskervilles | **Mysticism and Logic** (Russell, 1917) |
+| 2852 | Wells, The Time Machine | **The Hound of the Baskervilles** (Doyle, 1902) |
+| 35 | Twain, The Adventures of Adam | **The Time Machine** (Wells, 1895) |
+
+The inline comment above the list ("209 is Dracula; 345 is Great Expectations") is wrong
+for both. Verified against each file's own Gutenberg header, 2026-10-07.
+
+**Impact on recorded numbers: one attribution, zero measurements.** The measured corpus
+is `--limit 6` - IDs 1342, 1260, 768, 145, 110, 209 - and only 209 is mislabelled, so:
+corpus/multivolume/stoker-dracula-v06 is **The Turn of the Screw**. §19's table row
+labelled "Dracula, 25 chapters, 42.2%" measures it. The CV stands - it was measured on
+the files as staged - but the name does not; §19 carries the correction inline. The
+installed corpus is otherwise byte-reproducible with the current fetcher (all 303 + 143
+files verified identical to a fresh fetch). The list repair is **proposed, not applied**:
+a sweep measures and a repair re-keys, and this entry is the measurement.
+
+## 21. Nonfiction mode: A10a is scoped to a report; everything else stays live
+
+**Decision (2026-10-07).** A book declaring `mode: nonfiction` in `PROJECT_STATE.yaml`
+carries `A10a` ("nonfiction filler") as **reported, not failed**. Fiction mode and
+undeclared books still fail it — their path is unchanged by construction.
+
+The basis is §20's finding: over 134 files / 963,334 words of published prescriptive
+prose, the only frozen row accusing the register at more than a stray-file rate is the
+row whose own NAME targets it. Its pattern is the expository furniture Victorian advice
+prose uses natively ("it is worth noting", "due to the fact that", "interestingly,").
+A gate that fails every published book in a register is not calibrating that register,
+it is refusing it — and the honest response is the same shape the REPORT tier already
+gives a row that cannot accuse: keep the pattern, keep the count, print the number,
+lose the ability to fail.
+
+**Not scoped, deliberately, and the reasons are the §20 measurements:**
+
+- `A19`, `A21`, `A24`, `A25` — all scored ZERO across the prescriptive sweep. That
+  binds the question ONE WAY: these are constructions of the modern how-to register,
+  which postdates the corpus and sits behind the copyright wall. Zero published hits
+  here is a one-sided bound, not a clearance for a 2020s parenting book, and these
+  rows' patterns come from the exact register (modern machine output) where genre and
+  slop are indistinguishable by construction. They stay live for nonfiction.
+- `A11a` ("in summary") — 2 of 134 files; an author-level glance, not a mode-level one.
+- `U5` warns by design on flat paragraph layout — expected in advice prose, already
+  documented in §20 Finding 3 and the mode scoping of the U-rows.
+
+**The holding record is `NF_SCOPED` in `conventions.py`**, guarded by its self-test
+(A10a in-scoped; A19/A21/A24/A25/A11a asserted NOT scoped). `deslop-check.sh` does not
+copy the list: it asks `conventions.py --scoped-rows` at runtime, so a scanner copy
+cannot drift from the record. The keyed book root is the same three-dirs-up path the
+SELFSCAN marker uses.
+
+**Control fixture: `calibration/nf-scope-fixture.md`** — a ~310-word clean prescriptive
+chapter (bedtime-routine parenting prose) whose only gate hits are the exact A10a
+constructions. Both arms are asserted by `validate-controls.sh` **control 17** every
+suite run:
+
+- nonfiction arm — the fixture staged under `mode: nonfiction` must PASS, and must
+  PRINT the scoped `-- A10a` line. A scoped row that stops reporting has gone dark,
+  which is worse than failing.
+- undeclared arm — the same fixture with no mode declared must FAIL on A10a itself,
+  not on some other row. The scope must be shown not to have widened.
+
+**Verification (2026-10-07).** Fixture verified standalone in both arms before the
+control was written (NF: exit 0, `-- A10a x3` printed; undeclared: exit 1,
+`FAIL A10a x3`). Full suite re-run: controls 7–17 pass, 20 ok verdicts, suite reports
+its documented PARTIAL state (human corpus external, exit 2 — unchanged from §20's
+run). `conventions.py` self-test green. Recorded as **Freeze 20** in GATE_FREEZE.md:
+`deslop-check.sh` `20e1976d20312974` → `35ed380c20db520e`, `validate-controls.sh`
+`d8d84fddeaddbd36` → `e5ecadf14e07ba9e`.
+
+What did NOT move: no cap was re-derived, no regex changed, no new row was added. The
+sweep measured; the scoping re-keys the gate's relationship to one register; and the
+zero-tolerance rows that the sweep could not clear (A19/A21/A24/A25) stay live so the
+gate keeps the ability to fail the register the corpus could not test.

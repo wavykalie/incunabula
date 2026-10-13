@@ -20,6 +20,15 @@ packages, and formatting handoff.
 
 Do not quietly swap the compact pipeline in where the full engine was chosen.
 
+### The whole thing in plain words
+
+This folder is the memory and the paperwork around the writing. It defines the intake
+interview (what kind of book this is), the voice contracts (how each character speaks),
+the canon ledger (the book's facts, each with its source), and the rules for resuming a
+project days later — or bringing an old project into the system without losing anything.
+The unusual terms used below — gate, freeze, platen, colophon — are defined in plain
+English in `INCUNABULA_LEXICON.md`.
+
 ## The one rule
 
 Persist decisions to files. A run leaves a durable project tree, not chat.

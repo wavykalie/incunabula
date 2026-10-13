@@ -13,6 +13,10 @@ project:
   genre: ""
   audience: ""
   language: ""
+  mode: ""                   # fiction | nonfiction - declared at intake. The primary
+                             # field the prose gates read (tools/prose/conventions.py).
+                             # Legacy readers also honour positioning/genre free text
+                             # containing "nonfiction", so pre-mode books keep working.
   positioning: ""            # full-length book | short novel | novella | serial | nonfiction
   paragraph_convention: ""   # "" (default) | commercial-dialogue - see below
   # LENGTH. These three are REQUIRED, not optional metadata, and they must be real

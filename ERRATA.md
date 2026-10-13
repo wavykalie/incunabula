@@ -1698,3 +1698,58 @@ the gate.
                `tools/prose/deslop-check.sh` is untouched at `20e1976d20312974`.
                Nothing in kagiroi-drift changes either way: its worst true reading is
                0.80/1k against the current cap, and 0.80 against a re-derived one too.
+
+---
+
+### 2026-10-08 — density rows match case-sensitively while HARD rows do not; a sentence-initial coda dodges A24
+- **row:**      A24 (explanatory coda) — the rate rule; F1 (closing coda) is unaffected
+- **observed:** "This is why the same routine works at home…" — an explanatory coda mid-paragraph in chapter-02 of quiet-hours — matched nothing under the A24 density row, because the density pass counts with `grep -oE` (deslop-check.sh line 258) while the HARD pass and F1 use `grep -oiE` (line 458, line 581), and the row's literal is lowercase `this is (also )?why`. A coda at a sentence start — its most natural position — is invisible to the rate.
+- **n:**        1 book, 1 occurrence (1 independent)
+- **evidence:** test-books/quiet-hours/manuscript/chapters/chapter-02.md as drafted 2026-10-08; isolated test `grep -oiE "(which|that|this) is (also )?why"` returns 1 hit where the row reported 0. The sentence was rewritten in the same session ("That is what lets…"), so the shipped book does not carry it.
+- **motive:**   aesthetic — the author's account: a row trained on mid-sentence codas ("That is why…") misses the same move when the sentence opens with it, and a book is then certified clean against an instrument that was not looking where the move lands
+- **state:**    observed
+- **proposes:** none — `tools/prose/deslop-check.sh` is untouched at `35ed380c20db520e`. If it is ever promoted: fold case into the density pass or state the rows as case-sensitive by design, and re-measure every density cap under the changed reading before moving any number.
+
+---
+
+### 2026-10-08 — the freeze verifier read the historical columns too, so every freeze entry broke it
+- **row:**      (tooling | delegation) — `tools/prose/verify-freeze.sh`, the guard over `GATE_FREEZE.md`
+- **observed:** `verify-freeze.sh` matched every `` `tools/prose/file` | `hash` `` cell in `GATE_FREEZE.md`, including the "what it was at Freeze N" columns of the historical entry tables, so each appended freeze entry added phantom CHANGED rows for files that had not moved and permanently broke the guard. Found 2026-10-08 while verifying Freeze 21: before the fix the check reported 5 phantom CHANGED rows (`deslop-check.sh` `20e1976d…`, `validate-controls.sh` `d8d84fdd…`, and three others from the Freeze 20 table). A guard that cries wolf on its own ledger is worse than no guard, because a real move is then indistinguishable from the noise.
+- **n:**        1 tool, 1 ledger (1 independent)
+- **evidence:** `tools/prose/verify-freeze.sh`; before=5 CHANGED, after the scan was restricted to the manifest region above the first `## Freeze` heading (`awk '/^## Freeze/{exit} {print}'`) with a zero-rows guard: all manifest rows ok, `FREEZE HOLDS`, exit 0. `verify-freeze.sh` is itself deliberately unmanifested, so this repair is not a freeze event and adds no manifest row.
+- **motive:**   aesthetic — the maintainer's account: the verifier has to read the manifest and only the manifest; a guard that cannot tell the current key from a historical note about an old key has stopped measuring the thing it was written to measure
+- **state:**    observed
+- **proposes:** none — `tools/prose/verify-freeze.sh` is unmanifested and outside the manifest the guard protects. If this tool is ever brought inside a freeze discipline, its own scan region must be pinned so a future edit cannot reintroduce the historical-column read.
+
+---
+
+### 2026-10-12 — chapter-level passes claimed without artifacts; 30 stub chapters wore a 105k outline (kitsch-reprise v1)
+- **row:**      (process | delegation) — the phase passes that produce no artifact: `register` (blind sort), `catchword` (hook/pull scores), `quoin` (op log), `composing` (diff review), `proof-panel` (persona verdicts), `proof-pull` (round log), `collator` 5.6 (manuscript audit)
+- **observed:** Autonomous run produced 30 chapters averaging 754 words (22,613 total against a 95,000 floor) with every chapter-level pass recorded as complete. None of the seven passes above leaves an artifact by default — all are claimed in chat or state prose — so nothing distinguished a run pass from a skipped one. The run gates all passed (integrity OK 30/30, uniformity OK at 5.3x ratio, narrative N4 conforms with zero OPEN debt, length IN PROGRESS recorded-not-judged), which is the precise harm this directory refuses: the book was certified clean against instruments that were not looking where the failure was. Same defect class as KF-004/Freeze 8 (an absence read as a decision) and Freeze 4 (a silently-skipped row looks exactly like a passing one), one layer up: **a pass that was never evidenced looks exactly like a pass.** Contributing causes, all recorded: (1) no subagent dispatcher exists in this harness, so the "fresh critic" checkpoints self-approved under a "critic-role-pass" note — the protocol's loop-until-APPROVE cannot run with one mind on both sides; (2) progress was tracked as chapters-drafted, and no gated-words number existed; (3) U1 measures relative CV (369-1964w passes) and L1 measures totals during in_progress, so nothing checks absolute chapter adequacy; (4) self-scores 7.0-7.5 were taken at face value against the documented 0.5-1.0 self-evaluation bias, and the checkpoint-2 DENY-to-APPROVE loop ran on +362 words of revision.
+- **n:**        1 book, 7 passes, 30 chapters (1 independent; v1 archived to manuscript/stubs-v1/, floor restated 6.0, repair as 12-chapter v2 underway)
+- **evidence:** test-books/kitsch-reprise/manuscript/stubs-v1/ (30 files, mean 754w); test-books/kitsch-reprise/REPAIR-MAP.md; evaluations/v2-ch01-passes.md (the first artifacted pass: blind sort 6/6, hook 8/pull 8, 5 logged quoin ops, persona verdicts)
+- **motive:**   aesthetic — the author's account: a pass with no artifact is a wish, and the loop only promotes on falsifiers. Per SELF_IMPROVEMENT the channels hold: this entry moves no measurement and no threshold.
+- **state:**    observed
+- **proposes:** none to any frozen file (`tools/prose/*` untouched; freeze holds). Craft-channel proposal recorded separately: evidence-required passes (a phase completes only with its artifact file on disk), an absolute chapter floor with recorded waivers, gated-words as the progress metric, and human-owned checkpoints wherever no independent critic exists. That proposal is a skill-text change and waits on the author's decision, per the rule that a person still decides.
+
+---
+
+### 2026-10-12 — single-pass drafting lands at half the floor; outline targets do not enforce themselves (the-origin-point finish pass)
+- **row:**      (process | delegation) — Phase 3 drafting vs outline word targets; L1 length contract
+- **observed:** 30/30 chapters drafted structurally complete (all 15 ledger items planted by ch18, name stated ch22, Cora line ch27, reopened determination ch30) at 38,748 words — 48% of the 80,000 floor. Ch 1–13 entered the pass already 14k under plan (25,615 actual vs ~40,180 targeted); ch 14–30 averaged ~760 words against ~3,000-word targets because each was written in one pass optimised for closing structure, and Phase 3 has no per-chapter word floor — only the maintenance-gate waiver, which was used for seventeen chapters instead of one. Same defect class as the 2026-09-30 marrow-light carry and the 2026-10-12 kitsch-reprise stubs: the outline records a number the draft never meets, and every gate that reads it (L1 IN PROGRESS, U1 relative CV) certifies the absence as procedure.
+- **n:**        3 books in the same class (marrow-light carried shortfall; kitsch-reprise v1 stubs @754w mean; the-origin-point @48% of floor), 2 independent runs
+- **evidence:** `wc -w test-books/the-origin-point/manuscript/chapters/` = 38,748 total; outline.md targets sum ~91,580; `check-length.py` 2026-10-12 = IN PROGRESS exit 4 (recorded not judged); waiver recorded in test-books/the-origin-point/RUN_REPORT.md, contract unmoved
+- **motive:**   aesthetic — the author's account, verbatim: 48% of the 80,000 floor is unacceptable on launch
+- **state:**    observed
+- **proposes:** none — no frozen file touched. Craft-channel candidate noted, not proposed: enforce a per-chapter word floor at Phase 3 dispatch (reject under 50% of target), check the running total every 2–3 chapters, and treat a second consecutive waiver as a stop-the-line event. Per SELF_IMPROVEMENT §5 that is one promotion per channel per book at most, and per §4/§6 it waits on the author's decision with a named falsifier before adoption.
+
+---
+
+### 2026-10-13 — seven frozen files sat below the freeze verifier's scan line, unchecked since the day they were frozen
+- **row:**      (tooling | delegation) — `GATE_FREEZE.md`'s manifest region and `tools/prose/verify-freeze.sh`, the guard over it
+- **observed:** Freeze 5 froze `check-premise-distinct.py`, `check-comps.py`, and `calibration/PREMISE_LEDGER.tsv`; Freeze 13 froze `check-narrative.py`, `check-figurative.py`, `check-dialogue-tags.py`, and `check-quantities.py`. All seven rows were recorded as `file | hash` rows inside their history sections — below the first `## Freeze` heading, outside the manifest region the verifier scans (the scan was restricted to that region at Freeze 21, correctly, to stop history rows being read as live claims). Seven of the nineteen frozen files were therefore frozen on paper and unchecked in fact: `verify-freeze.sh` printed FREEZE HOLDS while never looking at them. Same defect class as the 2026-10-08 entry above — a guard that cannot see what it protects — in the opposite direction: that one read too much, this one read too little.
+- **n:**        7 files, 2 freezes (2 independent additions)
+- **evidence:** GATE_FREEZE.md rows at the Freeze 5 and Freeze 13 entries; `awk '/^## Freeze/{exit}'` matched 12 of the 19 frozen rows; live sha256 of all seven files equals the hashes those freezes recorded (`check-narrative.py` `3bf0bf46f318ab2c`, `check-comps.py` `9f47751a6a45aefa`, ...) — nothing had drifted, the ledger was simply incomplete. Found 2026-10-13 during the improvement pass's freeze-ledger audit. Guard proven by injection: a manifest-shaped row appended in a history region makes the verifier exit 1 naming the file; removed, it returns FREEZE HOLDS.
+- **motive:**   aesthetic — the maintainer's account: a manifest that names nineteen files and verifies twelve overstates what it protects, and a drift in any of the seven could not have been reported by a guard that never looked
+- **state:**    observed
+- **proposes:** none — no check changed and no hash moved; `tools/prose/*` instruments are byte-identical. The repair is bookkeeping: the seven rows joined the manifest region with the exact hashes Freeze 5 and Freeze 13 recorded, and `verify-freeze.sh` (unmanifested, per the 2026-10-08 entry) gained a completeness guard that fails any manifest-shaped `tools/prose/` row the scanner does not actually verify.

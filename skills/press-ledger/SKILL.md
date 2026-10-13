@@ -198,7 +198,7 @@ As long as the file exists and is current, nothing is permanently lost.
 
 A waived rule is a *local* decision and lives in `RUN_REPORT.md`. A repeated waiver is an
 *observation about the system* and belongs in `ERRATA.md`. The record in
-`tools/check-uniformity.py` already says why this distinction matters: “reproducing the same
+`tools/prose/check-uniformity.py` already says why this distinction matters: “reproducing the same
 exemption across books is itself the pattern this check exists to catch.” A second waiver is
 not a coincidence to be re-noted in the next book; it is the first data point in a pattern
 that nobody will otherwise assemble.

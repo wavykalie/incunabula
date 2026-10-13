@@ -86,7 +86,7 @@ For the last question, run `tools/prose/check-dialogue-tags.py` and read its V2 
 map: it names which chapters carry the breath-heavy tags, so the question can be asked
 of the right scenes instead of of the book in general.
 
-Run `tools/check-uniformity.py` and put its output in the report. A panel that praises every
+Run `tools/prose/check-uniformity.py` and put its output in the report. A panel that praises every
 chapter individually and never compares them has not read the book; it has read the chapters.
 
 **The Hostile also hunts dubious data** — quantities that do not cohere with each other,

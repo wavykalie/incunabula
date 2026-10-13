@@ -17,7 +17,7 @@ The copyright wall is real and this does not climb it: nothing published recentl
 freely available, so a *current* commercial corpus remains a procurement problem. What is
 achievable is format and breadth, and that is what this does.
 
-usage:  python fetch-multivolume.py <out-dir> [--set fiction|nonfiction] [--limit N]
+usage:  python fetch-multivolume.py <out-dir> [--set fiction|nonfiction|prescriptive] [--limit N]
 """
 
 import os
@@ -67,7 +67,35 @@ NONFICTION = [
     (3086, "ruskin-unto-this-last", "Ruskin, Unto This Last, 1862"),
 ]
 
-SETS = {"fiction": BOOKS, "nonfiction": NONFICTION}
+# Published English PRESCRIPTIVE prose - self-help, parenting, pedagogy - the register
+# of the two demo genres. The set above is NARRATIVE nonfiction: travel, memoir, science
+# written as argument. This set is the register that tells the reader what to DO, and it
+# is the honest test of rows calibrated on nineteenth-century fiction: an advice book
+# enumerates, exhorts, and closes chapters on counsel, and a row that accuses it for that
+# is a row that needs the convention mechanism - not a book that needs rewriting.
+#
+# All seven are US-public-domain (published 1762-1912), which is the copyright wall and
+# also the caveat: the modern self-help register (Carnegie and after) is not in this set
+# and cannot be until it ages into the public domain. A row that misfires here misfires
+# on modern advice prose too; a row that passes here is NOT proven clean on a 2020s
+# parenting book. CALIBRATION.md section 20 states both directions.
+#
+# Chavasse does not chapter into this corpus's unit - it is a Q&A handbook whose sections
+# are topic headings and whose numbered questions would each fall under the 600-word
+# floor - so it stages whole as __flat.txt and is measured at whole-book granularity.
+# Named rather than dropped: it is the parenting volume, and a register sweep for the
+# parenting demo genres that quietly omits parenting is not a sweep.
+PRESCRIPTIVE = [
+    (935, "smiles-selfhelp", "Smiles, Self-Help, 1859"),
+    (21291, "marden-pushing", "Marden, Pushing to the Front, 1894"),
+    (16287, "james-talks", "James, Talks to Teachers, 1899"),
+    (2274, "bennett-24-hours", "Bennett, How to Live on 24 Hours a Day, 1908"),
+    (39863, "montessori-method", "Montessori, The Montessori Method, 1912"),
+    (6595, "chavasse-mother", "Chavasse, Advice to a Mother, 1878"),
+    (5427, "rousseau-emile", "Rousseau, Emile, 1762"),
+]
+
+SETS = {"fiction": BOOKS, "nonfiction": NONFICTION, "prescriptive": PRESCRIPTIVE}
 
 # Gutenberg's own header/footer, stripped so it is not counted as prose.
 PG_START = re.compile(r"\*\*\*\s*START OF (?:THE|THIS) PROJECT GUTENBERG.*?\*\*\*", re.S)
@@ -83,6 +111,26 @@ CHAPTER_HEADS = [
     # than "CHAPTER I", and Ruskin's Unto This Last is entirely built from them.
     re.compile(r"(?m)^\s*([IVXLCDM]{1,7})\.\s*$"),
     re.compile(r"(?m)^\s*(\d{1,2})\.\s*$"),
+]
+
+# Heading shapes for the PRESCRIPTIVE set only. Not shared: every attempt to fold these
+# into CHAPTER_HEADS changed how the fiction and nonfiction sets stage (a wrapped prose
+# initial - Darwin's "C. C. Sprengel has shown" - is flush-left roman + period + capital,
+# and one draft of this pattern split Wealth of Nations into 41 chapters and Sherlock
+# Holmes into 15). The sets are curated lists already; a curated heading shape per set is
+# the same kind of curation, and it leaves fiction and nonfiction byte-identical BY
+# CONSTRUCTION rather than by verification.
+#
+# "I. PSYCHOLOGY AND THE TEACHING ART" (James, Talks to Teachers): roman numeral, period,
+# same-line ALL-CAPS title. Four restraints, each one earned:
+#   - flush-left (no leading whitespace): TOC lines and legal sub-enumerations indent.
+#   - [ \t] not \s after the period: \s reaches across a newline and re-matches the
+#     bare-numeral shape in CHAPTER_HEADS.
+#   - ALL-CAPS title body: a wrapped sentence starting "C. C. Sprengel has shown" is
+#     mixed-case and cannot match; a talk heading is set in caps and cannot miss.
+#   - no digit requirement: the numerals are the shape the books actually use.
+PRESCRIPTIVE_HEADS = [
+    re.compile(r"(?m)^([IVXLCDM]{1,7})\.[ \t]+[A-Z][A-Z ,'-]+$"),
 ]
 
 MIN_CHAPTER_WORDS = 600
@@ -113,14 +161,14 @@ def strip_gutenberg(text):
     return text
 
 
-def split_chapters(text, minimum=MIN_CHAPTER_WORDS):
+def split_chapters(text, minimum=MIN_CHAPTER_WORDS, extra_heads=()):
     """Split on chapter headings, merging runs that are too short to be a chapter.
 
     A heading followed by a paragraph of two lines would otherwise become a 'chapter'
     and every cross-chapter statistic would be measuring that artefact.
     """
     marks = []
-    for rx in CHAPTER_HEADS:
+    for rx in tuple(CHAPTER_HEADS) + tuple(extra_heads):
         for m in rx.finditer(text):
             marks.append(m.start())
     if not marks:
@@ -170,7 +218,8 @@ def main():
             skipped.append(f"{stem}: fetch failed ({exc})")
             continue
         text = strip_gutenberg(raw)
-        chapters = split_chapters(text)
+        chapters = split_chapters(text, extra_heads=(
+            PRESCRIPTIVE_HEADS if which == "prescriptive" else ()))
         if not chapters:
             words = len(text.split())
             skipped.append(f"{stem}: no usable chapter headings "
