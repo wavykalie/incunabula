@@ -11,9 +11,11 @@
 # state file that would not parse (KF-004), a stray CR that hid from grep (KF-005),
 # and a book carrying its own stale copy of the instruments (a verdict nobody can
 # attribute - the copy now under test-books/incunabula-test/_archive/ failed U1 at
-# 30% where the frozen instrument fails at 22%).
-# A check that has never been seen to fail is not yet known to work — so every row here
-# names its own state, including the states where it could not look.
+# 30% where the frozen instrument fails at 22%).#   A check that has never been seen to fail is not yet known to work — so every row here
+#   names its own state, including the states where it could not look.
+#   Row 7 (record hygiene) is the self-prune in its check role: the record files'
+#   standing claims measured against the live program. The repair half is
+#   `python tools/prune-stale.py --apply`, also run by run-gates.sh after each run.
 #
 # USAGE
 #   bash tools/preflight.sh [project-root ...]
@@ -188,6 +190,32 @@ while IFS= read -r f; do
   fi
 done <<< "$hits"
 [ $found_inst -eq 0 ] && row "embedded instruments" PASS "no book carries a copy of the instruments"
+
+# 7. Record hygiene -----------------------------------------------------------
+# The self-prune's check half. The record files (ERRATA.md, GATE_FREEZE.md,
+# KNOWN_FINDINGS.md) carry standing claims about the program - counts, tallies,
+# statuses - and the program moves while the claims stand still. That drift is the
+# failure class the author hit: ERRATA.md opened with "the ten controls" against a
+# suite that runs nineteen. prune-stale.py measures the live program and reports the
+# disagreement; --apply repairs what is provable in place (old wording preserved in
+# maintenance/PRUNING_LOG.md) and reports the rest for a ruling. This row CHECKS;
+# it never writes. A dated entry is never edited by either mode.
+echo "7. record hygiene"
+if command -v python >/dev/null 2>&1; then
+  if [ -f "$ROOT/tools/prune-stale.py" ]; then
+    out=$(python "$ROOT/tools/prune-stale.py" --check 2>&1)
+    rc=$?
+    if [ $rc -eq 0 ]; then
+      row "prune-stale --check" PASS "records agree with the live program"
+    else
+      row "prune-stale --check" FAIL "stale record claim(s) - run: python tools/prune-stale.py --apply (old wording goes to maintenance/PRUNING_LOG.md; dated history is reported, never edited)"
+    fi
+  else
+    row "prune-stale --check" FAIL "tools/prune-stale.py not found - record drift would go unnoticed"
+  fi
+else
+  row "prune-stale --check" FAIL "python not found; the records cannot be checked against the program"
+fi
 
 echo
 if [ $fails -gt 0 ]; then

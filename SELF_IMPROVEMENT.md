@@ -101,6 +101,13 @@ observe -> propose -> falsify -> adopt -> attribute -> shadow -> (roll back)
    are appended to `COMMONPLACE.md` and marked `emergent`.
 3. Delete or rewrite history. `ERRATA.md` and `COMMONPLACE.md` are append-only; an entry
    that turns out wrong gets a `WRONG` line under it and the wrongness stays visible.
+   **Amended 2026-10-14, at author direction:** append-only governs *history* — dated
+   entries and recorded decisions — not standing claims about the current program. When
+   the live program contradicts a standing count or status, `tools/prune-stale.py`
+   (the self-prune) repairs it in place and preserves the old wording verbatim in
+   `maintenance/PRUNING_LOG.md`. A claim inside a dated entry is never edited; it is
+   reported for the author to rule on. The same amendment is in `ERRATA.md`'s header,
+   and it is the only carve-out this rule has.
 4. Promote while any verifier reads SKIPPED.
 5. Touch attribution records or the freeze manifest except through the recorded freeze
    procedure in `GATE_FREEZE.md`.
@@ -140,6 +147,7 @@ permission.
 | `USER_PREFERENCES.md` / `PREFERENCES.md` | declared taste | unchanged; unenforced and immutable |
 | `GATE_FREEZE.md` | attribution | unchanged; every move still recorded |
 | `tools/preflight.sh` | the stack's runner | **new** — tool and state, never prose |
+| `tools/prune-stale.py` | maintenance | **new** — the self-prune: keeps the record files true to the program. Standing claims corrected in place, old wording in `maintenance/PRUNING_LOG.md`; dated history reported, never edited; book-carried instrument copies quarantined under `_archive/`. Runs from `preflight.sh` (check) and `run-gates.sh` (apply after a run) |
 
 Mode is set at the top of this file (`improvement.mode`). `hand` is always available as a
 request: say so, and the loop only proposes.

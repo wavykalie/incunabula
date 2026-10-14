@@ -25,6 +25,12 @@
 #   (quarantined 2026-10-13) fails U1 at 30% while the frozen copy fails at 22% -
 #   and a result must be attributable to one known instrument.
 #
+#   One step runs after the gates and is not a gate: tools/prune-stale.py --apply,
+#   the self-prune. It keeps the record files' standing claims true to the program
+#   (old wording preserved in maintenance/PRUNING_LOG.md), quarantines book-carried
+#   instrument copies, and never edits dated history. Housekeeping - it cannot
+#   change the verdict. See its own docstring for the full contract.
+#
 # USAGE
 #   bash tools/run-gates.sh <book-root>
 #
@@ -213,6 +219,24 @@ echo "== length, progress, and pass evidence ========================="
 run_row "check-length.py" contract "$PROSE/check-length.py" "$BOOK"
 run_row "check-progress.py" contract "$ROOT/tools/check-progress.py" "$BOOK"
 run_row "check-pass-evidence.py" hygiene "$ROOT/tools/check-pass-evidence.py" "$BOOK"
+
+echo "== post-run self-prune (housekeeping; gates nothing) ==================="
+# The repair half of the self-prune. After the book has been measured, the RECORDS
+# are measured against the program that just ran: standing claims (counts, tallies,
+# statuses) that the live program contradicts are corrected in place, with the old
+# wording preserved verbatim in maintenance/PRUNING_LOG.md (maintenance-protocol §7).
+# Book-carried instrument copies are quarantined under _archive/, never deleted.
+# DATED HISTORY IS NEVER EDITED - a dated entry that disagrees with the program is
+# reported for the author to rule on. This is housekeeping around the run and cannot
+# change the verdict below; it is deliberately not a row in GATE_FREEZE.md, same
+# exemption class as preflight.sh.
+if [ -f "$ROOT/tools/prune-stale.py" ]; then
+  "$PY" "$ROOT/tools/prune-stale.py" --apply
+  echo
+else
+  echo "     prune-stale.py not found at tools/ - record drift is not repaired."
+  echo
+fi
 
 echo "================================================================="
 echo "run-gates summary"

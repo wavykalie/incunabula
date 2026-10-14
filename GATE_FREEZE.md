@@ -60,6 +60,7 @@ locked tools, and each entry underneath tells the story of one change.
 | Freeze 20 | 2026-10-07 | For declared nonfiction, the "filler phrase" row is reported instead of failed. |
 | Freeze 21 | 2026-10-08 | The name check learned the nonfiction case; a case-sensitivity blind spot in one style rule pinned rather than silently fixed; the freeze verifier stopped flagging history rows as if they were live. |
 | (2026-10-13) | | The manifest catches up with itself: seven frozen rows that Freeze 5 and Freeze 13 recorded inside the history sections moved into the manifest region, where the verifier can see them. No check changed and no hash moved. |
+| (2026-10-14) | | Record files caught up with the live program by `tools/prune-stale.py` (ERRATA.md; GATE_FREEZE.md) — self-prune, author direction 2026-10-14. No check changed and no hash moved; old wording in `maintenance/PRUNING_LOG.md`. |
 
 ## Manifest (FREEZE 4 - current)
 
@@ -98,8 +99,8 @@ hide again.
 Also frozen, because they change what the gates *see* rather than what they assert:
 
 - `tools/prose/calibration/CALIBRATION.md` — every measurement behind the numbers
-- `PRINTERS_COPY.md` — 25 rejected measures, 6 confirmed
-- `ERRATA.md` — 49 entries
+- `PRINTERS_COPY.md` — 30 rejected measures, 12 confirmed
+- `ERRATA.md` — 54 entries
 - `skills/` — the prose skills that generate the text under test
 
 ## Load-bearing thresholds at this freeze

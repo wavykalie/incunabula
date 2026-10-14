@@ -94,6 +94,13 @@ Pruning reduces what has to be in context. It does not erase history.
 - A new subdirectory under `_archive/` gets an entry in `_archive/README.md` in the same
   commit that creates it.
 - `maintenance/PRUNING_LOG.md` is append-only.
+- **Standing claims and history are different things** (amended 2026-10-14, author
+  direction). A dated entry is history: it records what was measured or decided on its
+  date and is never rewritten. A standing claim — a count, a status, a tally in prose
+  that describes the program *as it is now* — is kept true to the live program by
+  `tools/prune-stale.py`, which corrects it in place and preserves the old wording
+  verbatim in `maintenance/PRUNING_LOG.md`. When a dated entry disagrees with the live
+  program, the correct action is a report and a ruling, not an edit.
 - Anything referenced by the active phase, by a pending handoff, by an unresolved conflict,
   or by a user decision does not get archived.
 - Do not collapse facts that are distinct merely because they share a subject. In a series,

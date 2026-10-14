@@ -1,4 +1,4 @@
-the ten controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only) |# ERRATA
+# ERRATA
 
 The printer's errata sheet: corrections issued after the impression, and observations that
 have not yet become corrections.
@@ -7,6 +7,18 @@ have not yet become corrections.
 An entry that turned out to be wrong gets a `WRONG` line under it, and the wrongness stays
 visible. That is the point — a ledger with no recorded mistakes is a ledger being curated,
 and a curated ledger cannot be trusted with the job.
+
+**Amended 2026-10-14 — standing claims are repaired in place.** Append-only governs
+history: a dated entry records what was measured on its date, and is never rewritten.
+It does not make a claim immortal. Text outside the dated entries — a heading, a tally,
+a count in prose — describes the program **as it is now**, and the program moves. When
+the live program contradicts one of those standing claims,
+`tools/prune-stale.py` (the self-prune) corrects it in place and keeps the old wording
+verbatim in `maintenance/PRUNING_LOG.md`, in the maintenance-protocol §7 format. A
+claim inside a dated entry is never edited: it is reported with the number the program
+now has, for the author to rule on, because a record of what was true then is history
+and not drift. This is the one carve-out from append-only, author direction 2026-10-14,
+and it is exactly this wide.
 
 This file feeds `PRINTERS_COPY.md`. It is the destination that `check-uniformity.py` has
 needed since it was written: *"Reproducing the same exemption across books is itself the

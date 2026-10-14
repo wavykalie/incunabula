@@ -20,3 +20,13 @@ Format: `date — target — action — replacement — reason — authority`
 
 - **2026-10-13 — `tools/check-drift.py`, `tools/check-uniformity.py`, `tools/deslop-check.sh`, `tools/validate-controls.sh`, `tools/calibration/extract.py`, `tools/calibration/measure.py` — QUARANTINED to `_archive/tools/` (relative paths kept; nothing deleted) — replaced by the frozen instruments at `tools/prose/` —** These are copies of the gate toolchain that have gone stale: `tools/check-uniformity.py` fails U1 at 30% where the frozen copy fails at 22%, so any verdict from it is unattributable to one known instrument. `tools/preflight.sh` row 6 flags book-carried instrument copies and names quarantine as the fix; the author directed it ("Quarantine the stale gate copies under test-books/incunabula-test/tools/ so preflight goes green", 2026-10-13). The canonical archived copy at `_archive/validation-series-meta/tools/` (see the 2026-09-25 entry) is untouched. — authority: author direction
 - **2026-10-13 — `tools/build-epub.py`, `tools/build-omnibus-epub.py`, `tools/check-docs.py`, `tools/check-stale-status.sh`, `tools/check-structure-drift.sh`, `tools/run-checks.sh`, `tools/calibration/` data — KEPT in place — no replacement —** Not copies of anything in `tools/` or `tools/prose/`: this book's own apparatus, outside the stale-copy rule. The archive does not take what it was not asked for. Recorded because restraint is an entry. — authority: maintenance protocol
+## 001 — 2026-10-14 — cache: test-books/incunabula-test/tools/__pycache__
+
+- **date:** 2026-10-14
+- **path:** test-books/incunabula-test/tools/__pycache__
+- **action:** deleted (derived, regenerable) (cache)
+- **archive path:** none — the wording is preserved below, verbatim
+- **old wording:** __pycache__
+- **replacement:** none — removed
+- **reason:** derived bytecode cache left by a run — regenerable, holds no source information; deletion logged per the pruning log rule
+- **authority:** author direction 2026-10-14 — the self-prune corrects standing claims the live program contradicts, in place, with the old wording preserved here (ERRATA.md header amendment; SELF_IMPROVEMENT.md §6.3)
