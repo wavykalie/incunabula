@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Cascadia Code";
+        src: local("Cascadia Code"), local("Cascadia Mono");
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px; height: 1080px; overflow: hidden;
+        background: #0b0e14;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+      .scene { position: absolute; inset: 0; }
+      .center { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+      /* ---- shared type ---- */
+      .kicker {
+        color: #8b93a3; font-size: 30px; letter-spacing: 0.35em;
+        text-transform: uppercase; font-weight: 600;
+      }
+      .h1 { color: #f2f4f8; font-size: 104px; font-weight: 700; letter-spacing: -0.02em; }
+      .h2 { color: #f2f4f8; font-size: 62px; font-weight: 700; letter-spacing: -0.01em; }
+      .sub { color: #a9b2c2; font-size: 38px; font-weight: 400; }
+      .amber { color: #e8b04b; }
+      .mono { font-family: "Cascadia Code", Consolas, monospace; }
+
+      /* ---- scene 2: the prompt ---- */
+      .prompt-card {
+        background: #131a26; border: 2px solid #26324a; border-radius: 18px;
+        padding: 44px 64px; color: #eef1f6; font-size: 52px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      }
+      .prompt-caret {
+        display: inline-block; width: 18px; height: 52px;
+        background: #e8b04b; vertical-align: middle; margin-left: 8px;
+      }
+
+      /* ---- scene 3: the funnel ---- */
+      .funnel-wrap { position: absolute; inset: 0; }
+      .stage {
+        position: absolute; left: 340px; width: 1240px; height: 150px;
+        background: #131a26; border: 2px solid #26324a; border-radius: 16px;
+        display: flex; align-items: center; padding: 0 40px; gap: 36px;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.4);
+      }
+      .stage-num {
+        min-width: 92px; height: 92px; border-radius: 50%;
+        background: #1d2739; border: 3px solid #e8b04b; color: #e8b04b;
+        font-size: 40px; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .stage-text { width: 620px; flex-shrink: 0; }
+      .stage-name { color: #f2f4f8; font-size: 40px; font-weight: 700; }
+      .stage-detail { color: #9aa4b5; font-size: 24px; margin-top: 6px; }
+      .arrow {
+        position: absolute; left: 950px; width: 0; height: 0;
+        border-left: 22px solid transparent; border-right: 22px solid transparent;
+        border-top: 26px solid #3a4a68;
+      }
+      .cp {
+        position: absolute; right: 90px; background: #e8b04b; color: #14181f;
+        font-size: 22px; font-weight: 700; padding: 8px 20px; border-radius: 999px;
+        white-space: nowrap;
+      }
+      .pulse {
+        position: absolute; left: 932px; top: 130px; width: 56px; height: 56px; border-radius: 50%;
+        background: radial-gradient(circle, #ffd97a 0%, #e8b04b 60%, rgba(232,176,75,0) 72%);
+        box-shadow: 0 0 40px 14px rgba(232,176,75,0.55);
+      }
+
+      /* ---- scene 4: the chapter loop ---- */
+      .chip {
+        position: absolute; height: 110px; width: 216px; border-radius: 14px;
+        background: #131a26; border: 2px solid #26324a;
+        display: flex; align-items: center; justify-content: center;
+        color: #dfe5ee; font-size: 30px; font-weight: 600; text-align: center;
+      }
+      .chip-arrow {
+        position: absolute; width: 0; height: 0;
+        border-top: 16px solid transparent; border-bottom: 16px solid transparent;
+        border-left: 22px solid #3a4a68;
+      }
+      .highlight {
+        position: absolute; height: 130px; width: 236px; border-radius: 18px;
+        border: 4px solid #e8b04b; box-shadow: 0 0 34px rgba(232,176,75,0.5);
+      }
+      .gate-card {
+        position: absolute; left: 460px; top: 700px; width: 1000px; height: 170px;
+        background: #10182a; border: 3px solid #2c3c5c; border-radius: 18px;
+        display: flex; align-items: center; justify-content: center; gap: 40px;
+      }
+      .verdict {
+        font-size: 52px; font-weight: 800; letter-spacing: 0.06em;
+        padding: 12px 36px; border-radius: 12px;
+      }
+      .verdict.clear { background: #123624; color: #4ade80; border: 2px solid #2f7a4e; }
+      .verdict.fail  { background: #3a1420; color: #f87171; border: 2px solid #8a2f42; }
+      .gate-note { color: #9aa4b5; font-size: 30px; }
+
+      /* ---- scene 5: output ---- */
+      .out-card {
+        width: 560px; height: 560px; border-radius: 20px; padding: 48px;
+        background: #131a26; border: 2px solid #26324a;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      }
+      .out-title { color: #e8b04b; font-size: 34px; font-weight: 700; margin-bottom: 28px; }
+      .out-line { color: #c3cbd8; font-size: 27px; margin: 14px 0; }
+      .book {
+        width: 380px; height: 520px; border-radius: 8px 18px 18px 8px;
+        background: linear-gradient(135deg, #2a1f14 0%, #4a3218 55%, #2a1f14 100%);
+        border: 2px solid #6b4a22;
+        box-shadow: 24px 30px 70px rgba(0,0,0,0.6);
+        display: flex; flex-direction: column; justify-content: center; padding: 50px;
+      }
+      .book-title { color: #f5e7c8; font-size: 44px; font-weight: 700; }
+      .book-sub { color: #cfae74; font-size: 26px; margin-top: 18px; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="70.8"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- narration track (hyperframes tts, voice bm_george) -->
+      <audio class="clip" id="vo1" src="vo/scene1.wav" data-start="0.4"  data-duration="5.06"  data-track-index="1"></audio>
+      <audio class="clip" id="vo2" src="vo/scene2.wav" data-start="6.2"  data-duration="5.55"  data-track-index="1"></audio>
+      <audio class="clip" id="vo3" src="vo/scene3.wav" data-start="12.5" data-duration="25.11" data-track-index="1"></audio>
+      <audio class="clip" id="vo4" src="vo/scene4.wav" data-start="38.4" data-duration="19.18" data-track-index="1"></audio>
+      <audio class="clip" id="vo5" src="vo/scene5.wav" data-start="58.3" data-duration="11.99" data-track-index="1"></audio>
+
+      <!-- ============ SCENE 1 — title (0–5.8) ============ -->
+      <div class="scene center clip" id="s1" data-start="0" data-duration="5.8" data-track-index="0">
+        <div class="kicker" id="s1-kick">a book-production pipeline</div>
+        <div class="h1" id="s1-title" style="margin-top: 28px;">INCUNABULA</div>
+        <div class="sub" id="s1-sub" style="margin-top: 30px;">one prompt <span class="amber">→</span> one book</div>
+      </div>
+
+      <!-- ============ SCENE 2 — the single prompt (5.8–12.1) ============ -->
+      <div class="scene center clip" id="s2" data-start="5.8" data-duration="6.3" data-track-index="0">
+        <div class="kicker" id="s2-kick">it starts with one line</div>
+        <div class="prompt-card" id="s2-prompt" style="margin-top: 46px;">
+          <span class="mono">"a literary novel about a physicist losing her memory"</span><span class="prompt-caret" id="s2-caret"></span>
+        </div>
+        <div class="sub" id="s2-sub" style="margin-top: 42px;">no plot. no characters. no outline. one line.</div>
+      </div>
+
+      <!-- ============ SCENE 3 — the funnel (12.1–38.0) ============ -->
+      <div class="scene funnel-wrap clip" id="s3" data-start="12.1" data-duration="25.9" data-track-index="0">
+        <div class="kicker" id="s3-kick" style="position: absolute; top: 40px; width: 1920px; text-align: center;">the funnel</div>
+
+        <div class="stage" id="st1" style="top: 110px;">
+          <div class="stage-num">0</div>
+          <div class="stage-text"><div class="stage-name">Entrance</div>
+          <div class="stage-detail">incunabula-auto "&lt;idea&gt;" — preflight must be all-PASS first</div></div>
+        </div>
+        <div class="arrow" id="ar1" style="top: 272px;"></div>
+
+        <div class="stage" id="st2" style="top: 310px;">
+          <div class="stage-num">1</div>
+          <div class="stage-text"><div class="stage-name">The paperwork</div>
+          <div class="stage-detail">state · canon ledger · voice contracts · logs — created before any writing</div></div>
+        </div>
+        <div class="arrow" id="ar2" style="top: 472px;"></div>
+
+        <div class="stage" id="st3" style="top: 510px;">
+          <div class="stage-num">2</div>
+          <div class="stage-text"><div class="stage-name">Planning</div>
+          <div class="stage-detail">research → readership → foundation → voice → fact inventory → collation</div></div>
+          <div class="cp" id="cp1">★ CHECKPOINT 1 · approved</div>
+        </div>
+        <div class="arrow" id="ar3" style="top: 672px;"></div>
+
+        <div class="stage" id="st4" style="top: 710px;">
+          <div class="stage-num">3</div>
+          <div class="stage-text"><div class="stage-name">The chapter loop</div>
+          <div class="stage-detail">write · polish · disrupt · evaluate · fix · revise — gated every chapter</div></div>
+          <div class="cp" id="cp2">★ CHECKPOINT 2 · approved</div>
+        </div>
+        <div class="arrow" id="ar4" style="top: 872px;"></div>
+
+        <div class="stage" id="st5" style="top: 910px;">
+          <div class="stage-num">4</div>
+          <div class="stage-text"><div class="stage-name">Delivery</div>
+          <div class="stage-detail">continuity audit · final score · editorial package · formatting</div></div>
+          <div class="cp" id="cp3">★ CHECKPOINT 3 · delivered</div>
+        </div>
+
+        <div class="pulse" id="pulse"></div>
+      </div>
+
+      <!-- ============ SCENE 4 — one chapter, up close (38.0–57.9) ============ -->
+      <div class="scene clip" id="s4" data-start="38.0" data-duration="19.9" data-track-index="0">
+        <div class="kicker" id="s4-kick" style="position: absolute; top: 46px; width: 1920px; text-align: center;">inside one chapter</div>
+
+        <div class="chip" id="c1" style="left: 130px;  top: 320px;">write</div>
+        <div class="chip-arrow" id="ca1" style="left: 358px; top: 358px;"></div>
+        <div class="chip" id="c2" style="left: 392px;  top: 320px;">dialogue</div>
+        <div class="chip-arrow" id="ca2" style="left: 620px; top: 358px;"></div>
+        <div class="chip" id="c3" style="left: 654px;  top: 320px;">hooks</div>
+        <div class="chip-arrow" id="ca3" style="left: 882px; top: 358px;"></div>
+        <div class="chip" id="c4" style="left: 916px;  top: 320px;">disrupt</div>
+        <div class="chip-arrow" id="ca4" style="left: 1144px; top: 358px;"></div>
+        <div class="chip" id="c5" style="left: 1178px; top: 320px;">cleanup</div>
+        <div class="chip-arrow" id="ca5" style="left: 1406px; top: 358px;"></div>
+        <div class="chip" id="c6" style="left: 1440px; top: 320px;">evaluate</div>
+        <div class="chip-arrow" id="ca6" style="left: 1668px; top: 358px;"></div>
+        <div class="chip" id="c7" style="left: 1702px; top: 320px;">revise</div>
+
+        <div class="highlight" id="hl" style="left: 120px; top: 310px;"></div>
+
+        <div class="sub" id="s4-note" style="position: absolute; top: 500px; width: 1920px; text-align: center;">
+          every step leaves a file as proof — a claim without a file is a failure
+        </div>
+
+        <div class="gate-card" id="gate">
+          <div class="h2" style="font-size: 40px;">run-gates.sh</div>
+          <div class="verdict clear" id="v-clear">CLEAR ✓</div>
+          <div class="verdict fail" id="v-fail">FAIL → fix &amp; loop back</div>
+          <div class="gate-note" id="gate-note">17 automatic checks · FAIL or NOT CLEAR blocks the phase</div>
+        </div>
+      </div>
+
+      <!-- ============ SCENE 5 — what comes out (57.9–70.8) ============ -->
+      <div class="scene center clip" id="s5" data-start="57.9" data-duration="12.9" data-track-index="0">
+        <div class="kicker" id="s5-kick">what comes out</div>
+        <div style="display: flex; gap: 90px; margin-top: 54px; align-items: center;">
+          <div class="book" id="s5-book">
+            <div class="book-title">the manuscript</div>
+            <div class="book-sub">a novel a reader cannot put down</div>
+          </div>
+          <div class="out-card" id="s5-record">
+            <div class="out-title">and the whole record</div>
+            <div class="out-line">STATE.yaml — where the run stopped</div>
+            <div class="out-line">CANON_LEDGER — every fact, with its source</div>
+            <div class="out-line">NARRATIVE_LEDGER — what the book owes</div>
+            <div class="out-line">evaluations/ — every score, with citations</div>
+            <div class="out-line">maintenance/ — every decision, dated</div>
+          </div>
+        </div>
+        <div class="h2" id="s5-outro" style="margin-top: 60px;">files prove phases. <span class="amber">not chat.</span></div>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      /* ---------- scene 1: title (starts 0, dur 5.8) ---------- */
+      const s1 = gsap.timeline();
+      s1.fromTo("#s1-kick",  { opacity: 0, y: -18 }, { opacity: 1, y: 0, duration: 0.7 }, 0.2);
+      s1.fromTo("#s1-title", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.9 }, 0.5);
+      s1.fromTo("#s1-sub",   { opacity: 0, y: 22 }, { opacity: 1, y: 0, duration: 0.8 }, 1.2);
+      s1.to("#s1", { opacity: 0, duration: 0.5 }, 5.2);
+      tl.add(s1, 0);
+
+      /* ---------- scene 2: the prompt (starts 5.8, dur 6.3) ---------- */
+      const s2 = gsap.timeline();
+      s2.fromTo("#s2-kick",   { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.3);
+      s2.fromTo("#s2-prompt", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8 }, 0.7);
+      s2.to("#s2-caret", { opacity: 0, duration: 0.35, repeat: 5, yoyo: true }, 0.8);
+      s2.fromTo("#s2-sub",    { opacity: 0 }, { opacity: 1, duration: 0.7 }, 1.9);
+      s2.to("#s2", { opacity: 0, duration: 0.5 }, 5.8);
+      tl.add(s2, 5.8);
+
+      /* ---------- scene 3: the funnel (starts 12.1, dur 25.9) ---------- */
+      const s3 = gsap.timeline();
+      s3.fromTo("#s3-kick", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.3);
+
+      const stageIn = (sel, at) =>
+        s3.fromTo(sel, { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.7 }, at);
+      const arrowIn = (sel, at) =>
+        s3.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.4 }, at);
+
+      stageIn("#st1", 1.0);  arrowIn("#ar1", 1.7);
+      stageIn("#st2", 2.8);  arrowIn("#ar2", 3.5);
+      stageIn("#st3", 4.6);  arrowIn("#ar3", 5.3);
+      stageIn("#st4", 6.4);  arrowIn("#ar4", 7.1);
+      stageIn("#st5", 8.2);
+
+      /* the pulse travels the whole funnel (transform y, not top — frame-safe) */
+      s3.fromTo("#pulse", { y: 0, opacity: 0 }, { opacity: 1, duration: 0.3 }, 10.5);
+      s3.to("#pulse", { y: 800, duration: 4.0, ease: "none" }, 10.8);
+      s3.to("#pulse", { opacity: 0, duration: 0.4 }, 14.8);
+
+      /* checkpoints pop as the pulse passes them */
+      s3.fromTo("#cp1", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5 }, 12.4);
+      s3.fromTo("#cp2", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5 }, 13.4);
+      s3.fromTo("#cp3", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5 }, 14.4);
+
+      /* loop-back: a failing chapter loops from stage 3 back up to stage 2 */
+      s3.fromTo("#s3-kick",
+        { color: "#8b93a3" },
+        { color: "#e8b04b", duration: 0.5, repeat: 1, yoyo: true }, 17.5);
+      s3.to("#st4", { boxShadow: "0 0 0 4px #e8b04b, 0 18px 50px rgba(0,0,0,0.4)", duration: 0.4 }, 17.5);
+      s3.to("#st4", { boxShadow: "0 18px 50px rgba(0,0,0,0.4)", duration: 0.4 }, 18.7);
+      s3.to("#st3", { boxShadow: "0 0 0 4px #e8b04b, 0 18px 50px rgba(0,0,0,0.4)", duration: 0.4 }, 18.3);
+      s3.to("#st3", { boxShadow: "0 18px 50px rgba(0,0,0,0.4)", duration: 0.4 }, 19.5);
+      s3.to("#s3", { opacity: 0, duration: 0.6 }, 25.3);
+      tl.add(s3, 12.1);
+
+      /* ---------- scene 4: the chapter loop (starts 38.0, dur 19.9) ---------- */
+      const s4 = gsap.timeline();
+      s4.fromTo("#s4-kick", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.3);
+
+      const chipIn = (sel, at) =>
+        s4.fromTo(sel, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.45 }, at);
+      chipIn("#c1", 0.9);  chipIn("#ca1", 1.1);
+      chipIn("#c2", 1.3);  chipIn("#ca2", 1.5);
+      chipIn("#c3", 1.7);  chipIn("#ca3", 1.9);
+      chipIn("#c4", 2.1);  chipIn("#ca4", 2.3);
+      chipIn("#c5", 2.5);  chipIn("#ca5", 2.7);
+      chipIn("#c6", 2.9);  chipIn("#ca6", 3.1);
+      chipIn("#c7", 3.3);
+
+      s4.fromTo("#s4-note", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 3.8);
+
+      /* the highlight walks the chain (transform x, not left — frame-safe) */
+      s4.fromTo("#hl", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 4.5);
+      const hop = (dx, at) => s4.to("#hl", { x: dx, duration: 0.35 }, at);
+      hop(262, 5.2);  hop(524, 6.0);  hop(786, 6.8);
+      hop(1048, 7.6); hop(1310, 8.4); hop(1572, 9.2);
+      s4.to("#hl", { opacity: 0, duration: 0.3 }, 10.2);
+
+      /* the gate verdicts */
+      s4.fromTo("#gate", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6 }, 11.0);
+      s4.fromTo("#v-clear", { scale: 0.85 }, { scale: 1, duration: 0.5, ease: "back.out(2)" }, 11.6);
+      s4.fromTo("#gate-note", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 12.0);
+      s4.to("#v-clear", { opacity: 0.35, duration: 0.4 }, 13.4);
+      s4.fromTo("#v-fail", { scale: 0.85, opacity: 0.35 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2)" }, 13.8);
+      s4.to("#s4", { opacity: 0, duration: 0.6 }, 19.3);
+      tl.add(s4, 38.0);
+
+      /* ---------- scene 5: output (starts 57.9, dur 12.9) ---------- */
+      const s5 = gsap.timeline();
+      s5.fromTo("#s5-kick",   { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.3);
+      s5.fromTo("#s5-book",   { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 0.8 }, 0.8);
+      s5.fromTo("#s5-record", { opacity: 0, x: 50 },  { opacity: 1, x: 0, duration: 0.8 }, 1.1);
+      s5.fromTo("#s5-outro",  { opacity: 0, y: 24 },  { opacity: 1, y: 0, duration: 0.8 }, 10.6);
+      s5.to("#s5", { opacity: 0, duration: 0.5 }, 12.4);
+      tl.add(s5, 57.9);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
