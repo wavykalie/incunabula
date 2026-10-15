@@ -125,37 +125,13 @@ The greatest risk in machine-assisted prose is that it reads as machine-assisted
 critic smells it, the book is finished regardless of structure. Apply this while writing,
 not after.
 
-The recurring tells, each with the fix:
+The tells, their fixes, and the per-chapter checklist have one home: the `deslopify`
+catalog (`skills/deslopify/references/style_guide.md`). **Run the anti-AI pass per that
+catalog.** This section deliberately restates nothing — one catalog, one checklist, with
+`tools/prose/deslop-check.sh` as the mechanical enforcement.
 
-1. **Forced symmetry** — *not X, but Y* constructions and balanced antitheses. A person
-   does not speak in antithesis on every page. Rewrite most of them into plain statements.
-2. **Empty poetic vocabulary** — tapestry, mosaic, alchemy, catalyst, intertwining,
-   permeating, resonating, transcending, navigating one's feelings, journey-as-metaphor,
-   delicate, profound-as-feeling. If it sounds like an inspirational caption, replace it
-   with a word someone would say out loud.
-3. **Automatic rule of three** — everything listed in threes. Vary: two sometimes, four
-   sometimes, one and done.
-4. **Em dash as a crutch** — the dramatic aside piled between dashes. Cap them tightly per
-   page; where one is decorative, use a period, a comma, or restructure.
-5. **Metaphors that decorate instead of meaning.** The test: remove the image and write the
-   literal. If nothing is lost, the image was fat.
-6. **Dramatic sentences opening on *And*.** If the sentence only works with the *And*, it
-   is weak. Cut it.
-7. **Pseudo-profound closings** — the short, wise-sounding last line of a section. Replace
-   with something specific: not *maybe it was too late* but the unopened envelope, three
-   months expired.
-8. **Excessive parallelism** — anaphora works once per chapter, at the right moment. More
-   than that is a tic.
-9. **Over-smooth transitions** — every paragraph starting by connecting to the last. Cut
-   thirty per cent of the transitions; hard cuts are allowed and good.
-10. **Named emotions** — *a wave of sadness* instead of a man watching his coffee go cold.
-    Delete the label and put an action, a detail, or an image in its place.
-
-**After every chapter, check:** scan for the forbidden vocabulary; count the em dashes and
-trim past the cap; check the proportion of three-item lists; read each section's final
-sentence for captionitis; read the paragraph openings in sequence and break the smooth
-ones; and finish with the honest question — would a sceptical reader say a machine wrote
-this? Anything short of a confident no goes back.
+The standing question, asked after every chapter: would a sceptical reader say a machine
+wrote this? Anything short of a confident no goes back.
 
 ---
 

@@ -19,7 +19,7 @@ viable*, *ready for agents and editors*, *market-ready*, or *launch preparation*
 - `agent-panel` — simulated agent, editor, and bookseller review.
 - `corrector` — surgical revision by mode.
 - `copy-editing` — final language cleanup.
-- `humanizer` — removes synthetic phrasing and restores a lived voice.
+- `deslopify` — removes synthetic phrasing and restores a lived voice (the anti-AI catalog and checklist).
 - `colophon` — logline, back-cover copy, synopsis, query, cover brief.
 - `launch-strategy` and `content-strategy` — go-to-market and audience building.
 
@@ -37,7 +37,7 @@ delivery, and launch material.
 4. Run `reader-swarm` when the book needs many readers, niche-risk scouting, public reaction, or package-framing tests.
 5. Run the Devil's Audit and the Incunabula Score.
 6. Send only specific findings to `corrector`, with an explicit mode.
-7. Run `humanizer` and `copy-editing` once structure is stable.
+7. Run `deslopify` and `copy-editing` once structure is stable.
 8. Re-run the panels after revision.
 9. Run `colophon` only once the product gates pass.
 10. Run the launch and content skills for public-launch readiness.

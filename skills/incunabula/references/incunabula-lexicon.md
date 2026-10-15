@@ -90,5 +90,5 @@ Not every term needs a print-shop name. These stay ordinary: *oscillation*, *emo
 *engagement type*, *commercial pacing*, *scene*, *chapter*, *beat*, *voice under pressure*,
 *character chaos*, *anti-AI scan*.
 
-Utility skills that are not part of this system keep their own names: `humanizer`,
-`copy-editing`, `good-idea`, `deslopify`.
+Utility skills that are not part of this system keep their own names: `copy-editing`,
+`good-idea`, `deslopify`.

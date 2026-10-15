@@ -193,8 +193,9 @@ job.
 | Agent panel | `agent-panel` |
 | Re-derivation under changed rules | `rewrite` |
 
-Utility skills that are not part of book production keep their own names: `humanizer`,
-`copy-editing`, `deslopify`, `good-idea`. The directory holds 29 skills in total.
+Utility skills that are not part of book production keep their own names: `copy-editing`,
+`deslopify`, `good-idea`. The `skills/` directory holds 28 skills; retired skills are kept
+under `skills/_archive/` with a `MOVED.md` shim naming their successor.
 
 ## The gates
 

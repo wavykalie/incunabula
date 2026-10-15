@@ -171,5 +171,5 @@ pressure*, *character chaos*, *anti-AI scan*, *narrative debt*, *beat arc*, *sce
 function*, *setup and payoff*. The narrative layer (`NARRATIVE_LEDGER.yaml`, rows N1–N4)
 speaks plainly.
 
-Utility skills that are not part of this system keep their own names: `humanizer`,
-`copy-editing`, `good-idea`, `deslopify`.
+Utility skills that are not part of this system keep their own names: `copy-editing`,
+`good-idea`, `deslopify`.
