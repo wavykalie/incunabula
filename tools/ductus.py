@@ -262,7 +262,7 @@ def cmd_new(root, args):
     register = args[args.index("--register") + 1] if "--register" in args else None
     _press, ddir, err = press_config(root)
     if err == "no-yaml":
-        print("ductus: no YAML parser here — press.yaml was not read (and not passed).")
+        print(f"ductus: no YAML parser here — {CONFIG} was not read (and not passed).")
         return 3
     d = os.path.join(root, ddir, slug)
     if os.path.exists(d):

@@ -72,7 +72,7 @@ during the run — you do not have to invoke it separately, and the full engine 
 run phase one until those contracts exist.
 
 **Dependencies: Python 3 and bash. Nothing else.** No build step, no packages to fetch.
-The skills are plain Markdown and YAML; the checks use only the standard library. Three
+The skills are plain Markdown and YAML; the checks use only the standard library. Four
 qualifications, each of which the tools report rather than hide:
 
 - **`pyyaml` is optional, and its absence is a stated blind spot.** Without it, the
@@ -87,6 +87,11 @@ qualifications, each of which the tools report rather than hide:
   page, an em dash goes out as a single 0x97 byte, and a terminal renders it as junk.
   The checks still measure the same things either way — this is about reading their
   output, not about what they conclude.
+- **A book can bring its own apparatus, with its own dependencies.**
+  `test-books/kagiroi-drift/tools/render_kdp_formats.py` imports `docx` to render that
+  book's DOCX, and it is the only third-party import anywhere in the tree. Such scripts
+  live inside one book, nothing in `skills/` or `tools/` imports them, and the engine
+  never calls them — they are fixtures a book shipped with, not part of the system.
 
 ```
 skills/incunabula/            the full 17-phase engine (SKILL.md + the lexicon)
