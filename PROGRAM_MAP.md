@@ -168,6 +168,20 @@ corpus stands behind them yet.
 - Anti-inflation rules apply throughout: every score cites a passage; self-scores are
   assumed inflated by 0.5–1.0.
 
+### The author's voice (who is writing, as distinct from what the book says)
+
+| Piece | What it is |
+|---|---|
+| `ductus.yaml` | the imprint and where the voices live — no roster; a voice exists because a creator made one |
+| `ductus/<name>/ductus.md` | the voice contract an agent pilots: identity, register, refusals, how it breaks under pressure, benchmark lines |
+| `ductus/<name>/COMMONPLACE.md` | that voice's own taste ledger, with the root ledger's ceremony |
+| `ductus/PROMOTIONS.md` | the only channel between voices — a dated, deliberate merge; nothing else crosses |
+| `tools/ductus.py` | `new` · `check` · `contract` · `cross` · `list` — and `contract` is what a phase calls |
+
+Isolation here is the same rule the channels obey (`SELF_IMPROVEMENT.md` §2): a preference
+earned by one voice is not evidence for another, `cross` reports an entry two ledgers both
+hold, and no voice may move a threshold.
+
 ### The record layer (what survives between sessions)
 
 ```
@@ -203,6 +217,12 @@ person still decides.
 
 ## 5. One chapter, up close (the loop everyone asks about)
 
+0. **Resolve the voice** — `python tools/ductus.py contract <book-root>`. A book may be
+   drafted *under a ductus*: one authorial voice, whose contract the writer reads before
+   any line and whose refusals are binding (`ductus/<name>/ductus.md`). `UNASSIGNED` means
+   no voice is declared and the root `COMMONPLACE.md` is the only taste ledger in play;
+   `REFUSED` means the assignment names a voice nobody authored, and the phase stops there
+   rather than drafting against a skeleton.
 1. **Write** (`setting`) — given the outline entry, the voice bank, the previous chapter,
    and a structural approach that must differ from the previous chapter's.
 2. **Dialogue pass** (`register`) — blind-sort every speaking character; fix voice bleeding.
@@ -231,7 +251,8 @@ person still decides.
 | `skills/incunabula/` | the orchestrator: phases, gates, dispatch, scoring |
 | `skills/incunabula-codex/` | the contract layer: intake schema, canon schema, phase prompts, compact pipeline |
 | `tools/prose/` | the checkers (frozen instrument — fingerprinted in `GATE_FREEZE.md`) |
-| `tools/` | the harness: `run-gates.sh`, `preflight.sh`, `init-book.py`, `roll-brief.py`, `prune-stale.py`, … |
+| `tools/` | the harness: `run-gates.sh`, `preflight.sh`, `init-book.py`, `roll-brief.py`, `prune-stale.py`, `ductus.py`, … |
+| `ductus.yaml`, `ductus/` | the author voices: one contract an agent pilots plus one developing taste ledger per voice, created by `tools/ductus.py new` |
 | `tools/prose/calibration/` | how the thresholds were measured; corpus supplied locally, never committed |
 | `demo-books/` | three complete sample books to run the checks against |
 | `test-books/` | development projects and fixtures |

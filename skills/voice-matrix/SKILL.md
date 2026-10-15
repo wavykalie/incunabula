@@ -21,6 +21,33 @@ file and any existing samples in a voice bank.
 If `foundation.md` is missing, stop. Voice comes out of character, and characters live in
 the foundation. There is nothing to formalise yet.
 
+### The ductus, when the book has one
+
+Resolve it first: `python tools/ductus.py contract <book-root>`. If it prints a contract,
+that document is the **author** this book is written as — the book-level register — and
+Section 1 below realises it rather than inventing a register beside it. Read its Register,
+Refusals and Breaking sections before writing a word of Section 1, and take its benchmark
+lines as the tuning fork for the narrative voice here.
+
+Three states, and the middle one is the trap:
+
+- **resolved** — Section 1 is derived from the contract, and this document's job is to
+  make the author's register specific to these characters and this book. Where your
+  Section 1 and the contract disagree about the book-level register, the contract wins.
+  A deviation you judge necessary is recorded as a decision in that voice's
+  `COMMONPLACE.md` (see `ductus/<slug>/`), with the reason — not applied silently, and
+  not filed as drift for a later session to smooth over. The character cards remain
+  entirely yours: the contract says how the prose sounds, not who these people are.
+- **UNASSIGNED** — no voice is declared for this book. The register is derived from the
+  foundation and the market as it always was, which is how the whole catalogue was
+  written. Record the UNASSIGNED line in the session ledger so nothing implies otherwise.
+- **REFUSED** — the assignment names a voice whose contract is unauthored. Stop and report;
+  do not draft a register and let the assignment stand as if it had governed.
+
+The contract's **Refusals** are the one part that is binding without argument: if the
+voice will not write that way, a brilliant sentence in the wrong register is still wrong
+for this book.
+
 ---
 
 ## The document
@@ -76,6 +103,8 @@ Add two to four specific to this book.
 
 **Benchmark sentences.** Three sentences that demonstrate the narrative voice at its most
 characteristic. Not from the manuscript — targets the writer re-reads as a tuning fork.
+Where a ductus is in force, this is where its benchmark lines land, and this section must
+not contradict them.
 
 ### Section 2 — Voice cards
 
@@ -215,6 +244,9 @@ requirements and how it was resolved, and a note for the writer before chapter o
 
 ## Rules
 
+0. Where the book is assigned to a ductus, the contract is upstream on the book-level
+   register. Its benchmark lines are the target the narrative voice is tuned against, and
+   any deliberate departure is a recorded decision in that voice's ledger.
 1. The foundation is upstream. Deepen it; never contradict it.
 2. Voice comes from character — background, wound, education, region, age, work — never from the writer's preference.
 3. Specific beats excellent. A specific mediocre voice is worth more than a generic good one.

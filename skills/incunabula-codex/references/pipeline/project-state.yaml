@@ -51,6 +51,36 @@ project:
 #   market signal instead. Full reasoning: tools/prose/calibration/CALIBRATION.md,
 #   "U4 is advisory by default".
 
+# voice - THE AUTHOR THIS BOOK IS DRAFTED AS, if it has one.
+#
+# A book may be assigned to a *ductus* - an authorial voice a creator made - with the
+# `ductus:` key in BOOKS.yaml. That key is the assignment; this block records what the
+# assignment RESOLVED TO at the time, which is what makes a result attributable to a
+# contract rather than to a convention. Resolve it with:
+#
+#     python tools/ductus.py contract <book-root>
+#
+#   exit 0, resolved   writes the slug and a sha256 for the contract and the ledger
+#   exit 0, UNASSIGNED no assignment: drafted under the root COMMONPLACE.md alone, which
+#                      is where the whole catalogue was drafted. Record it as a state,
+#                      not as a blank - a run nobody can read back is a run nobody can
+#                      attribute.
+#   exit 1, REFUSED    assigned to a voice whose contract is still a skeleton, or which
+#                      has no ledger. The phase stops; it does not fall back silently.
+#
+# A contract that resolves is read before drafting, editing, auditing, scoring and
+# packaging, and it governs the BOOK-LEVEL register. Its own taste ledger lives at
+# ductus/<slug>/COMMONPLACE.md, and decisions taken under it are recorded there rather
+# than in the root ledger.
+voice:
+  state: "unresolved"        # resolved | unassigned | refused | unresolved
+  ductus: ""                 # the slug, or "" when the book has no assignment
+  contract_path: ""          # ductus/<slug>/ductus.md
+  contract_digest: ""        # sha256 of that file, first 12 hex
+  ledger_path: ""            # ductus/<slug>/COMMONPLACE.md
+  ledger_digest: ""          # sha256 of that file, first 12 hex
+  resolved: ""               # ISO date this was last resolved
+
 pipeline:
   phase: "0-intake"          # 0-intake | 1-foundation | 2-architecture | 3-drafting |
                              # 4-devils-audit | 5-fine-press-loop | 6-final-score | 7-colophon

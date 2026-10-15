@@ -36,6 +36,7 @@ maintenance_gate:
     - "live voice contracts inside voice-matrix.md"
     - "maintenance/PRUNING_LOG.md"
     - "maintenance/SESSION_LOG.md"
+    - "the ductus resolution for this book - the assigned voice, or the fact that there is none (tools/ductus.py contract), recorded in the state file's voice block"
   check_in:
     - "open the primary state file, the canon ledger, the recent session entries and the phase prompt"
     - "verify every chapter's status and word count against the files on disk"
@@ -94,6 +95,11 @@ phase_2_architecture:
 phase_3_drafting:
   label: "Phase 3: Drafting"
   prompt: "references/prompts/drafting.md"
+  # The author this book is drafted AS, when it has one. Resolve before the first
+  # chapter: `python tools/ductus.py contract <book-root>`. A REFUSED contract stops the
+  # phase; an UNASSIGNED book is drafted under the root COMMONPLACE.md alone, and the
+  # state file records that as a state rather than leaving it blank.
+  voice_contract: "tools/ductus.py contract"
   gate: "drafting"
   maintenance_gate: "required"
   prose_gate: "required"

@@ -131,8 +131,11 @@ already broken the gate.
 **Phase 2 — Architecture.** Outline, emotional curve, opening strategy, the promise the
 ending has to keep.
 
-**Phase 3 — Drafting.** Write in chapter blocks and let the blocks differ from one
-another structurally. Maintenance gate: check in before each block, check out after it,
+**Phase 3 — Drafting.** Resolve the author first: `python tools/ductus.py contract
+<book-root>`. A resolved contract is the voice these chapters are written as, and it
+governs the book-level register; a REFUSED one stops the phase, and an UNASSIGNED book is
+drafted under the root `COMMONPLACE.md` alone, recorded as such. Write in chapter blocks
+and let the blocks differ from one another structurally. Maintenance gate: check in before each block, check out after it,
 reconcile the new chapter's word count against the file, register every new proper noun,
 and log a conflict instead of quietly harmonising it. Prose gate: scan the chapter once
 it exists. A chapter the scanner rejects does not join the manuscript no matter how well

@@ -16,6 +16,19 @@ ledger. The row 5 text below is kept as it shipped rather than rewritten, and th
 isolation it describes — which is the load-bearing part — is unchanged and still
 asserted. Nothing else in this record moved.
 
+**And then wired, the same day.** The layer shipped as config plus a tool; nothing in
+`skills/` read it, so "an agent pilots a voice" was a sentence in a README. `tools/ductus.py
+contract <book-root>` is now the interface a phase calls, and the phases that write prose
+consult it: the engine resolves the voice before phase 2.5 and before every prose phase,
+`voice-matrix` derives the book-level register from the contract rather than inventing one
+beside it, `setting` and `register` treat its refusals as binding, `press-ledger` records
+the contract digest and routes a decision to that voice's ledger, and the codex state file
+carries a `voice:` block so the attribution is checkable on disk. A contract nobody
+authored stops the phase — the engine does not fall back to the root ledger silently,
+because a run that claims a voice it did not have is worse than one with none. Every book
+in this catalogue is `UNASSIGNED` today, which is the state they were drafted in and
+remains the default.
+
 ## v4 in one sentence
 
 The loop gains the channel that can tell it it is wrong about the world, and the layer
@@ -87,7 +100,7 @@ record survives until something falsifies it cannot rewrite one on append.
 | `errata-store.py check` | **exit 0** — 69 records (55 pinned measurement, 14 craft) |
 | `outcome-ledger.py --self-test` | **PASS** — 20 assertions (predict, supersede, falsify, NOT MAPPABLE, firewall) |
 | `swarm-route.py --self-test` | **PASS** — 16 assertions (routing, claim types, human pile, approval phrasing, NOT RUN) |
-| `ductus.py --self-test` | **PASS** — 17 assertions (creation, slug safety, the unauthored report and its clearing, isolation, leak detection, dispatch); `ductus cross` proven on the real ledgers (injected leak → exit 1 naming it → byte-identical restore → exit 0) |
+| `ductus.py --self-test` | **PASS** — 28 assertions (creation, slug safety, the unauthored report and its clearing, the `contract` interface with every refusal path, isolation, leak detection, dispatch); `ductus cross` proven on the real ledgers (injected leak → exit 1 naming it → byte-identical restore → exit 0), and `contract` proven on a real book (skeleton → REFUSED exit 1 → authored → resolved with digest → the digest moves when the contract moves) |
 | `check-errata.py` (frozen) | **OK** — 56 entries, all fields, valid motives and states |
 | YAML audit, whole tree | **57/57 files parse** (1 failed before the repair) |
 | `validate-controls.sh` | **PARTIAL (exit 2), by design** — the corpus is not at the default path; exit 2 never means fully validated |

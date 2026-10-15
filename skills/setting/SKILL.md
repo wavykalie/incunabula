@@ -12,6 +12,36 @@ never arrives.
 
 ---
 
+## 0. The voice you are drafting as
+
+Before the first line of a chapter, resolve what you are writing as:
+
+```bash
+python tools/ductus.py contract <book-root>
+```
+
+**Resolved.** `ductus/<slug>/ductus.md` is in force, and it is not advice. Its
+**Register** is how the prose sounds; its **Refusals** are binding even when a habit
+below would reach for one of them; its **Breaking** section is what a scene under
+pressure is drafted against. Read its benchmark lines first — they are the tuning fork,
+and the chapter should be recognisably the same hand. Where this skill's general advice
+and a refusal collide, the refusal wins: everything below describes good line-level
+prose, and a voice is a specific person who does some of it and declines the rest. A
+deviation you judge necessary is recorded as a decision in that voice's
+`COMMONPLACE.md`, with the reason.
+
+**UNASSIGNED.** No voice is declared for this book. Everything below stands alone, which
+is how the whole catalogue was written.
+
+**REFUSED.** The assignment names a voice whose contract is a skeleton. Stop — do not
+draft a chapter into a voice nobody authored and let the assignment stand as if it had
+governed. Report it and take the phase problem to the orchestrator.
+
+`voice-matrix.md` sits one layer down and always applies: it says who is speaking, this
+section says who is writing.
+
+---
+
 ## 1. Openings
 
 The first page is where an editor decides and where a reader's free sample ends. It carries

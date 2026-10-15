@@ -21,6 +21,10 @@ must already pass the prose gate; do not run line-level prose work here.
 1. Read the chapter: `manuscript/chapters/chapter-[N].md`.
 2. Read `voice-matrix.md` — the per-character voice cards and the differentiation matrix.
 3. Read `foundation.md` for character relationships, register, and social class.
+4. Resolve the ductus, if the book has one: `python tools/ductus.py contract <book-root>`.
+   A `REFUSED` contract stops the pass. When one is in force, the narrator's register in
+   this chapter is measured against that contract's benchmark lines, and its **Refusals**
+   are binding on dialogue too.
 
 ## The Blind Sort Test
 
@@ -61,6 +65,9 @@ Run it on **every speaking character in this chapter**.
 
 - Do not rewrite narrative prose, description, or interiority. If a flaw is not in or around a line
   of dialogue, it is not yours.
+- **Do not treat a declared refusal as voice bleeding.** Where a ductus says this voice will not
+  write a certain way, a character honouring it is the alignment working, not a defect. Sanding that
+  flat is the one repair here that makes the book worse while every row reads green.
 - Do not add dialogue to "show more" of a character. Fix what is on the page.
 - Do not sand subtext into clarity, and do not fog clear speech into subtext for its own sake.
 - Do not change what is said, only how it is said.
@@ -74,6 +81,7 @@ Append to the chapter's evaluation file and record the pass:
 
 **Speaking characters this chapter:** [names]
 **Blind Sort:** pass / fail
+**Narrative register vs ductus:** [contract slug, or UNASSIGNED — when a contract is in force, whether this chapter's narration is recognisably the same hand as its benchmarks]
 | Pair | Distinguishing markers | Verdict |
 |------|------------------------|---------|
 | A vs B | diction, syntax, refusal | pass |

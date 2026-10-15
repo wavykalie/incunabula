@@ -89,10 +89,16 @@ Run whenever work begins.
    attributed to; the commonplace book says what has already been chosen and declined.
    A session that starts without both is working from memory, which is the failure this
    layer exists to end.
-1. Read the state file.
-2. Report: current phase, what the last session finished, open handoffs, the planned next step, and the current score if one exists.
-3. Verify the file against reality: does the word count match the actual files, do chapter statuses match what exists, and did last session's decisions change today's work?
-4. Ask whether to continue from the last stopping point or do something else today.
+1. Resolve the voice this book is drafted under: `python tools/ductus.py contract
+   <book-root>`. `UNASSIGNED` means the root `COMMONPLACE.md` is the only taste ledger in
+   play; a resolved contract means that voice's `ductus/<slug>/COMMONPLACE.md` is read as
+   well; `REFUSED` stops the session before it starts, because a contract nobody authored
+   cannot govern the work and a run has to know which of the three it is in. Record the
+   state and the digests in the state file's `voice:` block.
+2. Read the state file.
+3. Report: current phase, what the last session finished, open handoffs, the planned next step, and the current score if one exists.
+4. Verify the file against reality: does the word count match the actual files, do chapter statuses match what exists, and did last session's decisions change today's work?
+5. Ask whether to continue from the last stopping point or do something else today.
 
 ## Check-out (session end)
 
@@ -106,6 +112,16 @@ Run whenever work stops.
    is the taste channel; `ERRATA.md` is the measurement channel, and evidence does not
    cross between them (`SELF_IMPROVEMENT.md` §2). Distill an `emergent` preference only
    at three agreeing decisions.
+
+   **Which ledger an entry belongs to depends on the voice.** A decision made while
+   drafting under a ductus goes to `ductus/<slug>/COMMONPLACE.md` — that voice's taste,
+   and only that voice's. The root ledger keeps what is not one voice's: the press's, the
+   pipeline's, the author's across books. Nothing is copied between them. A preference
+   earned by one voice that turns out to hold for another is merged deliberately and
+   dated in `ductus/PROMOTIONS.md`, and `python tools/ductus.py cross` reports an entry
+   two ledgers both carry, because a preference in both has stopped being either one's.
+   Write the contract digest `contract` printed beside the entries, so a decision is
+   attributable to the exact contract it was made under.
 4. Tell the user what got done, what is still open, and what the logical next step is.
 5. Warn about any handoff that has been open more than two sessions.
 

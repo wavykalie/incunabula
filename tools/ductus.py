@@ -43,6 +43,11 @@ WHAT IT WILL NOT DO
 usage:  tools/ductus.py <command> [--root DIR]
   new SLUG [--name "…"] [--register "…"]   create a voice (skeleton, to be authored)
   check                                    every voice, its isolation, the unassigned books
+  contract BOOK [--ductus SLUG]            WHAT A RUN DRAFTS UNDER: the resolved contract
+                                           for a book, its digest, or UNASSIGNED. A book
+                                           assigned to a voice whose contract is still a
+                                           skeleton is REFUSED — a phase may not draft
+                                           under a voice nobody authored.
   cross                                    report an entry held by two ledgers
   list                                     each voice and how far it has developed
   --self-test
@@ -63,6 +68,7 @@ import sys
 import tempfile
 
 CONFIG = "ductus.yaml"
+BOOKS = "BOOKS.yaml"
 DEFAULT_DIR = "ductus"
 PROMOTIONS = "PROMOTIONS.md"
 CONTRACT = "ductus.md"
@@ -173,7 +179,7 @@ def held_headings(path):
 
 
 def book_assignments(root):
-    data, err = load_yaml(os.path.join(root, "BOOKS.yaml"))
+    data, err = load_yaml(os.path.join(root, BOOKS))
     if err or not isinstance(data, dict):
         return None
     out = []
@@ -377,6 +383,112 @@ def cmd_check(root, args):
     return 0
 
 
+def digest(path):
+    """First 12 hex of the file's sha256 — what a run records as the contract in force."""
+    import hashlib
+    with open(path, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()[:12]
+
+
+def resolve_book(assignments, book):
+    """(registry path, slug, how). Exact path first, then a unique basename."""
+    def norm(p):
+        return str(p).replace("\\", "/").rstrip("/")
+
+    want = norm(book)
+    for path, slug in assignments:
+        if path and norm(path) == want:
+            return path, slug, "exact"
+    base = os.path.basename(want)
+    hits = [(p, s) for p, s in assignments
+            if p and os.path.basename(norm(p)) == base]
+    if len(hits) == 1:
+        return hits[0][0], hits[0][1], "basename"
+    if len(hits) > 1:
+        return None, None, "ambiguous"
+    return None, None, None
+
+
+def cmd_contract(root, args):
+    """The interface the phases call: what voice is this book drafted under, and is it real."""
+    press, ddir, err = press_config(root)
+    if err == "no-yaml":
+        print(f"ductus: no YAML parser here — {CONFIG} was not read (and not passed).")
+        return 3
+    if err:
+        print(f"ductus: {CONFIG} does not parse — {err}")
+        return 1
+    args = [a for a in args]
+    override = None
+    if "--ductus" in args:
+        i = args.index("--ductus")
+        override = args[i + 1] if i + 1 < len(args) else None
+        del args[i:i + 2]
+        if not override:
+            print("ductus: --ductus needs a slug.")
+            return 2
+    book = next((a for a in args if not a.startswith("--")), None)
+    if not book:
+        print("ductus: contract needs a book — `contract test-books/some-book`.")
+        return 2
+
+    assignments = book_assignments(root)
+    if assignments is None:
+        print("ductus: BOOKS.yaml is missing or does not parse — the assignment cannot "
+              "be resolved, so nothing can be said about what this run drafts under.")
+        return 1
+    rel, slug, how = resolve_book(assignments, book)
+    if how == "ambiguous":
+        print(f"ductus: {book!r} matches more than one registry entry — pass the full "
+              "path written in BOOKS.yaml.")
+        return 1
+    if rel is None:
+        print(f"ductus: UNREGISTERED — {book!r} is not in BOOKS.yaml, so it cannot carry "
+              "an assignment. A book outside the registry is outside the layer "
+              "(tools/check-registry.py owns that failure).")
+        return 1
+
+    if override and override != slug:
+        print(f"ductus: NOTE the registry assigns {rel} to "
+              f"{slug or 'no voice'} — this run overrides it with {override!r}.")
+        slug = override
+
+    if not slug:
+        print(f"ductus: UNASSIGNED — {rel} carries no `ductus:` in BOOKS.yaml. It is "
+              f"drafted under the root {ROOT_LEDGER} alone, which is where the whole "
+              "catalogue was drafted. This line is the record: nobody may read the run "
+              "as having drafted under a voice.")
+        return 0
+
+    d = os.path.join(root, ddir, slug)
+    contract = os.path.join(d, CONTRACT)
+    ledger = os.path.join(d, LEDGER)
+    if not os.path.isfile(contract):
+        print(f"ductus: REFUSED — {rel} is assigned to {slug!r}, and there is no "
+              f"{ddir}/{slug}/{CONTRACT}. A phase does not draft under a voice that "
+              "does not exist.")
+        return 1
+    if not os.path.isfile(ledger):
+        print(f"ductus: REFUSED — {slug!r} has no {ddir}/{slug}/{LEDGER}. Its taste "
+              "could not be recorded, which is the one thing the ledger is for.")
+        return 1
+    thin = thin_sections(read_text(contract))
+    if thin:
+        print(f"ductus: REFUSED — {ddir}/{slug}/{CONTRACT} is still a skeleton "
+              f"({', '.join(thin)}). Author it, or remove the assignment from "
+              "BOOKS.yaml so the book is drafted under the root ledger openly.")
+        return 1
+
+    print(f"ductus: {rel} is drafted under {slug}")
+    print(f"  contract: {ddir}/{slug}/{CONTRACT}  sha256:{digest(contract)}")
+    print(f"  ledger:   {ddir}/{slug}/{LEDGER}  "
+          f"{os.path.getsize(ledger)} byte(s)  sha256:{digest(ledger)}")
+    print("  read before: drafting, revision, audit, scoring, packaging. Record these "
+          "digests in the session ledger so a result is attributable to the contract it "
+          "was drafted under.")
+    return 0
+
+
 def cmd_cross(root, args):
     _press, ddir, err = press_config(root)
     if err == "no-yaml":
@@ -421,7 +533,7 @@ def selftest():
     try:
         write_text(os.path.join(tmp, CONFIG),
                    'press:\n  name: "Test Press"\n  ductus_dir: ductus\n')
-        write_text(os.path.join(tmp, "BOOKS.yaml"), "books:\n  - path: some-book\n")
+        write_text(os.path.join(tmp, BOOKS), "books:\n  - path: some-book\n")
         ok(cmd_new(tmp, ["folio", "--name", "Folio",
                          "--register", "long literary"]) == 0,
            "new: a ductus is created from a slug")
@@ -498,6 +610,81 @@ def selftest():
                    "books:\n  - path: some-book\n    ductus: folio\n")
         ok(cmd_check(tmp, []) == 0, "check: an assigned book passes")
 
+        # --- the interface the phases call ---------------------------------------
+        # Everything below goes through cmd_contract, which is what a skill runs by path.
+        def author(slug):
+            p = os.path.join(tmp, "ductus", slug, CONTRACT)
+            t = read_text(p)
+            for name in CONTRACT_SECTIONS:
+                t = re.sub(rf"(^## {name}\s*$)\n_\(.*\)_",
+                           rf"\1\nA real {name} body, written out at length so the "
+                           "placeholder is gone and the voice is authored.",
+                           t, flags=re.M | re.I)
+            write_text(p, t)
+
+        def assign(slug):
+            write_text(os.path.join(tmp, BOOKS),
+                       f"books:\n  - path: some-book\n    ductus: {slug}\n")
+
+        # the documented default, named, and not a silent pass
+        write_text(os.path.join(tmp, BOOKS), "books:\n  - path: some-book\n")
+        rc, out = captured(cmd_contract, tmp, ["some-book"])
+        ok(rc == 0 and "UNASSIGNED" in out and "root COMMONPLACE.md" in out,
+           "contract: a book with no assignment reports UNASSIGNED and exits 0")
+
+        # assigned to a voice nobody authored: the phase does not run
+        _empty_voice(tmp, "ductus", "folio")
+        assign("folio")
+        rc, out = captured(cmd_contract, tmp, ["some-book"])
+        ok(rc == 1 and "REFUSED" in out and "skeleton" in out,
+           "contract: a skeleton contract REFUSES the run (exit 1)")
+
+        author("folio")
+        rc, out = captured(cmd_contract, tmp, ["some-book"])
+        ok(rc == 0 and "is drafted under folio" in out and "sha256:" in out,
+           "contract: an authored contract resolves with its digest")
+        ok(re.search(r"contract: \S+\s+sha256:[0-9a-f]{12}", out) is not None
+           and re.search(r"ledger:\s+\S+\s+\d+ byte\(s\)\s+sha256:[0-9a-f]{12}", out)
+           is not None,
+           "contract: both digests are printed in the documented form")
+
+        # a voice that exists but has no ledger cannot record taste
+        os.rename(os.path.join(tmp, "ductus", "folio", LEDGER),
+                  os.path.join(tmp, "ductus", "folio", "held.md"))
+        rc, out = captured(cmd_contract, tmp, ["some-book"])
+        ok(rc == 1 and "REFUSED" in out and "taste could not be recorded" in out,
+           "contract: a voice with no ledger REFUSES the run")
+        os.rename(os.path.join(tmp, "ductus", "folio", "held.md"),
+                  os.path.join(tmp, "ductus", "folio", LEDGER))
+
+        # a book outside the registry is refused, not defaulted to the root ledger
+        rc, out = captured(cmd_contract, tmp, ["not-in-the-registry"])
+        ok(rc == 1 and "UNREGISTERED" in out,
+           "contract: a book outside BOOKS.yaml is refused, not defaulted")
+
+        # a bare basename can be ambiguous, and then it asks for the full path
+        write_text(os.path.join(tmp, BOOKS),
+                   "books:\n  - path: a/some-book\n    ductus: folio\n"
+                   "  - path: b/some-book\n    ductus: folio\n")
+        rc, out = captured(cmd_contract, tmp, ["some-book"])
+        ok(rc == 1 and "full path" in out,
+           "contract: a basename matching two entries asks for the full path")
+        rc, out = captured(cmd_contract, tmp, ["a/some-book"])
+        ok(rc == 0 and "drafted under folio" in out,
+           "contract: the full path resolves a name two entries share")
+
+        # the override is allowed, and it says so out loud
+        assign("folio")
+        _empty_voice(tmp, "ductus", "quarto")
+        author("quarto")
+        rc, out = captured(cmd_contract, tmp, ["some-book", "--ductus", "quarto"])
+        ok(rc == 0 and "overrides" in out and "is drafted under quarto" in out,
+           "contract: --ductus overrides the registry and reports the override")
+        rc, out = captured(cmd_contract, tmp, ["some-book", "--ductus"])
+        ok(rc == 2, "contract: --ductus with no slug is a usage error")
+        rc, out = captured(cmd_contract, tmp, [])
+        ok(rc == 2, "contract: no book is a usage error")
+
         # the leak detector, proven by injection in both directions
         _empty_voice(tmp, "ductus", "quarto")
         same = "### 2026-01-01 — decision — chose the flat ending\n"
@@ -530,8 +717,9 @@ def selftest():
         print(f"SELF-TEST FAILURE — {len(failed)} of {len(checks)} assertions failed.")
         return 1
     print(f"SELF-TEST PASS — {len(checks)} assertions (creation, slug safety, the "
-          "unauthored report and its clearing, isolation, missing ledger, stray dir, "
-          "assignment, development counts, leak detection, dispatch).")
+          "unauthored report and its clearing, the contract interface and every "
+          "refusal path, isolation, missing ledger, stray dir, assignment, development "
+          "counts, leak detection, dispatch).")
     return 0
 
 
@@ -552,6 +740,7 @@ def main():
     if cmd in ("selftest", "--self-test"):
         return selftest()
     table = {"new": cmd_new, "check": lambda r, a: cmd_check(r, a),
+             "contract": cmd_contract,
              "cross": lambda r, a: cmd_cross(r, a), "list": cmd_list}
     if cmd not in table:
         print(f"ductus: unknown command {cmd}")

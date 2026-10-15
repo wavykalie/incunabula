@@ -119,6 +119,8 @@ Deliberate once, a tic when it repeats.
 | **Forme** | The foundation document (`foundation.md`) — the book's assembled plan: premise, theme, characters, world. Everything else locks into it. (The forme is the locked-up page, ready for the press.) |
 | **Readership** | The reader personas — who the book is for. |
 | **Voice Matrix** | The per-character voice specification: how each character speaks, including how their voice breaks under pressure. (The matrix is the mould each character is shaped from.) |
+| **Ductus** | One authorial voice — the individual character of a writing hand — kept in `ductus/<name>/`. A book may be drafted *under* one: the agent pilots that voice, reading its contract before it writes a line. Its ledger of taste is its own, and voices are held apart the way channels are. (In manuscript studies the ductus is the particular way one scribe's hand forms its letters — the style that belongs to that hand and no other.) |
+| **Voice contract** | The ductus document the agent drafts under (`ductus/<name>/ductus.md`): identity, register, refusals, how the voice breaks, and the benchmark lines it is blind-sorted against. A contract nobody has authored is a skeleton, and a run assigned to one stops rather than drafting without it. |
 | **Colophon** | The editorial package — the closing deliverables: synopsis, back-cover copy, query letter, cover brief. (A colophon is the printer's note at the end of a book.) |
 | **Presswork** | Production preparation — formatting and packaging the book for delivery. |
 

@@ -74,6 +74,30 @@ and persistence preferences before any foundation work.
 `maintenance/PRUNING_LOG.md` are created or reconciled before the first phase is
 dispatched. A layer built late is recorded as a repair, never backdated.
 
+**The author's voice — the ductus.** A book may be drafted under a *ductus*: an authorial
+voice a creator made, held in `ductus.yaml` and `ductus/<slug>/` (a contract an agent
+pilots, plus that voice's own developing taste ledger). Resolve it before phase 2.5 and
+again before any prose work, and read what it says:
+
+```bash
+python tools/ductus.py contract <book-root>
+```
+
+| what it prints | what the engine does |
+|---|---|
+| `UNASSIGNED` (exit 0) | no `ductus:` in `BOOKS.yaml`. The book is drafted under the root `COMMONPLACE.md` alone — the state every book in the catalogue was drafted in. Say so in the session record; nobody may read the run as having had a voice. |
+| `REFUSED` (exit 1) | assigned to a voice whose contract is still a skeleton, or which has no ledger. **The phase stops.** The engine does not draft under a voice nobody authored, and it does not quietly fall back to the root ledger — a run that claims a voice it did not have is worse than a run with none. |
+| resolved (exit 0) | the contract and ledger paths with a sha256 digest each. Record the digests in the session ledger, so a result is attributable to the exact contract it was drafted under. |
+
+Where a contract governs, it governs the **book-level register** — how the prose sounds,
+what it refuses, how it breaks under pressure. The per-character specifications stay
+`voice-matrix.md`'s job, and the two are not rivals: the ductus is upstream on register
+the way the foundation is upstream on character. A conflict is resolved in the ductus's
+favour; a deliberate deviation is a recorded decision in that voice's ledger, never a
+silent drift. Taste earned while drafting under a voice is recorded in **that voice's**
+ledger, not the root one — nothing crosses between voices except a dated merge in
+`ductus/PROMOTIONS.md`.
+
 **Host contract.** Read the host contract at start and resume, and confirm the host can
 actually read the active prompt and write the project before claiming progress.
 
@@ -90,8 +114,10 @@ grade C is diagnostic only and cannot support an independent publication claim.
 ### During a run
 
 Keep the phase order, the specialist dispatches, the gates, and the revision taxonomy
-intact. Read the active canon and voice contracts before drafting, editing, auditing,
-scoring, or packaging. After every chapter block, revision, audit, score, or user decision,
+intact. Read the active canon, the voice contracts, and — where the book has one — its
+ductus before drafting, editing, auditing, scoring, or packaging. Resolve it with
+`python tools/ductus.py contract <book-root>` and record the digests it prints; a
+`REFUSED` contract stops the phase outright. After every chapter block, revision, audit, score, or user decision,
 run a maintenance check-in: merge duplicates, add provenance, scope facts that have
 evolved, and flag contradictions without ever overwriting canon silently. Book-scoped and
 chapter-scoped changes are scoped facts, not automatic contradictions. The compact

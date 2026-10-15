@@ -66,7 +66,11 @@ interruption except three approval points:
 1. Market research
 2. Readership
 3. Foundation — characters, outline, theme
-4. Voice matrix
+4. Voice matrix — after resolving the author: `python tools/ductus.py contract <book-root>`.
+   A resolved voice governs the book-level register and its refusals bind every chapter
+   after it; `UNASSIGNED` means no voice is declared and the root ledger stands alone. A
+   `REFUSED` contract stops the run here, at the cheapest possible point, rather than
+   twenty chapters into a voice nobody authored.
 5. **Checkpoint one: the foundation is approved**
 6. Entity state built from the foundation
 7. Outline collation

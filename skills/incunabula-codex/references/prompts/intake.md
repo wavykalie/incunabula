@@ -55,3 +55,10 @@ foundation phase.
 
 Run the maintenance check-in. `CANON_LEDGER.yaml`, the live voice contracts, and
 `maintenance/PRUNING_LOG.md` must exist before phase 1 is dispatched.
+
+Also settle the author this book is drafted as, because phase 3 will need the answer:
+`python tools/ductus.py contract <book-root>`. A resolved voice means `ductus/<slug>/` is
+read before every prose phase and its digest recorded in the state file's `voice:` block;
+`UNASSIGNED` means the root `COMMONPLACE.md` alone, and that absence is recorded rather
+than left blank; a `REFUSED` assignment stops the run at intake rather than at the first
+chapter, which is the cheapest place to find out that a persona was never authored.

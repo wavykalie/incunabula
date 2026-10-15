@@ -44,6 +44,9 @@ the case, the pull, the colophon.
 | Foundation document | **Forme** — the assembled page locked in the chase |
 | Reader personas | **Readership** |
 | Per-character voice spec | **Voice Matrix** — the matrix is the mould that shapes each character |
+| One authorial voice a book is drafted *as* | **Ductus** — the character of a single writing hand; `ductus/<name>/`, read before any prose work |
+| The document that voice is piloted by | **voice contract** — `ductus/<name>/ductus.md`: identity, register, refusals, breaking, benchmarks |
+| That voice's own taste ledger | **commonplace book** — `ductus/<name>/COMMONPLACE.md`; entries made under a voice land here, not in the root ledger |
 | Editorial package | **Colophon** |
 | Production preparation | **Presswork** |
 
