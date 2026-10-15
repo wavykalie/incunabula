@@ -143,9 +143,12 @@ fi
 # outcome-ledger.py is here for the same reason: it is the only channel that can tell
 # the loop it is wrong about the world, and a channel that runs when someone
 # remembers is the 2026-09-30 Hollow Bridge entry over again.
-echo "4. the dice, the scaffold, the records and the integrity check"
+# press.py is the same class again: a line whose ledger path has rotted would have a
+# run writing taste into another line's book, and isolation is structural or it is
+# decoration.
+echo "4. the harness self-tests"
 if command -v python >/dev/null 2>&1; then
-  for t in roll-brief niche-grow init-book errata-store outcome-ledger swarm-route check-manuscript-integrity; do
+  for t in roll-brief niche-grow init-book errata-store outcome-ledger swarm-route press check-manuscript-integrity; do
     if [ -f "$ROOT/tools/$t.py" ]; then
       out=$(python "$ROOT/tools/$t.py" --self-test 2>&1)
       rc=$?
@@ -158,6 +161,7 @@ if command -v python >/dev/null 2>&1; then
           errata-store)               why="the store cannot be trusted to keep what it was given" ;;
           outcome-ledger)             why="the loop has no working way to hear that it was wrong" ;;
           swarm-route)                why="a swarm run would route findings nobody can check" ;;
+          press)                      why="a run would draft under the wrong line's taste" ;;
           *)                          why="the dice cannot be trusted to reproduce a roll" ;;
         esac
         row "$t --self-test" FAIL "exit $rc - $why"
