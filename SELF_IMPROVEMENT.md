@@ -149,5 +149,19 @@ permission.
 | `tools/preflight.sh` | the stack's runner | **new** — tool and state, never prose |
 | `tools/prune-stale.py` | maintenance | **new** — the self-prune: keeps the record files true to the program. Standing claims corrected in place, old wording in `maintenance/PRUNING_LOG.md`; dated history reported, never edited; book-carried instrument copies quarantined under `_archive/`. Runs from `preflight.sh` (check) and `run-gates.sh` (apply after a run) |
 
+**Added 2026-10-15**, so the map above still describes the program — the machinery each
+channel now runs on:
+
+| file | what it does | channel |
+|---|---|---|
+| `tools/errata-store.py` | the structured, compactable index of what `ERRATA.md` holds, with pinned measurement records, an append-only mutation log, and `automerge` under `record/errata-policy.yaml` (rate-limited to one change per pass, pinned records never candidates) | measurement, kept truthful |
+| `tools/outcome-ledger.py` | predictions recorded **before** publication and falsified after; `report` is where prediction error — the fitness signal of §7 — is read | outcomes |
+| `press.yaml` + `press/<line>/COMMONPLACE.md` | the author lines and their isolated taste stores; nothing crosses lines except a dated merge in `press/PROMOTIONS.md` | taste |
+| `tools/swarm-route.py` | routes a `reader-swarm` run's tickets to the skill that would do the work, and keeps simulated signal, editorial judgment and needs-human-validation apart | craft (routing) |
+
+The firewall of §2 holds across all four: an outcome cannot move a pinned measurement
+record, a line cannot receive another line's preference, and no tool above moves a
+threshold.
+
 Mode is set at the top of this file (`improvement.mode`). `hand` is always available as a
 request: say so, and the loop only proposes.
