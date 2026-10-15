@@ -145,7 +145,7 @@ fi
 # remembers is the 2026-09-30 Hollow Bridge entry over again.
 echo "4. the dice, the scaffold, the records and the integrity check"
 if command -v python >/dev/null 2>&1; then
-  for t in roll-brief niche-grow init-book errata-store outcome-ledger check-manuscript-integrity; do
+  for t in roll-brief niche-grow init-book errata-store outcome-ledger swarm-route check-manuscript-integrity; do
     if [ -f "$ROOT/tools/$t.py" ]; then
       out=$(python "$ROOT/tools/$t.py" --self-test 2>&1)
       rc=$?
@@ -157,6 +157,7 @@ if command -v python >/dev/null 2>&1; then
           init-book)                  why="a book scaffolded here would be born failing its own state row" ;;
           errata-store)               why="the store cannot be trusted to keep what it was given" ;;
           outcome-ledger)             why="the loop has no working way to hear that it was wrong" ;;
+          swarm-route)                why="a swarm run would route findings nobody can check" ;;
           *)                          why="the dice cannot be trusted to reproduce a roll" ;;
         esac
         row "$t --self-test" FAIL "exit $rc - $why"

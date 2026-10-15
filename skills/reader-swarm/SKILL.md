@@ -32,6 +32,43 @@ persona roster, the sample map, cohort reports, interviews, the public-reaction 
 risk heatmap, revision tickets, score calibration, and a summary. If no project folder
 exists, create one beside the manuscript.
 
+Four of those files are named, because the routing step reads them and a missing one is
+NOT RUN rather than a silent pass: `sample-map.md`, `risk-heatmap.md`,
+`revision-tickets.md`, `summary.md`.
+
+### Revision tickets
+
+One ticket per finding, in `revision-tickets.md`:
+
+```
+### T-001 — chapter-03, the fountain scene
+- **cohort:**      genre devourer
+- **claim:**       simulated-signal | editorial-judgment | needs-human-validation
+- **evidence:**    manuscript/chapters/chapter-03.md:118
+- **issue:**       the reveal reads as withheld
+- **disposition:** fix | investigate | ignore | human-validate
+- **owner:**       corrector | register | catchword | quoin | collator | case-keeper | setting
+```
+
+`owner` names the skill that would do the work. A ticket with no claim type, no evidence or
+no owner is not an incomplete ticket — it is the failure this pass exists to prevent, and
+`tools/swarm-route.py` refuses it instead of routing it.
+
+## Routing
+
+`python tools/swarm-route.py route <run-dir>` reads the run folder, refuses any ticket that
+breaks a rule below, keeps the three claim types apart, and writes `routing.md` grouped by
+owner. It exits non-zero on any refusal or missing artifact, so a run cannot claim its
+findings were routed cleanly when they were not.
+
+- **Nothing simulated is phrased as approval.** "Readers approve of the ending" is refused:
+fictional readers cannot approve anything. Label it `simulated-signal`, or send it to a human.
+- **A niche or sensitivity cohort is never routable to a skill.** Such a ticket must carry
+`claim: needs-human-validation` and `disposition: human-validate`, and it lands in the human
+pile — the same cap the scoring section applies, where simulated niche approval is held at
+*flag* until a human has validated it.
+- **A ticket without evidence is a wish.** No line, scene or file means no ticket.
+
 ## The core rule
 
 Keep three kinds of claim apart: **simulated signal** (a hypothesis from fictional
