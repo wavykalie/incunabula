@@ -34,3 +34,13 @@ Written by `tools/prune-stale.py`; entries record what was pruned and keep the o
 - **replacement:** - `ERRATA.md` — 54 entries
 - **reason:** standing errata-entries claim disagrees with the live program (measured at run time from the tools themselves)
 - **authority:** author direction 2026-10-14 — the self-prune corrects standing claims the live program contradicts, in place, with the old wording preserved here (ERRATA.md header amendment; SELF_IMPROVEMENT.md §6.3)
+## 004 — 2026-10-15 — recount: GATE_FREEZE.md
+
+- **date:** 2026-10-15
+- **path:** GATE_FREEZE.md:103
+- **action:** corrected in place (recount)
+- **archive path:** none — the wording is preserved below, verbatim
+- **old wording:** - `ERRATA.md` — 54 entries
+- **replacement:** - `ERRATA.md` — 55 entries
+- **reason:** standing errata-entries claim disagrees with the live program (measured at run time from the tools themselves)
+- **authority:** author direction 2026-10-14 — the self-prune corrects standing claims the live program contradicts, in place, with the old wording preserved here (ERRATA.md header amendment; SELF_IMPROVEMENT.md §6.3)

@@ -259,7 +259,14 @@ def parse_entries(text):
         cur["end"] = len(lines)
         entries.append(cur)
     for e in entries:
-        e["body"] = "\n".join(lines[e["start"]:e["end"]]).rstrip()
+        body = "\n".join(lines[e["start"]:e["end"]]).rstrip()
+        # The `---` that separates two entries belongs to the file, not to the entry.
+        # Left in, it ended every record's body with a separator, and it made the LAST
+        # record's body change the moment another entry was appended: an append
+        # rewrote a record that had not moved. The store's whole claim is that a
+        # record survives until something falsifies it, so that had to go.
+        body = re.sub(r"\n-{3,}$", "", body).rstrip()
+        e["body"] = body
         e["fields"] = {}
         for ln in lines[e["start"]:e["end"]]:
             fm = FIELD.match(ln)
@@ -341,8 +348,14 @@ def cmd_import(root, args):
     n_craft = len(records) - n_meas
     print(f"imported {len(records)} records from ERRATA.md "
           f"({n_meas} measurement/pinned, {n_craft} craft)")
-    if old and [r["id"] for r in old] != [r["id"] for r in records]:
-        print("note: record ids changed since the last import — the store was rebuilt")
+    # Growth is normal: an entry was appended. Renumbering is not, and it is the
+    # thing worth warning about — an id is the handle `restore` and `rollback` take,
+    # so an id that disappears takes its handle with it.
+    gone = sorted({r["id"] for r in old} - {r["id"] for r in records})
+    if old and gone:
+        shown = ", ".join(gone[:3]) + (" …" if len(gone) > 3 else "")
+        print(f"note: {len(gone)} record id(s) from the previous import are gone "
+              f"({shown}) — the store was renumbered, not merely extended")
     return 0
 
 
@@ -749,6 +762,31 @@ def selftest():
            "import: an adopted corpus-backed measurement outranks a single-book craft note")
         save_records(tmp, recs)
 
+        # An entry appended later must ADD one record and touch nothing else. Both
+        # halves were bugs: the separator was absorbed into every body, and the last
+        # real entry's body changed as soon as a new one arrived.
+        write_text(src, read_text(src) + (
+            "---\n\n"
+            "### 2026-01-04 — a finding appended later\n"
+            "- **row:**      quoin (process | delegation)\n"
+            "- **observed:** appended after the first import\n"
+            "- **n:**        1\n"
+            "- **evidence:** a later run\n"
+            "- **motive:**   aesthetic\n"
+            "- **state:**    observed\n"
+            "- **proposes:** none\n"))
+        before = {r["id"]: r for r in recs}
+        grown = import_records(tmp, "TEST")
+        ok(not [r for r in grown if r["body"].rstrip().endswith("---")],
+           "import: no entry body swallows the `---` separator")
+        ok({r["id"] for r in grown} - set(before) == {"E-2026-01-04-001"},
+           "import: an appended entry adds exactly one record")
+        ok(not (set(before) - {r["id"] for r in grown}),
+           "import: an appended entry renumbers nothing")
+        ok(all(r["body"] == before[r["id"]]["body"] for r in grown
+               if r["id"] in before),
+           "import: appending an entry leaves every earlier record byte-identical")
+
         # a duplicate must merge; a pinned record must refuse to
         dup = dict(craft, id="E-2026-01-03-001", title=craft["title"], value=0.1)
         recs2 = load_records(tmp) + [dup]
@@ -812,7 +850,8 @@ def selftest():
         print(f"SELF-TEST FAILURE — {len(failed)} of {len(checks)} assertions failed.")
         return 1
     print(f"SELF-TEST PASS — {len(checks)} assertions "
-          "(import, pin, merge, archive, restore, expire, validate, render).")
+          "(import, append stability, pin, merge, archive, restore, expire, "
+          "validate, render).")
     return 0
 
 
@@ -836,7 +875,10 @@ def main():
         "rollback": cmd_rollback, "snapshot": cmd_snapshot, "render": cmd_render,
         "log": cmd_log,
     }
-    if cmd == "selftest":
+    if cmd in ("selftest", "--self-test"):
+        # `--self-test` is the spelling the other harness tools use, and preflight
+        # runs them all with it. Accepting both keeps this tool testable by the
+        # make-ready stack instead of by whoever remembers to call it.
         return selftest()
     if cmd not in table:
         print(f"errata-store: unknown command {cmd}")
