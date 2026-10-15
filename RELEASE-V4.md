@@ -6,6 +6,16 @@ press and persona layer, auto-merge and packing, and a release record — and to
 The pass began with a status sweep, and the sweep is why the record starts with defects
 rather than features: several checks that had been read as green were not looking.
 
+**Amended the same day — workstream 5 was generalised.** The taste layer shipped with
+its author lines enumerated in a config file: three of them, named after the three kinds
+of book already in this catalogue. That is a guess about identity, and it is the reason
+the layer could not be handed to anyone else. It is now **ductus**: `ductus.yaml` holds
+the imprint and the directory, a voice exists because a creator made one (`tools/ductus.py
+new`), and each voice carries a contract an agent pilots plus its own developing taste
+ledger. The row 5 text below is kept as it shipped rather than rewritten, and the
+isolation it describes — which is the load-bearing part — is unchanged and still
+asserted. Nothing else in this record moved.
+
 ## v4 in one sentence
 
 The loop gains the channel that can tell it it is wrong about the world, and the layer
@@ -22,7 +32,7 @@ cause rather than reported as noise.
 | 2 | **The fifteenth run is registered and repaired.** `grand-standing` was on disk and absent from the registry (the suite would have skipped it silently); its `ENTITY_STATE.yaml` did not parse, which is what made a frozen gate blind (below). | `test-books/grand-standing/`, `BOOKS.yaml`, `tools/niche-pool.txt` |
 | 3 | **Outcome wiring.** `tools/outcome-ledger.py`: a prediction recorded **before** publication, falsified afterwards, `report` on prediction error. It refuses the three fabrications — an index-less prediction, a prediction recorded after the outcome was known, and a falsification back-filled onto a book that never predicted. It records an actual it cannot map **verbatim** and reports NOT MAPPABLE rather than inventing the sales-to-index mapping the author deferred. It moves the store's usage counters through `errata-store.py`'s own value formula and mutation log, and refuses to move a PINNED measurement record. | new tool; preflight row 4 |
 | 4 | **Swarm routing.** `tools/swarm-route.py` turns a `reader-swarm` run folder into work each skill can take, and refuses to let a simulation speak as a community: a ticket with no claim type, no evidence or no owner is refused; a niche or sensitivity cohort must carry `needs-human-validation` + `human-validate` and lands in the human pile; "readers approve of the ending" is refused with the sentence quoted. A run folder missing its sample map, heatmap or summary is NOT RUN. | new tool + the ticket vocabulary in `skills/reader-swarm/SKILL.md` |
-| 5 | **The press and its author lines.** `press.yaml` declares three lines — `folio` (long literary), `quarto` (short high-premise), `octavo` (short prescriptive) — each with its own taste store under `press/<line>/`. Isolation is structural: a declared ledger that is missing is a failure, no two lines may share a store, and a line pointing at the press-wide ledger is refused. `press cross` reports an entry that appears in two ledgers. | `press.yaml`, `press/`, new `tools/press.py` |
+| 5 | **The press and its author lines** — *since replaced by the ductus layer, see the amendment above.* `press.yaml` declared three lines — `folio` (long literary), `quarto` (short high-premise), `octavo` (short prescriptive) — each with its own taste store under `press/<line>/`. Isolation was structural: a declared ledger that is missing is a failure, no two lines may share a store, and a line pointing at the press-wide ledger is refused. `press cross` reported an entry appearing in two ledgers. The same isolation now holds over **creator-made voices**: `ductus.yaml` + `ductus/<slug>/ductus.md` + `ductus/<slug>/COMMONPLACE.md`, checked by `tools/ductus.py check`, plus a voice whose own contract sections are still placeholders reported rather than passed in silence. | `ductus.yaml`, `ductus/`, new `tools/ductus.py` |
 | 6 | **Auto-merge and packing.** `errata-store.py automerge` applies `record/errata-policy.yaml` after every run, beside the self-prune: rate-limited to one change per pass (SELF_IMPROVEMENT §5), every deferred candidate printed, pinned records never candidates. `pack` concatenates the archive segments into one bundle with a per-segment digest manifest, and `--verify` fails on a single moved byte. | `tools/errata-store.py`, `record/errata-policy.yaml`, `tools/run-gates.sh` |
 | 7 | **The store stopped rewriting records an append did not touch.** The `---` between entries was absorbed into every body, so adding an entry rewrote the record before it; and the import warned "the store was rebuilt" whenever it merely grew. Both fixed, with assertions. | `tools/errata-store.py` |
 | 8 | **Two ERRATA entries** (the malformed ledger that blinded a frozen gate; the registry debt re-measured), and one duplicated phase table removed. | `ERRATA.md`, `README.md`, `skills/incunabula/SKILL.md` |
@@ -77,7 +87,7 @@ record survives until something falsifies it cannot rewrite one on append.
 | `errata-store.py check` | **exit 0** — 69 records (55 pinned measurement, 14 craft) |
 | `outcome-ledger.py --self-test` | **PASS** — 20 assertions (predict, supersede, falsify, NOT MAPPABLE, firewall) |
 | `swarm-route.py --self-test` | **PASS** — 16 assertions (routing, claim types, human pile, approval phrasing, NOT RUN) |
-| `press.py --self-test` | **PASS** — 13 assertions; `press cross` proven on the real ledgers (injected leak → exit 1 naming it → byte-identical restore → exit 0) |
+| `ductus.py --self-test` | **PASS** — 17 assertions (creation, slug safety, the unauthored report and its clearing, isolation, leak detection, dispatch); `ductus cross` proven on the real ledgers (injected leak → exit 1 naming it → byte-identical restore → exit 0) |
 | `check-errata.py` (frozen) | **OK** — 56 entries, all fields, valid motives and states |
 | YAML audit, whole tree | **57/57 files parse** (1 failed before the repair) |
 | `validate-controls.sh` | **PARTIAL (exit 2), by design** — the corpus is not at the default path; exit 2 never means fully validated |
@@ -100,9 +110,11 @@ record survives until something falsifies it cannot rewrite one on append.
    MAPPABLE for any actual not on the index scale, and `report` refuses to compute a
    fitness number rather than guessing the mapping. **No prediction has been recorded
    yet, for any book** — the channel exists and is empty.
-5. **Line assignment** — 14 books carry no `line:` in `BOOKS.yaml`; `press.py check`
+5. **Voice assignment** — 14 books carry no `ductus:` in `BOOKS.yaml`; `ductus.py check`
    names them and assigns none. Until then every book is drafted under the root ledger,
-   which is where the whole catalogue was drafted.
+   which is where the whole catalogue was drafted. **No voice exists yet either** —
+   `ductus/` ships with its README and the merge channel and no voices, because a voice
+   is the creator's to make.
 6. **automerge and pack are no-ops on the live store**, and that is the measured result,
    not a failure: the duplicate pairs it holds are PINNED measurement records, which
    compaction must never merge, and no pass has archived anything yet.
@@ -111,10 +123,12 @@ record survives until something falsifies it cannot rewrite one on append.
 ## Attribution
 
 Author direction throughout: the instruction was to finish the remaining workstreams and
-publish. Where the plan named a workstream but no specification — the press's line count
-and identity, the ticket vocabulary, the outcome record's shape — the design is the
-agent's, it is labelled as such in the tools and in the ERRATA motive lines, and nothing
-was adopted on a held-out comparison. The measurement channel did not move: every number
+publish. Where the plan named a workstream but no specification — the ticket vocabulary,
+the author voices' identity, the outcome record's shape — the design is the agent's, it
+is labelled as such in the tools and in the ERRATA motive lines, and nothing was adopted
+on a held-out comparison. Where the agent's design was wrong the author said so and it
+was replaced, which is what workstream 5's amendment records: the voices are the
+creator's to declare, not the tool author's to enumerate. The measurement channel did not move: every number
 above is either a frozen instrument's output or a count taken from the files at the moment
 it is printed. The registry's six problems were deliberately left standing, because a
 status is a claim by the author about the author's books.

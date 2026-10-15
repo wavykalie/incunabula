@@ -156,12 +156,22 @@ channel now runs on:
 |---|---|---|
 | `tools/errata-store.py` | the structured, compactable index of what `ERRATA.md` holds, with pinned measurement records, an append-only mutation log, and `automerge` under `record/errata-policy.yaml` (rate-limited to one change per pass, pinned records never candidates) | measurement, kept truthful |
 | `tools/outcome-ledger.py` | predictions recorded **before** publication and falsified after; `report` is where prediction error — the fitness signal of §7 — is read | outcomes |
-| `press.yaml` + `press/<line>/COMMONPLACE.md` | the author lines and their isolated taste stores; nothing crosses lines except a dated merge in `press/PROMOTIONS.md` | taste |
+| `ductus.yaml` + `ductus/<slug>/` | the author voices — one contract (`ductus.md`) the agent pilots and one taste ledger (`COMMONPLACE.md`) each, created by `tools/ductus.py new` rather than enumerated in the config. Nothing crosses voices except a dated merge in `ductus/PROMOTIONS.md` | taste |
 | `tools/swarm-route.py` | routes a `reader-swarm` run's tickets to the skill that would do the work, and keeps simulated signal, editorial judgment and needs-human-validation apart | craft (routing) |
 
 The firewall of §2 holds across all four: an outcome cannot move a pinned measurement
-record, a line cannot receive another line's preference, and no tool above moves a
+record, a voice cannot receive another voice's preference, and no tool above moves a
 threshold.
+
+**Where a ductus came from (2026-10-15).** The taste layer shipped hours earlier with
+the voices declared in a config file — three lines named after the three kinds of book
+already in the catalogue. That was a guess about identity rather than a fact about it,
+and it made the layer useless to anyone whose books are not these books. It is now the
+other way round: `ductus.yaml` holds the imprint and the directory, and a voice exists
+because a creator made one. The agent pilots it by reading `ductus/<slug>/ductus.md`;
+the identity is the creator's, invented included. What survived the change is the part
+that was load-bearing — the isolation, the leak detector, the dated merge channel, the
+preflight wiring — and each of those is asserted rather than claimed.
 
 Mode is set at the top of this file (`improvement.mode`). `hand` is always available as a
 request: say so, and the loop only proposes.

@@ -1,0 +1,49 @@
+# ductus.yaml — the imprint, and where the author voices live.
+#
+# WHAT A DUCTUS IS
+#   *Ductus* is the individual character of a writing hand — the style that belongs to
+#   one writer and nobody else. One ductus is one authorial voice: who it is, how it
+#   sounds, what it refuses, how it breaks under pressure, and the benchmark lines it
+#   can be blind-sorted against. `ductus/<slug>/ductus.md` is that contract, and an
+#   agent PILOTS the voice by drafting under it.
+#
+#   A ductus DEVELOPS. Beside the contract sits its own `COMMONPLACE.md` — that voice's
+#   taste, kept with the root ledger's ceremony: decisions recorded as they are made, a
+#   preference written only after three agreeing decisions (and written `emergent`,
+#   never enforced), outcomes recorded when readers land, promotions through the
+#   verifier stack. `python tools/ductus.py list` is the surface for watching that.
+#
+# NO ROSTER, ON PURPOSE
+#   Voices are not enumerated here. A ductus exists because a person or an agent
+#   created one: `python tools/ductus.py new <slug>`. Three lines used to be declared
+#   in this file — folio, quarto, octavo — enumerated from the books already in the
+#   catalogue. That was a guess about identity rather than a fact about it, and it is
+#   gone (2026-10-15). The press below is the imprint; who writes under it is not this
+#   file's business.
+#
+# THE ISOLATION RULE
+#   Each voice reads ONLY its own ledger. A decision recorded in one voice's ledger is
+#   not evidence for another, and nothing crosses except by an explicit, dated author
+#   merge recorded in `ductus/PROMOTIONS.md`. This is the three-channel firewall
+#   (SELF_IMPROVEMENT.md §2) applied one layer down: evidence from one voice may not
+#   move another, any more than evidence from one channel may move another.
+#
+#   `python tools/ductus.py check` fails on a ledger shared by two voices, on a voice
+#   with no ledger at all, and on a voice pointing at the press-wide ledger — a voice
+#   that reads the shared file has no voice. `cross` reports an entry that appears in
+#   two ledgers, because a preference in both has stopped being either one's.
+#
+# NOT A GATE
+#   Nothing here is enforced against a book, and no voice may move a threshold: a
+#   measurement moves on a named corpus, never on a voice's taste.
+#
+# ASSIGNMENT
+#   The `ductus:` key in BOOKS.yaml is the assignment, and it is the author's to make.
+#   No book carries one yet; `ductus.py check` NAMES the unassigned books rather than
+#   choosing for them. A book with no ductus is drafted under the root COMMONPLACE.md
+#   alone, which is where every book in the catalogue was drafted.
+
+press:
+  name: "Merope Press"
+  # Where the voices live. `ductus.py new` writes here; `check` reads here.
+  ductus_dir: "ductus"
