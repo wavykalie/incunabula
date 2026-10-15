@@ -135,7 +135,8 @@ the full engine silently.
 | 6 | `colophon` + `presswork` | editorial package, proofread, formatting |
 
 Supporting skills: `series-binder` (multi-book scope), `press-ledger` (session ledger),
-`bestseller-studio`, `reader-swarm`, `agent-panel` (panels and market simulation), and the
+`bestseller-studio`, `reader-swarm` (panels and market simulation — `--light` runs the
+four-voice market panel), and the
 generic craft utilities `copy-editing`, `deslopify`, `good-idea`.
 
 ### The gates (what can fail the book)

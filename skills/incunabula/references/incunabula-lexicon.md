@@ -82,7 +82,7 @@ the case, the pull, the colophon.
 | one-command run | `incunabula-auto` |
 | bestseller profile | `bestseller-studio` |
 | reader swarm | `reader-swarm` |
-| agent panel | `agent-panel` |
+| agent panel | `reader-swarm --light` |
 
 ## Plain craft language
 

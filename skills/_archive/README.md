@@ -10,5 +10,6 @@ provenance, not for dispatch — the live suite dispatches the successor.
 | retired | successor | when | why |
 |---|---|---|---|
 | `humanizer/` | `deslopify` | 2026-10-15 | its pattern catalog duplicated `deslopify`'s; merged (see `ERRATA.md` 2026-10-15) |
+| `agent-panel/` | `reader-swarm --light` | 2026-10-15 | its four voices are a strict subset of the swarm's `package-reaction` cohorts |
 
 Add to this table in the same commit that archives.

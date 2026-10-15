@@ -160,8 +160,8 @@ are installed paths — call them by name, know them by the job.
 | `series-binder` | Plans series scope and continuity |
 | `incunabula-auto` | Runs the whole pipeline in one command |
 | `bestseller-studio` | The commercial (bestseller) profile |
-| `reader-swarm` | Large simulated reader panels |
-| `agent-panel` | Simulated agent/editor/reader review panel |
+| `reader-swarm` | Large simulated reader panels; `--light` runs the four-voice market panel |
+| `agent-panel` | retired — the market panel now runs as `reader-swarm --light` |
 
 ### Plain craft language
 

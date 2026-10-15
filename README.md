@@ -189,12 +189,11 @@ job.
 | Series scope | `series-binder` |
 | One-command run | `incunabula-auto` |
 | Bestseller profile | `bestseller-studio` |
-| Reader swarm | `reader-swarm` |
-| Agent panel | `agent-panel` |
+| Reader swarm (crowd panels; `--light` = the four-voice market panel) | `reader-swarm` |
 | Re-derivation under changed rules | `rewrite` |
 
 Utility skills that are not part of book production keep their own names: `copy-editing`,
-`deslopify`, `good-idea`. The `skills/` directory holds 28 skills; retired skills are kept
+`deslopify`, `good-idea`. The `skills/` directory holds 27 skills; retired skills are kept
 under `skills/_archive/` with a `MOVED.md` shim naming their successor.
 
 ## The gates

@@ -53,7 +53,9 @@ RENAME_MAP = {
     "narrative-foundation": "forme",
     "prose-craft": "setting",
     "beta-reader": "proof-panel",
-    "literary-agent-panel": "agent-panel",
+    # agent-panel was itself retired 2026-10-15 into reader-swarm's --light preset,
+    # so the successor lands on the live skill (see skills/_archive/agent-panel/MOVED.md)
+    "literary-agent-panel": "reader-swarm",
     "book-swarm-panel": "reader-swarm",
     "series-architect": "series-binder",
     "production-prep": "presswork",
