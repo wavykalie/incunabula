@@ -125,23 +125,37 @@ PYEOF
   done
 fi
 
-# 4. The dice and the integrity check ------------------------------------------------
+# 4. The dice, the scaffold and the integrity check -----------------------------------
 # roll-brief.py and niche-grow.py decide what a run is about, and a run against a
 # broken dice produces a book plus a RUN_REPORT nobody can re-derive.
 # check-manuscript-integrity.py is here for a different reason: it is a check that
 # has never been seen to fail, which is the state this project keeps getting bitten
 # by. Twelve contaminated lines sat inside one chapter of La merienda in sentences
 # that read correctly on both sides, and no prose gate could see them.
-echo "4. the dice and the integrity check"
+# init-book.py is here because a book was being born failing row 3 above: on Windows
+# Python's text mode wrote every state file CRLF, so seven books on disk carried a
+# CR that grep cannot see and row 3 calls a defect (2026-10-15). The scaffold's own
+# self-test reads its bytes back and refuses to pass if the CR has returned.
+# errata-store.py is the record layer's other half (row 7 runs prune-stale, which
+# repairs the records; this one indexes and compacts them). Its self-test is what
+# proves an append does not rewrite the records already in the store - so it runs
+# here rather than when someone remembers.
+echo "4. the dice, the scaffold, the craft store and the integrity check"
 if command -v python >/dev/null 2>&1; then
-  for t in roll-brief niche-grow check-manuscript-integrity; do
+  for t in roll-brief niche-grow init-book errata-store check-manuscript-integrity; do
     if [ -f "$ROOT/tools/$t.py" ]; then
       out=$(python "$ROOT/tools/$t.py" --self-test 2>&1)
       rc=$?
       if [ $rc -eq 0 ]; then
         row "$t --self-test" PASS "$(printf '%s' "$out" | tail -1)"
       else
-        row "$t --self-test" FAIL "exit $rc - $(if [ "$t" = check-manuscript-integrity ]; then echo 'a check nobody has seen fail is not a check'; else echo 'the dice cannot be trusted to reproduce a roll'; fi)"
+        case "$t" in
+          check-manuscript-integrity) why="a check nobody has seen fail is not a check" ;;
+          init-book)                  why="a book scaffolded here would be born failing its own state row" ;;
+          errata-store)               why="the store cannot be trusted to keep what it was given" ;;
+          *)                          why="the dice cannot be trusted to reproduce a roll" ;;
+        esac
+        row "$t --self-test" FAIL "exit $rc - $why"
       fi
     else
       row "$t --self-test" SKIP "$t.py not found at tools/ - nothing to test"

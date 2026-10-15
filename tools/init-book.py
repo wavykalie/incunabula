@@ -27,6 +27,7 @@ Usage:
     python tools/init-book.py --path my-novel --title "My Novel" \
         [--status drafting] [--floor 80000] [--ceiling 95000] [--concept] \
         [--chapters-planned 30 --words-per-chapter 3000]
+    python tools/init-book.py --self-test
 
     --chapters-planned / --words-per-chapter  the plan. Their product must sit
         inside the declared band or intake refuses; tools/check-progress.py C1
@@ -38,8 +39,12 @@ Usage:
 """
 
 import argparse
+import io
 import os
+import shutil
+import subprocess
 import sys
+import tempfile
 from datetime import date
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -51,6 +56,33 @@ REGISTRY = os.environ.get("BOOKS_REGISTRY", os.path.join(FRAMEWORK, "BOOKS.yaml"
 STATUSES = {"concept", "drafting", "complete", "published", "fixture", "autonomous"}
 
 
+def write_text(path, text, mode="w"):
+    """Write text with LF line endings, whatever platform this runs on.
+
+    Python's text mode translates '\\n' to CRLF on Windows. That is invisible in
+    an editor and fatal to this project's records: a CR is a byte grep cannot see
+    (it hides from `grep '^'` entirely) and it sits exactly where the sentence
+    tokenizer expects a space, so sentence-level rows silently under-count. That
+    is KF-005, closed by fixing the detector - and this is the same defect one
+    layer down, in the file that writes the book's own state.
+
+    preflight.sh row 3 fails any canonical state file carrying a CR, so a book
+    scaffolded on Windows was born failing its own make-ready check: 7 of the
+    books on disk carried CRLF PROJECT_STATE.yaml for this reason. io.open with
+    newline="" writes the bytes given and translates nothing, so the file is
+    LF on every platform and byte-identical in a clone.
+
+    The registry is written the same way. It has no convention of its own to
+    keep - it was CRLF only because this appender ran on Windows, so its rows
+    were CRLF on one machine and LF on the next, and the file would have drifted
+    to mixed if it were ever appended to from Linux. LF is what the rest of the
+    repository uses (40+ files; the three CRLF ones are the two append-only
+    record files and a frozen instrument, none of which this tool writes).
+    """
+    with io.open(path, mode, encoding="utf-8", newline="") as fh:
+        fh.write(text)
+
+
 def append_registry(book_path, title, status, expected_manuscript):
     note = {
         "concept": "Concept stage; no manuscript expected yet.",
@@ -58,7 +90,7 @@ def append_registry(book_path, title, status, expected_manuscript):
         "fixture": "Registered as a fixture by init-book.py.",
         "autonomous": "Autonomous run (random button) - rolled by tools/roll-brief.py, no author at the wheel.",
     }.get(status, "Registered by init-book.py.")
-    with open(REGISTRY, "a", encoding="utf-8") as fh:
+    with io.open(REGISTRY, "a", encoding="utf-8", newline="") as fh:
         fh.write(
             f"\n  - path: {book_path}\n"
             f"    title: \"{title}\"\n"
@@ -68,7 +100,69 @@ def append_registry(book_path, title, status, expected_manuscript):
         )
 
 
+def self_test():
+    """Scaffold into a temp workspace and read the bytes back.
+
+    The assertions are the defect classes this tool has actually produced:
+      - a CR in PROJECT_STATE.yaml, so the book fails preflight row 3 at birth
+      - a registration that does not reach the registry
+      - a contract the plan contradicts, accepted instead of refused before
+        anything is written
+    """
+    tmp = tempfile.mkdtemp(prefix="init-book-selftest-")
+    real_registry = REGISTRY
+    real_workspace = os.environ.get("BOOKS_WORKSPACE")
+    try:
+        workspace = os.path.join(tmp, "books")
+        os.makedirs(workspace)
+        registry = os.path.join(tmp, "BOOKS.yaml")
+        write_text(registry, "books:\n")
+        os.environ["BOOKS_WORKSPACE"] = workspace
+        os.environ["BOOKS_REGISTRY"] = registry
+        globals()["REGISTRY"] = registry
+
+        rc = main(["--path", "selftest-book", "--title", "Self Test",
+                   "--status", "drafting", "--chapters-planned", "4",
+                   "--words-per-chapter", "1000"])
+        assert rc == 0, f"the scaffold refused a valid declaration (exit {rc})"
+
+        state = os.path.join(workspace, "selftest-book", "PROJECT_STATE.yaml")
+        raw = open(state, "rb").read()
+        assert b"\r" not in raw, (
+            f"PROJECT_STATE.yaml carries {raw.count(chr(13).encode())} CR byte(s) - "
+            "preflight row 3 would fail this book at birth")
+
+        reg = open(registry, "rb").read()
+        assert b"selftest-book" in reg, "the scaffold did not register the book"
+        assert b"\r" not in reg, "the registry append was not the file's own convention"
+
+        refused = False
+        try:
+            main(["--path", "refused", "--title", "Refused",
+                  "--floor", "80000", "--ceiling", "90000",
+                  "--chapters-planned", "10", "--words-per-chapter", "20000"])
+        except SystemExit:
+            refused = True
+        assert refused, "a plan outside the declared band was not refused"
+        assert not os.path.exists(os.path.join(workspace, "refused")), (
+            "a refused declaration created files anyway")
+
+        print("init-book self-test: ok")
+        return 0
+    finally:
+        globals()["REGISTRY"] = real_registry
+        if real_workspace is None:
+            os.environ.pop("BOOKS_WORKSPACE", None)
+        else:
+            os.environ["BOOKS_WORKSPACE"] = real_workspace
+        os.environ.pop("BOOKS_REGISTRY", None)
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if "--self-test" in argv:
+        return self_test()
     ap = argparse.ArgumentParser(description="Scaffold and register a book.")
     ap.add_argument("--path", required=True,
                     help="book path relative to the workspace root (e.g. my-novel)")
@@ -130,7 +224,8 @@ def main(argv=None):
 
     # 2. state file with the declared contract, the plan (or the explicit
     # absence of each), and the status
-    with open(os.path.join(book_root, "PROJECT_STATE.yaml"), "w", encoding="utf-8") as fh:
+    with io.open(os.path.join(book_root, "PROJECT_STATE.yaml"), "w",
+                 encoding="utf-8", newline="") as fh:
         fh.write(
             "# ============================================================================\n"
             "# A MATTER OF RECORD - created by incunabula/tools/init-book.py\n"
@@ -187,7 +282,6 @@ def main(argv=None):
     # failing, and folding them together would say a clean registration broke
     # the suite. A problem naming this book is a failure; anything else is a
     # debt the workspace already had, printed so nobody is surprised.
-    import subprocess
     proc = subprocess.run(
         [sys.executable, os.path.join(TOOLS_DIR, "check-registry.py"), workspace],
         capture_output=True, text=True)
