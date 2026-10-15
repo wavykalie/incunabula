@@ -39,6 +39,10 @@ STORAGE
   record/snapshots/*.json    periodic snapshot + sealed-log digests
   record/archive/*.jsonl     bodies moved out by compaction, quarterly; the log
                              itself is sealed here once it passes SEAL_LIMIT
+  record/archive/pack-*.jsonl        archive segments packed into one bundle, with a
+  record/archive/pack-*.manifest.txt digest per segment, so the archive is checkable
+                             in one look and does not grow a file at a time
+  record/errata-policy.yaml  the compaction policy `automerge` applies unattended
   ERRATA-CRAFT.md            generated human view (never hand-edited)
 
 usage:  tools/errata-store.py <command> [options]
@@ -49,6 +53,8 @@ usage:  tools/errata-store.py <command> [options]
   score                 recompute confidence/value from evidence
   merge ID_LOSER ID_WINNER
   compact [--dry-run] [--ttl-days N]
+  automerge [--apply]   policy-driven compaction, rate-limited, pinned-safe
+  pack [--verify]       pack the archive segments into one digest-verified bundle
   restore ID            undo the last mutation that touched a record
   rollback --to N       revert every mutation with seq > N (reverse order)
   snapshot              write a snapshot now
@@ -489,7 +495,7 @@ def merge(root, loser_id, winner_id, records, allow_pinned=False):
     return True
 
 
-def expire_pass(root, records, ttl_days, dry):
+def expire_pass(root, records, ttl_days, dry, budget=None):
     today = date.today()
     n = 0
     for r in records:
@@ -503,6 +509,10 @@ def expire_pass(root, records, ttl_days, dry):
         if not (past_expiry or low_value):
             continue
         why = "past expiry" if past_expiry else f"low confidence, unused, {age}d old"
+        if not _take(budget):
+            print(f"  defer expire {r['id']}  ({why}) — the rate limit took its "
+                  "change(s) this pass")
+            continue
         print(f"  {'would expire' if dry else 'expire'} {r['id']}  ({why})  {r['title'][:50]}")
         if dry:
             n += 1
@@ -516,7 +526,7 @@ def expire_pass(root, records, ttl_days, dry):
     return n
 
 
-def dedupe_pass(root, records, dry):
+def dedupe_pass(root, records, dry, budget=None):
     groups = {}
     for r in records:
         if r["pin"] or r["status"] != "active":
@@ -529,6 +539,11 @@ def dedupe_pass(root, records, dry):
         group.sort(key=lambda r: (-r["value"], r["id"]))
         keeper, losers = group[0], group[1:]
         for loser in losers:
+            if not _take(budget):
+                print(f"  defer merge {loser['id']} -> {keeper['id']}  "
+                      f"({loser['title'][:40]}) — the rate limit took its change(s) "
+                      "this pass")
+                continue
             print(f"  {'would merge' if dry else 'merge'} {loser['id']} -> {keeper['id']}"
                   f"  ({loser['title'][:50]})")
             if not dry:
@@ -571,6 +586,58 @@ def write_snapshot(root, records, note):
     return rpath(os.path.relpath(p, root))
 
 
+# --- the unattended half: a policy, a rate limit, and a pack ------------------
+
+POLICY_FILE = "record/errata-policy.yaml"
+POLICY_DEFAULTS = {"max_changes": "1", "ttl_days": str(DEFAULT_TTL_DAYS),
+                   "dedupe": "true", "expire": "true"}
+
+
+def load_policy(root):
+    """The compaction policy, as flat `key: value` — deliberately not YAML.
+
+    The store runs from preflight, which reports a missing YAML parser as its own
+    state rather than hiding it (row 3). A policy parser that could fail for a
+    missing third-party module would put the unattended path on an optional
+    dependency; four flat keys do not need a parser, so they get none. An unknown
+    key is ignored, and a malformed line is ignored rather than guessed at.
+    """
+    pol = dict(POLICY_DEFAULTS)
+    p = os.path.join(root, POLICY_FILE)
+    if not os.path.isfile(p):
+        return pol
+    for ln in read_text(p).splitlines():
+        ln = ln.split("#", 1)[0].strip()
+        if not ln or ":" not in ln:
+            continue
+        k, _, v = ln.partition(":")
+        k, v = k.strip(), v.strip().strip('"').strip("'").lower()
+        if k in pol:
+            pol[k] = v
+    return pol
+
+
+def _budget(limit):
+    return {"limit": limit, "left": limit if limit else None, "deferred": 0}
+
+
+def _take(budget):
+    """May this change be made now? Counts the ones the rate limit refused.
+
+    SELF_IMPROVEMENT §5: at most one promotion per channel per book. Unattended
+    compaction runs after a run with nobody watching, so it takes what the policy
+    allows and reports the rest — a limiter that silently drops candidates is the
+    same defect as a check that silently passes.
+    """
+    if budget is None or budget["left"] is None:
+        return True
+    if budget["left"] <= 0:
+        budget["deferred"] += 1
+        return False
+    budget["left"] -= 1
+    return True
+
+
 def cmd_compact(root, args):
     dry = "--dry-run" in args
     ttl = int(args[args.index("--ttl-days") + 1]) if "--ttl-days" in args else DEFAULT_TTL_DAYS
@@ -587,6 +654,122 @@ def cmd_compact(root, args):
                   f"(sha256 {sealed['sha256_16']})")
         print(f"  snapshot: {snap}")
     print(f"  {m} merged · {e} expired")
+    return 0
+
+
+def cmd_automerge(root, args):
+    """Compaction with nobody watching: policy-driven, rate-limited, reversible.
+
+    run-gates.sh runs this after a run, beside the self-prune. It reads
+    record/errata-policy.yaml and applies at most `max_changes` changes, printing
+    every candidate the limit deferred — SELF_IMPROVEMENT §5 allows one promotion
+    per channel per book, and a limiter that silently drops candidates is the same
+    defect as a check that silently passes. Pinned records are never candidates
+    (both passes skip them), and every change lands in the mutation log with its
+    before/after, so `restore <id>` and `rollback --to <seq>` undo any of it.
+    """
+    apply_ = "--apply" in args
+    pol = load_policy(root)
+    limit = _int_or_zero(pol.get("max_changes", "")) or 1
+    ttl = _int_or_zero(pol.get("ttl_days", "")) or DEFAULT_TTL_DAYS
+    truthy = ("true", "yes", "1", "on")
+    records = load_records(root)
+    budget = _budget(limit)
+    print(f"automerge ({'apply' if apply_ else 'dry run'}) — {POLICY_FILE}: max {limit} "
+          f"change(s) per pass, ttl {ttl}d, dedupe {pol['dedupe']}, expire {pol['expire']}; "
+          "pinned records are never candidates")
+    dry = not apply_
+    m = dedupe_pass(root, records, dry, budget) if pol["dedupe"] in truthy else 0
+    e = expire_pass(root, records, ttl, dry, budget) if pol["expire"] in truthy else 0
+    if apply_ and (m or e):
+        save_records(root, records)
+        sealed = seal_log(root)
+        snap = write_snapshot(root, records, f"automerge: {m} merged, {e} expired")
+        if sealed:
+            print(f"  sealed {sealed['sealed']} log events -> {sealed['file']} "
+                  f"(sha256 {sealed['sha256_16']})")
+        print(f"  snapshot: {snap}")
+    print(f"  {m} merged · {e} expired · {budget['deferred']} deferred by the rate limit")
+    return 0
+
+
+def cmd_pack(root, args):
+    """Pack the archive segments into one bundle a person can check in one look.
+
+    record/archive/ gains a segment per compaction pass, plus a sealed log segment
+    once the log passes SEAL_LIMIT, so it grows a file at a time. An archive nobody
+    can verify in one look is an archive nobody checks — the same portability lesson
+    .gitattributes already records about hashes that only one machine can confirm.
+
+    Packing concatenates the segments in order, writes a manifest holding the digest
+    of the pack and of every segment absorbed, and removes the absorbed segments
+    only after that manifest is on disk. No body is removed: every JSONL line is in
+    the pack, the manifest names every source, and the same text is still in
+    ERRATA.md. `--verify` re-hashes each pack against its manifest.
+    """
+    arch = store_paths(root)["arch"]
+    if not os.path.isdir(arch):
+        if "--verify" in args:
+            # Not-run is never a pass: nothing to verify is a state to name, not 0.
+            print("pack --verify: no record/archive/ — nothing was verified, and "
+                  "nothing is claimed about the archive.")
+            return 1
+        print("pack: no record/archive/ yet — nothing to pack.")
+        return 0
+    packs = sorted(f for f in os.listdir(arch)
+                   if f.startswith("pack-") and f.endswith(".jsonl"))
+
+    if "--verify" in args:
+        if not packs:
+            print("pack --verify: no packs exist — nothing verified, and nothing claimed")
+            return 1
+        bad = 0
+        for name in packs:
+            man = os.path.join(arch, name[:-len(".jsonl")] + ".manifest.txt")
+            digest = hashlib.sha256(open(os.path.join(arch, name), "rb").read()).hexdigest()
+            want = None
+            if os.path.isfile(man):
+                for ln in read_text(man).splitlines():
+                    d, _, f = ln.partition("  ")
+                    if f.strip() == name:
+                        want = d.strip()
+            if want == digest:
+                print(f"  ok    {name}  {digest[:16]}")
+            else:
+                print(f"  FAIL  {name}  CHANGED (manifest {str(want)[:16]}, now {digest[:16]})")
+                bad += 1
+        print(f"pack --verify: {len(packs) - bad}/{len(packs)} pack(s) match their manifest. "
+              "A pack with no digest beside it is a file.")
+        return 1 if bad else 0
+
+    segments = sorted(f for f in os.listdir(arch)
+                      if f.endswith(".jsonl") and not f.startswith("pack-"))
+    if not segments:
+        print("pack: every segment is already packed — nothing to do.")
+        return 0
+
+    blob = ""
+    for name in segments:
+        blob += read_text(os.path.join(arch, name))
+        if blob and not blob.endswith("\n"):
+            blob += "\n"
+    base, n = f"pack-{date.today().isoformat()}", 1
+    while os.path.exists(os.path.join(arch, f"{base}-{n}.jsonl")):
+        n += 1
+    dest = f"{base}-{n}.jsonl"
+    write_text(os.path.join(arch, dest), blob)
+    digest = hashlib.sha256(blob.encode("utf-8")).hexdigest()
+    manifest = "# pack manifest — the digest of the pack, then of every segment absorbed\n"
+    manifest += "".join(
+        [f"{digest}  {dest}\n"] + [f"{hashlib.sha256(open(os.path.join(arch, s), 'rb').read()).hexdigest()}  {s}\n"
+                                  for s in segments])
+    write_text(os.path.join(arch, dest[: -len(".jsonl")] + ".manifest.txt"), manifest)
+    for name in segments:
+        os.remove(os.path.join(arch, name))
+    where = rpath(os.path.relpath(os.path.join(arch, dest), root))
+    print(f"pack: {len(segments)} segment(s) -> {where} (sha256 {digest[:16]})")
+    print("  no body was removed: every line is in the pack, the manifest names every "
+          "source, and the same text is in ERRATA.md.")
     return 0
 
 
@@ -839,6 +1022,70 @@ def selftest():
         ok(not errs, f"check: the store validates ({'; '.join(errs) if errs else 'clean'})")
         ok(cmd_render(tmp, []) == 0 and os.path.isfile(os.path.join(tmp, "ERRATA-CRAFT.md")),
            "render: the human view is written")
+
+        # --- automerge: the rate limit is the feature, and a PINNED record is never
+        # --- a candidate even when it looks exactly like a duplicate.
+        def mk(rid, title, value=0.4, pin=None):
+            return {"id": rid, "created": "2026-02-01", "updated": "2026-02-01",
+                    "class": "craft", "target": "quoin (process)", "title": title,
+                    "body": "b", "source": {"file": "ERRATA.md", "line": 1,
+                                             "commit": "T"},
+                    "state": "observed", "n": 1, "evidence": "e", "motive": "aesthetic",
+                    "usage": {"cited": 0, "applied": 0, "outcome_win": 0,
+                              "outcome_loss": 0},
+                    "status": "active", "pin": pin or [], "expiry": None,
+                    "merged_from": [], "superseded_by": None, "tombstone": None,
+                    "confidence": 0.35, "value": value}
+
+        write_text(store_paths(tmp)["jsonl"], "".join(json.dumps(r, sort_keys=True) + "\n"
+                   for r in [mk("E-2026-02-01-001", "the same finding", 0.5),
+                             mk("E-2026-02-01-002", "the same finding", 0.4),
+                             mk("E-2026-02-01-003", "the same finding", 0.3),
+                             mk("E-2026-02-02-001", "the same finding", 0.9,
+                                pin=[PINNED_PIN])]))
+        write_text(os.path.join(tmp, POLICY_FILE),
+                   "# policy\nmax_changes: 1\nttl_days: 30\ndedupe: true\nexpire: true\n")
+        ok(load_policy(tmp)["max_changes"] == "1", "automerge: the policy file is read")
+        ok(cmd_automerge(tmp, []) == 0, "automerge: a dry run exits 0")
+        ok(all(r["status"] == "active" for r in load_records(tmp)),
+           "automerge: the dry run changed nothing")
+        ok(cmd_automerge(tmp, ["--apply"]) == 0, "automerge: --apply exits 0")
+        after_rows = load_records(tmp)
+        merged_now = [r for r in after_rows if r["status"] == "merged"]
+        pinned_now = [r for r in after_rows if r["id"] == "E-2026-02-02-001"][0]
+        ok(len(merged_now) == 1,
+           f"automerge: the rate limit took exactly one change ({len(merged_now)})")
+        ok(pinned_now["status"] == "active" and pinned_now["pin"] == [PINNED_PIN],
+           "automerge: a PINNED record is never a compaction candidate")
+        ok(len([r for r in after_rows if r["status"] == "active"]) == 3,
+           "automerge: the candidates the limit deferred are still there, not dropped")
+
+        # --- pack: segments into one digest-verified bundle, and the digest is seen
+        # --- to fail when a byte moves.
+        # the merge and expire passes above left real segments in record/archive/,
+        # so start this half from an empty archive rather than assuming one.
+        shutil.rmtree(os.path.join(tmp, "record", "archive"), ignore_errors=True)
+        ok(cmd_pack(tmp, []) == 0, "pack: an empty archive is a no-op, exit 0")
+        write_text(os.path.join(tmp, "record", "archive", "mutations-1.jsonl"),
+                   '{"seq": 1, "op": "merge"}\n')
+        write_text(os.path.join(tmp, "record", "archive", "compact-2026-02-01.jsonl"),
+                   '{"id": "E-2026-01-01-001", "body": "a body"}\n')
+        ok(cmd_pack(tmp, []) == 0, "pack: two segments pack, exit 0")
+        packs = sorted(f for f in os.listdir(os.path.join(tmp, "record", "archive"))
+                       if f.startswith("pack-") and f.endswith(".jsonl"))
+        pack_path = os.path.join(tmp, "record", "archive", packs[0])
+        packed = read_text(pack_path)
+        ok(len(packs) == 1 and "\"a body\"" in packed and '"seq": 1' in packed,
+           "pack: every segment's bytes are in the pack")
+        ok(not [f for f in os.listdir(os.path.join(tmp, "record", "archive"))
+                if f.endswith(".jsonl") and not f.startswith("pack-")],
+           "pack: the absorbed segments are gone")
+        ok(cmd_pack(tmp, ["--verify"]) == 0, "pack --verify: the pack matches its manifest")
+        write_text(pack_path, packed.replace("a body", "a bodY"))
+        ok(cmd_pack(tmp, ["--verify"]) == 1,
+           "pack --verify: a single moved byte fails the check and names the file")
+        write_text(pack_path, packed)
+        ok(cmd_pack(tmp, ["--verify"]) == 0, "pack --verify: restoring the bytes clears it")
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -851,7 +1098,7 @@ def selftest():
         return 1
     print(f"SELF-TEST PASS — {len(checks)} assertions "
           "(import, append stability, pin, merge, archive, restore, expire, "
-          "validate, render).")
+          "validate, render, automerge rate limit, pack digest).")
     return 0
 
 
@@ -871,6 +1118,7 @@ def main():
     table = {
         "import": cmd_import, "check": cmd_check, "list": cmd_list, "show": cmd_show,
         "score": cmd_score, "merge": cmd_merge, "compact": cmd_compact,
+        "automerge": cmd_automerge, "pack": cmd_pack,
         "expire": lambda r, a: cmd_compact(r, a), "restore": cmd_restore,
         "rollback": cmd_rollback, "snapshot": cmd_snapshot, "render": cmd_render,
         "log": cmd_log,

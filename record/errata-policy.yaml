@@ -1,0 +1,25 @@
+# errata-policy.yaml — what `errata-store.py automerge` may do with nobody watching.
+#
+# Flat `key: value` on purpose, not YAML: the store is stdlib-only, it runs from
+# preflight on machines where PyYAML may be absent (row 3 reports that state), and a
+# policy parser that could fail for a missing third-party module would put the
+# unattended path on an optional dependency. Unknown keys and malformed lines are
+# ignored rather than guessed at.
+#
+# WHY A RATE LIMIT IS THE POINT
+#   SELF_IMPROVEMENT.md §5: at most one promotion per channel per book. Compaction
+#   that runs after every run and takes as much as it can find is not a rate-limited
+#   loop, it is a bulk rewrite with a schedule. `max_changes` makes the loop choose,
+#   and every candidate it deferred is printed — a limiter that silently drops
+#   candidates is the same defect as a check that silently passes.
+#
+# WHAT IT CAN NEVER DO
+#   Touch a pinned measurement record. Both passes skip them by construction, and the
+#   self-test asserts it with a pinned record that looks exactly like a duplicate.
+#   Every change it does make is in record/mutations.jsonl with its before/after, so
+#   `restore <id>` and `rollback --to <seq>` undo any of it.
+
+max_changes: 1      # changes per pass, across dedupe + expire together
+ttl_days: 365       # age past which a low-value, never-used craft record may expire
+dedupe: true        # merge craft records sharing a normalized title
+expire: true        # retire low-value records that were never used

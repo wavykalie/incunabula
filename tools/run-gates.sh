@@ -25,11 +25,14 @@
 #   (quarantined 2026-10-13) fails U1 at 30% while the frozen copy fails at 22% -
 #   and a result must be attributable to one known instrument.
 #
-#   One step runs after the gates and is not a gate: tools/prune-stale.py --apply,
-#   the self-prune. It keeps the record files' standing claims true to the program
+#   Two steps run after the gates and are not gates. tools/prune-stale.py --apply is
+#   the self-prune: it keeps the record files' standing claims true to the program
 #   (old wording preserved in maintenance/PRUNING_LOG.md), quarantines book-carried
-#   instrument copies, and never edits dated history. Housekeeping - it cannot
-#   change the verdict. See its own docstring for the full contract.
+#   instrument copies, and never edits dated history. tools/errata-store.py automerge
+#   --apply is the craft store's unattended compaction, rate-limited by
+#   record/errata-policy.yaml and never allowed to touch a pinned measurement record.
+#   Housekeeping, both of them - neither can change the verdict. See their docstrings
+#   for the full contracts.
 #
 # USAGE
 #   bash tools/run-gates.sh <book-root>
@@ -235,6 +238,19 @@ if [ -f "$ROOT/tools/prune-stale.py" ]; then
   echo
 else
   echo "     prune-stale.py not found at tools/ - record drift is not repaired."
+  echo
+fi
+
+# And the second housekeeping step, for the same reason and with the same status:
+# tools/errata-store.py automerge --apply, the craft store's unattended compaction.
+# It is rate-limited by record/errata-policy.yaml (one change per pass, per
+# SELF_IMPROVEMENT §5) and it never touches a pinned measurement record. It cannot
+# change the verdict either; it is reported so a run's record state is visible.
+if [ -f "$ROOT/tools/errata-store.py" ]; then
+  "$PY" "$ROOT/tools/errata-store.py" automerge --apply
+  echo
+else
+  echo "     errata-store.py not found at tools/ - the craft store is not compacted."
   echo
 fi
 
