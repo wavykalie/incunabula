@@ -137,7 +137,8 @@ the full engine silently.
 Supporting skills: `series-binder` (multi-book scope), `press-ledger` (session ledger),
 `bestseller-studio`, `reader-swarm` (panels and market simulation — `--light` runs the
 four-voice market panel), and the
-generic craft utilities `copy-editing`, `deslopify`, `good-idea`.
+generic craft utilities `copy-editing`, `deslopify`. (`bundles/good-idea/` is a
+separate bundle, not part of this suite.)
 
 ### The gates (what can fail the book)
 

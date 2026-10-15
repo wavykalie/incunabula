@@ -193,8 +193,9 @@ job.
 | Re-derivation under changed rules | `rewrite` |
 
 Utility skills that are not part of book production keep their own names: `copy-editing`,
-`deslopify`, `good-idea`. The `skills/` directory holds 27 skills; retired skills are kept
-under `skills/_archive/` with a `MOVED.md` shim naming their successor.
+`deslopify`. The `skills/` directory holds 26 skills; retired skills are kept under
+`skills/_archive/` with a `MOVED.md` shim naming their successor. One tool sits outside
+the suite entirely: `bundles/good-idea/`, a video-idea validator kept as its own bundle.
 
 ## The gates
 

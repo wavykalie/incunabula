@@ -91,4 +91,5 @@ Not every term needs a print-shop name. These stay ordinary: *oscillation*, *emo
 *character chaos*, *anti-AI scan*.
 
 Utility skills that are not part of this system keep their own names: `copy-editing`,
-`good-idea`, `deslopify`.
+`deslopify`. (`good-idea` is not part of this system at all: `bundles/good-idea/`, its
+own bundle.)

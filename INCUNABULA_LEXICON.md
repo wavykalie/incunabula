@@ -172,4 +172,5 @@ function*, *setup and payoff*. The narrative layer (`NARRATIVE_LEDGER.yaml`, row
 speaks plainly.
 
 Utility skills that are not part of this system keep their own names: `copy-editing`,
-`good-idea`, `deslopify`.
+`deslopify`. (`good-idea` is not part of this system at all: `bundles/good-idea/`, its
+own bundle.)
