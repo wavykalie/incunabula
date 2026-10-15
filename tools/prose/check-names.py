@@ -273,7 +273,7 @@ def declare_nonfiction(book_root):
     check ("you", "the child", "the grandparent" are not cast), so an empty read
     on a nonfiction book is REPORTED, while on a fiction or undeclared book it
     stays a failure - a novel whose canon file reads as empty must not pass
-    silently. First used by test-books/quiet-hours (RUN_REPORT.md 2026-10-08).
+    silently. First found on a prescriptive guide, 2026-10-08.
     """
     return conventions.is_nonfiction(book_root)
 

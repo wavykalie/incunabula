@@ -31,11 +31,11 @@ Three books, measured against the same frozen instrument:
 
 | book | range | ratio | CV | written with length targets? |
 |---|---|---|---|---|
-| Merope 1 | 478 – 2,304 | 4.8× | 40.9% | ~~no~~ **yes** — 2,450 × 7, declared |
-| Merope 2 | 519 – 2,406 | 4.6× | 40.0% | ~~no~~ **yes** — 2,450 × 7, declared |
-| The Trick | 1,460 – 3,442 | 2.4× | 23.7% | **yes** |
+| validation 1 | 478 – 2,304 | 4.8× | 40.9% | ~~no~~ **yes** — 2,450 × 7, declared |
+| validation 2 | 519 – 2,406 | 4.6× | 40.0% | ~~no~~ **yes** — 2,450 × 7, declared |
+| the demo book | 1,460 – 3,442 | 2.4× | 23.7% | **yes** |
 
-**Why it is withdrawn.** The Merope manuscripts were seven chapters when they were written,
+**Why it is withdrawn.** The two validation manuscripts were seven chapters when written,
 to an outline reading `7 chapters × ~2,450 words`, and they scored **CV 5.8% and 10.9%** —
 the most uniform books in this project. They were later re-partitioned into eleven chapters
 in place, and the re-partitioned files are what the table above measures. 97–99% of every
@@ -52,7 +52,7 @@ before where it actually ends.
 **What this changes.** The correlation the framework drew was an artifact of a file
 overwrite. Every book measured here that was genuinely drafted to targets scored *lower*,
 not higher — 5.8%, 10.9%, 23.7%. The one book drafted from scratch with no targets of any
-kind, `muzzle-and-marrow`, scores **12.1%**, well under the 33.4–45.1% band.
+kind, the pilot, scores **12.1%**, well under the 33.4–45.1% band.
 
 **So the honest position: this project has never shown that a book drafted without length
 targets lands in the band.** The books that scored in the band got there by being cut
@@ -74,7 +74,7 @@ The band was re-measured from the six real volumes and reproduced: **33.3–45.0
 chapters, against the recorded 33.4–45.1%. The calibration is sound.
 
 **Candidate 1 — distribution shape.** Every one of the six real volumes is right-skewed
-(0.27 to 2.39). The pilot is −0.08 and the re-partitioned Merope books are 0.04 and 0.52,
+(0.27 to 2.39). The pilot is −0.08 and the re-partitioned validation books are 0.04 and 0.52,
 which looked like a clean discriminator: real boundaries make a short tail, cut ones make a
 flat distribution.
 
@@ -149,7 +149,7 @@ not fix that.
 The failures this prevents, in order of how often they happen:
 
 - **The stub.** A chapter under about 600 words that contains a scene. Real and legitimate.
-  ~~A 478-word chapter in Merope 1 is a whole scene and it is the reason that book has a
+  ~~A 478-word chapter in validation 1 is a whole scene and it is the reason that book has a
   4.8× range.~~ Withdrawn: that chapter is the tail of a 2,173-word chapter, split off by
   the re-partitioning described above. It contains no scene. The stub failure is real; that
   was not an instance of it.

@@ -116,14 +116,14 @@ live, and that gap has already cost a manuscript.
   `GATE_FREEZE.md` reads that path. Otherwise the archive location is still the book root,
   or a stub is left behind pointing at the archive.
 - A rewrite that re-chapters a book archives **the manuscript it replaces**, in the book,
-  before writing the new one — not just the metadata. The 7 → 11 re-chapter of
-  `validation-series` archived its outline, ledgers and audits correctly and overwrote seven
+  before writing the new one — not just the metadata. A book was re-chaptered 7 → 11:
+  its outline, ledgers and audits were archived correctly and it overwrote seven
   chapter files in place; those chapters survived only inside an already-built EPUB.
 - Confirm the pre-rewrite manuscript is readable **outside the live book directory** before
   treating the rewrite as done.
 - **An archive needs an index, written in the same commit that creates it.** `_archive/`
   had none until 2026-09-29, and for that time a complete checkout of the framework's
-  previous version — `hollow-bridge/book-genesis-v4/`, 19 skills, its own git history — sat
+  previous version — `<name>/book-genesis-v4/`, 19 skills, its own git history — sat
   there unread. An unindexed archive is not an archive; it is a directory nobody is
   allowed to delete. The index is `_archive/README.md`.
 - **Do not assume an archived subtree is old manuscript.** Some of it is prior

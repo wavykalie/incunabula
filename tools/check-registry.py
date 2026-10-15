@@ -7,18 +7,18 @@ same exemption class as tools/preflight.sh and the 2026-09-30 entry in
 GATE_FREEZE.md): it answers a question about which books exist, not a question
 about a book.
 
-Created 2026-10-01, after the all-books suite silently omitted `marrow-light/`
-— a finished book — because its book list was hand-typed. The failure had two
+Created 2026-10-01, after an all-books suite silently omitted a complete,
+finished book because its book list was hand-typed. The failure had two
 directions, and this checks both:
 
     1. a registered path that no longer exists (a renamed or archived book the
        suite would silently skip), and
     2. a PROJECT_STATE.yaml on disk that is not registered (a book the suite
-       does not know about — the marrow-light failure), and
+       does not know about — the omission above), and
     3. a `complete`/`published` claim the files do not support — chapters with
        no pass evidence, or zero gated words. Added 2026-10-13, author-directed,
        after the audit found books reaching `status: complete` with 0 gated
-       words (quiet-hours, la-merienda) and nothing refusing the claim.
+       words and nothing refusing the claim.
 
 Exit codes:
     0  registry and disk agree

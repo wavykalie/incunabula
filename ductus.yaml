@@ -44,6 +44,8 @@
 #   alone, which is where every book in the catalogue was drafted.
 
 press:
-  name: "Merope Press"
+  # The imprint name. Set your own: it appears in the colophon and on every
+  # `ductus.py check` report. The shipped value is a placeholder.
+  name: "Your Imprint"
   # Where the voices live. `ductus.py new` writes here; `check` reads here.
   ductus_dir: "ductus"

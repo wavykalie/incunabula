@@ -35,7 +35,7 @@ WHAT IT DOES NOT DO
   arriving through the front door.
 
   usage:  python measure-pd-corpus.py <dir-of-.txt-novels> [--window 3000]
-          defaults to the VERMILLION human corpus if no directory is given
+          The directory is required. The corpus this was measured on is not shipped.
 """
 
 import os
@@ -48,9 +48,9 @@ import statistics as st
 ONELINE_FAIL, ONELINE_WARN = 35.0, 50.0
 PARACV_FAIL, PARACV_WARN = 55.0, 75.0
 
-# Absolute: incunabula moved out of the books workspace (2026-10-07), so no
-# relative climb reaches vermillion-study from here any more.
-DEFAULT_CORPUS = "D:/KDP Books/vermillion-study/corpus/human"
+# No default path. The corpus this was measured on lives outside this project, and a
+# hard-coded absolute path from one machine is a broken argument on every other machine,
+# so the directory is now required.
 
 
 def sentences(text):
@@ -111,7 +111,12 @@ def main():
         size = int(args[i + 1])
         del args[i:i + 2]
 
-    root = args[0] if args else DEFAULT_CORPUS
+    if not args:
+        print("measure-pd-corpus: give the directory of .txt novels. There is no default:")
+        print("  the corpus this was measured on is not part of this project.")
+        print("  usage: python measure-pd-corpus.py <dir-of-.txt-novels> [--window 3000]")
+        return 2
+    root = args[0]
     if not os.path.isdir(root):
         print(f"measure-pd-corpus: {root} is not a directory.")
         print("  usage: python measure-pd-corpus.py <dir-of-.txt-novels> [--window 3000]")

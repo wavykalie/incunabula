@@ -9,7 +9,7 @@ Corrector revises a living text. This re-derives a book that was **finished unde
 contract that has since changed**. The text may be excellent and still be wrong for the
 new rules, because the rules are not in the prose.
 
-Worked example: `validation-series/` Merope 1 and 2, re-derived 2026-09-28 after
+Worked example: the two validation books (`validation 1`, `validation 2`), re-derived 2026-09-28 after
 `DRAFTING_FRAMEWORK.md` removed chapter-length targets. Record: `REWRITE.md` in that
 project. Read it before improvising a sequence here.
 
@@ -32,7 +32,7 @@ If you cannot name it in one sentence, stop and ask. You do not yet have a task.
 ### 2. Read `_archive/` before you decide what needs rewriting
 
 `_archive/README.md` is the index. It was missing until 2026-09-29, and for two months
-`_archive/hollow-bridge/book-genesis-v4/` — a complete checkout of the framework's
+`_archive/<name>/book-genesis-v4/` — a complete checkout of the framework's
 **previous version**, with its own git history and 19 skills — sat there undocumented.
 Do not assume an archived subtree is an old manuscript.
 
@@ -101,12 +101,13 @@ Numbers that came out this way, and are worth recognising:
 
 | book | had targets | range | CV |
 |---|---|---|---|
-| Merope 1 | **yes** | 4.8× → **4.9×** | 40.9% → **41.0%** |
-| Merope 2 | **yes** | 4.6× → **4.6×** | 40.0% → **39.9%** |
-| The Trick | yes | 2.4× | 23.7% |
+| validation 1 | **yes** | 4.8× → **4.9×** | 40.9% → **41.0%** |
+| validation 2 | **yes** | 4.6× → **4.6×** | 40.0% → **39.9%** |
+| the demo book | yes | 2.4× | 23.7% |
 
-**Corrected 2026-09-29.** These rows previously read `had targets: no` for Merope, and that
-was wrong. Merope was drafted to a declared 7 × ~2,450 and scored CV 5.8% / 10.9%; the
+**Corrected 2026-09-29.** These rows previously read `had targets: no`, and that
+was wrong. Both validation books were drafted to a declared 7 × ~2,450 and scored CV
+5.8% / 10.9%; the
 40% figures are the same prose re-partitioned into eleven chapters afterwards. The `no`
 described a file, not a drafting. Evidence in `ERRATA.md` 2026-09-29.
 
@@ -141,7 +142,7 @@ yet, that is step 2's job, not step 8's — but step 8 is where you find out you
 ### 9. Record what the rewrite did *not* prove
 
 Say plainly which parts of the new contract the book was never under. In the worked
-example: the Merope books were re-chaptered from seven planned chapters to eleven
+example: the validation books were re-chaptered from seven planned chapters to eleven
 specifically to break uniform lengths, under a state file declaring
 `average_words_per_chapter_planned: 2450`. So they are evidence that a spread **survives
 a repair** under the new framework. They are not evidence that drafting under the new
@@ -162,8 +163,9 @@ overstates what it demonstrated will be believed by the next person who reads it
 - **Delete anything to make a book look tidy.** Superseded work is archived with a
   reason and a provenance line (`maintenance/PRUNING_LOG.md`). Archived out of a book's
   own directory, it disarms the gates that read it — see step 3.
-- **Assume an archive is a graveyard.** `hollow-bridge/book-genesis-v4/` is the previous
-  version of this framework, not superseded manuscript. Read `_archive/README.md`, and
+- **Assume an archive is a graveyard.** `<name>/book-genesis-v4/` is the previous
+  version of this framework, not superseded manuscript, and the archive holds more than one
+  such tree. Read `_archive/README.md`, and
   add to it in the same commit that archives — see step 2.
 - **Report a gate you did not see run.** Exit 0 and "ran" are different claims, and exit
   2 and 3 now mean different things from each other.

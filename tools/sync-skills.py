@@ -142,7 +142,7 @@ def main():
             "%s\nMoved 2026-09-29 by tools/sync-skills.py.\n"
             "The v4 name is superseded. The live successor is in\n"
             "%s.\n"
-            "Full v4 history: D:/KDP Books/_archive/hollow-bridge/book-genesis-v4/\n"
+            "Full v4 history: the archived framework checkout named in tools/SKILLS.md.\n"
             % (succ, REPO),
             encoding="utf-8",
         )

@@ -96,7 +96,7 @@ value, record the later one as a conflict, and ask for a decision.
 Derive the ID from the normalized subject, predicate, and the value that distinguishes it:
 
 - `mara-calloway.voice-under-pressure`
-- `hollow-bridge.founding-year`
+- `the-city.founding-year`
 - `chapter-08.narration-register`
 - `station-ledger.status`
 

@@ -42,3 +42,15 @@ test-books/**/tools/calibration/corpus/
 # Private registry exemptions: books on disk this public repo must not name.
 # Read by tools/check-registry.py (load_private_dirs); see BOOKS.yaml header.
 .registry-private
+
+# Beside the framework on this machine but not part of it. The video funnel is its own
+# project with its own dependencies: 18 files and 154 MB of renders, source clips and a
+# virtual environment. It is not a book, no tool in this repository reads it, and a clone
+# that received it would download a second project it never asked for. Found while
+# sweeping the public tree for content unrelated to the framework, 2026-10-15.
+funnel-video/
+
+# Sibling checkouts and generated trees that live in this directory on a working machine.
+# check-registry.py already skips vermillion-study by name; this keeps git from seeing it.
+vermillion-study/
+_verify-clone/

@@ -46,9 +46,9 @@ THRESHOLDS ARE MEASURED, NOT GUESSED
   175,144 words) through this same code path. Measured RMS Cohen's d, first half
   against second half:
 
-      published vol. 1 (17 ch)   0.58      project: Sons of Heaven (15 ch)  1.26
-      published vol. 2 (18 ch)   0.49      project: Merope vol. 1 (11 ch)   0.98
-      published vol. 5 (13 ch)   0.80      project: Merope vol. 2 (11 ch)   0.90
+      published vol. 1 (17 ch)   0.58      project: nonfiction (15 ch)     1.26
+      published vol. 2 (18 ch)   0.49      project: validation 1 (11 ch)   0.98
+      published vol. 5 (13 ch)   0.80      project: validation 2 (11 ch)   0.90
 
   The positive control is two fixtures assembled from two different books each -
   which is by construction a book whose voice changes at the seam, because the

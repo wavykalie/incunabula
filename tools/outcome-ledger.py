@@ -462,7 +462,7 @@ def selftest():
 
         # 3. a real prediction appends and the old file stays a byte-prefix
         before = read_raw(paths(tmp)["commons"])
-        rc = cmd_predict(tmp, ["--book", "grand-standing", "--first-impression", "7.4",
+        rc = cmd_predict(tmp, ["--book", "fixture-book", "--first-impression", "7.4",
                                "--standing-type", "5.1", "--basis", "two blind readers"])
         after = read_raw(paths(tmp)["commons"])
         ok(rc == 0, "predict: a well-formed prediction is recorded")
@@ -473,21 +473,21 @@ def selftest():
            "predict: the prediction is verbatim in the ledger")
 
         # 4. a second open prediction for the same book is refused, then superseded
-        ok(cmd_predict(tmp, ["--book", "grand-standing", "--first-impression", "9",
+        ok(cmd_predict(tmp, ["--book", "fixture-book", "--first-impression", "9",
                              "--standing-type", "9"]) == 1,
            "predict: a second open prediction for one book is refused")
-        ok(cmd_predict(tmp, ["--book", "grand-standing", "--first-impression", "8.0",
+        ok(cmd_predict(tmp, ["--book", "fixture-book", "--first-impression", "8.0",
                              "--standing-type", "5.5", "--force", "--basis", "superseding"]) == 0,
            "predict: --force records a revised prediction")
         superseded = [r for r in load_rows(tmp) if r["status"] == "superseded"]
         ok(len(superseded) == 1, "predict: the superseded prediction is kept, not dropped")
 
-        # 5. falsifying a book with no prediction is refused (Hollow Bridge)
-        ok(cmd_falsify(tmp, ["--book", "hollow-bridge", "--actual", "12 copies"]) == 1,
+        # 5. falsifying a book with no prediction is refused
+        ok(cmd_falsify(tmp, ["--book", "unpredicted-book", "--actual", "12 copies"]) == 1,
            "falsify: a book with no prior prediction is refused, not back-filled")
 
         # 6. an uncomparable actual is recorded verbatim and NOT MAPPABLE
-        rc = cmd_falsify(tmp, ["--book", "grand-standing", "--actual",
+        rc = cmd_falsify(tmp, ["--book", "fixture-book", "--actual",
                                "sold 340 in year one; one 1-star review, verbatim: 'thin'",
                                "--lesson", "the premise read as hollow"])
         rows = load_rows(tmp)

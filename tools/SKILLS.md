@@ -62,7 +62,7 @@ Two independent safety nets, because this deletes nothing:
   before the first sync (8.6 MB).
 - `~/_skills-quarantine-20260929/` — the 20 superseded v4-named skills, moved rather
   than removed, each carrying a `_SUPERSEDED_BY` file naming its live successor and
-  pointing at `_archive/hollow-bridge/book-genesis-v4/` for the full v4 git history.
+  pointing at the archived framework checkout for the full v4 git history.
 
 To undo a single skill: move it back from the quarantine directory. To undo everything:
 restore from the backup.

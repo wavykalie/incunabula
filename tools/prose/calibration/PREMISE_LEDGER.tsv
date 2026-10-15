@@ -35,10 +35,14 @@
 # the specific feeling of "I have read this". A gate that fired on profession alone
 # would fail every book in every series ever, which is why it must not.
 #
-# SEEDED 2026-09-28 from the author's own catalogue. New rows are added when a book is
-# FINISHED, not when it is started - a premise entered at Phase 0 would make the book
-# collide with itself.
-
-sons-of-heaven	2025	narrator	nonfiction investigation	marriage and a life disclosed	complete, 28133 words
-hollow-bridge	2025	railway signalman	industrial accident investigation	sibling rivalry, one dead	AI control book, 33 ch
-the-origin-point	2026	fire investigator	origin-point certification of a fire	nephew suspected of an old fire	premise 2; premise 1 archived
+# ROWS
+#   Seeded by hand, by the author, because the population that matters is "premises
+#   this author has already used" and the author is the only person who knows that
+#   list. Add a row when a book is FINISHED, not when it is started - a premise
+#   entered at Phase 0 would make the book collide with itself.
+#
+#   One row per book, tab-separated, no header line:
+#     <slug>	<year>	<profession>	<engine>	<relationship>	<note>
+#   The shipped ledger carries no rows: the premises in it would be the author's
+#   own unpublished books. An empty ledger is NOT a pass - check-premise-distinct.py
+#   exits 2 and says so, because an empty population passes everything.

@@ -38,7 +38,7 @@ DEFAULT_POOL = os.path.join(HERE, "niche-pool.txt")
 # Dice 1 is the list this file shipped with, kept verbatim, because a published
 # roll records the seed and pool size and nothing else. Change the list or the
 # draw method and `--seed N --pool-size K` stops reproducing that roll, which
-# breaks the one promise this tool makes. Dice 1 is how the pension-winter run
+# breaks the one promise this tool makes. Dice 1 is how the first autonomous run
 # (seed 779398044) still re-derives.
 #
 # Dice 2 is the current one, and there is nothing left to draw.

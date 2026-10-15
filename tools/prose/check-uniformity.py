@@ -13,10 +13,10 @@ WHY THIS EXISTS
   genres, different lengths, written months apart - were built by the same pipeline
   and came out uniform to a degree published prose never is:
 
-      book                    chapters   word counts            CV
-      Sons of Heaven (11 ch)      11     2401 .. 2686          3.2%
-      Merope vol. 1  (7 ch)        7     2077 .. 2402          5.8%
-      Merope vol. 2  (7 ch)        7     1882 .. 2511         10.8%
+      book                         chapters   word counts            CV
+      the nonfiction fixture (11 ch)  11     2401 .. 2686          3.2%
+      validation 1   (7 ch)            7     2077 .. 2402          5.8%
+      validation 2   (7 ch)            7     1882 .. 2511         10.8%
 
   The published control corpus this floor was FIRST derived from was a light novel
   (Wandering Witch, Yen Press, 48 chapters, 177,047 words) at 48.4% / 68.1% / 70.6% CV,
@@ -174,9 +174,9 @@ FRAME_FAIL, FRAME_WARN = 40.0, 30.0
 # 23% of one volume's chapters ("Nobody X"), and the other two volumes do not put a
 # single frame above 20%. The three project books, before this check existed, ran:
 #
-#   Sons of Heaven   antithesis in 87% of chapters, "which is why" in 40%
-#   Merope vol. 1    "I want to be X" in 82%, "that is the" in 73%
-#   Merope vol. 2    "I want to be X" in 91%, "that is the" in 91%
+#   nonfiction fixture   antithesis in 87% of chapters, "which is why" in 40%
+#   validation 1         "I want to be X" in 82%, "that is the" in 73%
+#   validation 2         "I want to be X" in 91%, "that is the" in 91%
 #
 # The frames below are deliberately the distinctive ones - a stall, a coda, an
 # antithesis, a refrain - and not ordinary English. "That is the <noun>" is absent
@@ -190,7 +190,7 @@ FRAMES = [
      r"(?:was|were|is|are) not[^.!?]{0,50}[.!?] +(?:It|That|This|He|She|They) (?:was|were|is|are)"),
 ]
 # A frame is a CONSTRUCTION, not a word. "Nobody X" was in the first draft of this
-# list and was removed after it fired on Merope vol. 2 in 10 of 11 chapters, because
+# list and was removed after it fired on validation 2 in 10 of 11 chapters, because
 # it was not measuring a tic at all: being unnoticed is that book's subject, and a
 # theme realised in diction will cluster in every chapter that touches it. Leaving it
 # in would have pushed the author to stop writing the word the book is about. The

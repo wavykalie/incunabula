@@ -4,9 +4,9 @@
 # WHY THIS EXISTS
 #   The gates in tools/prose/ are a dozen separate commands a run had to remember
 #   at seventeen phase boundaries, and nothing enforced the remembering: books
-#   reached `status: complete` with zero gated words and no pass files at all
-#   (test-books/quiet-hours, test-books/la-merienda - both fail
-#   tools/check-pass-evidence.py). "The prose gate" was prose: a checklist an
+#   reached `status: complete` with zero gated words and no pass files at all.
+#   Two such books were found by tools/check-pass-evidence.py. "The prose gate"
+#   was prose: a checklist an
 #   agent could skip and still declare victory. This runner is the enforcement
 #   point. One command, every gate, and the project's standing rule applied to
 #   the suite as a whole: NOT-RUN IS NEVER PASS. It exits nonzero when a gate
@@ -21,8 +21,8 @@
 #
 #   It always runs the tools in THIS tree ($ROOT/tools/prose), never a copy
 #   embedded in a book directory. A book carrying its own tools/ snapshot can
-#   carry a stale instrument - test-books/incunabula-test/_archive/tools/check-uniformity.py
-#   (quarantined 2026-10-13) fails U1 at 30% while the frozen copy fails at 22% -
+#   carry a stale instrument - a quarantined copy of check-uniformity.py under a
+#   book's own `_archive/tools/` fails U1 at 30% while the frozen copy fails at 22% -
 #   and a result must be attributable to one known instrument.
 #
 #   Two steps run after the gates and are not gates. tools/prune-stale.py --apply is

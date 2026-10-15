@@ -509,7 +509,7 @@ sentence above the table already says. That was known here and not carried forwa
 `after` numbers were later cited in `DRAFTING_FRAMEWORK.md` as books "drafted with no
 length targets," which inverts the cause.
 
-The Merope manuscripts were drafted to a declared 7 × ~2,450 words. 97–99% of every
+The two validation manuscripts were drafted to a declared 7 × ~2,450 words. 97–99% of every
 re-partitioned chapter is verbatim original prose and the totals hold to within 0.5%;
 cutting the archived draft to the new chapter sizes reproduces 41.0% and 39.9% exactly
 with nothing written. The re-chaptering was a legitimate repair of a real defect — the

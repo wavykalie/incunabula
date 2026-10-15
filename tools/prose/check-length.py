@@ -86,8 +86,8 @@ def state_file(book_root):
     can say what length the book owes, and every downstream report that treats the skip
     as "no target declared" is reading an absence as a decision.
 
-    That is not hypothetical. Both validation-series Merope books have their
-    PROJECT_STATE.yaml in _archive/validation-series-meta/, so this gate exited 2 for a
+    That is not hypothetical. Two books in this project had their
+    PROJECT_STATE.yaml in an archive directory, so this gate exited 2 for a
     reason that had nothing to do with the drafting framework, and that exit 2 was read
     in-session as evidence that the framework had removed their length targets. It had
     not. The targets were still there, carrying `average_words_per_chapter_planned:

@@ -10,8 +10,8 @@
 # skill copy (meaningless measurements), a broken freeze (unattributable results), a
 # state file that would not parse (KF-004), a stray CR that hid from grep (KF-005),
 # and a book carrying its own stale copy of the instruments (a verdict nobody can
-# attribute - the copy now under test-books/incunabula-test/_archive/ failed U1 at
-# 30% where the frozen instrument fails at 22%).#   A check that has never been seen to fail is not yet known to work — so every row here
+# attribute - a quarantined copy under a book's `_archive/tools/` failed U1 at 30%
+# where the frozen instrument fails at 22%).#   A check that has never been seen to fail is not yet known to work — so every row here
 #   names its own state, including the states where it could not look.
 #   Row 7 (record hygiene) is the self-prune in its check role: the record files'
 #   standing claims measured against the live program. The repair half is
@@ -188,8 +188,8 @@ fi
 
 # 6. Embedded instruments --------------------------------------------------------
 # A book that carries its own copy of the gates can be measured by a stale one:
-# test-books/incunabula-test/_archive/tools/check-uniformity.py (quarantined
-# 2026-10-13) fails U1 at 30% while the frozen copy fails at 22% (recorded in
+# a quarantined copy of check-uniformity.py under a book's `_archive/tools/`
+# (quarantined 2026-10-13) fails U1 at 30% while the frozen copy fails at 22% (recorded in
 # tools/run-gates.sh). run-gates.sh never runs
 # a book-embedded copy, but a human with a shell might, and a result must be
 # attributable to one known instrument. The scan matches by instrument NAME: a

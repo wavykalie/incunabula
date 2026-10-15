@@ -77,7 +77,7 @@ CLAUSE_SPLIT = re.compile(r"\b(?:while|and|as|but|then|though|than)\b", re.I)
 SENT_END = re.compile(r"[.!?]")
 # A second image is only a second image if it SENSATES. The first version counted
 # every coordinated clause in a complement as an image, so one simile plus a chain of
-# predicates read as eleven images in one sentence (measured on demo-magician), and
+# predicates read as eleven images in one sentence (measured on one demo book), and
 # the report listed five windows per chapter - which points a reader at nothing.
 # A clause counts as a separate image unit when it joins with "while" (the canonical
 # two-images-one-sentence shape) or carries a sensory/impact cue of its own.

@@ -866,7 +866,7 @@ else
 fi
 
 echo "=== Control 18/19: a nonfiction book with no named cast is reported by check-names; fiction still fails"
-# quiet-hours (RUN_REPORT.md 2026-10-08) found check-names exiting 2 on a prescriptive
+# A prescriptive guide (2026-10-08) found check-names exiting 2 on a prescriptive
 # guide with no named cast. That is right for fiction - a novel whose canon file reads
 # empty must not pass - and wrong for a guide whose actors are \"you\", \"the child\",
 # \"the grandparent\". Freeze 21 gives the gate a nonfiction case keyed on
@@ -936,7 +936,7 @@ echo "=== Control 19/19: A24's case-sensitivity characterization stays pinned (E
 # grep -oE (case-SENSITIVE) while the HARD rows and F1 read case-insensitively, so the
 # explanatory coda - a row with a published rate behind its cap - cannot see the move
 # when a sentence opens with it ("This is why...") and counts it mid-sentence ("...and
-# that is why..."). Found by quiet-hours, 2026-10-08. Every density cap was derived on
+# that is why..."). Found on a prescriptive guide, 2026-10-08. Every density cap was derived on
 # the case-sensitive reading, so a silent "fix" would re-price those rows against prose
 # measured with a different instrument. If either arm below fails, the reading changed:
 # re-measure with calibration/measure.py before touching any number, then rewrite this

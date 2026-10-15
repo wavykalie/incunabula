@@ -213,7 +213,8 @@ DENSITY=(
 # reading every hit in two finished books rather than by a control misbehaving. There was
 # no word boundary after "not", so "was NOTHING in it worth the walk. It was ..." matched:
 # the regex took "was not" and then "hing in it worth the walk" as the intervening clause.
-# Read out one at a time, 24 of Merope's 25 hits are the real construction and 1 is that
+# Read out one at a time, 24 of 25 hits in the validation books are the real construction
+# and 1 is that
 # accident. The fix is one character and it can only ever REMOVE matches, so no cap moved
 # and nothing that passed can start failing. Leaving it in place would mean editing a
 # correct sentence to dodge a substring - which is the opposite of what a gate is for, and
@@ -329,7 +330,7 @@ scan_file() {
   # the split never happens: on book-2/chapter-11 the awk counted 22 sentences in a
   # chapter that has 43, and P1 was computed against half the text it claims to cover.
   #
-  # Measured across validation-series Merope, 15 of 22 chapters carried \r\r\n. On
+  # Measured across the validation books, 15 of 22 chapters carried \r\r\n. On
   # normalisation P1 opener counts roughly DOUBLED and book-1/chapter-10 went from "ok"
   # to FAIL ("they were" x3) - so those chapters were not passing these rows, they were
   # evading them. A gate that under-reports is worse than no gate, because a green
@@ -338,12 +339,12 @@ scan_file() {
   # NOT ORDINARY CRLF - measured, and the distinction is load-bearing. On this platform
   # awk reads a file in text mode and eats one CR per LF, so a plain CRLF file arrives
   # clean. Synthetic controls and both books confirm it: CONTROL plain CRLF reads 4
-  # sentences either way; demo-magician's 34 CRLF chapters read 120 either way, and the
+  # sentences either way; the demo book's 34 CRLF chapters read 120 either way, and the
   # regression run on all 34 is byte-identical before and after this fix. Only a LONE or
   # DOUBLED CR survives as a stray byte: \r\r\n loses its \r\n pair and leaves one \r,
   # and that is the case that counted 22 sentences in a chapter that has 43.
   #
-  # An earlier survey of these books reported demo-magician as clean because it tested
+  # An earlier survey of these books reported the demo book as clean because it tested
   # for LONE CR only. That test was right about the question it asked and wrong about the
   # answer that mattered - the book was never affected, but it would have been declared
   # clean on a criterion that does not predict the defect.

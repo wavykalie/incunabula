@@ -306,7 +306,7 @@ def main(argv):
         # The English-word check runs ONLY when the book has declared itself
         # non-English. Unknown is not non-English: an undeclared book is an
         # English book until it says otherwise, and treating "unknown" as
-        # foreign put 180 false positives on demo-magician alone.
+        # foreign put 180 false positives on one demo book alone.
         english_check = lang is not None and not is_english(lang)
         if lang is None:
             note = ("no language declared in PROJECT_STATE.yaml/STATE.yaml; "

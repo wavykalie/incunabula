@@ -37,23 +37,23 @@ locked tools, and each entry underneath tells the story of one change.
 
 | file | sha256 (first 16) | role |
 |---|---|---|
-| `tools/prose/deslop-check.sh` | `35ed380c20db520e` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 20 - A10a scoped to a report for mode: nonfiction, via conventions.py) |
-| `tools/prose/check-uniformity.py` | `9aa47f622e7ea61d` | U1–U6 cross-chapter rows (Freeze 19 - mode reader via conventions.py) |
-| `tools/prose/check-drift.py` | `814ca33e9e684ee7` | voice drift, size-dependent floor (Freeze 2 - Spearman tie fix) |
+| `tools/prose/deslop-check.sh` | `7462cde6e0dafacd` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 20 - A10a scoped to a report for mode: nonfiction, via conventions.py) |
+| `tools/prose/check-uniformity.py` | `64a8ce620b389687` | U1–U6 cross-chapter rows (Freeze 19 - mode reader via conventions.py) |
+| `tools/prose/check-drift.py` | `3e1a6b33fbafc5b5` | voice drift, size-dependent floor (Freeze 2 - Spearman tie fix) |
 | `tools/prose/check-arc.py` | `f2059aec8a9580cc` | A1 gate; A2–A4 report-only |
 | `tools/prose/check-surplus.py` | `7107a75155e8ffb5` | S1–S4, report-only (Freeze 19 - mode reader via conventions.py) |
 | `tools/prose/check-recoverable.py` | `591c61560d8c53b3` | tic × dialogue enrichment, report-only |
 | `tools/prose/check-errata.py` | `e9724056d7a3f18c` | protocol validator, reads no prose (Freeze 3 - floor 30) |
-| `tools/prose/check-length.py` | `6dd9d862d275bff3` | declared-length row `L1` (Freeze 2 - added after the sons-of-heaven-v2 run exposed the deletion incentive; Freeze 8 - exit 3 for ungoverned) |
-| `tools/prose/check-names.py` | `f5f169b0704e6e46` | cross-book cast-name collisions + default-name filter, reads no prose (Freeze 4 - added after the author found `Priya` in two books; Freeze 21 - nonfiction case via `conventions.py`) |
+| `tools/prose/check-length.py` | `b0f77f89fba525ba` | declared-length row `L1` (Freeze 2 - added after the sons-of-heaven-v2 run exposed the deletion incentive; Freeze 8 - exit 3 for ungoverned) |
+| `tools/prose/check-names.py` | `b09d89d8ca4b7765` | cross-book cast-name collisions + default-name filter, reads no prose (Freeze 4 - added after the author found `Priya` in two books; Freeze 21 - nonfiction case via `conventions.py`) |
 | `tools/prose/calibration/NAME_FREQUENCY.tsv` | `f17e837f6f2ae0a5` | the name-frequency data `check-names.py` reads (Freeze 4) |
 | `tools/prose/calibration/NAME_FREQUENCY.md` | `75f6fa0dae36f327` | provenance + the tier reasoning; frozen because it states what the tiers mean (Freeze 4) |
-| `tools/prose/validate-controls.sh` | `b3346a394925788e` | the controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only; Freeze 13 - controls 13-16; Freeze 20 - control 17, NF scope arms; Freeze 21 - controls 18-19, names case + A24 pin) |
+| `tools/prose/validate-controls.sh` | `4d559c43529c6a02` | the controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only; Freeze 13 - controls 13-16; Freeze 20 - control 17, NF scope arms; Freeze 21 - controls 18-19, names case + A24 pin) |
 | `tools/prose/check-premise-distinct.py` | `852541b840442e94` | premise job+engine collision vs the author's own catalogue (Freeze 5) |
 | `tools/prose/check-comps.py` | `9f47751a6a45aefa` | comp-title verification stamps; reads research/, not prose (Freeze 5) |
-| `tools/prose/calibration/PREMISE_LEDGER.tsv` | `1751102150c3ad6b` | the spent-premise data `check-premise-distinct.py` reads (Freeze 5) |
+| `tools/prose/calibration/PREMISE_LEDGER.tsv` | `f4c03a83537f0270` | the spent-premise data `check-premise-distinct.py` reads (Freeze 5) |
 | `tools/prose/check-narrative.py` | `3bf0bf46f318ab2c` | N1 debt (gates) / N2 beat repetition / N3 scene function / N4 ledger conformance (gates); reads no prose — the contract row, L1's class (re-keyed at the second update and Freezes 14–15; see below) |
-| `tools/prose/check-figurative.py` | `53962ce04c430d4f` | G1/G2 figurative pile-up reporter; report-only (re-keyed at the fourth update) |
+| `tools/prose/check-figurative.py` | `394cd0e402a7f8b9` | G1/G2 figurative pile-up reporter; report-only (re-keyed at the fourth update) |
 | `tools/prose/check-dialogue-tags.py` | `b646cff207ef723f` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second, fourth and Freeze 16 updates) |
 | `tools/prose/check-quantities.py` | `4cc4a538dde7309e` | Q1–Q4 quantity extraction, spread, sanity notes, counted-noun conflicts; report-only (re-keyed at the third and fourth updates) |
 Manifest completeness, 2026-10-13: the seven rows above for
@@ -76,6 +76,41 @@ Also frozen, because they change what the gates *see* rather than what they asse
 Those four are deliberately described without counts. The registries' own sizes live in
 the files themselves, and a second copy here is a second thing to keep true — which is
 exactly the drift `tools/prune-stale.py` exists to catch.
+
+### Change recorded 2026-10-15 — de-identification. No measurement moved.
+
+The instruments' comments and one data file named the books of the project this
+instrument was extracted from. A public copy of the tools should not carry them, so every
+identifier was replaced with a neutral label: the two validation books keep their numbers
+(`validation 1`, `validation 2`), the nonfiction book is `the nonfiction fixture`, the
+demo book is `the demo book`, and a book slug was replaced by a description of what the
+row measured.
+
+Every changed line in the Python and shell files is a comment or a docstring line. No
+regex, cap, threshold, arithmetic or control assertion was touched, and the eight rows
+re-keyed above are the fingerprints of that text-only edit.
+
+`tools/prose/calibration/PREMISE_LEDGER.tsv` also lost its seeded rows. They were the
+premises of the author's own unpublished books, and a public template should not carry
+them. The file now documents its own format and ships empty. Nothing was destroyed: the
+seed is kept outside the public tree, and `check-premise-distinct.py` already refuses an
+empty ledger with exit 2, so an empty file cannot read as a pass.
+
+Three files outside the hash manifest were de-identified in the same pass: the same prose
+in `calibration/CALIBRATION.md`, one archived-tree path named in `skills/rewrite/SKILL.md`,
+and the hard-coded corpus path in `calibration/measure-pd-corpus.py`. That last one is a
+behaviour change, not a text change: the script now requires its corpus directory and
+exits 2 with a message when it gets none, because a path that points at one machine's
+directory is a broken argument on every other machine.
+
+**Evidence at the time of the change.** `bash tools/prose/validate-controls.sh` ran
+19/19 controls and passed every one that needs only the shipped fixtures; it exits 2
+(PARTIAL) because no calibration corpus is installed on this machine, which is that
+suite's documented state and not a result of this change. The five changed Python files
+compile. `bash -n` passes on both shell files. That is evidence the harness still detects
+bad output. It is **not** evidence that the caps still match published prose: that needs
+`HUMAN_CORPUS` pointed at reference text, and it was equally unverified before this
+change.
 
 ## Load-bearing thresholds at this freeze
 
@@ -104,8 +139,8 @@ value. "fail < 22%, warn < 28%" means the row fails the book below 22% and warns
 and `U5` as advisory, and deslop row `A10a` as reported-not-failed (Freeze 20;
 `NF_SCOPED` in conventions.py). A book declaring `paragraph_convention:
 commercial-dialogue` holds
-`U4` to the market gate. `Sons of Heaven, Students of Dust` declares
-`positioning: "nonfiction"`.
+`U4` to the market gate. A book that declares `positioning: "nonfiction"` is scoped
+this way.
 
 ## What a pass does and does not mean
 
@@ -129,7 +164,9 @@ history of a long-running project is the bulk of this file. Freeze numbers cited
 skills (`Freeze 13`, `Freeze 19`) refer to entries in the history of the project this
 instrument was extracted from; a project's own numbering starts at its own first change.
 
-**No changes have been made to this project's copy yet.**
+**One change has been made to this project's copy**, on 2026-10-15, and it is recorded
+above this heading in the manifest region: de-identification of the instruments' own
+comments. It moved no measurement.
 
 Two rules govern the recording, and both exist because the opposite produced a false
 green light somewhere: a change is recorded *in the manifest region*, above the first
