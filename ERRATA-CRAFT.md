@@ -4,7 +4,7 @@
 
 This is the readable half of the store behind [`ERRATA.md`](ERRATA.md). `ERRATA.md` stays append-only and is never edited; this view is regenerated from `record/errata.jsonl` and can be deleted and rebuilt at any time. Measurement findings are **pinned** — the freeze cites them by date and compaction never moves them. Craft findings carry a prototype confidence, a usage count, and an expiry.
 
-_67 records · 55 pinned · 67 active · 0 merged · 0 expired_
+_69 records · 55 pinned · 69 active · 0 merged · 0 expired_
 
 | id | date | class | target | state | status | conf | value | pin | title |
 |---|---|---|---|---|---|---|---|---|---|
@@ -75,6 +75,8 @@ _67 records · 55 pinned · 67 active · 0 merged · 0 expired_
 | `E-2026-10-12-001` | 2026-10-12 | craft | `(process | delegation) — the phase passes that produce no artifact: `register` (blind sort), `catchword` (hook/pull scores), `quoin` (op log), `composing` (diff review), `proof-panel` (persona verdicts), `proof-pull` (round log), `collator` 5.6 (manuscript audit)` | observed | active | 0.35 | 0.35 |  | chapter-level passes claimed without artifacts; 30 stub chapters wore a 105k out |
 | `E-2026-10-12-002` | 2026-10-12 | craft | `(process | delegation) — Phase 3 drafting vs outline word targets; L1 length contract` | observed | active | 0.45 | 0.45 |  | single-pass drafting lands at half the floor; outline targets do not enforce the |
 | `E-2026-10-13-001` | 2026-10-13 | craft | `(tooling | delegation) — `GATE_FREEZE.md`'s manifest region and `tools/prose/verify-freeze.sh`, the guard over it` | observed | active | 0.45 | 0.45 |  | seven frozen files sat below the freeze verifier's scan line, unchecked since th |
+| `E-2026-10-15-001` | 2026-10-15 | craft | `(tooling | delegation) — `tools/prose/check-names.py` reading `ENTITY_STATE.yaml`; `tools/preflight.sh` row 3 (state hygiene)` | observed | active | 0.45 | 0.45 |  | a frozen gate passed a book it could not read: a malformed ENTITY_STATE.yaml mad |
+| `E-2026-10-15-002` | 2026-10-15 | craft | `(tooling | delegation) — `BOOKS.yaml`, `tools/check-registry.py`, `tools/preflight.sh` row 3 (state hygiene)` | observed | active | 0.45 | 0.45 |  | the registry debt is unchanged after six months of record, and the same books ca |
 
 ## Compaction
 

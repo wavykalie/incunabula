@@ -100,7 +100,7 @@ Also frozen, because they change what the gates *see* rather than what they asse
 
 - `tools/prose/calibration/CALIBRATION.md` — every measurement behind the numbers
 - `PRINTERS_COPY.md` — 30 rejected measures, 12 confirmed
-- `ERRATA.md` — 55 entries
+- `ERRATA.md` — 56 entries
 - `skills/` — the prose skills that generate the text under test
 
 ## Load-bearing thresholds at this freeze
