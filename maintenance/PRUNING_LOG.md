@@ -1,56 +1,30 @@
 # PRUNING LOG
 
-Append-only. Format per `skills/incunabula-codex/references/maintenance-protocol.md` §7: path, archive path, replacement, reason, date.
-Written by `tools/prune-stale.py`; entries record what was pruned and keep the old wording verbatim — pruning reduces what a reader must trust, it does not erase history.
-## 001 — 2026-10-14 — fragment: ERRATA.md
+**Append-only. This file is the record of what was pruned, archived, or deliberately left
+alone — and the "left alone" half is the point.** A log that only ever lists deletions can
+never demonstrate that anything was protected.
 
-- **date:** 2026-10-14
-- **path:** ERRATA.md:1
-- **action:** corrected in place (fragment)
-- **archive path:** none — the wording is preserved below, verbatim
-- **old wording:** the ten controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only) |# ERRATA
-- **replacement:** # ERRATA
-- **reason:** a table fragment is glued onto a markdown heading; the fragment is itself a stale copy of a GATE_FREEZE manifest cell. The heading is restored and the fragment is preserved in the pruning log.
-- **authority:** author direction 2026-10-14 — the self-prune corrects standing claims the live program contradicts, in place, with the old wording preserved here (ERRATA.md header amendment; SELF_IMPROVEMENT.md §6.3)
+`tools/prune-stale.py` writes here when it repairs a standing claim in place: the old
+wording is preserved verbatim, with the date and the reason, so a corrected sentence can be
+told apart from a sentence that was always true. Dated history — a claim inside an ERRATA
+entry, a freeze entry, a session record — is never edited and never logged here: it is
+reported for a ruling instead, because a record of what was true then is history and not
+drift.
 
-## 002 — 2026-10-14 — recount: GATE_FREEZE.md
+The format, in the maintenance protocol's §7 shape:
 
-- **date:** 2026-10-14
-- **path:** GATE_FREEZE.md:101
-- **action:** corrected in place (recount)
-- **archive path:** none — the wording is preserved below, verbatim
-- **old wording:** - `PRINTERS_COPY.md` — 25 rejected measures, 6 confirmed
-- **replacement:** - `PRINTERS_COPY.md` — 30 rejected measures, 12 confirmed
-- **reason:** standing printers-counts claim disagrees with the live program (measured at run time from the tools themselves)
-- **authority:** author direction 2026-10-14 — the self-prune corrects standing claims the live program contradicts, in place, with the old wording preserved here (ERRATA.md header amendment; SELF_IMPROVEMENT.md §6.3)
+```
+### YYYY-MM-DD — what changed, and why
+- **file:**       which record
+- **was:**        the old wording, verbatim
+- **now:**        the new wording
+- **cause:**      what moved the program
+- **authority:**  the rule that permits the repair
+```
 
-## 003 — 2026-10-14 — recount: GATE_FREEZE.md
+---
 
-- **date:** 2026-10-14
-- **path:** GATE_FREEZE.md:102
-- **action:** corrected in place (recount)
-- **archive path:** none — the wording is preserved below, verbatim
-- **old wording:** - `ERRATA.md` — 49 entries
-- **replacement:** - `ERRATA.md` — 54 entries
-- **reason:** standing errata-entries claim disagrees with the live program (measured at run time from the tools themselves)
-- **authority:** author direction 2026-10-14 — the self-prune corrects standing claims the live program contradicts, in place, with the old wording preserved here (ERRATA.md header amendment; SELF_IMPROVEMENT.md §6.3)
-## 004 — 2026-10-15 — recount: GATE_FREEZE.md
-
-- **date:** 2026-10-15
-- **path:** GATE_FREEZE.md:103
-- **action:** corrected in place (recount)
-- **archive path:** none — the wording is preserved below, verbatim
-- **old wording:** - `ERRATA.md` — 54 entries
-- **replacement:** - `ERRATA.md` — 55 entries
-- **reason:** standing errata-entries claim disagrees with the live program (measured at run time from the tools themselves)
-- **authority:** author direction 2026-10-14 — the self-prune corrects standing claims the live program contradicts, in place, with the old wording preserved here (ERRATA.md header amendment; SELF_IMPROVEMENT.md §6.3)
-## 005 — 2026-10-15 — recount: GATE_FREEZE.md
-
-- **date:** 2026-10-15
-- **path:** GATE_FREEZE.md:103
-- **action:** corrected in place (recount)
-- **archive path:** none — the wording is preserved below, verbatim
-- **old wording:** - `ERRATA.md` — 55 entries
-- **replacement:** - `ERRATA.md` — 56 entries
-- **reason:** standing errata-entries claim disagrees with the live program (measured at run time from the tools themselves)
-- **authority:** author direction 2026-10-14 — the self-prune corrects standing claims the live program contradicts, in place, with the old wording preserved here (ERRATA.md header amendment; SELF_IMPROVEMENT.md §6.3)
+**No entries.** Nothing has been pruned, archived, or corrected in this install yet.
+Nothing has been protected from pruning either — that is not an omission. It is the
+starting state, and it changes the first time a record drifts from the program or a file
+is deliberately left where it is.

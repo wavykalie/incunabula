@@ -105,8 +105,8 @@ advisory on a book declaring `positioning: nonfiction`, alongside `U4` and `U5`,
 enforced everywhere else at 22% fail / 28% warn. No separate non-fiction floor was
 derived: six volumes can refute one, not set one.
 
-**`A1` does not catch our own AI control.** Hollow Bridge, written by a model, scores
-0.533 — inside the human range and above the warn line. See §5.
+**`A1` does not catch the machine-written control.** The control book, written by a
+model, scores 0.533 — inside the human range and above the warn line. See §5.
 
 ## 4. Rejected — must not be re-derived without new evidence
 
@@ -155,8 +155,8 @@ adding one, ask what else besides the defect it would also be measuring.
 What this system knows matters and cannot see. The gates are silent on all of it, and a
 clean gate report means nothing about any of it.
 
-- **Whether a book is the length it was asked to be.** The first `sons-of-heaven-v2` draft
-  came in at 11,839 words against a 28,000-32,000 target, and **no gate noticed**, because
+- **Whether a book is the length it was asked to be.** A measured draft came in at 11,839
+  words against a 28,000–32,000 target, and **no gate noticed**, because
   the only row that measures chapter length is `U1`, and `U1` is advisory for a declared
   nonfiction book. This is the advisory mechanism working correctly and still concealing a
   real failure. It cannot be fixed by tightening `U1` — that reintroduces the false failure

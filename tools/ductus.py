@@ -483,9 +483,10 @@ def cmd_contract(root, args):
     print(f"  contract: {ddir}/{slug}/{CONTRACT}  sha256:{digest(contract)}")
     print(f"  ledger:   {ddir}/{slug}/{LEDGER}  "
           f"{os.path.getsize(ledger)} byte(s)  sha256:{digest(ledger)}")
-    print("  read before: drafting, revision, audit, scoring, packaging. Record these "
-          "digests in the session ledger so a result is attributable to the contract it "
-          "was drafted under.")
+    print("  read before: drafting, revision, auditing and scoring. Record these digests "
+          "in the session ledger so a result is attributable to the contract it was "
+          "drafted under. Not packaging: the query letter and cover copy are written in "
+          "the imprint's register, not the book's.")
     return 0
 
 

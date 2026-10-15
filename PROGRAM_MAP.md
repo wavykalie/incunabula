@@ -254,8 +254,7 @@ person still decides.
 | `tools/` | the harness: `run-gates.sh`, `preflight.sh`, `init-book.py`, `roll-brief.py`, `prune-stale.py`, `ductus.py`, … |
 | `ductus.yaml`, `ductus/` | the author voices: one contract an agent pilots plus one developing taste ledger per voice, created by `tools/ductus.py new` |
 | `tools/prose/calibration/` | how the thresholds were measured; corpus supplied locally, never committed |
-| `demo-books/` | three complete sample books to run the checks against |
-| `test-books/` | development projects and fixtures |
+| `demo-books/`, `test-books/` | your books — gitignored, never published by a push. The framework ships no manuscripts; `tools/init-book.py` makes the first one |
 | `GATE_FREEZE.md`, `ERRATA.md`, `PRINTERS_COPY.md`, `KNOWN_FINDINGS.md` | the evidence and history record |
 | `INCUNABULA_LEXICON.md` | the dictionary of every term |
 

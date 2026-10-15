@@ -2,7 +2,9 @@
 
 ```yaml
 improvement:
-  mode: auto        # hand | supervised | auto
+  mode: hand        # hand | supervised | auto — hand is the shipped default: the loop
+                    # proposes and a person adopts. `auto` is earned by a project whose
+                    # verifier stack has been exercised on it, not selected at install.
 ```
 
 In a letterpress shop the *make-ready* is the calibration done to the press before the
@@ -101,13 +103,13 @@ observe -> propose -> falsify -> adopt -> attribute -> shadow -> (roll back)
    are appended to `COMMONPLACE.md` and marked `emergent`.
 3. Delete or rewrite history. `ERRATA.md` and `COMMONPLACE.md` are append-only; an entry
    that turns out wrong gets a `WRONG` line under it and the wrongness stays visible.
-   **Amended 2026-10-14, at author direction:** append-only governs *history* — dated
+   **Append-only governs *history*, not standing claims:** it governs dated
    entries and recorded decisions — not standing claims about the current program. When
    the live program contradicts a standing count or status, `tools/prune-stale.py`
    (the self-prune) repairs it in place and preserves the old wording verbatim in
    `maintenance/PRUNING_LOG.md`. A claim inside a dated entry is never edited; it is
-   reported for the author to rule on. The same amendment is in `ERRATA.md`'s header,
-   and it is the only carve-out this rule has.
+   reported for the author to rule on. The same carve-out is stated in `ERRATA.md`'s
+   header, and it is the only one this rule has.
 4. Promote while any verifier reads SKIPPED.
 5. Touch attribution records or the freeze manifest except through the recorded freeze
    procedure in `GATE_FREEZE.md`.
@@ -149,8 +151,8 @@ permission.
 | `tools/preflight.sh` | the stack's runner | **new** — tool and state, never prose |
 | `tools/prune-stale.py` | maintenance | **new** — the self-prune: keeps the record files true to the program. Standing claims corrected in place, old wording in `maintenance/PRUNING_LOG.md`; dated history reported, never edited; book-carried instrument copies quarantined under `_archive/`. Runs from `preflight.sh` (check) and `run-gates.sh` (apply after a run) |
 
-**Added 2026-10-15**, so the map above still describes the program — the machinery each
-channel now runs on:
+The machinery each channel now runs on, so that the map above stays true as the program
+moves:
 
 | file | what it does | channel |
 |---|---|---|
@@ -163,15 +165,15 @@ The firewall of §2 holds across all four: an outcome cannot move a pinned measu
 record, a voice cannot receive another voice's preference, and no tool above moves a
 threshold.
 
-**Where a ductus came from (2026-10-15).** The taste layer shipped hours earlier with
-the voices declared in a config file — three lines named after the three kinds of book
-already in the catalogue. That was a guess about identity rather than a fact about it,
-and it made the layer useless to anyone whose books are not these books. It is now the
-other way round: `ductus.yaml` holds the imprint and the directory, and a voice exists
-because a creator made one. The agent pilots it by reading `ductus/<slug>/ductus.md`;
-the identity is the creator's, invented included. What survived the change is the part
-that was load-bearing — the isolation, the leak detector, the dated merge channel, the
-preflight wiring — and each of those is asserted rather than claimed.
+**Why the voices are not declared in a config file.** An earlier shape of this layer
+listed the authorial voices in `ductus.yaml` — enumerated from whatever books were
+already in the catalogue. That is a guess about identity rather than a fact about it, and
+it makes the layer useless to anyone whose books are not those books. So it is the other
+way round: the config holds the imprint and the directory, and a voice exists because a
+creator made one. An agent pilots a voice by reading `ductus/<slug>/ductus.md`; the
+identity is the creator's, invented included. What is load-bearing is not the roster but
+the isolation, the leak detector, the dated merge channel and the preflight wiring — and
+each of those is asserted rather than claimed.
 
 Mode is set at the top of this file (`improvement.mode`). `hand` is always available as a
 request: say so, and the loop only proposes.

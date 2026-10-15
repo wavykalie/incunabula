@@ -20,6 +20,18 @@ __pycache__/
 # preferences, which is the correct default -- shipping it would make taste a default.
 USER_PREFERENCES.md
 
+# The author's own record, kept beside the framework rather than shipped inside it.
+# Everything in .private/ is yours: your ERRATA ledger, your commonplace book, your
+# known findings, your freeze history, your registry and your books. The repository
+# carries templates at the canonical paths so the tools keep working, and the real
+# content lives here, untracked. See .private/README.md for what is in it.
+.private/
+
+# Your books. The framework does not ship them: a clone gets the checks, the skills and
+# a scaffold command, and nothing that belongs to anyone else.
+test-books/
+demo-books/
+
 # Book-carried copies of the calibration corpus. Same class as the corpus/ rule in
 # tools/prose/calibration/.gitignore: published commercial prose that is nobody else's
 # to ship, wherever it gets copied to. The copies stay on disk (the local controls that

@@ -136,6 +136,18 @@ def self_test():
         assert b"selftest-book" in reg, "the scaffold did not register the book"
         assert b"\r" not in reg, "the registry append was not the file's own convention"
 
+        # A workspace-prefixed --path must not nest the book inside the workspace.
+        # The failure it prevents is silent: test-books/test-books/<slug> is still
+        # found by the registry scan, so the book looks scaffolded and sits somewhere
+        # nobody expects.
+        rc = main(["--path", "books/second", "--title", "Second",
+                   "--status", "drafting"])
+        assert rc == 0, f"a workspace-prefixed --path was refused (exit {rc})"
+        assert os.path.isdir(os.path.join(workspace, "second", "manuscript")), \
+            "a workspace-prefixed --path did not resolve into the workspace"
+        assert not os.path.exists(os.path.join(workspace, "books")), \
+            "a workspace-prefixed --path nested the book inside the workspace"
+
         refused = False
         try:
             main(["--path", "refused", "--title", "Refused",
@@ -210,6 +222,18 @@ def main(argv=None):
             f"the disarm the 2026-10-13 audit found. Fix the plan or the contract.")
 
     workspace = os.environ.get("BOOKS_WORKSPACE", DEFAULT_WORKSPACE)
+    # `--path` is relative to the workspace, so the natural-looking
+    # `--path test-books/my-book` scaffolds `test-books/test-books/my-book` and still
+    # reports success. A workspace prefix is therefore tolerated rather than duplicated:
+    # this is the first command anyone runs on a fresh clone, and a first command that
+    # silently nests a tree teaches the wrong shape immediately. (Found 2026-10-15, on a
+    # clone that had no workspace directory at all - which is every clone now.)
+    ws_base = os.path.basename(workspace.rstrip("/\\"))
+    if ws_base and book_path.startswith(ws_base + "/"):
+        stripped = book_path[len(ws_base) + 1:]
+        print(f"init-book: --path {book_path!r} already names the workspace "
+              f"({ws_base}/) - reading it as {stripped!r}.")
+        book_path = stripped
     book_root = os.path.join(workspace, book_path)
     if os.path.exists(book_root):
         print(f"init-book: {book_root} already exists - nothing created, nothing registered.")

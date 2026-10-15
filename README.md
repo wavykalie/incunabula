@@ -87,11 +87,10 @@ qualifications, each of which the tools report rather than hide:
   page, an em dash goes out as a single 0x97 byte, and a terminal renders it as junk.
   The checks still measure the same things either way — this is about reading their
   output, not about what they conclude.
-- **A book can bring its own apparatus, with its own dependencies.**
-  `test-books/kagiroi-drift/tools/render_kdp_formats.py` imports `docx` to render that
-  book's DOCX, and it is the only third-party import anywhere in the tree. Such scripts
-  live inside one book, nothing in `skills/` or `tools/` imports them, and the engine
-  never calls them — they are fixtures a book shipped with, not part of the system.
+- **A book can bring its own apparatus, with its own dependencies.** A book's own tools
+  live inside its directory — one of them, a DOCX renderer, imports `docx` — and nothing
+  in `skills/` or `tools/` imports them or calls them. They belong to that book, not to
+  the system.
 
 ```
 skills/incunabula/            the full 17-phase engine (SKILL.md + the lexicon)
@@ -112,9 +111,9 @@ of it:
   It shares no code with the engine, nothing in `skills/` or `tools/` reads it, and its
   virtualenv is deliberately ignored. If you are here for the book system, you can ignore
   the whole directory.
-- **`test-books/` and `demo-books/`** are fixtures: real runs, their reports, and the
-  defects they kept on purpose. They are evidence, not documentation, and their absolute
-  paths are the machine they were made on.
+- **Your books are not here.** `test-books/` and `demo-books/` are gitignored: books you
+  write land there, stay on your disk, and are never published by a `git push`. Every
+  path in every document still refers to them, because that is where they live.
 
 The same split runs through the records. The **framework** works for any author; the
 **record** is what this installation decided, and is context rather than obligation.
@@ -151,21 +150,32 @@ Which limits are affected: every threshold in `deslop-check.sh`, `check-uniformi
 and `check-drift.py`. `check-length.py` needs no corpus (it compares a book to what that
 book declared); the registry checks need none.
 
-### Demo books (runnable fixtures)
+### Your first book, in one command
 
-Three complete books produced by this pipeline ship under [`demo-books/`](demo-books/) —
-manuscripts, state files, and the phase artifacts — so every check can be run against
-real books before you trust it on your own:
-
-- **`demo-magician`** — *The Trick*, a 1930s conjuring mystery (34 chapters). The clean run: complete, swept, editorial package built.
-- **`muzzle-and-marrow`** — the from-scratch pilot. Its `U1`/`L1` failures are deliberately kept findings.
-- **`marrow-light`** — 38 chapters; the book whose silent omission from a hand-typed suite list created the registry.
+**No books ship with this repository.** A book here is somebody's manuscript, and the
+framework does not carry anyone's; what it carries is the scaffold that makes one. So the
+first thing to run is the scaffold, and the first thing to read is its output:
 
 ```bash
-bash tools/prose/deslop-check.sh demo-books/demo-magician/manuscript/chapters
-python tools/prose/check-uniformity.py demo-books/demo-magician
-python tools/prose/check-length.py demo-books/muzzle-and-marrow   # kept L1 finding: exits 1
+python tools/init-book.py --path test-books/my-book --title "My Book"   # scaffold + register
+python tools/roll-brief.py --seed 7                                      # optional: roll a premise
+bash tools/run-gates.sh test-books/my-book                               # exit 2 until it has chapters
 ```
+
+`init-book.py` needs `--path` and `--title`; a `test-books/` prefix on the path is
+understood, not duplicated.
+
+`run-gates.sh` exits **2** on a book with no chapters yet, which means *not run* and never
+*pass*. That is the whole idea, and the first run is where to see it: **an empty thing is
+not a green thing.**
+
+Two honest consequences of shipping no books:
+
+- `python tools/check-registry.py` exits **2** — "registry exists but lists no books" —
+  until you register your own. Not run is not a pass.
+- `bash tools/prose/validate-controls.sh` is **PARTIAL (exit 2)** without a corpus to
+  measure against, exactly as its own summary says. You supply the reference prose; the
+  limits are only *verified* once you do.
 
 ### Reading guide: what to read, in what order
 

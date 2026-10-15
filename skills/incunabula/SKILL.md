@@ -115,7 +115,7 @@ grade C is diagnostic only and cannot support an independent publication claim.
 
 Keep the phase order, the specialist dispatches, the gates, and the revision taxonomy
 intact. Read the active canon, the voice contracts, and — where the book has one — its
-ductus before drafting, editing, auditing, scoring, or packaging. Resolve it with
+ductus before drafting, editing, auditing, or scoring. Resolve it with
 `python tools/ductus.py contract <book-root>` and record the digests it prints; a
 `REFUSED` contract stops the phase outright. After every chapter block, revision, audit, score, or user decision,
 run a maintenance check-in: merge duplicates, add provenance, scope facts that have

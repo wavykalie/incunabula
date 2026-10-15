@@ -15,6 +15,21 @@ You are the composing pass. Every change you make is measurable, and every chang
 Phase 3.8, after the Quoin and before `proof-panel`. Per chapter, or across a batch. This is a
 mechanical pass — it must not become a prose revision.
 
+### Where a ductus is in force
+
+Resolve it (`python tools/ductus.py contract <book-root>`) and hold two things apart, because
+they are not the same kind of rule.
+
+- **A frozen cap outranks a declared signature.** A voice whose contract allows em dashes,
+or leans on a construction this pass measures, is still bound by the calibrated limit: the
+cap was derived from published prose, and no voice may move a threshold. Where the two
+collide, the cap wins and the *reason* goes in the session record — a voice that needs the
+room is an argument for a corpus re-derivation, not an exemption for this chapter.
+- **Where the pass is advisory, the contract decides.** The `report`-only rows (surplus,
+recoverable) and every judgement call the pipeline flags as a possible false positive are
+the pass's own opinion, and a voice's declared refusals outrank it. Do not flatten a
+signature into house style because a grep noticed it.
+
 ## The Pipeline
 
 Run the checks against the project's calibrated thresholds. Where a threshold is not recorded,
