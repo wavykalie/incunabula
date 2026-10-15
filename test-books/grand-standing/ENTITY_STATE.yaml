@@ -1,0 +1,114 @@
+# ENTITY STATE — Grand Standing
+# Built at phase 2.7 (case-keeper BUILD) from foundation.md and outline.md.
+# Every character, location, and timeline entry the outline touches.
+
+meta:
+  project: "grand-standing"
+  built: "2026-10-14"
+  source: "foundation.md, outline.md, premise.md"
+  mode: "BUILD — update after each batch (3.7) and after revision (5.5)"
+
+characters:
+  - id: "P-001"
+    name: "Marnie Liss"
+    role: "protagonist — the Sentinel's last reporter, 29"
+    arc: "recorder → participant"
+    chaos: { wound: "father laid off by email after 30 years on the letters page", lie: "precision is rescue", obsession: "municipal fonts", distortion: "people are sources", memory: "father reading clause 7 aloud", failure: "deflects kindness with follow-up questions" }
+    chapters: [1-32]
+  - id: "P-002"
+    name: "Desmond Vellum"
+    role: "editor of the Sentinel, 63"
+    arc: "managing decline → going down swinging"
+    chaos: { wound: "killed the 1998 structural-survey story over a facing ad", lie: "small papers survive by not fighting", obsession: "apostrophes; obituaries of the living", distortion: "sees column inches everywhere", memory: "opening night 1969, the velvet", failure: "converts grief into layout" }
+    chapters: [2, 8, 15, 25, 30, 31]
+  - id: "P-003"
+    name: "Ruth Ampadu"
+    role: "chair of the Estates committee, 52"
+    arc: "managing the unmanageable → owning the choice"
+    chaos: { wound: "campaigned on the monuments; now kills them", lie: "there is always a third option", obsession: "competitive flower arranging", distortion: "moral questions → working groups", memory: "flat above the chip shop", failure: "schedules breakdowns for recess weeks" }
+    chapters: [1, 7, 16, 21, 23, 24, 32]
+  - id: "P-004"
+    name: "Jerome Arkwright"
+    role: "theatre's last manager, 41 — lives in the stage-left flat"
+    arc: "custodian of a ruin → saves what is not stone"
+    chaos: { wound: "the building ate fifteen years of his life", lie: "the building chooses its people", obsession: "seat upholstery by touch", distortion: "maintenance is morality", memory: "the unclaimed ring in row G", failure: "monologues to the empty house" }
+    chapters: [4, 9, 11, 17, 19, 20, 26]
+  - id: "P-005"
+    name: "Mrs. Ampadu (Ruth's mother)"
+    role: "the fountain's anonymous maintainer, 11 years"
+    reveal: "chapter 24"
+    seeding: "ch12 only — hands at the pump, unattributed (corrected at checkpoint 1 round 2; see evaluations/checkpoint-1-vote.md)"
+    chapters: [12, 24]
+  - id: "P-006"
+    name: "the letter-writer (unnamed)"
+    role: "wants the theatre demolished — her son died on its stairs; NOT Mrs. Ampadu (registered separately at checkpoint 1 round 2)"
+    chapters: [5, 14]
+
+locations:
+  - id: "L-001"
+    name: "Mardenbridge"
+    role: "the town — monument-rich, maintenance-poor"
+  - id: "L-002"
+    name: "Colosseum Civic Theatre"
+    role: "6,000 seats; stage condemned (ch 10); demolished ch 28"
+  - id: "L-003"
+    name: "The Sentinel office"
+    role: "dying paper; closes ch 31"
+  - id: "L-004"
+    name: "Council chamber"
+    role: "1969 Gill Sans lettering; decisions ch 1, 7, 16, 23"
+  - id: "L-005"
+    name: "The fountain"
+    role: "no pump; funded by seat salvage (ch 28)"
+  - id: "L-006"
+    name: "The frieze"
+    role: "portraits of the 1969 builders incl. Marnie's grandfather (ch 13)"
+  - id: "L-007"
+    name: "Stage-left flat"
+    role: "Arkwright's home; emptied ch 26"
+
+timeline:
+  - id: "T-001"
+    entry: "Ch1: council resolves not to renew the lease (7-4, 8:41pm)"
+    chapters: [1]
+  - id: "T-002"
+    entry: "Ch3: survey cost published — £2.4m repairs; lease is £1/yr peppercorn"
+    chapters: [3]
+  - id: "T-003"
+    entry: "Ch10: full survey published — STAGE condemned, not roof; season cannot proceed"
+    chapters: [10, 17, 25]
+  - id: "T-004"
+    entry: "Ch16: budget meeting date set; Ruth knew from ch 7 only one monument is fundable"
+    chapters: [7, 16, 23]
+  - id: "T-005"
+    entry: "Ch23: committee vote ties; Ruth's chair's vote funds the fountain"
+    chapters: [23]
+  - id: "T-006"
+    entry: "Ch28: auditorium demolished; 6,000 seats sold as keepsakes fund pump + frieze"
+    chapters: [28, 29]
+  - id: "T-007"
+    entry: "Ch30: Desmond dies; Marnie files his obituary before the funeral"
+    chapters: [30]
+  - id: "T-008"
+    entry: "Ch31: Marnie buys the Sentinel masthead for £1"
+    chapters: [31]
+
+objects:
+  - id: "O-001"
+    name: "the wedding ring (row G)"
+    thread: [9, 19, 26]
+    state: "returned deliberately (ch19); left again as ritual (ch26)"
+  - id: "O-002"
+    name: "the structural survey"
+    thread: [10, 17, 25]
+    state: "Marnie holds the original; Arkwright falsifies one measure (ch17); Desmond prints it (ch25)"
+  - id: "O-003"
+    name: "the obituary file"
+    thread: [2, 30, 31]
+    state: "Desmond's drawer; Marnie completes the ritual"
+  - id: "O-004"
+    name: "seat keepsakes"
+    thread: [28, 29]
+    state: "6,000 seats sold; one kept in the council chamber (ch29)"
+
+conflicts: []

@@ -103,3 +103,9 @@ books:
     status: autonomous
     expected_manuscript: true
     note: "Autonomous run (random button) - rolled by tools/roll-brief.py, no author at the wheel. (2026-10-11)"
+
+  - path: grand-standing
+    title: "Grand Standing"
+    status: autonomous
+    expected_manuscript: true
+    note: "Autonomous run (random button) - rolled by tools/roll-brief.py, no author at the wheel. (2026-10-14)"
