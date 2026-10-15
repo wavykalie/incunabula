@@ -1,0 +1,194 @@
+# tools/phase-map.yaml — the seventeen-phase chain, machine-readable.
+#
+# SINGLE SOURCE OF TRUTH for tools/run-phases.sh. skills/incunabula/SKILL.md shows
+# the same chain in words and points here. When the two disagree, this is what the
+# runner enforces, and the disagreement is a defect in one of them.
+#
+# Extracted from skills/incunabula/SKILL.md ("The seventeen phases" and "Phase
+# gates, condensed") on 2026-10-15. The skill layer stays the content of each
+# step; this file and the runner are only the control. The runner never writes
+# prose and never scores: it sequences, invokes the tools below, and refuses to
+# advance on a nonzero exit.
+#
+# FIELDS
+#   id        the phase number, exactly as the skill's diagram writes it
+#   name      what the phase is called there
+#   skill     the specialist skill whose content work the phase is for
+#   artifacts paths (under the book root) that must exist before the gate runs.
+#             A missing artifact is a halt, not a pass: an absent artifact is a
+#             failure, per the maintenance gate.
+#   gates     gate ids (see the gates map) run at this phase's exit. Exit 0 from
+#             every one of them is the ONLY thing that advances the phase. Any
+#             other exit halts the run and writes a resume pointer into the
+#             project state. Not-run is never a pass.
+#   human     the criteria of this phase's exit arrow that no tool can compel —
+#             user approvals, judgments, skill work. The runner records this
+#             string in its halt/advance notes and enforces NONE of it. A CLEAR
+#             from the runner covers the gates only; it never covers this.
+#
+# GATES
+#   Each command runs with BOOK and CHAPTERS set (book root; book root +
+#   manuscript/chapters). Every tool here already exists; this file adds no gate
+#   (GATE_FREEZE.md, the rewrite skill's rule). It makes the existing ones
+#   unskippable. Exit contracts are the tools' own:
+#     deslop-check.sh   0 pass, 1 fail (an empty scan fails by its own design)
+#     check-uniformity  0 pass, 1 failure or nothing checkable
+#     check-drift       0 pass, 1 a voice shift or nothing checkable
+#     check-arc         0 pass, 1 failure or nothing checkable
+#     check-narrative   0 clean, 1 N1/N4 fail, 2 ledger declares nothing (NOT RUN)
+#     check-length      0 in range, 1 outside, 2 not declared, 3 ungoverned,
+#                       4 status in_progress (recorded, not judged)
+#     check-progress    0 C1 agrees, 1 C1 fails, 2 cannot judge, 3 ungoverned
+#     check-comps       0 pass, 1 unverified comps, 2 research unreadable
+#     check-premise     0 pass, 1 collision, 2 could not read
+#     check-pass-evidence  0 evidenced, 1 missing evidence, 2 no chapters
+#     preflight / check-registry  0 ready; anything else refuses the run
+#
+# Parsed by tools/phase-state.py (python3 stdlib only; a strict subset of YAML —
+# quoted scalars and inline lists, no anchors, no multiline strings). Anything
+# this parser does not understand is a refusal, not a guess.
+
+schema: "1"
+source: "skills/incunabula/SKILL.md"
+written: "2026-10-15"
+
+gates:
+  preflight: "bash tools/preflight.sh"
+  registry: "python tools/check-registry.py"
+  comps: "python tools/prose/check-comps.py {book}"
+  premise: "python tools/prose/check-premise-distinct.py {book}"
+  deslop: "bash tools/prose/deslop-check.sh {chapters}"
+  uniformity: "python tools/prose/check-uniformity.py {book}"
+  drift: "python tools/prose/check-drift.py {book}"
+  arc: "python tools/prose/check-arc.py {book}"
+  narrative: "python tools/prose/check-narrative.py {book}"
+  length: "python tools/prose/check-length.py {book}"
+  progress: "python tools/check-progress.py {book}"
+  pass-evidence: "python tools/check-pass-evidence.py {book}"
+
+phases:
+  - id: "1"
+    name: "Research"
+    skill: "scout"
+    artifacts: ["research/"]
+    gates: ["comps", "premise"]
+    human: "market study with comps, genre conventions, a length target, an engagement type; explicit user approval of direction"
+
+  - id: "1.5"
+    name: "Readership"
+    skill: "readership"
+    artifacts: ["readership.md"]
+    gates: []
+    human: "three to five personas; a primary that drives writing and a hostile that drives evaluation; deal-breakers and triggers on each"
+
+  - id: "2"
+    name: "Foundation"
+    skill: "forme"
+    artifacts: ["foundation.md", "outline.md"]
+    gates: []
+    human: "characters with chaos; outline carrying emotional anchors and surprises, structural approaches, a transition plan; theme as a question; user approval"
+
+  - id: "2.5"
+    name: "Voice matrix"
+    skill: "voice-matrix"
+    artifacts: ["voice-matrix.md"]
+    gates: []
+    human: "global profile, per-character cards with how each voice breaks, differentiation matrix, anti-pattern checklist, benchmark samples; voice bank of at least ten samples"
+
+  - id: "2.7"
+    name: "Case build"
+    skill: "case-keeper"
+    artifacts: ["ENTITY_STATE.yaml"]
+    gates: []
+    human: "the entity file built from foundation and outline, tracking every character, location, and timeline entry"
+
+  - id: "2.8"
+    name: "Collation, outline"
+    skill: "collator"
+    artifacts: ["ENTITY_STATE.yaml"]
+    gates: []
+    human: "the outline collation found no critical issues; warnings logged and each addressed or deferred with a reason"
+
+  - id: "3"
+    name: "Drafting"
+    skill: "setting"
+    artifacts: ["manuscript/chapters/"]
+    gates: ["deslop"]
+    human: "one chapter written with its self-report; a chapter that fails the scan does not enter the manuscript; the read-aloud half of the prose gate stays with the skill layer"
+
+  - id: "3.1"
+    name: "Register"
+    skill: "register"
+    artifacts: []
+    gates: ["pass-evidence"]
+    human: "blind sort passes for every speaking character; the dialogue-to-prose ratio sits inside the genre target"
+
+  - id: "3.2"
+    name: "Catchword"
+    skill: "catchword"
+    artifacts: []
+    gates: ["pass-evidence"]
+    human: "hook and pull scored at or above the genre floor; the hook type differs from the previous chapter"
+
+  - id: "3.5"
+    name: "Quoin"
+    skill: "quoin"
+    artifacts: []
+    gates: ["pass-evidence"]
+    human: "at least five of the nine operations applied, including operation 9; the emotional anchor preserved"
+
+  - id: "3.7"
+    name: "Case update"
+    skill: "case-keeper"
+    artifacts: ["ENTITY_STATE.yaml"]
+    gates: []
+    human: "the case tracker updated, every three to five chapters"
+
+  - id: "3.8"
+    name: "Composing"
+    skill: "composing"
+    artifacts: []
+    gates: ["pass-evidence", "uniformity", "drift", "arc"]
+    human: "the mechanical pass run with every diff reviewed for false positives; a uniformity failure fixed or waived in writing (the waiver ledger is the runner's waive command, phase-map aside)"
+
+  - id: "4"
+    name: "Evaluation"
+    skill: "proof-panel"
+    artifacts: []
+    gates: ["deslop", "uniformity", "drift", "arc", "narrative", "pass-evidence"]
+    human: "scores per dimension with citations, the weakness taxonomy ranked, the tic scan at genre targets, the chaos check, keepsake anchors counted, and beat arcs plus scene functions declared into NARRATIVE_LEDGER.yaml"
+
+  - id: "4.5"
+    name: "Proof pull"
+    skill: "proof-pull"
+    artifacts: []
+    gates: ["pass-evidence"]
+    human: "the loop runs at most three rounds and then escalates as structural; the runner owns the counter and refuses a fourth (proof_pull in the project state)"
+
+  - id: "5"
+    name: "Revision"
+    skill: "corrector"
+    artifacts: []
+    gates: []
+    human: "revisions completed per the revision taxonomy, top-down; strengths confirmed intact; at most three cycles (revision_cycles in the project state)"
+
+  - id: "5.5"
+    name: "Case update"
+    skill: "case-keeper"
+    artifacts: ["ENTITY_STATE.yaml"]
+    gates: []
+    human: "the case tracker updated after revision"
+
+  - id: "5.6"
+    name: "Collation, manuscript"
+    skill: "collator"
+    artifacts: []
+    gates: ["narrative", "drift", "uniformity", "progress"]
+    human: "names, appearances, relationships, timeline, knowledge, threads, and world rules consistent; the narrative ledger audited against the text in both directions"
+
+  - id: "6"
+    name: "Delivery"
+    skill: "colophon + presswork"
+    artifacts: ["delivery/"]
+    gates: ["deslop", "uniformity", "drift", "arc", "narrative", "length", "pass-evidence"]
+    human: "the floor meets the genre threshold; first impression at or above 7.0; human feedback integrated or explicitly deferred; user approval to package"

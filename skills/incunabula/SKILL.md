@@ -157,6 +157,10 @@ book finished until the proof pulls and the state-canon-voice consistency gate b
 6      Delivery            colophon + presswork
 ```
 
+The same chain is machine-readable in `tools/phase-map.yaml` — the single source of
+truth for `tools/run-phases.sh`. This diagram is the explanation; the yaml is what the
+runner enforces. When the two disagree, that is a defect in one of them, not a choice.
+
 **Why the quoin sits where it does.** After a chapter is written and before it is scored,
 the quoin runs. It does not fix anything; it breaks predictability. It cuts self-explaining
 similes, injects irrelevant thoughts where the mind is too focused, lets emotional control
@@ -323,9 +327,23 @@ length_gate:        # pass | flag | block against the recorded positioning contr
 
 ## Dispatch
 
-The orchestrator does not invoke skills; it tells the user which one to run, what to pass
-it, and what to expect back. Every dispatch names the skill, the project path, the specific
-task, the relevant state, and the constraints.
+The control layer is mechanical. `bash tools/run-phases.sh <project>` walks the chain in
+`tools/phase-map.yaml`, runs each phase's gate tools itself, parses their exit codes —
+never a report — and refuses to advance on anything but CLEAR: a failure hard-stops the
+run, marks the project state `HALTED`, and writes a resume pointer naming the phase, the
+gate, and the exit code. `bash tools/run-phases.sh --list` prints the chain. The runner
+writes no prose and scores nothing. It is control; the skill layer is content.
+
+The orchestrator hands the user the dispatch for the phase the runner has reached: the
+skill, the project path, the specific task, the relevant state, and the constraints. When
+the skill's work lands, the runner re-runs the phase's gates and advances or halts the
+project state itself.
+
+**The manual path — fallback, and the weaker one.** Where the runner cannot run, dispatch
+each skill by hand as listed below and run `bash tools/run-gates.sh <project>` at every
+phase boundary, recording its verdict. The gates are then enforced by nothing except the
+run's own record — that is the failure mode the runner exists to prevent, so use this path
+only when the runner is genuinely unavailable, and say so in the session record.
 
 **Research** — `scout` for the market: top titles in the niche, gaps, comps, length
 estimate, engagement recommendation, and the prose-rules file for the drafting skill.
@@ -571,6 +589,8 @@ graduated reveal — and those are not penalised in that genre.
 
 `start [idea]` initialise and run phase one · `status` current state and next action ·
 `gates` run the full suite (`bash tools/run-gates.sh <project>`, verdict recorded) ·
+`run` the phase runner (`bash tools/run-phases.sh <project>`) — sequences the chain from
+`tools/phase-map.yaml`, enforces gate exit codes, HALTs the state on failure ·
 `phase [n]` force-advance with a gate check that will refuse — the check is `run-gates.sh`,
 and it refuses on FAIL or on NOT CLEAR · `write [n]` prepare a
 drafting dispatch · `quoin [n]` · `evaluate [n|all]` · `revise [n]` · `score` the
