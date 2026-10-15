@@ -65,6 +65,7 @@ gates:
   length: "python tools/prose/check-length.py {book}"
   progress: "python tools/check-progress.py {book}"
   pass-evidence: "python tools/check-pass-evidence.py {book}"
+  check-eval: "python tools/prose/check-eval.py {book}"
 
 phases:
   - id: "1"
@@ -155,21 +156,21 @@ phases:
     name: "Evaluation"
     skill: "proof-panel"
     artifacts: []
-    gates: ["deslop", "uniformity", "drift", "arc", "narrative", "pass-evidence"]
+    gates: ["deslop", "uniformity", "drift", "arc", "narrative", "pass-evidence", "check-eval"]
     human: "scores per dimension with citations, the weakness taxonomy ranked, the tic scan at genre targets, the chaos check, keepsake anchors counted, and beat arcs plus scene functions declared into NARRATIVE_LEDGER.yaml"
 
   - id: "4.5"
     name: "Proof pull"
     skill: "proof-pull"
     artifacts: []
-    gates: ["pass-evidence"]
+    gates: ["pass-evidence", "check-eval"]
     human: "the loop runs at most three rounds and then escalates as structural; the runner owns the counter and refuses a fourth (proof_pull in the project state)"
 
   - id: "5"
     name: "Revision"
     skill: "corrector"
     artifacts: []
-    gates: []
+    gates: ["check-eval"]
     human: "revisions completed per the revision taxonomy, top-down; strengths confirmed intact; at most three cycles (revision_cycles in the project state)"
 
   - id: "5.5"

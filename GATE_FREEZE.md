@@ -112,6 +112,22 @@ bad output. It is **not** evidence that the caps still match published prose: th
 `HUMAN_CORPUS` pointed at reference text, and it was equally unverified before this
 change.
 
+### Change recorded 2026-10-15 — `check-eval.py` is enforcement, not a gate.
+
+`tools/prose/check-eval.py` was added beside the instruments. It is **not** a gate and
+gets no manifest row: it enforces rules that already exist — the anti-inflation section
+of the engine's contract and the evaluator protocol (every score cites a passage; no
+dimension moves more than +0.5 per revision cycle without textual evidence; the floor is
+the minimum of the seven dimensions; self-evaluation carries a measured −0.8 bias). It
+reads no prose, measures nothing new, and fails bookkeeping, never a manuscript. The
+self-evaluation calibration is applied in the tool's own arithmetic, so no agent is asked
+to subtract a bias from its own score.
+
+It is the same exemption class as `check-pass-evidence.py`: make-ready hygiene around the
+instrument. Its entry here exists so the next reader does not mistake it for a
+unfrozen gate — a check that enforces an existing rule is not a change to what any gate
+asserts. The rules it enforces predate it and did not move.
+
 ## Load-bearing thresholds at this freeze
 
 How to read the table: each row is one measurement a gate enforces, with its current
