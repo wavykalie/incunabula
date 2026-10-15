@@ -323,6 +323,24 @@ def claim_specs(m):
 # Record-file scan
 # ---------------------------------------------------------------------------
 
+def missing_record_files(root):
+    """Record files this tool is responsible for but that the tree does not carry.
+
+    RECORD_FILES is the set of files whose standing claims this tool measures. A file
+    in that set that is simply absent used to pass silently (`if not os.path.isfile:
+    continue`), which made a DELETED record file indistinguishable from a record file
+    with nothing wrong in it. That is the same defect class this directory already
+    records twice — a guard that cannot see what it is supposed to protect — and it is
+    why a whole record file could be removed from the tree while `preflight.sh` still
+    reported PASS.
+
+    Nothing here is guessed: a missing file is named, and restoring it is a human
+    decision, because an absence is not a decision.
+    """
+    return [rel for rel in RECORD_FILES
+            if not os.path.isfile(os.path.join(root, rel))]
+
+
 def record_findings(root, m):
     findings = []
     for rel in RECORD_FILES:
@@ -914,6 +932,25 @@ def self_test():
         again = record_findings(tmp, measure(tmp, gaining2)) + bf2
         ok(not [f for f in again if f.action in ("repair", "quarantine", "delete")],
            "idempotent: second pass repairs nothing")
+
+        # --- the record layer's completeness check (proven to fire) -------------
+        # A DELETED record file used to read exactly like a clean one. It must be
+        # named, and the enforcement must be gated on the incunabula root so a book
+        # root passed with --root is not asked for records it never carried.
+        probe = os.path.join(tmp, "probe-root")
+        os.makedirs(os.path.join(probe, "tools", "prose"))
+        write_raw(os.path.join(probe, "tools", "prose", "check-errata.py"), "# gate\n")
+        write_raw(os.path.join(probe, "ERRATA.md"), "# ERRATA\n")
+        for rel in RECORD_FILES:
+            p = os.path.join(probe, rel)
+            if not os.path.exists(p):
+                write_raw(p, f"# {rel}\n")
+        os.remove(os.path.join(probe, "KNOWN_FINDINGS.md"))   # the case that shipped
+        gone = missing_record_files(probe)
+        ok(gone == ["KNOWN_FINDINGS.md"],
+           "record layer: a missing record file is named, and only the missing one")
+        ok(not os.path.isfile(os.path.join(book, "tools", "prose", "check-errata.py")),
+           "record layer: the check is gated on the incunabula root, not a book root")
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
 
@@ -959,6 +996,23 @@ def main():
 
     if mode == "self-test":
         return self_test()
+
+    # The record layer must be COMPLETE before any claim inside it is measured: a
+    # repair applied to an incomplete set of records is unsound. Gated on this being
+    # the incunabula root (its validator is present) so a book root passed with
+    # --root is not asked for repo-level records it was never meant to carry.
+    if os.path.isfile(os.path.join(root, "tools", "prose", "check-errata.py")):
+        missing = missing_record_files(root)
+        if missing:
+            print("=" * 67)
+            print("prune-stale — record files named by this tool but absent from the tree")
+            print("=" * 67)
+            for rel in missing:
+                print(f"  ABSENT    {rel}  (named in RECORD_FILES; the record layer is incomplete)")
+            print("-" * 67)
+            print("  A record file that is missing is not a record file with nothing wrong in it.")
+            print("  Restoring it is a human decision — this tool does not invent one.")
+            return 1
 
     bf = book_findings(root)
     # The "N of M live projects" claim counts pruning logs, and applying a repair
