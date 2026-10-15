@@ -10,6 +10,23 @@
 # The gate prints only the single most frequent two-word opener, so a chapter can
 # fail on a key that is not the one you were hunting.
 
+# --- paths derived from this file, not from the machine that ran it ----------------
+# The run happened at C:/Users/screa/incunabula; a clone is somewhere else, so walk up
+# until the repository root (the directory holding tools/prose/) is found.
+import os
+
+
+def _repo_root():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while not os.path.isdir(os.path.join(d, "tools", "prose")):
+        parent = os.path.dirname(d)
+        if parent == d:
+            break
+        d = parent
+    return d
+
+
+REPO = _repo_root()
 import io, os, re, sys, glob
 from collections import Counter
 
@@ -106,7 +123,7 @@ def show(entries, t):
 def main():
     only = sys.argv[1:] or ["book-1", "book-2"]
     for book in only:
-        B = "C:/Users/screa/incunabula/test-books/validation-series/%s/manuscript/chapters/" % book
+        B = REPO + "/test-books/validation-series/%s/manuscript/chapters/" % book
         print("#" * 12, book)
         for f in sorted(glob.glob(B + "chapter-*.md")):
             t = load(f)

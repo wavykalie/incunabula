@@ -71,8 +71,22 @@ Then invoke `incunabula`. The contract layer in `incunabula-codex` is read by th
 during the run — you do not have to invoke it separately, and the full engine will not
 run phase one until those contracts exist.
 
-No dependencies, no build step, no packages to fetch. The skills are plain Markdown and
-YAML; the checks are Python 3 and bash, using only the standard library.
+**Dependencies: Python 3 and bash. Nothing else.** No build step, no packages to fetch.
+The skills are plain Markdown and YAML; the checks use only the standard library. Three
+qualifications, each of which the tools report rather than hide:
+
+- **`pyyaml` is optional, and its absence is a stated blind spot.** Without it, the
+  YAML-parse rows read `SKIP — no YAML parser on this machine, parse NOT CHECKED` rather
+  than passing, and `tools/ductus.py check` exits 3. Install it (`pip install pyyaml`)
+  and those rows become real checks. The alternative to this note would be a green board
+  with a hole in it, which is the failure this repository exists to avoid.
+- **On Windows, "bash" means Git Bash**, which ships with Git. Every tool here is POSIX
+  shell; there is no PowerShell or `.cmd` variant, and there will not be one.
+- **On Windows, set `PYTHONUTF8=1`** (`export PYTHONUTF8=1` before a session) so the
+  tools' output is UTF-8. Without it, Python writes its output in the machine's code
+  page, an em dash goes out as a single 0x97 byte, and a terminal renders it as junk.
+  The checks still measure the same things either way — this is about reading their
+  output, not about what they conclude.
 
 ```
 skills/incunabula/            the full 17-phase engine (SKILL.md + the lexicon)
@@ -82,6 +96,23 @@ skills/deslopify/             the anti-AI style guide the scanner is built on
 tools/prose/                  the checks every skill calls
 INCUNABULA_LEXICON.md         the plain-English dictionary of every term
 ```
+
+### What is in this repository, and what is not
+
+Everything above is the book-production system. Two things sit beside it and are not part
+of it:
+
+- **`funnel-video/`** is a **separate project that happens to live in this clone** — a
+  video pipeline with its own `package.json`, its own renders and its own agent notes.
+  It shares no code with the engine, nothing in `skills/` or `tools/` reads it, and its
+  virtualenv is deliberately ignored. If you are here for the book system, you can ignore
+  the whole directory.
+- **`test-books/` and `demo-books/`** are fixtures: real runs, their reports, and the
+  defects they kept on purpose. They are evidence, not documentation, and their absolute
+  paths are the machine they were made on.
+
+The same split runs through the records. The **framework** works for any author; the
+**record** is what this installation decided, and is context rather than obligation.
 
 ### Supplying a calibration corpus (the one setup step with a decision in it)
 
@@ -420,6 +451,15 @@ closed-catalogue regression, held-out comparison), and reverted when a monitor r
 [`COMMONPLACE.md`](COMMONPLACE.md) is the taste ledger — decisions, reader outcomes, and
 emergent preferences distilled from three agreeing choices. `tools/preflight.sh` runs the
 stack's static half before a session starts.
+
+Taste can also live one layer down, per author voice. A **ductus** (`ductus.yaml`,
+`ductus/<slug>/`) is an authorial persona an agent pilots: `ductus.md` is the contract it
+drafts under, `COMMONPLACE.md` is that voice's own ledger, and a voice exists because
+somebody made one — `python tools/ductus.py new <slug>` — rather than because the config
+lists it. Voices are held apart the same way channels are: `ductus.py cross` reports an
+entry two voices both hold, and nothing crosses except a dated merge in
+`ductus/PROMOTIONS.md`. The layer is optional: with no voices declared, every book drafts
+under the root ledger, which is where this catalogue was drafted.
 
 Three channels — measurement, craft, taste — with a firewall: evidence from one may never
 move another. Limits still need a named corpus. Declared preferences in

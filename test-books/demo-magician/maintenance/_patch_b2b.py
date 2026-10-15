@@ -1,6 +1,23 @@
+# --- paths derived from this file, not from the machine that ran it ----------------
+# The run happened at C:/Users/screa/incunabula; a clone is somewhere else, so walk up
+# until the repository root (the directory holding tools/prose/) is found.
+import os
+
+
+def _repo_root():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while not os.path.isdir(os.path.join(d, "tools", "prose")):
+        parent = os.path.dirname(d)
+        if parent == d:
+            break
+        d = parent
+    return d
+
+
+REPO = _repo_root()
 import io, sys
 
-B = "C:/Users/screa/incunabula/test-books/demo-magician/manuscript/chapters/"
+B = REPO + "/test-books/demo-magician/manuscript/chapters/"
 
 # ---- ch 9: the Lausanne award he did not collect, and the Brussels certificate
 p9 = B + "chapter-09.md"

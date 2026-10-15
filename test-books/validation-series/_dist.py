@@ -13,12 +13,29 @@
 # Word count is the gate's own (wc -w over the normalised file), so the number here is
 # the one the gates use, not a Python approximation of it.
 
+# --- paths derived from this file, not from the machine that ran it ----------------
+# The run happened at C:/Users/screa/incunabula; a clone is somewhere else, so walk up
+# until the repository root (the directory holding tools/prose/) is found.
+import os
+
+
+def _repo_root():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while not os.path.isdir(os.path.join(d, "tools", "prose")):
+        parent = os.path.dirname(d)
+        if parent == d:
+            break
+        d = parent
+    return d
+
+
+REPO = _repo_root()
 import glob, io, os, statistics as st, subprocess
 
 BOOKS = [
-    ("Merope 1", "C:/Users/screa/incunabula/test-books/validation-series/book-1/manuscript/chapters", 478, 2304, 40.9),
-    ("Merope 2", "C:/Users/screa/incunabula/test-books/validation-series/book-2/manuscript/chapters", 519, 2406, 40.0),
-    ("The Trick", "C:/Users/screa/incunabula/test-books/demo-magician/manuscript/chapters", 1460, 3442, 23.7),
+    ("Merope 1", REPO + "/test-books/validation-series/book-1/manuscript/chapters", 478, 2304, 40.9),
+    ("Merope 2", REPO + "/test-books/validation-series/book-2/manuscript/chapters", 519, 2406, 40.0),
+    ("The Trick", REPO + "/test-books/demo-magician/manuscript/chapters", 1460, 3442, 23.7),
 ]
 
 print("%-11s %6s %6s %7s %7s  %-15s %-15s %s"

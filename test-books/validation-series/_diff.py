@@ -2,10 +2,27 @@
 # Any disagreement is a bug in _locate.py, not a fact about the manuscript.
 # Nothing gets patched until the two agree.
 
+# --- paths derived from this file, not from the machine that ran it ----------------
+# The run happened at C:/Users/screa/incunabula; a clone is somewhere else, so walk up
+# until the repository root (the directory holding tools/prose/) is found.
+import os
+
+
+def _repo_root():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while not os.path.isdir(os.path.join(d, "tools", "prose")):
+        parent = os.path.dirname(d)
+        if parent == d:
+            break
+        d = parent
+    return d
+
+
+REPO = _repo_root()
 import glob, io, os, re, subprocess, sys
 
-INC = "C:/Users/screa/incunabula/tools/prose/deslop-check.sh"
-sys.path.insert(0, "C:/Users/screa/incunabula/test-books/validation-series")
+INC = REPO + "/tools/prose/deslop-check.sh"
+sys.path.insert(0, REPO + "/test-books/validation-series")
 import _locate as L
 
 
@@ -21,7 +38,7 @@ def gate_rows(f):
 
 bad = 0
 for book in ("book-1", "book-2"):
-    B = "C:/Users/screa/incunabula/test-books/validation-series/%s/manuscript/chapters/" % book
+    B = REPO + "/test-books/validation-series/%s/manuscript/chapters/" % book
     for f in sorted(glob.glob(B + "chapter-*.md")):
         t = L.load(f)
         name = os.path.basename(f)

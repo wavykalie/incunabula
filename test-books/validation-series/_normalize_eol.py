@@ -9,9 +9,26 @@
 # Nothing but line endings changes. The check below proves it: the text with every CR
 # and LF removed must be IDENTICAL before and after, and the word count must not move.
 
+# --- paths derived from this file, not from the machine that ran it ----------------
+# The run happened at C:/Users/screa/incunabula; a clone is somewhere else, so walk up
+# until the repository root (the directory holding tools/prose/) is found.
+import os
+
+
+def _repo_root():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while not os.path.isdir(os.path.join(d, "tools", "prose")):
+        parent = os.path.dirname(d)
+        if parent == d:
+            break
+        d = parent
+    return d
+
+
+REPO = _repo_root()
 import glob, io, os, re, subprocess
 
-INC = "C:/Users/screa/incunabula/tools/prose/deslop-check.sh"
+INC = REPO + "/tools/prose/deslop-check.sh"
 KEEP = ("A25", "A6", "P1", "P2", "P3")
 
 
@@ -27,7 +44,7 @@ def rows(path):
 
 total = changed = 0
 for book in ("book-1", "book-2"):
-    for f in sorted(glob.glob("C:/Users/screa/incunabula/test-books/validation-series/%s/manuscript/chapters/*.md" % book)):
+    for f in sorted(glob.glob(REPO + "/test-books/validation-series/%s/manuscript/chapters/*.md" % book)):
         raw = io.open(f, encoding="utf-8", newline="").read()
         total += 1
         if "\r" not in raw:

@@ -4,18 +4,35 @@ The whole point of the declared `canonical_name:` convention is that the frozen
 gate reads it correctly. This checks that against the real parser, not an
 assumption, before a single chapter is drafted against it.
 """
+# --- paths derived from this file, not from the machine that ran it ----------------
+# The run happened at C:/Users/screa/incunabula; a clone is somewhere else, so walk up
+# until the repository root (the directory holding tools/prose/) is found.
+import os
+
+
+def _repo_root():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while not os.path.isdir(os.path.join(d, "tools", "prose")):
+        parent = os.path.dirname(d)
+        if parent == d:
+            break
+        d = parent
+    return d
+
+
+REPO = _repo_root()
 import importlib.util
 import sys
 from pathlib import Path
 
 _spec = importlib.util.spec_from_file_location(
-    "check_names", Path("C:/Users/screa/incunabula/tools/prose/check-names.py")
+    "check_names", Path(REPO + "/tools/prose/check-names.py")
 )
 cn = importlib.util.module_from_spec(_spec)
 sys.modules["check_names"] = cn
 _spec.loader.exec_module(cn)
 
-BOOK = Path("C:/Users/screa/incunabula/test-books/muzzle-and-marrow")
+BOOK = Path(REPO + "/test-books/muzzle-and-marrow")
 LEDGER = BOOK / "ENTITY_STATE.yaml"
 
 EXPECTED_FIRST = {"Mittens", "Rocky", "Hester", "Patches", "Tuppence", "Void"}
