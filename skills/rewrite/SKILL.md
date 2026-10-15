@@ -13,6 +13,13 @@ Worked example: the two validation books (`validation 1`, `validation 2`), re-de
 `DRAFTING_FRAMEWORK.md` removed chapter-length targets. Record: `REWRITE.md` in that
 project. Read it before improvising a sequence here.
 
+**The worked example is schematic.** It names the author's own project
+(`validation-series/` and its `_archive/`), and that project is not shipped:
+`test-books/` is gitignored, so those paths exist only on the machine that wrote them.
+Take the shape from the example — the named delta, the measure-before, the per-instance
+reading, the artifact rebuild, and the *what it did not prove* close — and substitute
+your own book's paths.
+
 ## The mistake this skill exists to prevent
 
 Running the gates, seeing rows fail, and editing until they pass. That produces a book
@@ -46,8 +53,8 @@ Two questions this answers before you spend an hour:
 
 The general rule, from a recovery that succeeded once and failed once: check for the
 previous version **before** the operation that replaces it, not after you notice it is
-missing. Read `validation-series-meta/V1-MANUSCRIPT-RECOVERY.md` if you have not — it is
-short, and it is the worked example behind step 8.
+missing. Read `V1-MANUSCRIPT-RECOVERY.md` (the author's archived project metadata; not
+shipped) if you have not — it is short, and it is the worked example behind step 8.
 
 ### 3. Establish that the book is *governed* before you trust a single number
 

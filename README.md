@@ -190,12 +190,21 @@ job.
 | One-command run | `incunabula-auto` |
 | Bestseller profile | `bestseller-studio` |
 | Reader swarm (crowd panels; `--light` = the four-voice market panel) | `reader-swarm` |
-| Re-derivation under changed rules | `rewrite` |
 
-Utility skills that are not part of book production keep their own names: `copy-editing`,
-`deslopify`. The `skills/` directory holds 26 skills; retired skills are kept under
-`skills/_archive/` with a `MOVED.md` shim naming their successor. One tool sits outside
-the suite entirely: `bundles/good-idea/`, a video-idea validator kept as its own bundle.
+Utility skills that are not part of book production keep their own names: `copy-editing`
+(marketing & conversion copy editor — it never touches manuscript prose), `deslopify`.
+The `skills/` directory holds 26 skills; retired skills are kept under `skills/_archive/`
+with a `MOVED.md` shim naming their successor. One tool sits outside the suite entirely:
+`bundles/good-idea/`, a video-idea validator kept as its own bundle.
+
+## Maintenance
+
+User-invoked maintenance. None of these is dispatched by the engine, and none appears in
+the phase map.
+
+| Job | Skill |
+|---|---|
+| Re-derivation of a finished book under changed rules | `rewrite` |
 
 ## The gates
 

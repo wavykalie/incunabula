@@ -3,7 +3,9 @@ name: copy-editing
 description: Improves existing marketing or promotional copy rather than writing new copy from scratch. Use for edits, reviews, proofreads, tightening, or sharpening messaging on copy that already exists. For writing new copy, use a copywriting approach instead.
 ---
 
-# Copy-editing — improve what is already written
+# Copy-editing — marketing & conversion copy editor
+
+This skill does not touch manuscript prose.
 
 An editor for marketing and conversion copy. The goal is to make existing copy land harder
 without changing what it says. Check for a product-marketing context file first and, if it
