@@ -553,23 +553,6 @@ breakdown plus both indices · `deliver` phase six after its gate check · `feed
 `register [n]` · `catchword [n|binge]` · `composing [n|all]` · `proof-pull [n]` ·
 `patterns` · `oscillation`.
 
-## Skill map
-
-```
-incunabula (coordinates; never writes)
-  scout         1      readership   1.5
-  forme         2      voice-matrix 2.5
-  case-keeper   2.7, 3.7, 5.5
-  collator      2.8, 5.6
-  setting       3      register     3.1    catchword 3.2
-  quoin         3.5    composing    3.8
-  proof-panel   4      proof-pull   4.5
-  corrector     5
-  colophon      6      presswork    6
-```
-
----
-
 ## Principles
 
 1. **The user's idea is the point.** Execute their vision with technical excellence rather than substituting a different one.

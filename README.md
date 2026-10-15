@@ -213,29 +213,10 @@ pressure*, *anti-AI scan*), and utility skills unrelated to book production —
 
 ## The pipeline
 
-The full engine runs 17 phases. The compact `incunabula-codex` pipeline runs the same
-work as eight.
-
-```
-PHASE 1     RESEARCH            scout
-PHASE 1.5   READERSHIP          readership
-PHASE 2     FOUNDATION          forme
-PHASE 2.5   VOICE MATRIX        voice-matrix
-PHASE 2.7   CASE TRACKING       case-keeper (BUILD)
-PHASE 2.8   COLLATION (outline) collator
-PHASE 3     WRITING             setting            (one chapter at a time)
-PHASE 3.1   REGISTER            register
-PHASE 3.2   CATCHWORD           catchword
-PHASE 3.5   QUOIN               quoin
-PHASE 3.7   CASE UPDATE         case-keeper (UPDATE)
-PHASE 3.8   COMPOSING           composing
-PHASE 4     EVALUATION          proof-panel
-PHASE 4.5   PROOF PULL          proof-pull          (auto-loop, max 3)
-PHASE 5     REVISION            corrector
-PHASE 5.5   CASE UPDATE         case-keeper (UPDATE)
-PHASE 5.6   COLLATION (ms)      collator
-PHASE 6     DELIVERY            colophon + presswork
-```
+The full engine runs 17 phases; the phase table lives once, in
+[`skills/incunabula/SKILL.md`](skills/incunabula/SKILL.md) under "The seventeen phases" —
+one list, one place, no copy to drift. The compact `incunabula-codex` pipeline runs the
+same work as eight.
 
 Agents run in sequence and never score their own fresh output: `proof-panel` must not
 share the context that wrote the chapter, or the evaluation is worthless.
