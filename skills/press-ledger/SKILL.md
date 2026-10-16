@@ -15,6 +15,12 @@ Without it, every session starts from nothing. With it, fifty sessions build one
 
 ## PROJECT_STATE.yaml
 
+**Scope contract (state files).** This skill owns `PROJECT_STATE.yaml` — the session
+scope: chapters, scores, decisions, sessions, handoffs. The engine owns `STATE.yaml` —
+the engine scope: phase position and session mode. Each writes only its own file; when
+both exist, `incunabula`'s mode rule picks the primary and neither file is deleted or
+silently overwritten. (Do not merge the two: the scopes are different.)
+
 The source of truth, at the project root:
 
 ```yaml

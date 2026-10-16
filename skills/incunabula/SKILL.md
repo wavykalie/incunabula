@@ -66,6 +66,12 @@ project whose layer was skipped). When both `STATE.yaml` and `PROJECT_STATE.yaml
 pick the primary using explicit decisions, completeness, phase progress, and update
 evidence — and never delete or silently overwrite the other.
 
+**Scope contract (state files).** The engine owns `STATE.yaml` — the engine scope: phase
+position and session mode. `press-ledger` owns `PROJECT_STATE.yaml` — the session scope:
+chapters, scores, decisions, sessions, handoffs. Each writes only its own file; the
+primary-selection rule above is the referee when both exist. (Do not merge the two: the
+scopes are different.)
+
 **Intake.** Capture book type, audience, language, market, length, output form, the global
 voice, character voices, chapter narration, fact-presentation voice, content boundaries,
 and persistence preferences before any foundation work.

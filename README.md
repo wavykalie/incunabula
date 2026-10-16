@@ -127,6 +127,19 @@ Two conditions follow from shipping no books:
   corpus. Its own summary says this. You supply the reference prose. The limits are
   verified only after you do. See *Supply a calibration corpus* below.
 
+## Which one when
+
+Four entry points exist. This table is the routing rule:
+
+| Situation | Entry point | Rule |
+|---|---|---|
+| Writing a book — **the default** | `incunabula` | The full 17-phase engine. If you did not deliberately choose another row, you are on this one. |
+| Small project, short run | `incunabula-codex`'s 8-phase compact pipeline | **Explicitly chosen, never a silent substitution** for the engine. It runs the same checks in 8 phases and calls no specialist skills. |
+| Aiming at the trade market | `bestseller-studio` | The commercial track: viability, packaging, launch. |
+| One command, end to end | `incunabula-auto` | Dispatches the engine autonomously and stops at three human checkpoints. |
+
+If nobody wrote "compact", the answer is the full engine.
+
 ## The two main skills
 
 The two skills are not alternatives. The intended production setup uses both.
