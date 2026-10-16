@@ -27,15 +27,35 @@
 #
 # USAGE
 #   bash tools/run-phases.sh <book-root> [--from <id>] [--to <id>]
+#   bash tools/run-phases.sh <book-root> --tick proof-pull|revision [--chapter <n>]
+#   bash tools/run-phases.sh <book-root> --waive <rule> --chapter <n|book> --reason <text>
 #   bash tools/run-phases.sh --list
 #
 #   <book-root> is the project directory holding PROJECT_STATE.yaml and
 #   manuscript/chapters/. Without --from, the walk starts at the phase recorded
 #   in the state's runner block (the resume pointer), or at phase 1.
 #
+#   --tick records one more iteration of a capped loop - proof-pull's three per
+#   chapter, or the revision 5->4 loop's three per book - in PROJECT_STATE.yaml.
+#   The refusal is in code: a fourth request exits 1 and marks the loop
+#   ESCALATED, and a later walk into an ESCALATED loop refuses to dispatch at
+#   all. "Do not run a fourth" used to be a sentence; now it is the state file.
+#   --chapter resets a proof-pull counter when the chapter changes (the
+#   proof-pull counter is per chapter; revision_cycles is per book).
+#
+#   --waive records a waiver in maintenance/WAIVERS.md - the "waived in
+#   writing" of the composing review gate, in one ledger the runner appends to
+#   and tools/prose/check-waivers.py audits across chapters. It records the
+#   declaration; it clears no gate. A waived gate still halts the walk: fix the
+#   row, or declare the waiver and resume past that phase explicitly with
+#   --from, on the record.
+#
 # EXIT
-#   0  every requested phase's gates were CLEAR; the state advanced
-#   1  HALTED: a gate or artifact failed. The state file says where to resume.
+#   0  every requested phase's gates were CLEAR; the state advanced. For --tick,
+#      the iteration was recorded; for --waive, the declaration was appended.
+#   1  HALTED: a gate or artifact failed, a capped loop refused another
+#      iteration, or an ESCALATED loop refused dispatch. The state file says
+#      where to resume and why.
 #   2  refused to start: bad invocation, unknown phase id, or no state file
 #   3  could not run: no python, or the phase map is missing or unparsable
 
@@ -54,7 +74,7 @@ else
 fi
 
 usage() {
-  sed -n '2,40p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+  awk 'NR>1 && !/^#/{exit} NR>1{sub(/^# ?/,""); print}' "${BASH_SOURCE[0]}"
 }
 
 if [ "${1:-}" = "--list" ]; then
@@ -75,11 +95,15 @@ if [ $# -lt 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 fi
 
 BOOK_IN="$1"; shift
-FROM=""; TO=""
+FROM=""; TO=""; TICK=""; CHAPTER=""; WAIVE_RULE=""; REASON=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --from) FROM="${2:-}"; shift 2 ;;
     --to)   TO="${2:-}"; shift 2 ;;
+    --tick) TICK="${2:-}"; shift 2 ;;
+    --chapter) CHAPTER="${2:-}"; shift 2 ;;
+    --waive) WAIVE_RULE="${2:-}"; shift 2 ;;
+    --reason) REASON="${2:-}"; shift 2 ;;
     *) echo "run-phases: unknown argument $1"; usage; exit 2 ;;
   esac
 done
@@ -91,6 +115,65 @@ fi
 BOOK="$(cd "$BOOK_IN" && pwd)"
 CHAPTERS="$BOOK/manuscript/chapters"
 cd "$ROOT" || exit 3
+
+# The waiver ledger the runner appends to and check-waivers.py audits (B4).
+# Created empty on first use: a book that has never waived anything is the
+# healthy state, not a missing file, and the audit row must be able to say so.
+ensure_waivers_ledger() {
+  local f="$BOOK/maintenance/WAIVERS.md"
+  [ -f "$f" ] && return 0
+  mkdir -p "$BOOK/maintenance"
+  cat > "$f" <<'EOF'
+# Waiver ledger
+
+Declared waivers for this book, one entry per waiver, appended by
+`bash tools/run-phases.sh BOOK --waive RULE --chapter N --reason TEXT`.
+Audited by `tools/prose/check-waivers.py`, which holds the entry format and
+fails when the same rule is waived in more than three consecutive chapters.
+This is the "waived in writing" the composing review gate requires. The
+long-term catch for a recurring waiver is the press-ledger errata path - a rule
+waived by a second book is an ERRATA.md entry; this ledger is per-book.
+EOF
+}
+
+# --- --tick: one more iteration of a capped loop (B3) --------------------------
+if [ -n "$TICK" ]; then
+  tick_args=(state tick --root "$BOOK" --loop "$TICK")
+  [ -n "$CHAPTER" ] && tick_args+=(--chapter "$CHAPTER")
+  "$PY" "$STATE_TOOL" "${tick_args[@]}"
+  exit $?
+fi
+
+# --- --waive: declare a waiver into the one ledger (B4) -----------------------
+if [ -n "$WAIVE_RULE" ]; then
+  if [ -z "$CHAPTER" ]; then
+    echo "run-phases: --waive needs --chapter N (or 'book' for a book-scoped row)."
+    exit 2
+  fi
+  if [ -z "$REASON" ]; then
+    echo "run-phases: --waive needs --reason TEXT - a waiver without a reason is"
+    echo "            a skip wearing a waiver's clothes, and the auditor refuses it."
+    exit 2
+  fi
+  ensure_waivers_ledger
+  WAIVERS="$BOOK/maintenance/WAIVERS.md"
+  n=1
+  while grep -q "^## W-$(printf '%03d' "$n") " "$WAIVERS"; do n=$((n + 1)); done
+  wid="$(printf 'W-%03d' "$n")"
+  {
+    printf '\n'
+    printf '## %s — %s — chapter %s — %s\n' "$wid" "$(date +%Y-%m-%d)" "$CHAPTER" "$WAIVE_RULE"
+    printf -- '- reason: %s\n' "$REASON"
+  } >> "$WAIVERS"
+  echo "run-phases: waiver $wid recorded in maintenance/WAIVERS.md"
+  echo "            chapter $CHAPTER, rule $WAIVE_RULE."
+  echo "            This is the declaration, not a pass: the gate it excuses still"
+  echo "            exits nonzero. To advance, fix the row, or resume past the phase"
+  echo "            explicitly (bash tools/run-phases.sh $BOOK_IN --from <id>) - on"
+  echo "            the record. Recurring waivers are counted:"
+  echo "            python tools/prose/check-waivers.py $BOOK_IN"
+  exit 0
+fi
 
 # --- the map, into two tables -------------------------------------------------
 PHASES="$("$PY" "$STATE_TOOL" phases)" || exit 3
@@ -191,6 +274,26 @@ while IFS=$'\x1f' read -r id name skill artifacts gates human; do
   echo "     human (recorded, NOT enforced here): $human"
   echo
 
+  # loop caps (B3): an ESCALATED loop refuses dispatch - in code, not prose
+  loop=""
+  case "$id" in
+    4.5) loop="proof_pull" ;;
+    5)   loop="revision_cycles" ;;
+  esac
+  if [ -n "$loop" ]; then
+    loop_state="$("$PY" "$STATE_TOOL" state loop --root "$BOOK" --loop "$loop")"
+    lcount="$(printf '%s' "$loop_state" | cut -f1)"
+    lstatus="$(printf '%s' "$loop_state" | cut -f2)"
+    lcap="$(printf '%s' "$loop_state" | cut -f3)"
+    if [ "$lstatus" = "ESCALATED" ]; then
+      echo "---- loop:$loop"
+      echo "     $lcount of $lcap iterations used - status ESCALATED. The runner"
+      echo "     refuses to dispatch another: the cap is enforced in code."
+      echo
+      halt "$id" "loop:$loop" 1 "the $loop loop is at its cap ($lcount of $lcap) and ESCALATED - the next move is a human decision (fix, accept, or escalate as structural), not another iteration"
+    fi
+  fi
+
   # artifacts: an absent artifact is a failure, never a pass
   IFS=',' read -r -a arts <<< "$artifacts"
   for a in "${arts[@]}"; do
@@ -210,8 +313,21 @@ while IFS=$'\x1f' read -r id name skill artifacts gates human; do
   IFS=',' read -r -a gl <<< "$gates"
   for g in "${gl[@]}"; do
     [ -n "$g" ] || continue
-    run_gate "$id" "$g" \
-      || halt "$id" "$g" "$?" "gate $g did not return CLEAR - not-run is never a pass"
+    [ "$g" = "waivers" ] && ensure_waivers_ledger
+    rc=0
+    run_gate "$id" "$g" || rc=$?
+    if [ "$rc" -ne 0 ]; then
+      if [ "$g" = "uniformity" ]; then
+        echo "     composing's review gate: a uniformity row is fixed, or waived in"
+        echo "     writing. Put the writing on the one ledger, then fix the row or"
+        echo "     resume past this phase explicitly - both are on the record:"
+        echo "       bash tools/run-phases.sh $BOOK_IN --waive U<n> --chapter book --reason <why>"
+        echo "       bash tools/run-phases.sh $BOOK_IN --from <next phase id>"
+        echo "     A waived gate still halted this run: the waiver is a record, not a"
+        echo "     pass. Recurring waivers are counted by tools/prose/check-waivers.py."
+      fi
+      halt "$id" "$g" "$rc" "gate $g did not return CLEAR - not-run is never a pass"
+    fi
   done
 
   nxt=""

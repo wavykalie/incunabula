@@ -91,7 +91,11 @@ def parse_registry(path):
                 continue
             m = re.match(r"^\s*expected_manuscript\s*:\s*(.+?)\s*$", line)
             if m:
-                current["expected_manuscript"] = m.group(1).strip().lower() == "true"
+                # quote-stripped like path and status above: the registry's YAML
+                # habit is quoted scalars, and "true" must parse as true here the
+                # same way it does two lines up. (Was: stripped only whitespace,
+                # so every quoted "true" silently read as false.)
+                current["expected_manuscript"] = m.group(1).strip().strip("\"'").lower() == "true"
     return books
 
 

@@ -17,6 +17,12 @@ chapter at a time.
 Phase 4.5, after `proof-panel` has evaluated the chapter. Maximum **three iterations**. A chapter
 that has been revised twice and is still short is not improved by a third pass — it is escalated.
 
+**The cap is enforced in code, not here.** The phase runner records each iteration —
+`bash tools/run-phases.sh <book> --tick proof-pull --chapter <N>` — and refuses a fourth,
+marking the loop `ESCALATED` in `PROJECT_STATE.yaml`; a walk into an ESCALATED loop refuses
+to dispatch at all. This section is the guidance for what to do *when it escalates*. The
+prevention lives in the runner; do not rely on this paragraph to stop anything.
+
 ## Thresholds
 
 The gate is the **Platen** — the lowest dimension of the Incunabula Score, not the average.

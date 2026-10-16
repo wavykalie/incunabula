@@ -29,6 +29,13 @@ Usage:
     python tools/phase-state.py state halt   --root BOOK --phase P --gate G --exit N --reason TEXT
     python tools/phase-state.py state advance --root BOOK --phase P [--next P2]
     python tools/phase-state.py state set    --root BOOK --key runner --field status --value TEXT
+    python tools/phase-state.py state tick   --root BOOK --loop proof_pull|revision [--chapter N]
+    python tools/phase-state.py state loop   --root BOOK --loop proof_pull|revision
+
+`tick` records one more iteration of a capped loop (B3) and refuses past the
+cap with exit 1, marking the loop ESCALATED - the refusal is in code, so a
+fourth proof-pull iteration cannot be dispatched even when asked. `loop`
+prints count/status/cap so the runner's walk can refuse an ESCALATED loop.
 
 Exit codes:
     0  ok
@@ -281,6 +288,111 @@ def now():
     return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
 
+# --- loop caps (B3): the caps the skills state in prose, enforced in code -----
+# proof-pull runs at most three iterations per chapter; the revision 5->4 loop
+# runs at most three cycles per book (skills/proof-pull/SKILL.md, the engine's
+# loop-back rules). "Do not run a fourth" used to be a sentence. These are the
+# only two loops with a declared cap; the table is the whole enforcement.
+LOOP_CAPS = {"proof_pull": 3, "revision_cycles": 3}
+
+
+def loop_block(loop, fields):
+    order = ["count", "chapter", "status", "reason", "updated"]
+    lines = ["%s:" % loop]
+    for k in order:
+        if k in fields:
+            v = str(fields[k]).replace('"', "'")
+            if k == "count":
+                lines.append("  %s: %s" % (k, fields[k]))
+            else:
+                lines.append('  %s: "%s"' % (k, v))
+    return "\n".join(lines) + "\n"
+
+
+def load_loop(text, loop):
+    m = re.search(r"^%s:\n((?:[ \t].*\n?)*)" % re.escape(loop), text, re.M)
+    fields = {}
+    if not m:
+        return fields
+    for line in m.group(1).splitlines():
+        kv = TOP.match(line.strip())
+        if kv:
+            fields[kv.group(1)] = kv.group(2).strip().strip('"')
+    return fields
+
+
+def write_loop(root, loop, fields):
+    text = read_state(root)
+    new_text, _ = set_block(text, loop, loop_block(loop, fields))
+    err = yaml_check(new_text)
+    if err:
+        die("the rewritten %s does not parse; original left untouched: %s"
+            % (STATE_NAME, err))
+    with open(state_path(root), "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(new_text)
+
+
+def norm_loop(name):
+    loop = name.strip().replace("-", "_")
+    return "revision_cycles" if loop == "revision" else loop
+
+
+def cmd_tick(args):
+    """One more iteration of a capped loop. Refuses past the cap, in code."""
+    loop = norm_loop(args.loop)
+    if loop not in LOOP_CAPS:
+        die("tick: unknown loop %r (known: %s)"
+            % (args.loop, ", ".join(sorted(LOOP_CAPS))), 2)
+    cap = LOOP_CAPS[loop]
+    root = args.root
+    fields = load_loop(read_state(root), loop)
+    count = int(fields.get("count", 0) or 0)
+    status = fields.get("status", "ok")
+
+    # the proof-pull counter is per chapter: a new chapter starts a fresh loop
+    chapter = args.chapter or ""
+    if loop == "proof_pull" and chapter and fields.get("chapter", "") != chapter:
+        count = 0
+        status = "ok"
+
+    if status == "ESCALATED":
+        fields.update({"reason": "tick refused: the loop is ESCALATED - the next "
+                                 "move is a human decision, not a fourth iteration",
+                       "updated": now()})
+        write_loop(root, loop, fields)
+        sys.stderr.write("tick %s: REFUSED - already ESCALATED (cap %d).\n" % (loop, cap))
+        return 1
+    if count >= cap:
+        fields.update({"count": count, "chapter": chapter or fields.get("chapter", ""),
+                       "status": "ESCALATED",
+                       "reason": "%d of %d iterations used - a further iteration is "
+                                 "refused; escalate to the human" % (count, cap),
+                       "updated": now()})
+        write_loop(root, loop, fields)
+        sys.stderr.write("tick %s: REFUSED at the cap (%d). status is now ESCALATED - "
+                         "the runner will not dispatch another.\n" % (loop, cap))
+        return 1
+    count += 1
+    fields.update({"count": count, "chapter": chapter or fields.get("chapter", ""),
+                   "status": "ok", "reason": "", "updated": now()})
+    write_loop(root, loop, fields)
+    sys.stderr.write("tick %s: iteration %d of %d recorded.\n" % (loop, count, cap))
+    print(count)
+    return 0
+
+
+def cmd_loop(args):
+    """Print count/status so the runner's walk can refuse an ESCALATED loop."""
+    loop = norm_loop(args.loop)
+    if loop not in LOOP_CAPS:
+        die("loop: unknown loop %r" % args.loop, 2)
+    fields = load_loop(read_state(args.root), loop)
+    count = int(fields.get("count", 0) or 0)
+    status = fields.get("status", "ok")
+    cap = LOOP_CAPS[loop]
+    print("%d\t%s\t%d" % (count, status, cap))
+
+
 def cmd_state(args):
     root = args.root
     if not root:
@@ -312,6 +424,11 @@ def cmd_state(args):
             die("state set: --key runner is required", 2)
         fields[args.field] = args.value
         fields["updated"] = now()
+    elif args.state_cmd == "tick":
+        sys.exit(cmd_tick(args))
+    elif args.state_cmd == "loop":
+        cmd_loop(args)
+        return
     else:
         die("unknown state command %r" % args.state_cmd, 2)
     write_state(root, fields)
@@ -324,9 +441,13 @@ def main():
     sub.add_parser("gates")
     st = sub.add_parser("state")
     st_sub = st.add_subparsers(dest="state_cmd")
-    for name in ("show", "halt", "advance", "set"):
+    for name in ("show", "halt", "advance", "set", "tick", "loop"):
         p = st_sub.add_parser(name)
         p.add_argument("--root", required=True)
+        if name in ("tick", "loop"):
+            p.add_argument("--loop", required=True)
+        if name == "tick":
+            p.add_argument("--chapter", default="")
         if name == "halt":
             p.add_argument("--phase", required=True)
             p.add_argument("--gate", required=True)

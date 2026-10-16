@@ -42,6 +42,13 @@
 #     check-comps       0 pass, 1 unverified comps, 2 research unreadable
 #     check-premise     0 pass, 1 collision, 2 could not read
 #     check-pass-evidence  0 evidenced, 1 missing evidence, 2 no chapters
+#     check-eval        0 compliant, 1 a score-integrity rule was broken (a score
+#                       with no citation, a delta over +0.5 with no EVIDENCE block,
+#                       a floor that is not the minimum, a miscalibration)
+#     check-waivers     0 no pattern (a ledger with zero entries is healthy),
+#                       1 the same rule waived in more than 3 consecutive chapters
+#                       (the waiver is the pattern), 2 no ledger (NOT RUN),
+#                       3 a malformed entry (refusal)
 #     preflight / check-registry  0 ready; anything else refuses the run
 #
 # Parsed by tools/phase-state.py (python3 stdlib only; a strict subset of YAML —
@@ -66,6 +73,7 @@ gates:
   progress: "python tools/check-progress.py {book}"
   pass-evidence: "python tools/check-pass-evidence.py {book}"
   check-eval: "python tools/prose/check-eval.py {book}"
+  waivers: "python tools/prose/check-waivers.py {book}"
 
 phases:
   - id: "1"
@@ -149,14 +157,14 @@ phases:
     name: "Composing"
     skill: "composing"
     artifacts: []
-    gates: ["pass-evidence", "uniformity", "drift", "arc"]
+    gates: ["pass-evidence", "waivers", "uniformity", "drift", "arc"]
     human: "the mechanical pass run with every diff reviewed for false positives; a uniformity failure fixed or waived in writing (the waiver ledger is the runner's waive command, phase-map aside)"
 
   - id: "4"
     name: "Evaluation"
     skill: "proof-panel"
     artifacts: []
-    gates: ["deslop", "uniformity", "drift", "arc", "narrative", "pass-evidence", "check-eval"]
+    gates: ["deslop", "waivers", "uniformity", "drift", "arc", "narrative", "pass-evidence", "check-eval"]
     human: "scores per dimension with citations, the weakness taxonomy ranked, the tic scan at genre targets, the chaos check, keepsake anchors counted, and beat arcs plus scene functions declared into NARRATIVE_LEDGER.yaml"
 
   - id: "4.5"
@@ -184,12 +192,12 @@ phases:
     name: "Collation, manuscript"
     skill: "collator"
     artifacts: []
-    gates: ["narrative", "drift", "uniformity", "progress"]
+    gates: ["narrative", "waivers", "drift", "uniformity", "progress"]
     human: "names, appearances, relationships, timeline, knowledge, threads, and world rules consistent; the narrative ledger audited against the text in both directions"
 
   - id: "6"
     name: "Delivery"
     skill: "colophon + presswork"
     artifacts: ["delivery/"]
-    gates: ["deslop", "uniformity", "drift", "arc", "narrative", "length", "pass-evidence"]
+    gates: ["deslop", "waivers", "uniformity", "drift", "arc", "narrative", "length", "pass-evidence"]
     human: "the floor meets the genre threshold; first impression at or above 7.0; human feedback integrated or explicitly deferred; user approval to package"

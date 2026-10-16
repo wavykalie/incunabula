@@ -128,6 +128,25 @@ instrument. Its entry here exists so the next reader does not mistake it for a
 unfrozen gate — a check that enforces an existing rule is not a change to what any gate
 asserts. The rules it enforces predate it and did not move.
 
+### Change recorded 2026-10-15 — `check-waivers.py` is enforcement, not a gate.
+
+`tools/prose/check-waivers.py` was added beside the instruments. It is **not** a gate and
+gets no manifest row: it enforces rules that already exist — the composing review gate's
+"fixed or waived in writing", and the standing rule that a recurring waiver is itself the
+pattern ("reproducing the same exemption across books is itself the pattern this check
+exists to catch", `check-uniformity.py`; "a recurring waiver is itself the pattern", the
+maintenance gate). It reads no manuscript prose, measures nothing new, and fails
+bookkeeping: the same rule waived in more than three consecutive chapters of one book's
+`maintenance/WAIVERS.md` (N=3 default, documented in the tool, overridable). The ledger is
+appended by the phase runner's `--waive` command, so a waiver is one declaration in one
+auditable home instead of a sentence in a per-chapter report. It clears no gate, honors no
+waiver, and no threshold moved.
+
+It is the same exemption class as `check-pass-evidence.py`: make-ready hygiene around the
+instrument. Its entry here exists so the next reader does not mistake it for an unfrozen
+gate — a check that enforces an existing rule is not a change to what any gate asserts.
+The rules it enforces predate it and did not move.
+
 ## Load-bearing thresholds at this freeze
 
 How to read the table: each row is one measurement a gate enforces, with its current
