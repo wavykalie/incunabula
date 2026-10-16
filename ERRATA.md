@@ -102,3 +102,29 @@ mechanism by which this layer improves rather than merely accumulates.
 **Nothing here is a rule until it is adopted, and adoption is a person's act.** An
 entry that turns out to be wrong gets a `WRONG` line under it; the wrongness stays
 visible, because a ledger with no recorded mistakes is a ledger being curated.
+
+### 2026-10-15 — the anti-AI catalog merged into one home
+- **row:**      (merge) — the record layer's own shape
+- **observed:** The `humanizer` skill's 24-pattern catalog and `setting`'s anti-AI tell
+               list described the same tells as `deslopify/references/style_guide.md`
+               under two other roofs — the same catalog in three places, with the
+               scanner as the mechanical fourth. All three are now one catalog in the
+               deslopify guide. The duplicates were folded in, not appended, and where
+               two lists described one tell the sharper wording won: negative
+               parallelism, tricolon, vague attributions, em dashes, the serves-as
+               dodge, superficial analyses, false ranges, "despite its challenges",
+               grandiose inflation. Tells that existed in only one list moved in whole:
+               promotional tone, insisting on notability, synonym cycling, chatbot
+               residue, knowledge-cutoff hedging, sycophancy, filler, over-hedging,
+               generic positive endings, title-case headings, named emotions,
+               over-smooth transitions, dramatic And openers, decorating metaphors, the
+               pseudo-profound closing. `humanizer`'s constructive half ("add a pulse")
+               is the guide's second half; its per-chapter checklist moved to the
+               `deslopify` skill. `setting` now references the catalog and restates
+               nothing. The scanner is untouched, per the audit's own constraint.
+- **n:**        1 — one catalog, one checklist
+- **evidence:** `skills/deslopify/references/style_guide.md`, `skills/_archive/humanizer/MOVED.md`
+- **motive:**   aesthetic
+- **state:**    observed
+- **proposes:** none. Three lists of the same tells is redundancy in the documentation,
+               not a measurement; no threshold, rule, or regex moved.

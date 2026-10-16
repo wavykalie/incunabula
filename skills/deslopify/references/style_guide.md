@@ -3,6 +3,13 @@
 Pattern list from [tropes.fyi](https://tropes.fyi), with measured footnotes added where this
 project has its own numbers.
 
+**This file is the single home of the anti-AI catalog.** The former `humanizer` skill's
+24-pattern catalog and `setting`'s anti-AI tell list were merged here on 2026-10-15. The
+duplicates were folded in, not appended: where two lists described one tell, the sharper
+wording won. No other file restates the list. `tools/prose/deslop-check.sh` is the
+mechanical enforcement; this file is the reference and the checklist. The merge is
+recorded in `ERRATA.md`.
+
 ---
 
 ## Read this before you use this file
@@ -72,7 +79,7 @@ Overuse of "quietly" and similar adverbs to convey subtle importance or understa
 
 ### "Delve" and Friends
 
-Used to be the most infamous AI tell. "Delve" went from an uncommon English word to appearing in a staggering percentage of AI-generated text. Part of a family of overused AI vocabulary including "certainly", "utilize", "leverage" (as a verb), "robust", "streamline", and "harness".
+Used to be the most infamous AI tell. "Delve" went from an uncommon English word to appearing in a staggering percentage of AI-generated text. Part of a family of overused AI vocabulary including "certainly", "utilize", "leverage" (as a verb), "robust", "streamline", and "harness". The family also carries *additionally*, *align with*, *crucial*, *enduring*, *enhance*, *fostering*, *garner*, *highlight* (as a verb), *interplay*, *intricate*, *key* (as an adjective), *pivotal*, *showcase*, *testament*, *underscore*, *valuable*, *vibrant*. These cluster. Replace with the plain word or cut.
 
 **Avoid patterns like:**
 - "Let's delve into the details..."
@@ -88,9 +95,14 @@ Overuse of ornate or grandiose nouns where simpler words would do. "Tapestry" is
 - "Navigating the complex landscape of modern AI..."
 - "The ever-evolving landscape of technology..."
 
+The same tell travels under more names: *mosaic*, *alchemy*, *catalyst*, *intertwining*,
+*permeating*, *resonating*, *transcending*, *navigating one's feelings*, *journey*-as-
+metaphor, *delicate*, *profound*-as-feeling. If it sounds like an inspirational caption,
+replace it with a word someone would say out loud.
+
 ### The "Serves As" Dodge
 
-Replacing simple "is" or "are" with pompous alternatives like "serves as", "stands as", "marks", or "represents". AI avoids basic copulas because its repetition penalty pushes it toward fancier constructions (I've studied this!).
+Replacing simple "is" or "are" with pompous alternatives like "serves as", "stands as", "marks", or "represents". AI avoids basic copulas because its repetition penalty pushes it toward fancier constructions (I've studied this!). The family extends to *boasts*, *features*, and *offers*: say *is* or *has*. Puffed: *The room serves as the main gallery and features four spaces.* Plain: *The room is the main gallery and has four spaces.*
 
 **Avoid patterns like:**
 - "The building serves as a reminder of the city's heritage."
@@ -103,7 +115,7 @@ Replacing simple "is" or "are" with pompous alternatives like "serves as", "stan
 
 ### Negative Parallelism
 
-The "It's not X -- it's Y" pattern, often with an em dash. The single most commonly identified AI writing tell. Man I f*cking hate it. AI uses this to create false profundity by framing everything as a surprising reframe. One in a piece can be effective; ten in a blog post is a genuine insult to the reader. Before LLMs, people simply did not write like this at scale. Includes the causal variant "not because X, but because Y" where every explanation is framed as a surprise reveal.
+The "It's not X -- it's Y" pattern, often with an em dash. The single most commonly identified AI writing tell. Man I f*cking hate it. AI uses this to create false profundity by framing everything as a surprising reframe. One in a piece can be effective; ten in a blog post is a genuine insult to the reader. Before LLMs, people simply did not write like this at scale. Includes the causal variant "not because X, but because Y" where every explanation is framed as a surprise reveal, and the softer *it's not just X, it's Y* and *not merely a…, a…*. Assert directly instead, and remember that a person does not speak in antithesis on every page. Puffed: *It is not simply a beat under the vocal; it is the aggression itself.* Plain: *The heavy beat is what makes the track aggressive.*
 
 **Avoid patterns like:**
 - "It's not bold. It's backwards."
@@ -130,7 +142,7 @@ Self-posed rhetorical questions answered immediately in the next sentence or cla
 
 ### Anaphora Abuse
 
-Repeating the same sentence opening multiple times in quick succession.
+Repeating the same sentence opening multiple times in quick succession. Anaphora works once per chapter, at the right moment. More than that is a tic.
 
 **Avoid patterns like:**
 - "They assume that users will pay... They assume that developers will build... They assume that ecosystems will emerge... They assume that..."
@@ -146,6 +158,10 @@ Overuse of the rule-of-three pattern, often extended to four or five. A single t
 - "identity, payments, compute, distribution"
 - "workflows, decisions, and interactions"
 
+Break the pattern: two, four, or one. *Talks, panels, and networking. Innovation,
+inspiration, and insight.* becomes *There are talks and panels, and time to talk between
+them.*
+
 ### "It's Worth Noting"
 
 Filler transitions that signal nothing. AI uses these phrases to introduce new points without actually connecting them to the previous argument. Also includes: "It bears mentioning", "Importantly", "Interestingly", "Notably".
@@ -157,7 +173,7 @@ Filler transitions that signal nothing. AI uses these phrases to introduce new p
 
 ### Superficial Analyses
 
-Tacking a present participle ("-ing") phrase onto the end of a sentence to inject shallow analysis that says nothing. The model attaches significance, legacy, or broader meaning to mundane facts using phrases like "highlighting its importance", "reflecting broader trends", or "contributing to the development of...".
+Tacking a present participle ("-ing") phrase onto the end of a sentence to inject shallow analysis that says nothing. The model attaches significance, legacy, or broader meaning to mundane facts using phrases like "highlighting its importance", "reflecting broader trends", or "contributing to the development of...". These glue a fake second clause onto a plain fact. Cut the clause, or make it a real sentence with information in it. Inflated: *The building uses blue and gold, symbolising the region's landscape and reflecting its bond with the land.* Plain: *The building is blue and gold. The architect said the colours refer to local wildflowers and the coast.*
 
 **Avoid patterns like:**
 - "contributing to the region's rich cultural heritage"
@@ -173,6 +189,10 @@ Using "from X to Y" constructions where X and Y aren't on any real scale. In leg
 - "From the singularity of the Big Bang to the grand cosmic web."
 - "From problem-solving and tool-making to scientific discovery, artistic expression, and technological innovation."
 
+Or flatten the whole move: *From the Big Bang to the cosmic web, from a star's birth to
+dark matter's dance.* becomes *The book covers the Big Bang, star formation, and current
+ideas about dark matter.*
+
 ### Gerund Fragment Litany
 
 After making a claim, AI illustrates it with a stream of verbless gerund fragments — standalone sentences with no grammatical subject. "Fixing small bugs. Writing straightforward features. Implementing well-defined tickets." The first sentence already said everything. The fragments add nothing except word count and that familiar AI cadence. Humans don't write first drafts this way. It's a pure structural tic.
@@ -181,6 +201,11 @@ After making a claim, AI illustrates it with a stream of verbless gerund fragmen
 - "Fixing small bugs. Writing straightforward features. Implementing well-defined tickets."
 - "Reviewing pull requests. Debugging edge cases. Attending architecture meetings."
 - "Shipping faster. Moving quicker. Delivering more."
+
+### Dramatic "And" Openers
+
+Sentences that only work because they open on *And*. If the sentence dies without the
+*And*, it is weak. Cut it and let the sentence stand on its own.
 
 ---
 
@@ -202,6 +227,16 @@ Numbered or labeled points dressed up as continuous prose. The model writes what
 **Avoid patterns like:**
 - "The first wall is the absence of a free, scoped API... The second wall is the lack of delegated access... The third wall is the absence of scoped permissions..."
 - "The second takeaway is that... The third takeaway is that... The fourth takeaway is that..."
+
+### Over-Smooth Transitions
+
+Every paragraph starts by connecting to the last. Cut thirty per cent of the transitions
+and let hard cuts happen — a hard cut is allowed and good. The connective often does work
+the new paragraph's first sentence could do itself.
+
+**Avoid patterns like:**
+- every paragraph opening on "This", "That is why", "But", "And yet"
+- a join apologising for the change of subject
 
 ---
 
@@ -260,6 +295,13 @@ Everything is the most important thing ever. AI inflates the stakes of every arg
 - "will define the next era of computing"
 - "something entirely new"
 
+The milder form inflates a mundane fact into a milestone: *stands as*, *serves as a
+testament*, *a pivotal moment*, *underscores the importance of*, *marking a shift*, *key
+turning point*, *evolving landscape*, *indelible mark*. State what happened and let the
+reader judge whether it mattered. Inflated: *The institute's founding marked a pivotal
+moment in the region's statistical evolution.* Flattened: *The institute was founded in
+1989 to publish regional statistics independently of the national office.*
+
 ### "Let's Break This Down"
 
 The pedagogical voice that assumes the reader needs hand-holding. AI defaults to a teacher-student dynamic even when writing for expert audiences. Also includes: "Let's unpack this", "Let's explore", "Let's dive in".
@@ -278,6 +320,10 @@ Attributing claims to unnamed authorities instead of being specific. AI loves to
 - "Industry reports suggest that adoption is accelerating."
 - "Observers have cited the initiative as a turning point."
 
+Either name the source or drop the claim. Vague: *Experts believe the river is crucial to
+the regional ecosystem.* Sourced: *The river supports four endemic fish species, according
+to a 2019 survey by the national academy.*
+
 ### Invented Concept Labels
 
 AI clusters invented compound labels that sound analytical without being grounded. It appends abstract problem-nouns (paradox, trap, creep, divide, vacuum, inversion) to domain words — "supervision paradox", "acceleration trap", "workload creep" — and uses them as if they're established, rigorously defined terms. They function as rhetorical shorthand: name a thing, skip the argument. Multiple such labels in the same piece is a strong signal of AI slop.
@@ -286,6 +332,28 @@ AI clusters invented compound labels that sound analytical without being grounde
 - "the supervision paradox"
 - "the acceleration trap"
 - "workload creep"
+
+### Insisting on Notability
+
+Counting coverage instead of stating the claim the coverage made: *independent coverage*,
+*has been featured in*, *written by a leading expert*, *active social media presence*. Name
+the specific claim instead. Inflated: *Her views have appeared in four national newspapers
+and she has half a million followers.* Specific: *In a 2024 interview she argued that
+regulation should target outcomes rather than methods.*
+
+### Promotional Tone
+
+The travel-brochure register: *boasts*, *vibrant*, *rich* used figuratively, *profound*,
+*nestled*, *in the heart of*, *renowned*, *breathtaking*, *must-visit*, *stunning*. Write a
+neutral description and let it stand. Promotional: *Nestled in the breathtaking highlands,
+the town boasts a vibrant heritage.* Neutral: *The town sits in the highlands and is known
+for its weekly market and an eighteenth-century church.*
+
+### Named Emotions
+
+Labelling a feeling instead of staging it: *a wave of sadness*, *a pang of guilt*. Delete
+the label and put an action, a detail, or an image in its place — not *a wave of sadness*
+but a man watching his coffee go cold.
 
 ---
 
@@ -309,6 +377,10 @@ Every bullet point or list item starts with a bolded phrase or sentence. Extreme
 - "**Security**: Environment-based configuration with..."
 - "**Performance**: Lazy loading of expensive resources..."
 
+The mid-text variant is mechanical boldface — phrases bolded for emphasis with no logic.
+Remove the bold and let the sentence carry the weight. And where the items are not
+genuinely list-shaped, convert the list to a plain sentence.
+
 ### Unicode Decoration
 
 Use of unicode arrows (->), smart/curly quotes, and other special characters that can't be easily typed on a standard keyboard. Real writers typing in a text editor produce straight quotes and -> or =>. Claude in particular loves the -> arrow.
@@ -317,6 +389,43 @@ Use of unicode arrows (->), smart/curly quotes, and other special characters tha
 - "Input → Processing → Output"
 - "This leads to better outcomes → which means higher engagement"
 - "“Smart quotes” instead of straight "quotes" that you’d actually type"
+
+Emoji decoration is the same tell: remove it and state the point in words. Curly
+quotation marks are a tell only where the context expects straight quotes — typeset books
+use curly ones — so normalise to the document's convention instead of treating the shape
+as a defect.
+
+### Title-Case Headings
+
+Heading case with no logic to it. Use sentence case unless the house style says otherwise.
+
+---
+
+## Communication
+
+### Chatbot Residue
+
+Correspondence pasted in as content: *I hope this helps*, *Of course!*, *Certainly!*, *You're absolutely right*, *Would you like me to…*, *let me know*. Delete it.
+
+### Knowledge-Cutoff Hedging
+
+*as of*, *up to my last update*, *while details are limited*, *based on available information*. Either state the fact with a source or say plainly that it is unknown.
+
+### Sycophancy
+
+*Great question*. *That's an excellent point.* Delete. It adds nothing.
+
+---
+
+## Filler and Hedging
+
+### Filler Phrases
+
+*in order to* → *to*; *due to the fact that* → *because*; *at this point in time* → *now*; *in the event that* → *if*; *has the ability to* → *can*; *it is important to note that* → nothing.
+
+### Over-Hedging
+
+Three qualifiers in one claim leave no claim. *It could potentially be argued that the policy might have some effect* → *The policy may affect outcomes.*
 
 ---
 
@@ -339,6 +448,11 @@ Latching onto a single metaphor and beating it into the ground across the entire
 - "The ecosystem needs ecosystems to build ecosystem value."
 - "Walls and doors used 30+ times in the same article"
 - "Every paragraph finds a way to say "primitives" again"
+
+### Metaphors That Decorate
+
+Metaphors that add surface and no meaning. The test: remove the image and write the
+literal. If nothing is lost, the image was fat.
 
 ### Historical Analogy Stacking
 
@@ -365,6 +479,18 @@ Repeating entire sections or paragraphs verbatim within the same piece. This hap
 - "The same section appeared twice, word-for-word identical."
 - "Paragraph 3 and paragraph 17 are the same sentence reworded"
 
+### Synonym Cycling
+
+The repetition penalty showing through: the same thing called the protagonist, then the
+main character, then the central figure, then the hero. Say it once, plainly, even if that
+means repeating a word.
+
+### The Pseudo-Profound Closing
+
+The short, wise-sounding last line of a section — *maybe it was too late*. It reads as
+depth and carries none. Replace it with something specific: the unopened envelope, three
+months expired.
+
 ### The Signposted Conclusion
 
 Explicitly announcing the conclusion with "In conclusion", "To sum up", or "In summary". Competent writing doesn't need to tell you it's concluding. The reader can feel it. AI signals its structural moves because it's following a template, not writing organically.
@@ -382,6 +508,19 @@ The rigid formula where AI acknowledges problems only to immediately dismiss the
 - "Despite these challenges, the initiative continues to thrive."
 - "Despite its industrial and residential prosperity, Korattur faces challenges typical of urban areas."
 - "Despite their promising applications, pyroelectric materials face several challenges that must be addressed for broader adoption."
+
+The section around it runs the same formula — *faces several challenges*, *despite these
+challenges*, *future outlook*. Replace the formula with the specific events. Formulaic:
+*Despite its prosperity the district faces urban challenges, yet it continues to thrive.*
+Specific: *Traffic worsened after three offices opened in 2015. In 2022 the council began
+a drainage project to address the recurring floods.*
+
+### The Generic Positive Ending
+
+The upbeat sign-off that could close any piece: *The future looks bright*, *exciting times
+lie ahead*, *a step in the right direction*. Replace it with the concrete plan. Upbeat:
+*Exciting times lie ahead as the company continues its journey.* Concrete: *The company
+plans to open two more sites next year.*
 
 ---
 
@@ -596,6 +735,27 @@ Not tells. All four appear in the published control.
 What survived measurement is what is gated: chapter length, rhythm across chapters, the
 closing coda, paragraph layout, and the antithesis formula. Everything else in this section
 is the reasoning behind those five.
+
+---
+
+## The second half of the pass — add a pulse
+
+Removing every listed pattern produces something technically spotless and completely
+lifeless, which is just as obvious as the slop. The signs of a soulless edit: every
+sentence the same length; nothing but neutral reporting; no uncertainty, no mixed
+feeling; no first person where one belongs; no humour, no edge; the whole thing reading
+like a press release.
+
+So the pass has two halves, and the second one is not optional:
+
+- **Have a view.** React to the facts rather than listing them.
+- **Vary the rhythm.** Short. Then a longer one that takes its time arriving.
+- **Admit complexity.** *This is impressive and also faintly alarming* beats *this is impressive.*
+- **Use "I" where it fits.** It is honest, not unprofessional.
+- **Let some mess in.** Tangents and half-finished thoughts read as human; perfect structure reads as generated.
+- **Be specific about feeling.** Not *this is concerning* but the particular unease of something running all night while nobody watches.
+
+A text that is clean and dead has failed the pass. Removing tics is only half the job.
 
 ---
 

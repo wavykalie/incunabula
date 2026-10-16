@@ -1,19 +1,21 @@
 ---
 name: deslopify
-description: Make text more genuine, natural, and feel not written by an AI or LLM by removing AI tropes and cliches. Use when asked to deslopify, naturalize, or remove AI tropes from text.
+description: Make text more genuine, natural, and feel not written by an AI or LLM by removing AI tropes and cliches. Use when asked to deslopify, naturalize, or remove AI tropes from text. Single home of the anti-AI pattern catalog and its checklist.
 ---
 # Deslopify Text
 
 This skill helps you rewrite or edit text so that it sounds more human, genuine, and free of the repetitive, patronizing, or grandiose patterns typical of AI-generated content.
 
-## Workflow
+`references/style_guide.md` is the **single home of the anti-AI pattern catalog**. The
+former `humanizer` skill's catalog and `setting`'s anti-AI tell list were merged into it
+on 2026-10-15 (recorded in `ERRATA.md`), and no other file restates the list.
+`tools/prose/deslop-check.sh` is the mechanical enforcement; the guide is the reference
+and the checklist. Read the whole guide before you edit anything.
 
-1. Read the text provided by the user.
-2. Review the comprehensive AI writing tropes list in [references/style_guide.md](references/style_guide.md).
-3. Identify instances of these tropes in the text (e.g., magic adverbs, the "delve" family, negative parallelism, false vulnerability, listicles in a trench coat).
-4. Rewrite the text to eliminate these tropes while preserving the core meaning and intent of the original text. Prioritize clear, direct, and varied human-like prose.
+## The pass has two halves
 
-Always review [references/style_guide.md](references/style_guide.md) before attempting to deslopify text to ensure your edits are aligned with the established anti-patterns.
+1. **Take the tells out.** Review the text against [references/style_guide.md](references/style_guide.md) the way you would read a draft against a style sheet. Mark every instance of the patterns (e.g. magic adverbs, the "delve" family, negative parallelism, false vulnerability, listicles in a trench coat). Rewrite each one while preserving the core meaning, intent, and register of the original. Prioritize clear, direct, and varied human-like prose.
+2. **Put the person back.** The guide's closing section, *The second half of the pass — add a pulse*, is not optional. Have a view, vary the rhythm, admit complexity, let some mess in. A text that is clean and dead has failed the pass.
 
 **The guide is a review checklist, not a generation brief.** Read a draft *against* it, the
 way you would read a draft against a style sheet. Do not paste it into a generation context
@@ -22,6 +24,16 @@ documented failure mode in VERMILLION §8.8: a brief of pure prohibitions (*no e
 rule of three*) leaks its own constraint list into the output and spends the budget on
 compliance instead of on the writing. The guide's own opening section now carries the
 reasoning and the "ask for this instead" table.
+
+## The per-chapter checklist
+
+After every chapter: scan for the forbidden vocabulary; count the em dashes and trim past
+the cap; check the proportion of three-item lists; read each section's final sentence for
+captionitis; read the paragraph openings in sequence and break the smooth ones; read the
+result aloud — does it sound like a person, does the sentence structure vary, are the
+claims specific, is the register right for its context. Then finish with the honest
+question — would a sceptical reader say a machine wrote this? Anything short of a
+confident no goes back.
 
 ## Two scales, and you need both
 

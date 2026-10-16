@@ -25,6 +25,55 @@ readers are proxies, nothing more.
 Do not use it in place of sensitivity readers, legal review, factual consultants, or real
 beta readers.
 
+## Cost contract
+
+**The light preset is the cheap gate you run often. The full swarm is the deep instrument
+you run twice per book: pre-launch and post-draft.** The preset costs four personas and
+one file. A full swarm costs twelve to eighty personas, cohort reports, interviews, and a
+run folder. Do not run a full swarm where the preset answers the question, and do not
+substitute the preset when the question is crowd-level, niche-risk, or public reaction.
+This contract used to be nowhere, which is why the market panel and the swarm were two
+names for overlapping jobs.
+
+## The light preset: `--light` (the market panel)
+
+The cheap gate. It runs exactly four voices — **literary agent**, **acquiring editor**,
+**bookseller / category buyer**, and **target reader** — over a concept, opening pages, a
+synopsis, a query package, or a finished manuscript. It is `package-reaction` narrowed to
+those four: four personas, one pass each, no interviews, no public-reaction waves, no
+heatmap, small token budget.
+
+The verdict contract is unchanged: one **PASS / FLAG / BLOCK** per voice with a
+one-sentence reason; criteria scored out of ten with brief evidence (category clarity ·
+reader promise · opening-page pull · voice distinctiveness · comp-title fit · commercial
+pacing · emotional stakes · shelf and thumbnail fit · submission package strength ·
+launch and platform leverage); **the overall verdict is the weakest of the four — one
+block means not market-ready.** Keep taste objections separate from commercial blockers.
+Flag comp titles that have aged; never promise bestseller status.
+
+Output is one file, `evaluations/agent-panel.md`:
+
+```markdown
+# Agent Panel — light preset
+
+## Overall verdict
+[PASS/FLAG/BLOCK] — [one sentence]
+
+## Verdicts
+| Role | Verdict | Reason |
+
+## Scores
+| Criterion | Score | Evidence |
+
+## Top rejection risks
+## Fix before submitting
+## Best market angle
+```
+
+Every standing rule still applies: verdicts are `simulated-signal` or `editorial-judgment`,
+nothing simulated is phrased as approval, and the panel never stands in for a human agent,
+editor, or bookseller.
+
 ## Output
 
 Always to disk. A run folder under `evaluations/book-swarm/<date>-<slug>/` holding the
@@ -79,7 +128,7 @@ protected community). Never phrase simulated niche approval as real community ap
 ## Workflow
 
 1. **Load context** — project state, assumptions, positioning, market research, prior evaluations, and the manuscript. For package testing, also the logline, query, synopsis, cover copy, and launch material.
-2. **Choose a mode** — `reader-swarm` (broad beta reaction), `niche-risk` (cultural, religious, professional, geopolitical, domain-specific), `public-opinion` (social reaction to premise, excerpt, controversy, package, or angle), `package-reaction` (agent/editor/bookseller/reader response to query, copy, comps, cover, metadata), `post-revision` (compare against an earlier run on the same calibration), or `hybrid`.
+2. **Choose a mode** — `reader-swarm` (broad beta reaction), `niche-risk` (cultural, religious, professional, geopolitical, domain-specific), `public-opinion` (social reaction to premise, excerpt, controversy, package, or angle), `package-reaction` (agent/editor/bookseller/reader response to query, copy, comps, cover, metadata), `post-revision` (compare against an earlier run on the same calibration), or `hybrid`. Or take the `--light` preset above: package-reaction narrowed to the four market voices.
 3. **Build the sample map** — for manuscripts over sixty thousand words, stratify rather than reading everything, unless a full read is requested. Always include the first chapter, the last, the climax, the weakest and strongest flagged chapters, and anything revised. Record what was read fully, partially, and not at all.
 4. **Generate the roster** — twelve to eighty agents by default; forty to two hundred and fifty short personas for public opinion. Give each a cohort, taste, expertise, tolerance, bias, trigger points, social behaviour, abandon threshold, and influence weight.
 5. **Run the cohorts** — each reports abandon point, confusion, delight, objection, shareability, rating, and evidence. Specialist and niche cohorts return pass, flag, or block with line or scene evidence.

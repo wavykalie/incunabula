@@ -16,12 +16,15 @@ viable*, *ready for agents and editors*, *market-ready*, or *launch preparation*
 - `incunabula` — the pipeline, state, chapters, audits, and score.
 - `scout` — genre map, comps, gaps, length targets, nonfiction evidence.
 - `reader-swarm` — large simulated reader panels, niche-risk scouting, public-reaction tests, tickets.
-- `agent-panel` — simulated agent, editor, and bookseller review.
+- `reader-swarm --light` — simulated agent, editor, and bookseller review (the four-voice market panel).
 - `corrector` — surgical revision by mode.
-- `copy-editing` — final language cleanup.
-- `humanizer` — removes synthetic phrasing and restores a lived voice.
+- `copy-editing` — final cleanup of the marketing and conversion copy (never the manuscript).
+- `deslopify` — removes synthetic phrasing and restores a lived voice (the anti-AI catalog and checklist).
 - `colophon` — logline, back-cover copy, synopsis, query, cover brief.
-- `launch-strategy` and `content-strategy` — go-to-market and audience building.
+- **TODO(owner):** `launch-strategy` and `content-strategy` — go-to-market and audience
+  building. Neither skill exists in this repository (git history holds no trace of
+  either), so this line is a flag for the owner, not a dispatch. Do not invent them to
+  make the list look complete.
 
 ## Operating rule
 
@@ -33,14 +36,16 @@ delivery, and launch material.
 
 1. Run `scout` before architecture, unless market research already exists.
 2. Run `incunabula` phases 0–3 to build intake, foundation, architecture, and draft.
-3. After the first full draft or a major part, run `agent-panel`.
+3. After the first full draft or a major part, run `reader-swarm --light`.
 4. Run `reader-swarm` when the book needs many readers, niche-risk scouting, public reaction, or package-framing tests.
 5. Run the Devil's Audit and the Incunabula Score.
 6. Send only specific findings to `corrector`, with an explicit mode.
-7. Run `humanizer` and `copy-editing` once structure is stable.
+7. Run `deslopify` on the prose and `copy-editing` on the marketing copy once structure is stable.
 8. Re-run the panels after revision.
 9. Run `colophon` only once the product gates pass.
-10. Run the launch and content skills for public-launch readiness.
+10. **TODO(owner):** public-launch readiness needs the launch and content skills. This
+    step cannot run as documented until the owner writes or names them; it is a flag,
+    not a gate.
 
 ## Commercial gates
 

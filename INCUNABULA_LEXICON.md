@@ -160,8 +160,8 @@ are installed paths — call them by name, know them by the job.
 | `series-binder` | Plans series scope and continuity |
 | `incunabula-auto` | Runs the whole pipeline in one command |
 | `bestseller-studio` | The commercial (bestseller) profile |
-| `reader-swarm` | Large simulated reader panels |
-| `agent-panel` | Simulated agent/editor/reader review panel |
+| `reader-swarm` | Large simulated reader panels; `--light` runs the four-voice market panel |
+| `agent-panel` | retired — the market panel now runs as `reader-swarm --light` |
 
 ### Plain craft language
 
@@ -171,5 +171,6 @@ pressure*, *character chaos*, *anti-AI scan*, *narrative debt*, *beat arc*, *sce
 function*, *setup and payoff*. The narrative layer (`NARRATIVE_LEDGER.yaml`, rows N1–N4)
 speaks plainly.
 
-Utility skills that are not part of this system keep their own names: `humanizer`,
-`copy-editing`, `good-idea`, `deslopify`.
+Utility skills that are not part of this system keep their own names: `copy-editing`,
+`deslopify`. (`good-idea` is not part of this system at all: `bundles/good-idea/`, its
+own bundle.)

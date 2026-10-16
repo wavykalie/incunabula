@@ -128,6 +128,7 @@ that already exists, enter at the matching phase rather than forcing a full rest
 
 ## Complementary skills
 
-Reach for these when they are available and relevant: `copy-editing` for prose cleanup,
-`humanizer` for phrasing that has gone synthetic, a launch or content skill for go-to-market
+Reach for these when they are available and relevant: `copy-editing` for marketing and
+back-cover copy (it never touches manuscript prose),
+`deslopify` for phrasing that has gone synthetic, a launch or content skill for go-to-market
 material, and an image workflow for cover ideas.

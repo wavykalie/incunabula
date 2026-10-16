@@ -12,7 +12,7 @@ winner:
 
 | location | what it was | state found |
 |---|---|---|
-| `incunabula/skills/` | the repo, 29 skills | current |
+| `incunabula/skills/` | the repo, 26 live skills (plus `skills/_archive/`, `bundles/`) | current |
 | `~/.agents/skills/` | installed | drifted, 10,693 lines |
 | `~/.claude/skills/` | installed | the **pre-rename v4 names** |
 
