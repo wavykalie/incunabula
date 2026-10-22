@@ -32,9 +32,10 @@ WHY THIS EXISTS
     segments/chapter-NN/<segment_id>.wav    per-segment audio for ASR/QC alignment
     render-manifest.json                    render ledger: hashes, durations, drift
   Paralinguistic tags in spoken_text (`[sigh]`, `[breath]`, `[laughter]`) are
-  performance cues, not words: they are stripped before synthesis and preserved in
-  the manifest. `pause_after_ms` silences (including explicit `pause` segments for
-  scene breaks) are honored exactly.
+  performance cues, not words: they are passed to the synthesis backend (ming3 folds
+  them into its delivery instruction; the deterministic reference engine speaks only
+  their words) and preserved in the manifest. `pause_after_ms` silences (including
+  explicit `pause` segments for scene breaks) are honored exactly.
 
 USAGE
   python tools/audio/render-book.py <book-root> [--chapter <num-or-file>]
@@ -46,7 +47,8 @@ EXIT CODES
   1  REFUSED / FAIL — voice config refused, unfrozen/drifted voice, stale script,
      speaker below the drift floor, or unknown speaker in a script
   2  NOT RUN — missing book directory, missing audiobook/config.yaml, or no scripts
-  3  ERROR — malformed config, script JSON, or WAV of unexpected format
+  3  ERROR — malformed config, script JSON, WAV of unexpected format, or a
+     synthesis engine that is unavailable or misbehaving
 """
 
 import argparse
@@ -206,8 +208,7 @@ def render_chapter(
             paralinguistic_used.setdefault(speaker, []).append(t)
 
         spoken = str(seg.get("spoken_text", "") or "")
-        spoken_clean = PARALINGUISTIC_TAG_RE.sub(" ", spoken)
-        spoken_clean = re.sub(r"\s+", " ", spoken_clean).strip()
+        spoken_clean = re.sub(r"\s+", " ", PARALINGUISTIC_TAG_RE.sub(" ", spoken)).strip()
 
         if kind == "pause" or not spoken_clean:
             silence = silence_bytes(int(sample_rate * pause_ms / 1000.0))
@@ -234,7 +235,7 @@ def render_chapter(
         vinfo = voices[voice_id]
         seg_wav = os.path.join(seg_out_dir, f"{seg_id}.wav")
         res = renderer.synthesize_to_wav(
-            text=spoken_clean,
+            text=spoken,  # tags included: each backend decides what to do with them
             out_wav_path=seg_wav,
             voice_id=voice_id,
             voice_design=vinfo["voice_design"],
@@ -359,7 +360,8 @@ def main(argv=None):
     ap.add_argument("book", help="Path to the book root directory")
     ap.add_argument("--chapter", default=None,
                     help="Optional single chapter number or script filename")
-    ap.add_argument("--backend", default="ming", help="Synthesis backend (default: ming)")
+    ap.add_argument("--backend", default=None,
+                    help="Synthesis backend (default: audiobook config 'backend', else ming)")
     ap.add_argument("--out-dir", default=None,
                     help="Audio output directory (default: <book>/audiobook/audio)")
     ap.add_argument("--script-dir", default=None,
@@ -411,9 +413,10 @@ def main(argv=None):
             print(f"  - {r}", file=sys.stderr)
         return 1
 
+    backend_name = args.backend or ab_cfg.get("backend") or "ming"
     try:
-        renderer = renderer_mod.create_renderer(args.backend)
-    except ValueError as exc:
+        renderer = renderer_mod.create_renderer(backend_name)
+    except (ValueError, RuntimeError) as exc:
         print(f"render-book: ERROR — {exc}", file=sys.stderr)
         return 3
 
@@ -481,7 +484,7 @@ def main(argv=None):
                 drift_min_cosine=args.drift_min_cosine,
                 frozen_embeddings=frozen_embeddings,
             )
-        except ValueError as exc:
+        except (ValueError, RuntimeError) as exc:
             print(f"render-book: ERROR — {exc}", file=sys.stderr)
             return 3
         if fails:

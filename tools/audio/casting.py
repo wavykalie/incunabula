@@ -375,19 +375,18 @@ def validate_voices_config(ab_config, book_root=None):
 # ---------------------------------------------------------------------------
 
 def _get_renderer(backend_name="ming"):
-    """Load `tools/audio/renderer.py` if present (Cluster E), else use built-in
-    deterministic formant-harmonic acoustic synthesizer so Cluster B works standalone
-    and through the unified renderer."""
+    """Return the unified renderer for `backend_name` (Cluster E). Returns None only
+    when `tools/audio/renderer.py` itself is absent, which keeps Cluster B standalone.
+    Engine failures propagate: a configured engine that is unavailable or broken is
+    never silently replaced by the reference synthesizer — that substitution would
+    put a voice nobody approved into an approved pipeline."""
     renderer_path = os.path.join(HERE, "renderer.py")
-    if os.path.isfile(renderer_path):
-        try:
-            spec = importlib.util.spec_from_file_location("audio_renderer", renderer_path)
-            mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(mod)
-            return mod.create_renderer(backend_name)
-        except Exception:
-            pass
-    return None
+    if not os.path.isfile(renderer_path):
+        return None
+    spec = importlib.util.spec_from_file_location("audio_renderer", renderer_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.create_renderer(backend_name)
 
 
 def voice_acoustic_profile(voice_id, voice_design):
@@ -446,26 +445,29 @@ def synthesize_speech_Like_wav(
     style=None,
     target_duration_sec=None,
     sample_rate=24000,
+    backend_name="ming",
 ):
     """Synthesize a clean, non-clipping, speech-cadenced harmonic WAV file with
     natural phrase pauses, syllable envelopes, and speaker-specific spectral formants
-    (target -18 LUFS / RMS ~0.125, true peak <= -3.0 dBFS, zero clipping)."""
-    renderer = _get_renderer()
+    (target -18 LUFS / RMS ~0.125, true peak <= -3.0 dBFS, zero clipping).
+    Through the unified renderer (Cluster E) the `backend_name` selects the engine;
+    engine failures raise rather than fall back to a different voice."""
+    renderer = _get_renderer(backend_name)
     if renderer is not None and hasattr(renderer, "synthesize_to_wav"):
-        try:
-            res = renderer.synthesize_to_wav(
-                text=text,
-                out_wav_path=out_wav_path,
-                voice_id=voice_id,
-                voice_design=voice_design,
-                style=style or {},
-                target_duration_sec=target_duration_sec,
-                sample_rate=sample_rate,
-            )
-            if res and os.path.isfile(out_wav_path):
-                return res
-        except Exception:
-            pass
+        res = renderer.synthesize_to_wav(
+            text=text,
+            out_wav_path=out_wav_path,
+            voice_id=voice_id,
+            voice_design=voice_design,
+            style=style or {},
+            target_duration_sec=target_duration_sec,
+            sample_rate=sample_rate,
+        )
+        if res and os.path.isfile(out_wav_path):
+            return res
+        raise RuntimeError(
+            f"renderer backend {backend_name!r} produced no WAV at {out_wav_path}"
+        )
 
     return synthesize_fallback_wav(
         out_wav_path=out_wav_path,
@@ -495,6 +497,9 @@ def synthesize_fallback_wav(
     freeze-time golden references and render-time chapter audio come from the same
     engine with byte-identical output for identical inputs.
     """
+    # Paralinguistic tags are performance cues, not words; the reference synthesizer
+    # speaks only their words (the ming3 backend folds them into its instruction).
+    text = re.sub(r"\s+", " ", re.sub(r"\[[A-Za-z][A-Za-z -]*\]", " ", text)).strip()
     prof = voice_acoustic_profile(voice_id, voice_design)
     style = style or {}
     speed = float(style.get("speed", 1.0) or 1.0)
@@ -718,7 +723,7 @@ def cmd_validate(book_root):
     return 0
 
 
-def cmd_audition(book_root, voice_filter=None, backend_name="ming"):
+def cmd_audition(book_root, voice_filter=None, backend_name=None):
     ab_cfg, cfg_path, err = load_audiobook_config(book_root)
     if err:
         print(f"casting audition: NOT RUN — {err}", file=sys.stderr)
@@ -729,6 +734,7 @@ def cmd_audition(book_root, voice_filter=None, backend_name="ming"):
         for p in problems:
             print(f"  - {p}", file=sys.stderr)
         return 1
+    backend_name = backend_name or ab_cfg.get("backend") or "ming"
 
     auditions_dir = os.path.join(book_root, "audiobook", "auditions")
     os.makedirs(auditions_dir, exist_ok=True)
@@ -774,6 +780,7 @@ def cmd_audition(book_root, voice_filter=None, backend_name="ming"):
                 voice_design=v["voice_design"],
                 style=emo_style,
                 target_duration_sec=30.0,
+                backend_name=backend_name,
             )
             total_dur += res["duration_sec"]
             rendered_passages.append({
@@ -783,9 +790,12 @@ def cmd_audition(book_root, voice_filter=None, backend_name="ming"):
                 "text": p_text,
             })
 
-        # Preserve prior approval only if voice_design_sha256 has not changed!
+        # Preserve prior approval only if voice_design_sha256 AND the synthesis
+        # engine are unchanged — a human approved one engine's audio, not another's.
         prev = existing_voices.get(vid, {})
         same_design = prev.get("voice_design_sha256") == v["voice_design_sha256"]
+        same_backend = prev.get("backend") == backend_name
+        keep_approval = bool(prev.get("approved", False) and same_design and same_backend)
         existing_voices[vid] = {
             "voice_id": vid,
             "blind_label": f"Candidate-{idx:02d}",
@@ -797,10 +807,10 @@ def cmd_audition(book_root, voice_filter=None, backend_name="ming"):
             "auditioned_at": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "total_duration_sec": round(total_dur, 2),
             "passages": rendered_passages,
-            "approved": bool(prev.get("approved", False) and same_design),
-            "approved_by": prev.get("approved_by") if same_design else None,
-            "approved_at": prev.get("approved_at") if same_design else None,
-            "review_notes": prev.get("review_notes") if same_design else None,
+            "approved": keep_approval,
+            "approved_by": prev.get("approved_by") if keep_approval else None,
+            "approved_at": prev.get("approved_at") if keep_approval else None,
+            "review_notes": prev.get("review_notes") if keep_approval else None,
         }
 
     sheet_obj = {
@@ -877,7 +887,7 @@ def cmd_approve(book_root, voice_filter=None, approve_all=False, reviewer=None, 
     return 0
 
 
-def cmd_freeze(book_root, voice_filter=None, duration_sec=210.0, backend_name="ming"):
+def cmd_freeze(book_root, voice_filter=None, duration_sec=210.0, backend_name=None):
     if duration_sec < 180.0 or duration_sec > 300.0:
         print(f"casting freeze: --duration-sec must be between 180 and 300 seconds (3–5 minutes); got {duration_sec}",
               file=sys.stderr)
@@ -893,6 +903,7 @@ def cmd_freeze(book_root, voice_filter=None, duration_sec=210.0, backend_name="m
         for p in problems:
             print(f"  - {p}", file=sys.stderr)
         return 1
+    backend_name = backend_name or ab_cfg.get("backend") or "ming"
 
     sheet_path = os.path.join(book_root, "audiobook", "auditions", "AUDITION_SHEET.json")
     if not os.path.isfile(sheet_path):
@@ -922,6 +933,15 @@ def cmd_freeze(book_root, voice_filter=None, duration_sec=210.0, backend_name="m
                 f"casting freeze: REFUSED — voice {vid!r} voice_design string changed after "
                 f"audition (auditioned={arec.get('voice_design_sha256')}, "
                 f"current={voices[vid]['voice_design_sha256']}). Re-audition and re-approve.",
+                file=sys.stderr,
+            )
+            return 1
+        if arec.get("backend") and arec.get("backend") != backend_name:
+            print(
+                f"casting freeze: REFUSED — voice {vid!r} was auditioned and approved on "
+                f"backend {arec.get('backend')!r} but freeze is running backend "
+                f"{backend_name!r}. A human approved one engine's audio; re-audition and "
+                f"re-approve on {backend_name!r} before freezing.",
                 file=sys.stderr,
             )
             return 1
@@ -961,6 +981,7 @@ def cmd_freeze(book_root, voice_filter=None, duration_sec=210.0, backend_name="m
             voice_design=v["voice_design"],
             style=v["style"],
             target_duration_sec=duration_sec,
+            backend_name=backend_name,
         )
         with open(golden_wav, "rb") as fh:
             wav_sha256 = hashlib.sha256(fh.read()).hexdigest()
@@ -1124,7 +1145,8 @@ def main(argv=None):
     p_aud = sub.add_parser("audition", help="Render 3 standard audition passages (~90s) per voice")
     p_aud.add_argument("book")
     p_aud.add_argument("--voice", default=None)
-    p_aud.add_argument("--backend", default="ming")
+    p_aud.add_argument("--backend", default=None,
+                       help="Synthesis backend (default: audiobook config 'backend', else ming)")
 
     p_app = sub.add_parser("approve", help="Record human review approval on auditioned voices")
     p_app.add_argument("book")
@@ -1137,22 +1159,27 @@ def main(argv=None):
     p_frz.add_argument("book")
     p_frz.add_argument("--voice", default=None)
     p_frz.add_argument("--duration-sec", type=float, default=210.0)
-    p_frz.add_argument("--backend", default="ming")
+    p_frz.add_argument("--backend", default=None,
+                       help="Synthesis backend (default: audiobook config 'backend', else ming)")
 
     p_ver = sub.add_parser("verify", help="Verify all voices are frozen with valid golden references")
     p_ver.add_argument("book")
 
     args = ap.parse_args(argv)
-    if args.cmd == "validate":
-        return cmd_validate(args.book)
-    if args.cmd == "audition":
-        return cmd_audition(args.book, args.voice, args.backend)
-    if args.cmd == "approve":
-        return cmd_approve(args.book, args.voice, args.approve_all, args.reviewer, args.notes)
-    if args.cmd == "freeze":
-        return cmd_freeze(args.book, args.voice, args.duration_sec, args.backend)
-    if args.cmd == "verify":
-        return cmd_verify(args.book)
+    try:
+        if args.cmd == "validate":
+            return cmd_validate(args.book)
+        if args.cmd == "audition":
+            return cmd_audition(args.book, args.voice, args.backend)
+        if args.cmd == "approve":
+            return cmd_approve(args.book, args.voice, args.approve_all, args.reviewer, args.notes)
+        if args.cmd == "freeze":
+            return cmd_freeze(args.book, args.voice, args.duration_sec, args.backend)
+        if args.cmd == "verify":
+            return cmd_verify(args.book)
+    except (ValueError, RuntimeError) as exc:
+        print(f"casting: ERROR — {exc}", file=sys.stderr)
+        return 3
 
     ap.print_help()
     return 3
