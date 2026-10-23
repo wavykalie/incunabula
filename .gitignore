@@ -54,3 +54,6 @@ funnel-video/
 # check-registry.py already skips vermillion-study by name; this keeps git from seeing it.
 vermillion-study/
 _verify-clone/
+
+# Ming-3.0-tts local engine setup (venv, clone, checkpoints) — never committed
+.ming3/

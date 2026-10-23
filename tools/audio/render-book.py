@@ -23,9 +23,22 @@ WHY THIS EXISTS
        `source_sha256` matching the current `manuscript/chapters/` file it was built
        from. A script built from a different manuscript state is refused, not rendered.
     4. SPEAKER DRIFT GATE: after rendering, each speaker's assembled audio is embedded
-       and compared (cosine) against that voice's frozen golden embedding. Below the
-       drift floor (default 0.90; same voice measures > 0.96, different voices < 0.75)
-       the render FAILS — the audio exists but is refused as a release artifact.
+       (CAM++ speaker verification, `extract_speaker_embedding`) and checked against
+       the frozen golden embeddings twice — both measured on Ming-3.0-tts output, not
+       assumed:
+         a. ABSOLUTE FLOOR (default 0.75 cosine vs own frozen embedding): catches
+            voice collapse (0.00) and unconditioned synthesis (0.40–0.81). The floor
+            sits BELOW the instrument's same-voice noise because conditioned
+            cross-call identity measures 0.805–0.925 even when the voice is perfect:
+            short segments (1–2s) are unreliable speaker-verification material and
+            drag aggregates down. A 0.90 floor refused flawless audio.
+         b. IDENTITY (own embedding must beat every other frozen cast voice by a
+            margin, default 0.05; measured correct-voice margins 0.13–0.51): catches
+            voice mix-ups the floor cannot — a Halvard/Ines swap scores 0.63–0.77
+            against the wrong anchor, above any honest floor, while identification
+            names the wrong voice decisively.
+       Either failure FAILS the render — the audio exists but is refused as a
+       release artifact.
 
   Audio layout (under <book>/audiobook/audio/, or --out-dir):
     chapter-NN.wav                          assembled chapter (16-bit mono)
@@ -70,7 +83,11 @@ PARALINGUISTIC_TAG_RE = re.compile(r"\[[a-zA-Z][a-zA-Z ]*\]")
 SCRIPT_SCHEMA = "incunabula.audiobook.script.v1"
 
 DEFAULT_SAMPLE_RATE = 24000
-DEFAULT_DRIFT_MIN_COSINE = 0.90
+# Calibrated on real Ming-3.0-tts output (see gate 4 in the header): the floor
+# discriminates drift/collapse from the instrument's same-voice noise (0.805–0.925),
+# and the identity margin discriminates mix-ups (measured margins 0.13–0.51).
+DEFAULT_DRIFT_MIN_COSINE = 0.75
+DEFAULT_DRIFT_ID_MARGIN = 0.05
 MIN_DRIFT_AUDIO_SEC = 3.0
 
 
@@ -178,6 +195,7 @@ def render_chapter(
     speaker_lookup,
     out_dir,
     drift_min_cosine,
+    drift_id_margin,
     frozen_embeddings,
 ):
     """Render one narration script to per-segment WAVs + an assembled chapter WAV,
@@ -241,6 +259,11 @@ def render_chapter(
             voice_design=vinfo["voice_design"],
             style=seg.get("style") or {},
             sample_rate=sample_rate,
+            # VOICE_CLONE_FROM_GOLDEN: every segment is conditioned on the frozen
+            # golden identity. Unconditioned, the engine re-designs the voice per
+            # call and same-design calls drift apart (measured 0.40–0.81 cosine) —
+            # the drift gate below would rightly refuse the whole book.
+            speaker_embedding=frozen_embeddings.get(voice_id),
         )
         if not res or not os.path.isfile(seg_wav):
             fails.append(f"{script_path}: segment {seg_id} synthesis produced no WAV")
@@ -300,20 +323,40 @@ def render_chapter(
             wf.setsampwidth(2)
             wf.setframerate(sample_rate)
             wf.writeframes(bytes(frames))
-        emb = _CASTING.extract_speaker_embedding_from_wav(tmp_wav)
+        if hasattr(renderer, "extract_speaker_embedding"):
+            emb = renderer.extract_speaker_embedding(tmp_wav)  # engine's own instrument
+        else:
+            emb = _CASTING.extract_speaker_embedding_from_wav(tmp_wav)
         try:
             os.remove(tmp_wav)
         except OSError:
             pass
         cos = _CASTING.cosine_similarity(emb, frozen)
-        status = "OK" if cos >= drift_min_cosine else "FAIL"
-        if status == "FAIL":
+        # Identity check: the aggregate must match its own frozen voice better than
+        # every other frozen cast voice, by a margin (gate 4b in the header).
+        others = [(v2, _CASTING.cosine_similarity(emb, e2))
+                  for v2, e2 in frozen_embeddings.items()
+                  if v2 != voice_id and e2]
+        best_other, best_other_cos = max(others, key=lambda kv: kv[1]) if others else (None, None)
+        id_margin = None if best_other is None else cos - best_other_cos
+        status = "OK"
+        if cos < drift_min_cosine:
+            status = "FAIL"
             fails.append(
                 f"chapter-{ch_num:02d}: speaker drift for {voice_id!r} — rendered audio "
                 f"cosine {cos:.4f} vs frozen golden embedding is below the drift floor "
                 f"{drift_min_cosine:.2f} (Refusal Test #4 extension)"
             )
+        elif id_margin is not None and id_margin < drift_id_margin:
+            status = "FAIL"
+            fails.append(
+                f"chapter-{ch_num:02d}: voice mix-up for {voice_id!r} — rendered audio "
+                f"identifies closest as {best_other!r} (margin {id_margin:.4f} over "
+                f"own frozen voice is below {drift_id_margin:.2f}) (Refusal Test #4 extension)"
+            )
         drift[voice_id] = {"cosine": round(cos, 6), "audio_sec": round(audio_sec, 2),
+                           "closest_other": best_other,
+                           "id_margin": None if id_margin is None else round(id_margin, 6),
                            "status": status}
 
     duration_sec = len(chapter_frames) / 2 / sample_rate
@@ -368,6 +411,9 @@ def main(argv=None):
                     help="Narration script directory (default: <book>/audiobook/scripts)")
     ap.add_argument("--drift-min-cosine", type=float, default=DEFAULT_DRIFT_MIN_COSINE,
                     help=f"Speaker-drift cosine floor (default: {DEFAULT_DRIFT_MIN_COSINE})")
+    ap.add_argument("--drift-id-margin", type=float, default=DEFAULT_DRIFT_ID_MARGIN,
+                    help="Required cosine margin of own frozen voice over the closest "
+                         f"other cast voice (default: {DEFAULT_DRIFT_ID_MARGIN})")
     args = ap.parse_args(argv)
 
     book_root = os.path.abspath(args.book)
@@ -457,6 +503,7 @@ def main(argv=None):
         "backend": renderer.backend,
         "render_mode": "VOICE_CLONE_FROM_GOLDEN",
         "drift_min_cosine": args.drift_min_cosine,
+        "drift_id_margin": args.drift_id_margin,
         "rendered_at": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
         "chapters": {},
     }
@@ -482,6 +529,7 @@ def main(argv=None):
                 speaker_lookup=speaker_lookup,
                 out_dir=out_dir,
                 drift_min_cosine=args.drift_min_cosine,
+                drift_id_margin=args.drift_id_margin,
                 frozen_embeddings=frozen_embeddings,
             )
         except (ValueError, RuntimeError) as exc:

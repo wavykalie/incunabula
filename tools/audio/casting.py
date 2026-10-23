@@ -145,6 +145,18 @@ GOLDEN_REFERENCE_CORPUS = [
         "into the deep pocket of her coat where the brass stayed cold against her knuckles all "
         "the way down the hill to the station."
     ),
+    (
+        "The relays had been switched by hand twice that night, and the second time the lamp on "
+        "the wall dimmed far enough to make the log hard to read. She kept writing anyway, one "
+        "line for every change in the needle, because in the morning somebody would ask what the "
+        "load had done at three, and the only honest answer would be the one she put down now."
+    ),
+    (
+        "\"You do not have to stay,\" he said from the doorway. \"I know,\" she said. \"But the "
+        "generator will not hold the pumps past four, and when it stops I want somebody in this "
+        "room who can say exactly what happened.\" She turned the page over and started a fresh "
+        "column. \"Go and sleep. I will wake you if the needle moves.\""
+    ),
 ]
 
 
@@ -446,13 +458,16 @@ def synthesize_speech_Like_wav(
     target_duration_sec=None,
     sample_rate=24000,
     backend_name="ming",
+    renderer=None,
 ):
     """Synthesize a clean, non-clipping, speech-cadenced harmonic WAV file with
     natural phrase pauses, syllable envelopes, and speaker-specific spectral formants
     (target -18 LUFS / RMS ~0.125, true peak <= -3.0 dBFS, zero clipping).
     Through the unified renderer (Cluster E) the `backend_name` selects the engine;
-    engine failures raise rather than fall back to a different voice."""
-    renderer = _get_renderer(backend_name)
+    engine failures raise rather than fall back to a different voice. Pass `renderer`
+    to reuse one engine instance across many calls (a real TTS model loads once)."""
+    if renderer is None:
+        renderer = _get_renderer(backend_name)
     if renderer is not None and hasattr(renderer, "synthesize_to_wav"):
         res = renderer.synthesize_to_wav(
             text=text,
@@ -613,6 +628,33 @@ def synthesize_fallback_wav(
     }
 
 
+def active_speech_seconds(wav_path):
+    """Seconds of actual speech in a WAV (20ms windows above the -38 dBFS floor).
+
+    The freeze contract's 180-300s window is about VOICE MATERIAL. A golden
+    reference that is mostly silence padding is a collapsed synthesis wearing a
+    long file as a disguise — measured on the Ming-3.0-tts engine, a voice whose
+    long-form generation collapsed left a 180s file holding 35s of speech."""
+    with wave.open(wav_path, "rb") as wf:
+        sr = wf.getframerate()
+        n_ch = wf.getnchannels()
+        sampwidth = wf.getsampwidth()
+        raw = wf.readframes(wf.getnframes())
+    if sampwidth != 2 or not raw:
+        return 0.0
+    total = len(raw) // 2
+    samples = struct.unpack(f"<{total}h", raw[:total * 2])
+    if n_ch > 1:
+        samples = samples[::n_ch]
+    win = max(1, int(0.02 * sr))
+    active = 0
+    for i in range(0, len(samples) - win, win):
+        chunk = samples[i:i + win]
+        if sum(x * x for x in chunk) / win > (400.0 ** 2):
+            active += win
+    return active / sr
+
+
 def extract_speaker_embedding_from_wav(wav_path):
     """Extract a 64-dim L2-normalized acoustic speaker embedding from a WAV file.
 
@@ -623,14 +665,9 @@ def extract_speaker_embedding_from_wav(wav_path):
     """
     with wave.open(wav_path, "rb") as wf:
         sr = wf.getframerate()
-        n_frames = wf.getnframes()
         n_ch = wf.getnchannels()
         sampwidth = wf.getsampwidth()
-        # Read up to 15 seconds from the middle of the file for fast, stable measurement
-        max_frames = min(n_frames, sr * 15)
-        start_frame = max(0, (n_frames - max_frames) // 2)
-        wf.setpos(start_frame)
-        raw = wf.readframes(max_frames)
+        raw = wf.readframes(wf.getnframes())
 
     if sampwidth != 2 or not raw:
         return [0.0] * 64
@@ -640,20 +677,23 @@ def extract_speaker_embedding_from_wav(wav_path):
     if n_ch > 1:
         samples = samples[::n_ch]
 
-    # Filter out silence frames (20ms windows)
+    # Voiceprint the SPEECH, wherever it sits in the file: active frames are
+    # collected across the whole file (capped at 15s worth for speed). Sampling
+    # a fixed middle window instead once produced a zero vector here — silence
+    # padding in the middle of a short golden reference — and a zero vector
+    # cosine-compares as 0.0 against everything, which reads as total drift.
     win = max(1, int(0.02 * sr))
     active = []
+    max_active = sr * 15
     for i in range(0, len(samples) - win, win):
         chunk = samples[i:i + win]
         energy = sum(x * x for x in chunk) / win
         if energy > (400.0 ** 2):  # above -38 dBFS silence floor
             active.extend(chunk)
-            if len(active) >= sr * 4:
+            if len(active) >= max_active:
                 break
 
     if len(active) < 512:
-        active = list(samples[:min(len(samples), sr * 2)])
-    if not active:
         return [0.0] * 64
 
     # Normalize active signal to zero mean, unit variance
@@ -735,6 +775,7 @@ def cmd_audition(book_root, voice_filter=None, backend_name=None):
             print(f"  - {p}", file=sys.stderr)
         return 1
     backend_name = backend_name or ab_cfg.get("backend") or "ming"
+    renderer = _get_renderer(backend_name)
 
     auditions_dir = os.path.join(book_root, "audiobook", "auditions")
     os.makedirs(auditions_dir, exist_ok=True)
@@ -781,6 +822,7 @@ def cmd_audition(book_root, voice_filter=None, backend_name=None):
                 style=emo_style,
                 target_duration_sec=30.0,
                 backend_name=backend_name,
+                renderer=renderer,
             )
             total_dur += res["duration_sec"]
             rendered_passages.append({
@@ -904,6 +946,7 @@ def cmd_freeze(book_root, voice_filter=None, duration_sec=210.0, backend_name=No
             print(f"  - {p}", file=sys.stderr)
         return 1
     backend_name = backend_name or ab_cfg.get("backend") or "ming"
+    renderer = _get_renderer(backend_name)
 
     sheet_path = os.path.join(book_root, "audiobook", "auditions", "AUDITION_SHEET.json")
     if not os.path.isfile(sheet_path):
@@ -982,11 +1025,19 @@ def cmd_freeze(book_root, voice_filter=None, duration_sec=210.0, backend_name=No
             style=v["style"],
             target_duration_sec=duration_sec,
             backend_name=backend_name,
+            renderer=renderer,
         )
         with open(golden_wav, "rb") as fh:
             wav_sha256 = hashlib.sha256(fh.read()).hexdigest()
 
-        embedding = extract_speaker_embedding_from_wav(golden_wav)
+        # Embed with the same instrument render-book will drift-check against:
+        # a real speaker-verification encoder when the engine provides one.
+        if hasattr(renderer, "extract_speaker_embedding"):
+            embedding = renderer.extract_speaker_embedding(golden_wav)
+            embedding_kind = getattr(renderer, "embedding_kind", "unknown")
+        else:
+            embedding = extract_speaker_embedding_from_wav(golden_wav)
+            embedding_kind = "autocorr-64"
         prof = voice_acoustic_profile(vid, v["voice_design"])
 
         emb_obj = {
@@ -995,6 +1046,7 @@ def cmd_freeze(book_root, voice_filter=None, duration_sec=210.0, backend_name=No
             "golden_wav_sha256": wav_sha256,
             "duration_sec": res["duration_sec"],
             "embedding_dim": len(embedding),
+            "embedding_kind": embedding_kind,
             "embedding": embedding,
             "acoustic_profile": prof,
         }
@@ -1099,6 +1151,12 @@ def verify_frozen_voices(book_root):
         if dur < 180.0 or dur > 300.0:
             reasons.append(
                 f"voice {vid!r} golden reference duration {dur:.1f}s is outside the 180–300s (3–5 min) window"
+            )
+        speech_sec = active_speech_seconds(wav_path)
+        if speech_sec < 120.0:
+            reasons.append(
+                f"voice {vid!r} golden reference holds only {speech_sec:.1f}s of actual speech "
+                f"inside {dur:.1f}s of audio — a collapsed synthesis is not a voice reference"
             )
         emb_rel = frec.get("speaker_embedding_file", "")
         emb_path = os.path.join(book_root, emb_rel)

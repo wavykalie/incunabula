@@ -15,7 +15,16 @@ WHY THIS EXISTS
         renderer.synthesize_to_wav(
             text, out_wav_path, voice_id, voice_design,
             style=None, target_duration_sec=None, sample_rate=24000,
+            speaker_embedding=None,
         ) -> {"wav_path": ..., "duration_sec": ..., "sample_rate": ...}
+
+      `speaker_embedding` is the frozen golden reference embedding (or None):
+      when given, every utterance is conditioned on that identity — the engine
+      re-samples its voice per call when left unconditioned, and per-call
+      re-design drifts across a book (measured 0.40–0.81 cosine between
+      same-design calls). Conditioning is what makes
+      `render_mode=VOICE_CLONE_FROM_GOLDEN` true and keeps the speaker-drift
+      gate comparing identity to identity.
 
     - `ming3` — the production engine: Ant inclusionAI's Ming-3.0-tts (MIT,
       https://github.com/inclusionAI/Ming-3.0-tts). The contract maps onto it
@@ -29,9 +38,9 @@ WHY THIS EXISTS
           in the instruction (the engine's inline-tag mode lives on its reference-audio
           task, which this pipeline refuses to touch).
         * output -> 16-bit mono WAV at the requested `sample_rate`; the engine's native
-          44.1 kHz output is linearly resampled (stdlib) to the contract rate so every
-          artifact — golden reference included — shares one sample rate, which the
-          speaker-embedding drift gate requires (lags are sample-indexed).
+          44.1 kHz waveform is resampled with the engine's own torchaudio and saved as
+          PCM_S so every artifact — golden reference included — shares one sample rate,
+          which the speaker-embedding drift gate requires (lags are sample-indexed).
       Engine acquisition (loud, never silent): the official `ming_tts` package must be
       importable and a checkpoint available (`MING3_MODEL_PATH`, default
       `inclusionAI/Ming-3.0-tts-0.5b`). If not, synthesis raises with install steps —
@@ -64,15 +73,13 @@ EXIT CODES
 """
 
 import argparse
-import array
 import hashlib
 import importlib.util
 import json
 import os
 import re
-import struct
 import sys
-import wave
+import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TOOLS_DIR = os.path.dirname(HERE)
@@ -91,16 +98,23 @@ _BACKEND_DESCRIPTIONS = {
 }
 
 MING3_DEFAULT_MODEL = "inclusionAI/Ming-3.0-tts-0.5b"
+MING3_LOCAL_ROOT = os.path.join(HERE, ".ming3")
+MING3_LOCAL_REPO = os.path.join(MING3_LOCAL_ROOT, "Ming-3.0-tts")
+MING3_LOCAL_CHECKPOINT = os.path.join(MING3_LOCAL_ROOT, "Ming-3.0-tts-0.5b")
 
 MING3_INSTALL_HELP = (
     "ming3 backend unavailable: the official 'ming_tts' package is not importable.\n"
-    "Install the Ming-3.0-tts release (MIT, Ant inclusionAI):\n"
-    "  git clone https://github.com/inclusionAI/Ming-3.0-tts\n"
-    "  cd Ming-3.0-tts && pip install -r requirements.txt\n"
-    "  pip install \"huggingface_hub[cli]\"\n"
-    "  hf download inclusionAI/Ming-3.0-tts-0.5b --local-dir Ming-3.0-tts-0.5b\n"
-    "Then set MING3_MODEL_PATH to the checkpoint directory "
-    f"(default: {MING3_DEFAULT_MODEL})."
+    "Install the Ming-3.0-tts release (MIT, Ant inclusionAI) — e.g. the local setup:\n"
+    "  git clone https://github.com/inclusionAI/Ming-3.0-tts tools/audio/.ming3/Ming-3.0-tts\n"
+    "  python -m venv tools/audio/.ming3/venv\n"
+    "  tools/audio/.ming3/venv/Scripts/python.exe -m pip install "
+    "-r tools/audio/.ming3/Ming-3.0-tts/requirements.txt \"huggingface_hub[cli]\"\n"
+    "  tools/audio/.ming3/venv/Scripts/hf.exe download inclusionAI/Ming-3.0-tts-0.5b "
+    "--local-dir tools/audio/.ming3/Ming-3.0-tts-0.5b\n"
+    "Then run the pipeline with tools/audio/.ming3/venv/Scripts/python.exe, or set "
+    "MING3_MODEL_PATH to the checkpoint directory. GPU: needs a CUDA torch build; "
+    "on AMD (ROCm, e.g. WSL2 + Ubuntu 24.04) or ZLUDA, set MING3_DEVICE if torch "
+    "does not report a device itself."
 )
 
 # Paralinguistic tags this pipeline emits (build-script rationing) mapped to delivery
@@ -199,79 +213,53 @@ def build_ming3_instruction(voice_design, style, tags):
 
 
 # ---------------------------------------------------------------------------
-# WAV plumbing shared by backends (stdlib only)
-# ---------------------------------------------------------------------------
-
-def read_wav_mono16(path):
-    """Read a WAV as 16-bit mono frames. Raises RuntimeError on formats this
-    pipeline cannot concatenate losslessly."""
-    try:
-        with wave.open(path, "rb") as wf:
-            n_ch = wf.getnchannels()
-            sampwidth = wf.getsampwidth()
-            rate = wf.getframerate()
-            frames = wf.readframes(wf.getnframes())
-    except wave.Error as exc:
-        raise RuntimeError(
-            f"{path}: unsupported WAV container ({exc}) — the ming3 backend handles "
-            f"integer PCM WAV only; re-export the engine output as 16-bit PCM"
-        )
-    if sampwidth != 2:
-        raise RuntimeError(
-            f"{path}: expected 16-bit PCM, got {sampwidth * 8}-bit — the ming3 backend "
-            f"handles 16-bit PCM only"
-        )
-    if n_ch > 1:
-        total = len(frames) // 2
-        samples = struct.unpack(f"<{total}h", frames)
-        mono = array.array("h", bytes((total // n_ch) * 2))
-        for i in range(len(mono)):
-            acc = 0
-            base = i * n_ch
-            for c in range(n_ch):
-                acc += samples[base + c]
-            mono[i] = acc // n_ch
-        frames = mono.tobytes()
-    return frames, rate
-
-
-def resample_pcm16(frames, src_rate, dst_rate):
-    """Linear-interpolation resample of 16-bit mono frames. Stdlib-only on purpose;
-    artifacts of one book all share one sample rate so this runs once per segment."""
-    if src_rate == dst_rate:
-        return frames
-    n_src = len(frames) // 2
-    if n_src < 2:
-        return frames
-    samples = struct.unpack(f"<{n_src}h", frames)
-    n_dst = max(1, int(round(n_src * dst_rate / src_rate)))
-    step = (n_src - 1) / max(1, n_dst - 1)
-    out = array.array("h", bytes(n_dst * 2))
-    for j in range(n_dst):
-        pos = j * step
-        i0 = int(pos)
-        frac = pos - i0
-        i1 = i0 + 1 if i0 + 1 < n_src else i0
-        out[j] = int(samples[i0] + (samples[i1] - samples[i0]) * frac)
-    if sys.byteorder != "little":
-        out.byteswap()
-    return out.tobytes()
-
-
-def write_wav_mono16(path, frames, sample_rate):
-    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-    with wave.open(path, "wb") as wf:
-        wf.setnchannels(1)
-        wf.setsampwidth(2)
-        wf.setframerate(sample_rate)
-        wf.writeframes(frames)
-
-
-# ---------------------------------------------------------------------------
 # Backends
 # ---------------------------------------------------------------------------
 
 _casting_module = None
+
+
+def _import_ming_tts():
+    """Import the official `ming_tts` package, discovering the local engine checkout
+    under `tools/audio/.ming3/Ming-3.0-tts` when no installed copy exists."""
+    try:
+        from ming_tts import MingTTS
+        return MingTTS
+    except ImportError:
+        pass
+    if os.path.isdir(MING3_LOCAL_REPO) and MING3_LOCAL_REPO not in sys.path:
+        sys.path.insert(0, MING3_LOCAL_REPO)
+        try:
+            from ming_tts import MingTTS
+            return MingTTS
+        except ImportError:
+            pass
+    raise RuntimeError(MING3_INSTALL_HELP)
+
+
+def _ming3_model_path():
+    """Checkpoint resolution: explicit env, then the local setup directory, then the
+    Hugging Face hub id (which `MingTTS` downloads via snapshot_download)."""
+    env = os.environ.get("MING3_MODEL_PATH")
+    if env:
+        return env
+    if os.path.isdir(MING3_LOCAL_CHECKPOINT):
+        return MING3_LOCAL_CHECKPOINT
+    return MING3_DEFAULT_MODEL
+
+
+def _ming3_device():
+    """Device resolution: explicit env, then whatever torch reports. On AMD setups
+    (WSL2 + ROCm, or ZLUDA on Windows) torch exposes HIP as 'cuda:0', so auto-detect
+    picks up the GPU the moment a GPU-capable torch build is installed."""
+    env = os.environ.get("MING3_DEVICE")
+    if env:
+        return env
+    try:
+        import torch
+        return "cuda:0" if torch.cuda.is_available() else "cpu"
+    except ImportError:
+        return "cpu"
 
 
 def _load_casting():
@@ -289,6 +277,29 @@ def _load_casting():
     return _casting_module
 
 
+def _spkemb_file(embedding):
+    """Materialize a frozen speaker embedding as the `torch.save` file the engine's
+    `synthesize(spk_emb_path=...)` loader expects. Cached by content hash in the
+    system temp dir so per-segment rendering writes it once per voice.
+
+    Saved as bfloat16 to match the engine's own zero-embedding path exactly
+    (`torch.zeros(1, 192, dtype=torch.bfloat16)`), avoiding a dtype mismatch in
+    the `spk_head` projection."""
+    import torch
+
+    key = hashlib.sha256(
+        json.dumps([round(float(x), 6) for x in embedding]).encode("utf-8")
+    ).hexdigest()[:16]
+    cache_dir = os.path.join(tempfile.gettempdir(), "ming3-spkemb-cache")
+    path = os.path.join(cache_dir, f"spkemb-{key}.pt")
+    if not os.path.isfile(path):
+        os.makedirs(cache_dir, exist_ok=True)
+        vec = torch.tensor([float(x) for x in embedding],
+                           dtype=torch.bfloat16).unsqueeze(0)
+        torch.save({"spk_emb": vec}, path)
+    return path
+
+
 class DeterministicRenderer:
     """The `ming` backend: delegates to casting.py's standalone synthesizer.
 
@@ -296,6 +307,12 @@ class DeterministicRenderer:
     so both are produced by the same code with the same inputs."""
 
     backend = "ming"
+    embedding_kind = "autocorr-64"
+
+    def extract_speaker_embedding(self, wav_path):
+        """Deterministic spectral voiceprint (autocorrelation lags). Text-sensitive:
+        fine for the reference engine, not a speaker-verification instrument."""
+        return _load_casting().extract_speaker_embedding_from_wav(wav_path)
 
     def synthesize_to_wav(
         self,
@@ -306,6 +323,8 @@ class DeterministicRenderer:
         style=None,
         target_duration_sec=None,
         sample_rate=24000,
+        speaker_embedding=None,  # accepted, unused: this engine's identity IS its
+        # voice_design parameters — deterministic synthesis cannot drift from them
     ):
         casting = _load_casting()
         return casting.synthesize_fallback_wav(
@@ -328,16 +347,41 @@ class Ming3Renderer:
     for every segment. Engine failures propagate — see MING3_INSTALL_HELP."""
 
     backend = "ming3"
+    embedding_kind = "camplus"
     _model = None
+
+    def extract_speaker_embedding(self, wav_path):
+        """Speaker-verification embedding via the engine's own CAM++ encoder
+        (campplus.onnx, shipped with the checkpoint).
+
+        This is the right instrument for the drift gate: unlike a spectral
+        voiceprint it is trained to compare IDENTITY across different text and
+        prosody. Measured on real engine output, the spectral voiceprint scored
+        a cross-voice pair 0.94 and a same-voice cross-text pair 0.82 — inverted
+        separation, i.e. an invalid gate."""
+        import torch
+        import torchaudio
+
+        model = self._engine()
+        waveform, rate = torchaudio.load(wav_path, backend="soundfile")
+        if waveform.shape[0] > 1:
+            waveform = waveform.mean(dim=0, keepdim=True)
+        if rate != 16000:
+            waveform = torchaudio.functional.resample(waveform, rate, 16000)
+        emb = model.spkemb_extractor(waveform.float().cpu())
+        return [round(float(x), 6) for x in emb.flatten().tolist()]
 
     def _engine(self):
         if Ming3Renderer._model is None:
-            try:
-                from ming_tts import MingTTS
-            except ImportError as exc:
-                raise RuntimeError(MING3_INSTALL_HELP) from exc
-            model_path = os.environ.get("MING3_MODEL_PATH", MING3_DEFAULT_MODEL)
-            Ming3Renderer._model = MingTTS(model_path)
+            MingTTS = _import_ming_tts()
+            Ming3Renderer._model = MingTTS(
+                _ming3_model_path(),
+                device=_ming3_device(),
+                # build-script.py already expands numbers, dates, currencies and
+                # abbreviations into words, so the pynini FST normalizer (whose
+                # wheels are unreliable on Windows) is neither needed nor wanted.
+                text_normalization=False,
+            )
         return Ming3Renderer._model
 
     def synthesize_to_wav(
@@ -349,52 +393,77 @@ class Ming3Renderer:
         style=None,
         target_duration_sec=None,
         sample_rate=24000,
+        speaker_embedding=None,
     ):
+        import torch
+        import torchaudio
+
         model = self._engine()
         words, tags = split_paralinguistic_tags(text)
         if not words:
             raise RuntimeError(f"nothing speakable in segment for voice {voice_id!r}")
         instruction = build_ming3_instruction(voice_design, style, tags)
 
-        out_wav_path = os.path.abspath(out_wav_path)
-        os.makedirs(os.path.dirname(out_wav_path), exist_ok=True)
-        engine_wav = out_wav_path + ".ming3.wav"
-        model.synthesize(
+        # Identity conditioning: a frozen golden embedding pins the voice across
+        # calls; without one the engine designs the voice afresh from the
+        # instruction every call (freeze/audition deliberately do this — the voice
+        # is designed from text with no reference audio, which keeps the
+        # no-real-person-clone rule literal).
+        if speaker_embedding:
+            synth_kwargs = {
+                "use_zero_spk_emb": False,
+                "spk_emb_path": _spkemb_file(speaker_embedding),
+                "use_spk_emb": True,
+            }
+        else:
+            synth_kwargs = {"use_zero_spk_emb": True}
+
+        # synthesize() returns the waveform tensor; writing the WAV here (rather
+        # than round-tripping the engine's float32 container) keeps the contract's
+        # 16-bit PCM format and lets torchaudio do the rate conversion properly.
+        waveform = model.synthesize(
             task="FREEFORM",
             text=words,
             instruction=instruction,
-            use_zero_spk_emb=True,
-            output_path=engine_wav,
+            **synth_kwargs,
         )
-        if not os.path.isfile(engine_wav):
-            raise RuntimeError(f"ming3 engine produced no WAV at {engine_wav}")
+        engine_rate = int(model.sample_rate)
+        if waveform.device.type != "cpu":
+            waveform = waveform.cpu()
+        if engine_rate != sample_rate:
+            waveform = torchaudio.functional.resample(waveform, engine_rate, sample_rate)
 
-        frames, engine_rate = read_wav_mono16(engine_wav)
-        frames = resample_pcm16(frames, engine_rate, sample_rate)
-        try:
-            os.remove(engine_wav)
-        except OSError:
-            pass
-
-        duration_sec = len(frames) / 2 / sample_rate
+        # Silence-pad UP to `target_duration_sec` when natural speech is shorter
+        # (never truncate). This is only safe because casting.verify_frozen_voices
+        # separately requires >= 120s of actual speech: padding alone once turned a
+        # 35s collapsed synthesis into a passing 180s artifact; the speech gate is
+        # what distinguishes a fast voice from a collapse.
+        duration_sec = waveform.shape[-1] / sample_rate
         if target_duration_sec is not None and duration_sec < float(target_duration_sec):
-            # Keep the freeze contract (golden references span 180-300s) without
-            # truncating speech: pad the tail with silence, never clip words.
-            pad = int((float(target_duration_sec) - duration_sec) * sample_rate) * 2
-            frames += b"\x00\x00" * (pad // 2)
-            duration_sec = len(frames) / 2 / sample_rate
+            pad = int((float(target_duration_sec) - duration_sec) * sample_rate)
+            waveform = torch.nn.functional.pad(waveform, (0, pad))
+            duration_sec = waveform.shape[-1] / sample_rate
 
-        write_wav_mono16(out_wav_path, frames, sample_rate)
+        out_wav_path = os.path.abspath(out_wav_path)
+        os.makedirs(os.path.dirname(out_wav_path), exist_ok=True)
+        torchaudio.save(out_wav_path, waveform, sample_rate, encoding="PCM_S", bits_per_sample=16)
 
         meta_path = out_wav_path + ".meta.json"
         with open(meta_path, "w", encoding="utf-8", newline="\n") as fh:
             json.dump({
                 "backend": "ming3",
-                "engine_model": os.environ.get("MING3_MODEL_PATH", MING3_DEFAULT_MODEL),
+                "engine_model": _ming3_model_path(),
+                "engine_device": _ming3_device(),
                 "voice_id": voice_id,
                 "voice_design_sha256": hashlib.sha256(
                     voice_design.encode("utf-8")).hexdigest()[:16],
                 "instruction": instruction,
+                "speaker_conditioning": (
+                    "frozen-golden:" + hashlib.sha256(
+                        json.dumps([round(float(x), 6) for x in speaker_embedding]
+                                   ).encode("utf-8")).hexdigest()[:16]
+                    if speaker_embedding else "zero-voice-design"
+                ),
                 "paralinguistic_tags": tags,
                 "spoken_text": words,
                 "duration_sec": round(duration_sec, 3),
