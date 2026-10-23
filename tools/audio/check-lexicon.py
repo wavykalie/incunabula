@@ -459,6 +459,11 @@ def extract_proper_nouns_from_chapters(chapters, declared_cast):
                     suf = line[after_idx:after_idx + 3]
                     if not (suf.startswith("'s") or suf.startswith("\u2019s")):
                         continue
+                # Pronoun contractions ("I'd", "I'll", "I'm", "I've") are not
+                # proper nouns. The pronoun is never lowercased in English, so they
+                # defeat the never-lowercase heuristic and must be excluded outright.
+                if re.match(r"^I['\u2019](d|ll|m|ve|re)$", raw_tok):
+                    continue
                 tok = strip_possessive(raw_tok)
                 if len(tok) < 2 or tok in STOP_WORDS or ROMAN_RE.match(tok):
                     continue

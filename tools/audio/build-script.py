@@ -13,8 +13,9 @@ WHY THIS EXISTS
        - `tools/prose/verify-freeze.sh` holds (`FREEZE HOLDS`),
        - `PROJECT_STATE.yaml` exists and its prose status is complete (`complete` or
          `gate_passed` / `published`), NOT `in_progress`, `drafting`, or `concept`,
-       - `tools/check-pass-evidence.py` reports 0 missing chapter pass files and >0
-         gated words,
+      - `tools/check-pass-evidence.py` reports 0 missing chapter pass files and >0
+        gated words (missing files may be covered by an explicit recorded waiver
+        of rule `pass-evidence` in `maintenance/WAIVERS.md`),
        - No prose gate recorded in `PROJECT_STATE.yaml` is in a failed state unless
          covered by an explicit recorded resolution/waiver, AND
        - `tools/audio/check-lexicon.py` exits 0 (every proper noun in the scanned
@@ -234,6 +235,10 @@ def normalize_spoken_text(text):
     s = s.replace("\u2026", "...")
     s = re.sub(r"\s*&\s*", " and ", s)
 
+    # Markdown emphasis markers are formatting, not words ("that *is* it")
+    s = re.sub(r"\*+([^*]+)\*+", r"\1", s)
+    s = s.replace("*", "")
+
     # Expand abbreviations first
     for pat, repl in ABBREVIATIONS:
         s = pat.sub(repl, s)
@@ -338,6 +343,61 @@ def load_module(name, path):
     return mod
 
 
+# Waiver-ledger entry format is owned by tools/audio/check-lexicon.py
+# (WAIVER_ENTRY_RE / WAIVER_REASON_RE); keep these regexes identical so every
+# tool reading maintenance/WAIVERS.md agrees on what an entry is.
+WAIVER_ENTRY_RE = re.compile(
+    r"^##\s+(W-\d+)\s*[-\u2013\u2014]\s*(\d{4}-\d{2}-\d{2})\s*[-\u2013\u2014]\s*"
+    r"chapter\s+([A-Za-z0-9_.-]+)\s*[-\u2013\u2014]\s*(\S+)\s*$",
+    re.M | re.I,
+)
+WAIVER_REASON_RE = re.compile(r"^-\s+reason:\s+(.*\S)\s*$", re.M | re.I)
+
+
+def load_gate_waivers(book_root):
+    """Read `maintenance/WAIVERS.md` for explicit recorded resolutions/waivers.
+
+    Rule families honored here (the `lexicon:*` family belongs to
+    check-lexicon.py and is ignored here):
+      - `gate:<name>`   covers a recorded prose-gate failure <name>
+                        (e.g. `gate:uniformity`, `gate:length_gate`)
+      - `pass-evidence` covers missing per-chapter pass-evidence files
+    Scope is the entry's chapter field: `book` (or `*`) applies book-wide.
+
+    A waiver never clears a failure: the failure stays recorded in
+    PROJECT_STATE.yaml / FINISHED.md as fact. A waiver records the explicit
+    human decision to enter the audiobook stage with that fact standing.
+    Returns a list of {id, date, scope, rule, reason} records.
+    """
+    ledger = os.path.join(book_root, "maintenance", "WAIVERS.md")
+    records = []
+    if not os.path.isfile(ledger):
+        return records
+    try:
+        with open(ledger, "r", encoding="utf-8") as fh:
+            text = fh.read()
+    except OSError:
+        return records
+    marks = list(WAIVER_ENTRY_RE.finditer(text))
+    for i, m in enumerate(marks):
+        end = marks[i + 1].start() if i + 1 < len(marks) else len(text)
+        body = text[m.end():end]
+        rm = WAIVER_REASON_RE.search(body)
+        if not rm:
+            continue
+        rule = m.group(4).strip().lower()
+        if rule.startswith("lexicon"):
+            continue  # check-lexicon.py's family
+        records.append({
+            "id": m.group(1),
+            "date": m.group(2),
+            "scope": m.group(3).strip().lower(),
+            "rule": rule,
+            "reason": rm.group(1).strip(),
+        })
+    return records
+
+
 def verify_gate_freeze():
     """Verify live tools/prose files against GATE_FREEZE.md manifest (same contract
     as tools/prose/verify-freeze.sh, in pure stdlib Python so it executes in <10ms
@@ -398,6 +458,15 @@ def check_freeze_and_completion(book_root):
         return False, reasons, None
 
     # Extract project.status, phase.status, and runner.status without backtracking
+    waivers = load_gate_waivers(book_root)
+
+    def _book_waiver(rule):
+        """The explicit recorded waiver covering `rule` book-wide, if any."""
+        for w in waivers:
+            if w["rule"] == rule and w["scope"] in ("book", "*"):
+                return w
+        return None
+
     def _extract_section_field(text, section_name, field_name):
         in_sec = False
         for raw_line in text.splitlines():
@@ -435,21 +504,34 @@ def check_freeze_and_completion(book_root):
             f"(project.status={proj_status or 'unset'!r}, phase.status={phase_status or 'unset'!r})"
         )
 
-    # Check if PROJECT_STATE.yaml records any prose gate with exit: 1 / FAIL without waiver
+    # A prose gate recorded FAIL refuses the audiobook stage unless an explicit
+    # recorded resolution/waiver covers it (rule `gate:<name>` in
+    # maintenance/WAIVERS.md). A waiver never clears the failure — the FAIL stays
+    # recorded as fact — it records the decision to enter audio with it standing.
     for gate_line in re.finditer(
         r"^[ \t]+([a-z_]+):\s*\{[^}]*\bresult:\s*\"FAIL\"[^}]*\}",
         state_text, re.M,
     ):
         gname = gate_line.group(1)
+        w = _book_waiver(f"gate:{gname}")
+        if w:
+            print(f"   NOTICE: recorded gate failure '{gname}: FAIL' covered by "
+                  f"waiver {w['id']} ({w['date']}) — carried as recorded fact")
+            continue
         reasons.append(
             f"PROJECT_STATE.yaml records failed prose gate '{gname}: FAIL' — "
             f"cannot enter audiobook stage on a manuscript with an unresolved gate failure"
         )
 
-    if re.search(r"^length_gate:\s*\"?FAIL\"?", state_text, re.M):
-        reasons.append(
-            "PROJECT_STATE.yaml records 'length_gate: FAIL' — manuscript failed length contract"
-        )
+    if re.search(r"^[ \t]*length_gate:\s*\"?FAIL\"?", state_text, re.M):
+        w = _book_waiver("gate:length_gate")
+        if w:
+            print(f"   NOTICE: recorded 'length_gate: FAIL' covered by waiver "
+                  f"{w['id']} ({w['date']}) — carried as recorded fact")
+        else:
+            reasons.append(
+                "PROJECT_STATE.yaml records 'length_gate: FAIL' — manuscript failed length contract"
+            )
 
     # 3. Pass evidence check (`tools/check-pass-evidence.py`)
     ev_path = os.path.join(TOOLS_DIR, "check-pass-evidence.py")
@@ -461,11 +543,17 @@ def check_freeze_and_completion(book_root):
         if "error" in rep:
             reasons.append(f"check-pass-evidence: {rep['error']}")
         elif rep["missing"]:
-            missing_names = ", ".join(n for n, _ in rep["missing"][:5])
-            reasons.append(
-                f"check-pass-evidence failed: {len(rep['missing'])} of {rep['chapters']} "
-                f"chapter(s) missing pass evidence ({missing_names})"
-            )
+            w = _book_waiver("pass-evidence")
+            if w:
+                print(f"   NOTICE: {len(rep['missing'])} of {rep['chapters']} chapter(s) "
+                      f"missing pass evidence, covered by waiver {w['id']} ({w['date']}) — "
+                      f"record-keeping gap, carried as fact")
+            else:
+                missing_names = ", ".join(n for n, _ in rep["missing"][:5])
+                reasons.append(
+                    f"check-pass-evidence failed: {len(rep['missing'])} of {rep['chapters']} "
+                    f"chapter(s) missing pass evidence ({missing_names})"
+                )
         elif rep["gated_words"] == 0:
             reasons.append("check-pass-evidence failed: 0 gated words")
 
@@ -483,6 +571,7 @@ def load_book_cast_and_audio_config(book_root):
     """Load cast names/aliases and any audiobook voice/style config from the book."""
     cast_map = {}  # alias_lower -> canonical_speaker_id
     character_styles = {}  # canonical_speaker_id -> style dict
+    voice_gender = {}  # canonical_speaker_id -> "he"/"she" from config pronouns
     narrator_style = dict(DEFAULT_STYLE)
     paralinguistic_cap = 2
     pauses = dict(DEFAULT_PAUSES_MS)
@@ -551,52 +640,148 @@ def load_book_cast_and_audio_config(book_root):
                                 cast_map[v_id.lower()] = v_id
                                 for alias in v_cfg.get("aliases", []):
                                     cast_map[str(alias).lower()] = v_id
+                                for p in v_cfg.get("pronouns", []) or []:
+                                    p_low = str(p).lower()
+                                    if p_low in ("he", "she"):
+                                        voice_gender[v_id] = p_low
+                                        break
         except Exception:
             pass
 
-    return cast_map, character_styles, narrator_style, paralinguistic_cap, pauses
+    return cast_map, character_styles, narrator_style, paralinguistic_cap, pauses, voice_gender
 
 
-def attribute_dialogue(paragraph_text, quote_start, quote_end, cast_map, last_speakers):
-    """Determine speaker and emotion/paralinguistic cue for a quoted dialogue span."""
-    after = paragraph_text[quote_end:min(len(paragraph_text), quote_end + 140)]
-    before = paragraph_text[max(0, quote_start - 140):quote_start]
+PRONOUN_RE = re.compile(r"\b(he|she|him|her)\b", re.I)
+PRONOUN_GENDER = {"he": "he", "him": "he", "she": "she", "her": "she"}
+
+
+def _iter_cast_mentions(text, cast_map):
+    """Yield the canonical speaker of every cast mention in `text`.
+
+    A mention is never attribution evidence on its own — quotes are full of
+    vocatives ("Thank you, Teasel.") — but it seeds the participant set the
+    alternation fallback chooses from. Longest alias first so
+    "mittens the 7th" wins over "mittens".
+    """
+    low = text.lower()
+    taken = []
+    for key in sorted((k for k in cast_map if " " in k), key=len, reverse=True):
+        for m in re.finditer(r"\b" + re.escape(key) + r"\b", low):
+            if any(s <= m.start() and m.end() <= e for s, e in taken):
+                continue
+            taken.append((m.start(), m.end()))
+            yield cast_map[key]
+    for m in re.finditer(r"\b([A-Za-z'’-]+)\b", text):
+        tok = m.group(1).lower()
+        for suf in ("'s", "\u2019s"):
+            if tok.endswith(suf):
+                tok = tok[:-len(suf)]
+        if tok in cast_map:
+            yield cast_map[tok]
+
+
+def _span_evidence(span, cast_map):
+    """Evidence in one narration span (never inside quotes).
+
+    Returns (named_with_verb, named, pronoun_genders, first_speech_verb).
+    """
+    named = []
+    for canon in _iter_cast_mentions(span, cast_map):
+        if canon not in named:
+            named.append(canon)
+    first_verb = None
+    for m in re.finditer(r"\b([A-Za-z'’-]+)\b", span):
+        t = m.group(1).lower()
+        if t in SPEECH_VERBS and first_verb is None:
+            first_verb = t
+    pronouns = []
+    if first_verb:
+        for m in PRONOUN_RE.finditer(span):
+            g = PRONOUN_GENDER[m.group(1).lower()]
+            if g not in pronouns:
+                pronouns.append(g)
+    return (list(named) if first_verb else []), named, pronouns, first_verb
+
+
+def attribute_paragraph(para, quotes, cast_map, voice_gender, last_speakers, participants):
+    """Attribute one speaker to every quoted span of a single paragraph.
+
+    A paragraph is one character's turn of talk; its quotes share a speaker
+    unless the narration around them names different speakers at speech verbs
+    (a chained exchange). Evidence, strongest first:
+      1. a cast name at a speech verb in the narration around the quotes
+         ("said the duke", "Mittens agreed") — names INSIDE quotes never count;
+      2. exactly one cast name in that narration;
+      3. a pronoun at a speech verb resolving uniquely by declared gender
+         ("she said" with exactly one woman in the cast);
+      4. turn-taking: strict two-party alternation — the previous speaker
+         flips to the other party of the current exchange;
+      5. otherwise the most recently mentioned participant who is not the
+         current last speaker ("Thank you, Teasel." is a reply TO Teasel).
+    Returns (speakers, verbs) aligned with `quotes`.
+    """
+    spans = []
+    prev_end = 0
+    for q in quotes:
+        spans.append(para[prev_end:q.start()])
+        prev_end = q.end()
+    spans.append(para[prev_end:])
+
+    named, named_with_verb, pronouns, first_verbs = [], [], [], []
+    for sp in spans:
+        w, nm, pr, fv = _span_evidence(sp, cast_map)
+        for c in w:
+            if c not in named_with_verb:
+                named_with_verb.append(c)
+        for c in nm:
+            if c not in named:
+                named.append(c)
+        for g in pr:
+            if g not in pronouns:
+                pronouns.append(g)
+        first_verbs.append(fv)
+
+    def _turn_taking():
+        # Strict alternation: an unattributed line flips to the other party of
+        # the current exchange (the two most recent speakers).
+        if len(last_speakers) >= 2 and last_speakers[-1] != last_speakers[-2]:
+            return last_speakers[-2]
+        last = last_speakers[-1] if last_speakers else None
+        cands = [p for p in participants if p != last]
+        if cands:
+            return cands[-1]
+        return "NARRATOR"
+
+    if len(named_with_verb) >= 2:
+        # Chained exchange ("…," said A, "…," said B): each quote takes the
+        # speaker named at the nearest speech verb.
+        speakers, vlist = [], []
+        for i in range(len(quotes)):
+            spk, vb = None, None
+            for sp in (spans[i + 1], spans[i]):
+                w, _nm, _pr, fv = _span_evidence(sp, cast_map)
+                if fv and vb is None:
+                    vb = fv
+                if w and spk is None:
+                    spk = w[0]
+            speakers.append(spk or _turn_taking())
+            vlist.append(vb)
+        return speakers, vlist
 
     speaker = None
-    detected_verb = None
-
-    # Look for verb + speaker in after window or before window
-    for window in (after, before):
-        for w_m in re.finditer(r"\b([A-Za-z'’-]+)\b", window):
-            tok = w_m.group(1)
-            tok_low = tok.lower()
-            if tok_low in SPEECH_VERBS and detected_verb is None:
-                detected_verb = tok_low
-            clean_tok = tok_low
-            for suf in ("'s", "\u2019s"):
-                if clean_tok.endswith(suf):
-                    clean_tok = clean_tok[:-len(suf)]
-            if clean_tok in cast_map and speaker is None:
-                speaker = cast_map[clean_tok]
-
-    # Fallback: check anywhere in the paragraph for a cast name if not in immediate window
+    if len(named_with_verb) == 1:
+        speaker = named_with_verb[0]
+    elif len(named) == 1:
+        speaker = named[0]
+    elif pronouns:
+        cands = [sp for sp, g in voice_gender.items() if g in pronouns]
+        if len(cands) == 1:
+            speaker = cands[0]
     if speaker is None:
-        for w_m in re.finditer(r"\b([A-Z][a-z'’-]+)\b", paragraph_text):
-            tok_low = w_m.group(1).lower()
-            if tok_low in cast_map:
-                speaker = cast_map[tok_low]
-                break
+        speaker = _turn_taking()
 
-    # Conversational turn-taking fallback for two-hander alternating lines
-    if speaker is None:
-        if len(last_speakers) >= 2 and last_speakers[-1] != last_speakers[-2]:
-            speaker = last_speakers[-2]
-        elif len(last_speakers) == 1:
-            speaker = last_speakers[-1]
-        else:
-            speaker = "NARRATOR"
-
-    return speaker, detected_verb
+    verbs = [first_verbs[i + 1] or first_verbs[i] for i in range(len(quotes))]
+    return [speaker] * len(quotes), verbs
 
 
 def build_chapter_script(
@@ -609,12 +794,15 @@ def build_chapter_script(
     narrator_style,
     paralinguistic_cap,
     pauses,
+    voice_gender=None,
 ):
     """Split one chapter's markdown into structured narration script segments."""
     segments = []
     seg_counter = 0
     paralinguistic_counts = {}  # speaker -> count in this chapter
     last_speakers = []
+    participants = []  # cast mentioned so far, in mention order
+    voice_gender = voice_gender or {}
 
     def next_seg_id():
         nonlocal seg_counter
@@ -668,6 +856,10 @@ def build_chapter_script(
     flush_buf()
 
     for bkind, btext in blocks:
+        for canon in _iter_cast_mentions(btext, cast_map):
+            if canon in participants:
+                participants.remove(canon)
+            participants.append(canon)
         if bkind == "heading":
             clean_head = re.sub(r"\s+", " ", btext).strip()
             # If heading is bare number like "1", expand to "Chapter One"
@@ -700,7 +892,9 @@ def build_chapter_script(
                 "pause_after_ms": pauses["scene_break"],
                 "lexicon_hits": [],
             })
-            last_speakers.clear()
+            # The conversational chain survives scene breaks: the same cast is
+            # usually still talking, and an empty chain strands the first
+            # unattributed line of the new scene on NARRATOR.
             continue
 
         # Paragraph: split into interleaved narration and quoted dialogue spans
@@ -720,6 +914,12 @@ def build_chapter_script(
                 "lexicon_hits": find_lexicon_hits(para),
             })
             continue
+
+        # Paragraph-level speaker attribution, then interleave pieces
+        speakers_by_q, verbs_by_q = attribute_paragraph(
+            para, quotes, cast_map, voice_gender, last_speakers, participants)
+        plan = {(q.start(), q.end()): (spk, vb)
+                for q, spk, vb in zip(quotes, speakers_by_q, verbs_by_q)}
 
         # Interleaved dialogue + narration/attribution within the paragraph
         cursor = 0
@@ -763,7 +963,7 @@ def build_chapter_script(
                     "lexicon_hits": find_lexicon_hits(nar_raw),
                 })
             else:
-                speaker, verb = attribute_dialogue(para, q_start, q_end, cast_map, last_speakers)
+                speaker, verb = plan[(q_start, q_end)]
                 if speaker != "NARRATOR":
                     last_speakers.append(speaker)
 
@@ -875,7 +1075,7 @@ def main(argv=None):
     lexicon_entries, _, _ = lex_mod.load_lexicon(lex_path)
 
     # 3. Load cast, styles, and chapter files
-    cast_map, character_styles, narrator_style, cfg_cap, pauses = load_book_cast_and_audio_config(book_root)
+    cast_map, character_styles, narrator_style, cfg_cap, pauses, voice_gender = load_book_cast_and_audio_config(book_root)
     cap = args.paralinguistic_cap if args.paralinguistic_cap is not None else cfg_cap
 
     chapters = lex_mod.resolve_chapters(book_root, args.chapter)
@@ -899,6 +1099,7 @@ def main(argv=None):
             narrator_style=narrator_style,
             paralinguistic_cap=cap,
             pauses=pauses,
+            voice_gender=voice_gender,
         )
         out_path = os.path.join(out_dir, f"chapter-{ch_num:02d}.json")
         with open(out_path, "w", encoding="utf-8", newline="\n") as fh:
