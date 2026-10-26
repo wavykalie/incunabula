@@ -477,6 +477,7 @@ def synthesize_speech_Like_wav(
             style=style or {},
             target_duration_sec=target_duration_sec,
             sample_rate=sample_rate,
+            seed_salt=os.path.basename(out_wav_path),
         )
         if res and os.path.isfile(out_wav_path):
             return res
@@ -626,6 +627,375 @@ def synthesize_fallback_wav(
         "duration_sec": round(duration_sec, 3),
         "sample_rate": sample_rate,
     }
+
+
+# The text of the short acoustic prompt clip. It is deliberately plain narrative
+# prose with no proper nouns: the engine continues from the clip's acoustics, so
+# an odd name in the prompt is one more thing it can mispronounce while it
+# settles into the voice. Length matters more than content — around 10 seconds is
+# long enough to carry timbre and short enough to encode once per voice.
+PROMPT_CLIP_TEXT = (
+    "The market was already loud when I got there, and louder still by nine. "
+    "Nobody on that street ever agreed about anything except the price of fish."
+)
+
+# Candidates minted per voice, best-of. Identity cosine barely moves between
+# draws, but the reading pace does, and the engine continues from the clip's
+# pace: a brisk clip makes the whole book brisk. The clip kept is the one whose
+# words-per-second lands closest to the voice's own golden reference.
+PROMPT_CLIP_DRAWS = 4
+
+
+def _clip_words(text):
+    return len([w for w in (text or "").split() if w])
+
+
+def _load_renderer_module():
+    """The renderer MODULE (not an instance), for the engine's own text chunker."""
+    renderer_path = os.path.join(HERE, "renderer.py")
+    if not os.path.isfile(renderer_path):
+        return None
+    spec = importlib.util.spec_from_file_location("audio_renderer_mod", renderer_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _pcm16_mono(wav_path):
+    """Return (samples, rate) for a 16-bit mono WAV, or (None, 0)."""
+    try:
+        with wave.open(wav_path, "rb") as wf:
+            if wf.getsampwidth() != 2 or wf.getnchannels() != 1:
+                return None, 0
+            rate = wf.getframerate()
+            raw = wf.readframes(wf.getnframes())
+    except (wave.Error, OSError):
+        return None, 0
+    if not raw:
+        return None, 0
+    n = len(raw) // 2
+    return struct.unpack(f"<{n}h", raw[:n * 2]), rate
+
+
+def _zero_runs(samples, rate, block_sec=0.010, min_sec=0.03, max_sec=2.5):
+    """Exact-zero silence runs, in (start_sec, dur_sec).
+
+    The golden reference is synthesized as several chunk calls joined by an
+    inserted digital-silence gap, so those seams are runs of literally zero
+    samples. The engine's own pauses inside a chunk always carry low-level noise,
+    which is what makes the seams distinguishable at all.
+    """
+    block = max(1, int(rate * block_sec))
+    runs, start = [], None
+    for i in range(0, len(samples) - block + 1, block):
+        chunk = samples[i:i + block]
+        is_zero = not any(chunk)
+        if is_zero and start is None:
+            start = i
+        elif not is_zero and start is not None:
+            dur = (i - start) / float(rate)
+            if min_sec <= dur <= max_sec:
+                runs.append((start / float(rate), dur))
+            start = None
+    if start is not None:
+        dur = (len(samples) - start) / float(rate)
+        if min_sec <= dur <= max_sec:
+            runs.append((start / float(rate), dur))
+    return runs
+
+
+def _golden_chunk_texts(golden_text, renderer_mod):
+    """The exact chunk strings the golden reference was synthesized from."""
+    if renderer_mod is None or golden_text is None:
+        return None
+    chunker = getattr(renderer_mod, "_engine_chunks", None)
+    max_words = getattr(renderer_mod, "MING3_MAX_CHUNK_WORDS", None)
+    if chunker is None or not max_words:
+        return None
+    try:
+        chunks = chunker(golden_text, max_words)
+    except Exception:
+        return None
+    return chunks or None
+
+
+def _choose_seams(seams, words, total_dur):
+    """Pick len(words)-1 seam times for the known chunks, or None.
+
+    When the count already matches it is used as-is (the common case: the golden
+    has exactly one inserted gap per chunk join). Otherwise a dynamic program
+    chooses the subset whose implied chunk durations best track the chunk word
+    counts, minimising RELATIVE error so one long chunk cannot dominate.
+    """
+    k = len(words)
+    if k < 2:
+        return None
+    if len(seams) == k - 1:
+        return [t for t, _d in seams]
+    if len(seams) < k - 1:
+        return None
+    total_words = sum(words) or 1
+    pred = [w * total_dur / total_words for w in words]
+    times = [0.0] + [s[0] for s in seams] + [total_dur]
+    c = len(seams)
+    inf = float("inf")
+    n = c + 2
+    dp = [[inf] * n for _ in range(k)]
+    back = [[-1] * n for _ in range(k)]
+    for i in range(1, c + 1):
+        dp[0][i], back[0][i] = abs(times[i] - pred[0]) / pred[0], 0
+    for ki in range(1, k - 1):
+        for i in range(ki + 1, c + 1):
+            for j in range(ki, i):
+                if dp[ki - 1][j] == inf:
+                    continue
+                cost = dp[ki - 1][j] + abs((times[i] - times[j]) - pred[ki]) / pred[ki]
+                if cost < dp[ki][i]:
+                    dp[ki][i], back[ki][i] = cost, j
+    best, arg = inf, -1
+    for j in range(k - 1, c + 1):
+        if dp[k - 2][j] == inf:
+            continue
+        cost = dp[k - 2][j] + abs((total_dur - times[j]) - pred[k - 1]) / pred[k - 1]
+        if cost < best:
+            best, arg = cost, j
+    if arg < 0:
+        return None
+    bounds, j = [total_dur], arg
+    bounds.insert(0, times[j])
+    for ki in range(k - 2, 0, -1):
+        j = back[ki][j]
+        bounds.insert(0, times[j])
+    bounds.insert(0, 0.0)
+    return bounds[1:-1]
+
+
+# A prompt chunk has to be long enough to carry timbre and short enough to encode
+# once per voice and to be continued from without the engine drifting.
+PROMPT_CHUNK_MIN_SEC = 6.0
+PROMPT_CHUNK_MAX_SEC = 14.0
+# Alignment acceptance: a partition whose chunk durations disagree with the chunk
+# word counts is a partition that will hand the engine the WRONG transcript, and
+# a mismatched (audio, transcript) pair is worse than no clip at all.
+PROMPT_CHUNK_MAX_REL_ERR = 0.15
+PROMPT_CHUNK_MAX_MEDIAN_ERR = 0.20
+
+
+def extract_golden_prompt_clip(book_root, vid, golden_wav, golden_text):
+    """Cut an acoustic prompt out of the approved golden reference itself.
+
+    Why not mint a fresh clip: every render of this engine is a new draw, and a
+    fresh clip is a *sibling* of the approved voice, not the voice. Conditioning
+    on it pulls every segment to that sibling's centroid — measured on chapter 01,
+    segments landed 0.72-0.77 from the very clip they were conditioned on and only
+    0.65-0.71 from the golden, against 0.83 for embedding-only conditioning. The
+    book became consistent with a voice nobody approved.
+
+    The golden is itself several chunk calls joined by inserted digital silence,
+    and the chunker is deterministic over the recorded transcript, so the text of
+    every chunk is known exactly. Locating the seams therefore recovers exact
+    (audio, transcript) pairs drawn from the approved recording, which is what the
+    engine's acoustic-prompt mode actually wants.
+
+    Returns (record_or_None, reason).
+    """
+    if not golden_wav or not os.path.isfile(golden_wav):
+        return None, "no golden reference on disk"
+    renderer_mod = _load_renderer_module()
+    chunks = _golden_chunk_texts(golden_text, renderer_mod)
+    if not chunks:
+        return None, "engine chunker unavailable (cannot recover chunk transcripts)"
+    samples, rate = _pcm16_mono(golden_wav)
+    if not samples:
+        return None, "golden reference is not 16-bit mono PCM"
+    total = len(samples) / float(rate)
+    words = [_clip_words(c) for c in chunks]
+    if any(w == 0 for w in words):
+        return None, "a golden chunk has no words"
+
+    seams = _zero_runs(samples, rate)
+    bounds = _choose_seams(seams, words, total)
+    if bounds is None:
+        return None, (f"cannot locate {len(words) - 1} chunk seams in the golden "
+                      f"(found {len(seams)} zero-runs)")
+    edges = [0.0] + list(bounds) + [total]
+    durs = [edges[i + 1] - edges[i] for i in range(len(words))]
+    total_words = sum(words)
+    rel = [abs(durs[i] - words[i] * total / total_words)
+           / (words[i] * total / total_words) for i in range(len(words))]
+    ordered = sorted(rel)
+    median_err = ordered[len(ordered) // 2]
+    if median_err > PROMPT_CHUNK_MAX_MEDIAN_ERR:
+        return None, (f"chunk partition does not fit the transcript "
+                      f"(median duration error {median_err * 100:.0f}%) — refusing to "
+                      f"condition on audio paired with the wrong words")
+
+    cands = [(rel[i], i, durs[i]) for i in range(len(words))
+             if PROMPT_CHUNK_MIN_SEC <= durs[i] <= PROMPT_CHUNK_MAX_SEC]
+    if not cands:
+        return None, "no golden chunk falls in the usable 6-14s window"
+    cands.sort()
+    best_err, idx, dur = cands[0]
+    if best_err > PROMPT_CHUNK_MAX_REL_ERR:
+        return None, (f"best usable golden chunk misses its expected duration by "
+                      f"{best_err * 100:.0f}% — alignment not trustworthy")
+
+    clip_text = chunks[idx]
+    start = int(round(edges[idx] * rate))
+    end = int(round(edges[idx + 1] * rate))
+    piece = samples[start:end]
+    # Trim residual leading/trailing silence, then 10ms fades so the clip does not
+    # begin or end on a click.
+    floor = max(1, int(0.004 * rate))
+    lo, hi = 0, len(piece)
+    while lo < hi and abs(piece[lo]) < floor:
+        lo += 1
+    while hi > lo and abs(piece[hi - 1]) < floor:
+        hi -= 1
+    piece = piece[lo:hi]
+    if len(piece) / float(rate) < 2.0:
+        return None, "golden chunk is silent after trimming"
+    fade = max(1, int(0.010 * rate))
+    piece = list(piece)
+    for i in range(min(fade, len(piece) // 2)):
+        g = i / float(fade)
+        piece[i] = int(piece[i] * g)
+        piece[-1 - i] = int(piece[-1 - i] * g)
+
+    v_out_dir = os.path.join(book_root, "audiobook", "voices", vid)
+    os.makedirs(v_out_dir, exist_ok=True)
+    clip_path = os.path.join(v_out_dir, "prompt_clip.wav")
+    with wave.open(clip_path, "wb") as wf:
+        wf.setnchannels(1)
+        wf.setsampwidth(2)
+        wf.setframerate(rate)
+        wf.writeframes(struct.pack(f"<{len(piece)}h", *piece))
+    text_path = os.path.join(v_out_dir, "prompt_clip.txt")
+    with open(text_path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(clip_text)
+        fh.write("\n")
+    with open(clip_path, "rb") as fh:
+        sha = hashlib.sha256(fh.read()).hexdigest()
+    clip_dur = len(piece) / float(rate)
+    return {
+        "prompt_clip": os.path.relpath(clip_path, book_root).replace("\\", "/"),
+        "prompt_clip_sha256": sha,
+        "prompt_clip_text": clip_text,
+        "prompt_clip_source": "golden-chunk",
+        "prompt_clip_chunk_index": idx,
+        "prompt_clip_chunks_total": len(chunks),
+        "prompt_clip_duration_sec": round(clip_dur, 3),
+        "prompt_clip_wps": round(_clip_words(clip_text) / max(0.1, clip_dur), 3),
+        "prompt_clip_chunk_fit": round(best_err, 4),
+        "prompt_clip_partition_median_fit": round(median_err, 4),
+        "golden_wps": round(total_words / max(0.1, total), 3),
+    }, None
+
+
+def mint_prompt_clip(book_root, vid, voice_design, style, embedding, renderer,
+                     golden_wav, golden_text, draw_count=PROMPT_CLIP_DRAWS):
+    """Mint the short acoustic prompt clip a render conditions on, and return its record.
+
+    Identity is already pinned by the frozen embedding. What the embedding does
+    NOT carry is how the voice *sounds in this recording* — timbre texture, mic
+    and codec character, the small irregularities a listener hears as "the same
+    person still speaking". Conditioning on real audio of the voice carries it.
+
+    The clip is minted from the voice's own approved synthetic golden (never from
+    a real person's audio), with a transcript we therefore know exactly — which is
+    what the engine requires alongside the audio.
+
+    Returns (record_or_None, reason). A voice whose clip cannot be minted stays
+    renderable on embedding-only conditioning; that is a degradation, not a
+    failure, so the caller decides.
+    """
+    # Preferred source: the approved recording itself, cut at one of its own chunk
+    # seams. That keeps identity, texture AND pace on the voice a human approved,
+    # because the reference and the conditioning become the same audio.
+    rec, why = extract_golden_prompt_clip(book_root, vid, golden_wav, golden_text)
+    if rec:
+        return rec, None
+    fallback_reason = why
+
+    if not hasattr(renderer, "synthesize_to_wav"):
+        return None, f"{fallback_reason}; renderer has no synthesize_to_wav"
+    v_out_dir = os.path.join(book_root, "audiobook", "voices", vid)
+    os.makedirs(v_out_dir, exist_ok=True)
+    clip_path = os.path.join(v_out_dir, "prompt_clip.wav")
+    clip_text_path = os.path.join(v_out_dir, "prompt_clip.txt")
+
+    # Pace must be measured the way the listener experiences it: words over TOTAL
+    # duration, pauses included. The first version of this scored against
+    # words/speech-only-seconds (~4.2 wps), so it preferred brisk clips and the
+    # engine, which continues at its prompt's pace, read chapter 01 at 3.74 wps
+    # against v8's 2.63 — a 42% speed-up nobody asked for. Total-duration pace on
+    # the same golden is ~2.6 wps, which is what narration should sound like.
+    golden_wps = 0.0
+    if golden_wav and os.path.isfile(golden_wav):
+        with wave.open(golden_wav, "rb") as wf:
+            golden_dur = wf.getnframes() / float(wf.getframerate() or 24000)
+        if golden_dur > 1.0:
+            golden_wps = _clip_words(golden_text) / golden_dur
+
+    best = None
+    for i in range(max(1, draw_count)):
+        cand = os.path.join(v_out_dir, f"prompt_clip.draw{i}.wav")
+        try:
+            renderer.synthesize_to_wav(
+                text=PROMPT_CLIP_TEXT,
+                out_wav_path=cand,
+                voice_id=vid,
+                voice_design=voice_design,
+                style=style,
+                sample_rate=24000,
+                speaker_embedding=embedding,
+                seed_salt=f"prompt_clip#d{i}",
+            )
+        except Exception:
+            break
+        with wave.open(cand, "rb") as wf:
+            cand_dur = wf.getnframes() / float(wf.getframerate() or 24000)
+        speech = active_speech_seconds(cand)
+        if speech < 5.0:
+            continue
+        wps = _clip_words(PROMPT_CLIP_TEXT) / max(0.1, cand_dur)
+        # Pace is the one property that leaks from clip to book, so it is the
+        # score; without a golden pace to compare against, the slower draw wins
+        # (a deliberately read book is the failure that is easy to fix by ear).
+        score = abs(wps - golden_wps) if golden_wps > 0 else wps
+        if best is None or score < best[0]:
+            best = (score, cand, wps, speech)
+
+    if best is None:
+        for i in range(max(1, draw_count)):
+            cand = os.path.join(v_out_dir, f"prompt_clip.draw{i}.wav")
+            if os.path.isfile(cand):
+                os.remove(cand)
+        return None, f"{fallback_reason}; no candidate clip produced usable speech"
+
+    _, cand, wps, speech = best
+    for i in range(max(1, draw_count)):
+        other = os.path.join(v_out_dir, f"prompt_clip.draw{i}.wav")
+        if os.path.isfile(other) and os.path.abspath(other) != os.path.abspath(cand):
+            os.remove(other)
+    os.replace(cand, clip_path)
+    with open(clip_text_path, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(PROMPT_CLIP_TEXT)
+        fh.write("\n")
+    with open(clip_path, "rb") as fh:
+        sha = hashlib.sha256(fh.read()).hexdigest()
+
+    return {
+        "prompt_clip": os.path.relpath(clip_path, book_root).replace("\\", "/"),
+        "prompt_clip_sha256": sha,
+        "prompt_clip_text": PROMPT_CLIP_TEXT,
+        "prompt_clip_source": "synthesized",
+        "prompt_clip_fallback_reason": f"{fallback_reason}",
+        "prompt_clip_speech_sec": round(speech, 3),
+        "prompt_clip_duration_sec": round(cand_dur, 3),
+        "prompt_clip_wps": round(wps, 3),
+        "golden_wps": round(golden_wps, 3),
+    }, None
 
 
 def active_speech_seconds(wav_path):
@@ -1071,6 +1441,20 @@ def cmd_freeze(book_root, voice_filter=None, duration_sec=210.0, backend_name=No
             "frozen_at": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "backend": backend_name,
         }
+        clip_rec, clip_err = mint_prompt_clip(
+            book_root, vid, v["voice_design"], v["style"], embedding, renderer,
+            golden_wav, golden_text,
+        )
+        if clip_rec:
+            manifest["voices"][vid].update(clip_rec)
+            print(f"   - {vid:<18} acoustic prompt clip "
+                  f"{clip_rec['prompt_clip_duration_sec']:.1f}s "
+                  f"@ {clip_rec['prompt_clip_wps']:.2f} wps "
+                  f"(golden {clip_rec['golden_wps']:.2f}) "
+                  f"source={clip_rec['prompt_clip_source']}")
+        else:
+            print(f"   - {vid:<18} acoustic prompt clip NOT minted ({clip_err}); "
+                  f"this voice renders on embedding-only conditioning", file=sys.stderr)
 
     manifest["frozen_at"] = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     with open(manifest_path, "w", encoding="utf-8", newline="\n") as fh:
@@ -1148,20 +1532,80 @@ def verify_frozen_voices(book_root):
                 f"(expected {frec.get('golden_wav_sha256', '')[:16]}, got {actual_sha[:16]})"
             )
         dur = float(frec.get("duration_sec", 0.0) or 0.0)
-        if dur < 180.0 or dur > 300.0:
-            reasons.append(
-                f"voice {vid!r} golden reference duration {dur:.1f}s is outside the 180–300s (3–5 min) window"
-            )
         speech_sec = active_speech_seconds(wav_path)
-        if speech_sec < 120.0:
-            reasons.append(
-                f"voice {vid!r} golden reference holds only {speech_sec:.1f}s of actual speech "
-                f"inside {dur:.1f}s of audio — a collapsed synthesis is not a voice reference"
-            )
+        if frec.get("reference_mode") == "SINGLE_TAKE":
+            # One continuous take IS the reference, so the window is about being
+            # long enough to identify a speaker and short enough to stay inside the
+            # engine's coherent range (it drifts past roughly 45 words).
+            if dur < 5.0 or dur > 60.0:
+                reasons.append(
+                    f"voice {vid!r} single-take reference duration {dur:.1f}s is outside "
+                    f"the 5–60s window")
+            if speech_sec < 4.0:
+                reasons.append(
+                    f"voice {vid!r} single-take reference holds only {speech_sec:.1f}s of "
+                    f"speech inside {dur:.1f}s of audio")
+            take_txt = os.path.join(os.path.dirname(wav_path), "reference_take.txt")
+            if not os.path.isfile(take_txt):
+                reasons.append(
+                    f"voice {vid!r} single-take reference has no transcript beside it at "
+                    f"{take_txt} — the engine needs the take's exact words")
+            else:
+                with open(take_txt, "r", encoding="utf-8") as fh:
+                    on_disk = fh.read().strip()
+                if on_disk != (frec.get("reference_take_text") or "").strip():
+                    reasons.append(
+                        f"voice {vid!r} reference take transcript disagrees with the "
+                        f"freeze manifest")
+            if frec.get("prompt_clip_sha256") not in (None, frec.get("golden_wav_sha256")):
+                reasons.append(
+                    f"voice {vid!r} conditions on a different audio than its reference — "
+                    f"the take must be both the reference and the acoustic prompt")
+        else:
+            if dur < 180.0 or dur > 300.0:
+                reasons.append(
+                    f"voice {vid!r} golden reference duration {dur:.1f}s is outside the 180–300s (3–5 min) window"
+                )
+            if speech_sec < 120.0:
+                reasons.append(
+                    f"voice {vid!r} golden reference holds only {speech_sec:.1f}s of actual speech "
+                    f"inside {dur:.1f}s of audio — a collapsed synthesis is not a voice reference"
+                )
         emb_rel = frec.get("speaker_embedding_file", "")
         emb_path = os.path.join(book_root, emb_rel)
         if not emb_rel or not os.path.isfile(emb_path):
             reasons.append(f"voice {vid!r} speaker embedding file missing at {emb_path}")
+        clip_rel = frec.get("prompt_clip")
+        if clip_rel:
+            clip_path = os.path.join(book_root, clip_rel)
+            if not os.path.isfile(clip_path):
+                reasons.append(f"voice {vid!r} acoustic prompt clip missing at {clip_path}")
+            else:
+                with open(clip_path, "rb") as fh:
+                    clip_sha = hashlib.sha256(fh.read()).hexdigest()
+                if clip_sha != frec.get("prompt_clip_sha256"):
+                    reasons.append(
+                        f"voice {vid!r} acoustic prompt clip hash mismatch "
+                        f"(expected {str(frec.get('prompt_clip_sha256'))[:16]}, got {clip_sha[:16]})"
+                    )
+                text_path = clip_path[:-4] + ".txt" if clip_path.endswith(".wav") \
+                    else clip_path + ".txt"
+                recorded = frec.get("prompt_clip_text") or ""
+                if not os.path.isfile(text_path):
+                    reasons.append(
+                        f"voice {vid!r} acoustic prompt clip has no transcript beside it at "
+                        f"{text_path} — the engine needs the clip's exact words")
+                else:
+                    with open(text_path, "r", encoding="utf-8") as fh:
+                        on_disk = fh.read().strip()
+                    if on_disk != recorded.strip():
+                        reasons.append(
+                            f"voice {vid!r} acoustic prompt transcript does not match the "
+                            f"freeze manifest — conditioning on audio paired with the wrong "
+                            f"words degrades the voice silently")
+                if not recorded.strip():
+                    reasons.append(
+                        f"voice {vid!r} acoustic prompt clip has no recorded transcript")
 
     return len(reasons) == 0, manifest, reasons
 
@@ -1178,14 +1622,345 @@ def cmd_verify(book_root):
     print("=" * 67)
     print(f"## casting verify   {book_root}")
     print("=" * 67)
-    print(f"   frozen voices: {len(frozen_voices)} (all verified, 3–5 min golden reference + embedding)")
+    single = [v for v, r in frozen_voices.items() if r.get("reference_mode") == "SINGLE_TAKE"]
+    if single:
+        print(f"   frozen voices: {len(frozen_voices)} verified; {len(single)} pinned to a "
+              f"single continuous take (identity and acoustic prompt are one recording)")
+    else:
+        print(f"   frozen voices: {len(frozen_voices)} (all verified, 3–5 min golden reference + embedding)")
     for vid, frec in sorted(frozen_voices.items()):
-        print(f"   - {vid:<18} {frec['duration_sec']:>5.1f}s | "
+        mode = "take" if frec.get("reference_mode") == "SINGLE_TAKE" else "golden"
+        print(f"   - {vid:<18} {frec['duration_sec']:>5.1f}s {mode:>6s} | "
               f"design={frec['voice_design_sha256']} | wav={frec['golden_wav_sha256'][:16]} | "
               f"approved_by={frec.get('approved_by')}")
     print()
     print("VOICE FREEZE OK — all cast voices are frozen and attributable to golden references.")
     return 0
+
+
+# The passage a single-take reference is spoken from. One engine call, so the
+# whole take is one continuous voice; ~40 words stays inside the ~45-word range
+# this engine renders coherently before it starts drifting.
+SINGLE_TAKE_TEXT = (
+    "The market was already loud when I got there, and louder still by nine. "
+    "Nobody on that street ever agreed about anything except the price of fish, "
+    "and even that only after an argument that lasted most of the morning."
+)
+SINGLE_TAKE_DRAWS = 4
+
+
+def _score_embedder():
+    """The gate's own instrument when available, else the engine's encoder.
+
+    The take kept has to be the one the gate will like most, and the gate uses
+    ECAPA when it can. Falling back to the engine's CAM++ keeps casting usable
+    where speechbrain is absent, at the cost of ranking on a slightly different
+    instrument than the one that will judge the chapter.
+    """
+    verifier_path = os.path.join(HERE, "verifier.py")
+    if os.path.isfile(verifier_path):
+        try:
+            spec = importlib.util.spec_from_file_location("audio_verifier", verifier_path)
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            verifier, note = mod.make_verifier("ecapa")
+            return (lambda p: verifier.embedding(p)), note
+        except Exception:
+            pass
+    return None, "unavailable"
+
+
+def cmd_reference_take(book_root, voice_filter=None, backend_name=None,
+                       draw_count=SINGLE_TAKE_DRAWS):
+    """Freeze each voice's identity on ONE continuous take.
+
+    Why: a 180-300s golden reference on this engine is 15-23 independent draws
+    stitched together, and those draws measure a pairwise median of 0.29-0.47
+    against each other (worst pair -0.05) — the "approved voice" alternates
+    between different speakers inside its own reference. Every render is therefore
+    stable only relative to whatever single thing it is conditioned on, and no
+    single take can match a reference that contradicts itself.
+
+    So the reference becomes one take. It is also the take every chapter segment
+    is conditioned on, which makes identity, timbre texture and reading pace all
+    properties of the same recording — the only arrangement where a speaker gate
+    and a listener can agree.
+    """
+    ab_cfg, cfg_path, err = load_audiobook_config(book_root)
+    if err:
+        print(f"casting reference-take: NOT RUN — {err}", file=sys.stderr)
+        return 2
+    ok, voices, problems = validate_voices_config(ab_cfg, book_root)
+    if not ok:
+        print(f"casting reference-take: REFUSED — invalid voice config in {cfg_path}:", file=sys.stderr)
+        for p in problems:
+            print(f"  - {p}", file=sys.stderr)
+        return 1
+
+    manifest_path = os.path.join(book_root, "audiobook", "voices", "freeze-manifest.json")
+    if not os.path.isfile(manifest_path):
+        print(f"casting reference-take: REFUSED — no freeze manifest at {manifest_path}", file=sys.stderr)
+        return 1
+    with open(manifest_path, "r", encoding="utf-8") as fh:
+        manifest = json.load(fh)
+    frozen = manifest.get("voices", {})
+
+    backend_name = backend_name or ab_cfg.get("backend") or "ming"
+    renderer = _get_renderer(backend_name)
+    embed, instrument = _score_embedder()
+    if embed is None:
+        if not hasattr(renderer, "extract_speaker_embedding"):
+            print("casting reference-take: REFUSED — no speaker encoder available to rank "
+                  "takes (install speechbrain+ecapa, or use a backend that exposes "
+                  "extract_speaker_embedding)", file=sys.stderr)
+            return 1
+        embed = renderer.extract_speaker_embedding
+        instrument = f"{getattr(renderer, 'embedding_kind', 'unknown')} (engine encoder)"
+
+    target_ids = [voice_filter] if voice_filter else sorted(voices.keys())
+    rc = 0
+    for vid in target_ids:
+        if vid not in voices:
+            print(f"casting reference-take: unknown voice {vid!r}", file=sys.stderr)
+            return 3
+        frec = frozen.get(vid)
+        if not frec:
+            print(f"casting reference-take: REFUSED — voice {vid!r} is not frozen", file=sys.stderr)
+            return 1
+        v_out_dir = os.path.join(book_root, "audiobook", "voices", vid)
+        os.makedirs(v_out_dir, exist_ok=True)
+        # The archived stitched golden stays the ANCHOR for where the voice should
+        # sit, even though it is no longer the reference. A take pinned to that
+        # centroid is one coherent recording near the approved voice; it does not
+        # inherit the golden's problem, because that problem was 23 separate calls
+        # each free to re-texture, not the centroid they average to.
+        archived_wav = os.path.join(
+            book_root, frec.get("archived_golden_wav") or frec.get("golden_wav", ""))
+        archived_emb = None
+        anchor_emb = None
+        if os.path.isfile(archived_wav):
+            try:
+                archived_emb = embed(archived_wav)
+            except Exception:
+                archived_emb = None
+            # Engine conditioning needs the ENGINE's embedding space (CAM++), not
+            # the gate's ECAPA one — feeding the verifier vector to the engine's
+            # speaker head conditions synthesis on the wrong space entirely.
+            if hasattr(renderer, "extract_speaker_embedding"):
+                try:
+                    anchor_emb = renderer.extract_speaker_embedding(archived_wav)
+                except Exception:
+                    anchor_emb = None
+
+        best = None
+        for i in range(max(1, draw_count)):
+            cand = os.path.join(v_out_dir, f"reference_take.draw{i}.wav")
+            try:
+                renderer.synthesize_to_wav(
+                    text=SINGLE_TAKE_TEXT,
+                    out_wav_path=cand,
+                    voice_id=vid,
+                    voice_design=voices[vid]["voice_design"],
+                    style=voices[vid]["style"],
+                    sample_rate=24000,
+                    speaker_embedding=anchor_emb,
+                    seed_salt=f"reference_take#d{i}",
+                )
+            except Exception as exc:
+                print(f"   - {vid:<18} take {i} failed: {exc}", file=sys.stderr)
+                continue
+            speech = active_speech_seconds(cand)
+            if speech < 4.0:
+                continue
+            score = 0.0
+            if archived_emb is not None:
+                try:
+                    score = cosine_similarity(embed(cand), archived_emb)
+                except Exception:
+                    score = 0.0
+            if best is None or score > best[0]:
+                best = (score, cand, speech)
+
+        if best is None:
+            for i in range(max(1, draw_count)):
+                p = os.path.join(v_out_dir, f"reference_take.draw{i}.wav")
+                if os.path.isfile(p):
+                    os.remove(p)
+            print(f"   - {vid:<18} FAILED: no usable take", file=sys.stderr)
+            rc = 1
+            continue
+
+        score, cand, speech = best
+        take_wav = os.path.join(v_out_dir, "reference_take.wav")
+        for i in range(max(1, draw_count)):
+            p = os.path.join(v_out_dir, f"reference_take.draw{i}.wav")
+            if os.path.isfile(p) and os.path.abspath(p) != os.path.abspath(cand):
+                os.remove(p)
+            m = p + ".meta.json"
+            if os.path.isfile(m) and os.path.abspath(p) != os.path.abspath(cand):
+                os.remove(m)
+        os.replace(cand, take_wav)
+        meta_src = cand + ".meta.json"
+        if os.path.isfile(meta_src):
+            os.replace(meta_src, take_wav + ".meta.json")
+        take_txt = os.path.join(v_out_dir, "reference_take.txt")
+        with open(take_txt, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(SINGLE_TAKE_TEXT)
+            fh.write("\n")
+        with open(take_wav, "rb") as fh:
+            take_sha = hashlib.sha256(fh.read()).hexdigest()
+        with wave.open(take_wav, "rb") as wf:
+            take_dur = wf.getnframes() / float(wf.getframerate() or 24000)
+
+        # The frozen identity becomes this take. Anything derived from the stitched
+        # golden must go: the embedding, the verifier shortcut, and the prompt clip.
+        #
+        # The stored embedding must be the ENGINE's space (CAM++): render-book
+        # compares per-segment CAM++ embeddings against it and the renderer feeds it
+        # to the engine's spk_head. `embed` above is the gate's verifier (ECAPA);
+        # storing that here made the drift gate compare CAM++ against ECAPA —
+        # cross-space cosine ~0.06 for identical voices, refusing every segment.
+        # The ECAPA vector is kept alongside as `verifier_embedding` (record only).
+        if hasattr(renderer, "extract_speaker_embedding"):
+            embedding = renderer.extract_speaker_embedding(take_wav)
+            embedding_kind = getattr(renderer, "embedding_kind", "unknown")
+        else:
+            embedding_kind = instrument
+        verifier_embedding = embed(take_wav)
+        prof = voice_acoustic_profile(vid, voices[vid]["voice_design"])
+        emb_path = os.path.join(v_out_dir, "speaker_embedding.json")
+        with open(emb_path, "w", encoding="utf-8", newline="\n") as fh:
+            json.dump({
+                "voice_id": vid,
+                "voice_design_sha256": voices[vid]["voice_design_sha256"],
+                "golden_wav_sha256": take_sha,
+                "duration_sec": round(take_dur, 3),
+                "embedding_dim": len(embedding),
+                "embedding_kind": embedding_kind,
+                "verifier_embedding": verifier_embedding,
+                "verifier_kind": instrument,
+                "reference_mode": "SINGLE_TAKE",
+                "embedding": embedding,
+                "acoustic_profile": prof,
+            }, fh, indent=2, ensure_ascii=False)
+            fh.write("\n")
+        for stale in ("verifier-ecapa.json", "verifier-campplus.json"):
+            p = os.path.join(v_out_dir, stale)
+            if os.path.isfile(p):
+                os.remove(p)
+
+        frec.update({
+            "reference_mode": "SINGLE_TAKE",
+            "golden_wav": os.path.relpath(take_wav, book_root).replace("\\", "/"),
+            "golden_wav_sha256": take_sha,
+            "duration_sec": round(take_dur, 3),
+            "reference_take_text": SINGLE_TAKE_TEXT,
+            "reference_take_agreement": round(score, 4),
+            "reference_take_instrument": instrument,
+            "speaker_embedding_file": os.path.relpath(emb_path, book_root).replace("\\", "/"),
+            "embedding_dim": len(embedding),
+            "archived_golden_wav": frec.get("archived_golden_wav") or frec.get("golden_wav"),
+            "archived_golden_wav_sha256": (frec.get("archived_golden_wav_sha256")
+                                           or frec.get("golden_wav_sha256")),
+            "archived_golden_duration_sec": (frec.get("archived_golden_duration_sec")
+                                             or frec.get("duration_sec")),
+            "prompt_clip": os.path.relpath(take_wav, book_root).replace("\\", "/"),
+            "prompt_clip_sha256": take_sha,
+            "prompt_clip_text": SINGLE_TAKE_TEXT,
+            "prompt_clip_source": "reference-take",
+            "prompt_clip_duration_sec": round(take_dur, 3),
+            "prompt_clip_wps": round(_clip_words(SINGLE_TAKE_TEXT) / max(0.1, take_dur), 3),
+        })
+        with open(os.path.join(v_out_dir, "prompt_clip.txt"), "w",
+                  encoding="utf-8", newline="\n") as fh:
+            fh.write(SINGLE_TAKE_TEXT)
+            fh.write("\n")
+        print(f"   - {vid:<18} reference take {take_dur:5.1f}s "
+              f"({_clip_words(SINGLE_TAKE_TEXT)} words, agreement {score:.3f} "
+              f"with the archived golden)")
+
+    with open(manifest_path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(manifest, fh, indent=2, ensure_ascii=False)
+        fh.write("\n")
+    if rc == 0:
+        print("\nREFERENCE TAKES FROZEN — each voice is one continuous recording, "
+              "and that same take conditions every rendered segment.")
+    return rc
+
+
+def cmd_prompt_clip(book_root, voice_filter=None, backend_name=None):
+    """Mint acoustic prompt clips for voices already frozen.
+
+    Separate from `freeze` so an existing approved golden reference is never
+    re-synthesized just to gain a clip — re-freezing would replace the audio a
+    human listened to with a new draw, which is exactly what the freeze contract
+    exists to prevent.
+    """
+    ab_cfg, cfg_path, err = load_audiobook_config(book_root)
+    if err:
+        print(f"casting prompt-clip: NOT RUN — {err}", file=sys.stderr)
+        return 2
+    ok, voices, problems = validate_voices_config(ab_cfg, book_root)
+    if not ok:
+        print(f"casting prompt-clip: REFUSED — invalid voice config in {cfg_path}:", file=sys.stderr)
+        for p in problems:
+            print(f"  - {p}", file=sys.stderr)
+        return 1
+
+    manifest_path = os.path.join(book_root, "audiobook", "voices", "freeze-manifest.json")
+    if not os.path.isfile(manifest_path):
+        print(f"casting prompt-clip: REFUSED — no freeze manifest at {manifest_path}", file=sys.stderr)
+        return 1
+    with open(manifest_path, "r", encoding="utf-8") as fh:
+        manifest = json.load(fh)
+    frozen = manifest.get("voices", {})
+
+    backend_name = backend_name or ab_cfg.get("backend") or "ming"
+    renderer = _get_renderer(backend_name)
+    golden_text = "\n\n".join(GOLDEN_REFERENCE_CORPUS)
+
+    target_ids = [voice_filter] if voice_filter else sorted(voices.keys())
+    rc = 0
+    for vid in target_ids:
+        if vid not in voices:
+            print(f"casting prompt-clip: unknown voice {vid!r}", file=sys.stderr)
+            return 3
+        frec = frozen.get(vid)
+        if not frec:
+            print(f"casting prompt-clip: REFUSED — voice {vid!r} is not frozen", file=sys.stderr)
+            return 1
+        if frec.get("reference_mode") == "SINGLE_TAKE":
+            print(f"   - {vid:<18} skipped: reference is a single take and already "
+                  f"serves as its own acoustic prompt")
+            continue
+        emb_path = os.path.join(book_root, frec.get("speaker_embedding_file", ""))
+        golden_wav = os.path.join(book_root, frec.get("golden_wav", ""))
+        if not os.path.isfile(emb_path) or not os.path.isfile(golden_wav):
+            print(f"casting prompt-clip: REFUSED — voice {vid!r} is missing its frozen "
+                  f"embedding or golden reference", file=sys.stderr)
+            return 1
+        with open(emb_path, "r", encoding="utf-8") as fh:
+            embedding = json.load(fh).get("embedding")
+        clip_rec, clip_err = mint_prompt_clip(
+            book_root, vid, voices[vid]["voice_design"], voices[vid]["style"],
+            embedding, renderer, golden_wav, golden_text,
+        )
+        if not clip_rec:
+            print(f"   - {vid:<18} FAILED to mint clip ({clip_err})", file=sys.stderr)
+            rc = 1
+            continue
+        frec.update(clip_rec)
+        print(f"   - {vid:<18} acoustic prompt clip "
+              f"{clip_rec['prompt_clip_duration_sec']:.1f}s @ "
+              f"{clip_rec['prompt_clip_wps']:.2f} wps (golden "
+              f"{clip_rec['golden_wps']:.2f}) source={clip_rec['prompt_clip_source']}")
+
+    with open(manifest_path, "w", encoding="utf-8", newline="\n") as fh:
+        json.dump(manifest, fh, indent=2, ensure_ascii=False)
+        fh.write("\n")
+    if rc == 0:
+        print("\nACOUSTIC PROMPT CLIPS MINTED — renders condition on real audio of each voice.")
+    return rc
 
 
 def main(argv=None):
@@ -1223,6 +1998,22 @@ def main(argv=None):
     p_ver = sub.add_parser("verify", help="Verify all voices are frozen with valid golden references")
     p_ver.add_argument("book")
 
+    p_take = sub.add_parser(
+        "reference-take",
+        help="Freeze each voice's identity on ONE continuous take, used as its own "
+             "acoustic prompt (replaces a stitched long golden as the reference)")
+    p_take.add_argument("book")
+    p_take.add_argument("--voice", default=None)
+    p_take.add_argument("--backend", default=None)
+    p_take.add_argument("--draws", type=int, default=SINGLE_TAKE_DRAWS)
+
+    p_clip = sub.add_parser(
+        "prompt-clip",
+        help="Mint the short acoustic prompt clip per frozen voice (no re-freeze)")
+    p_clip.add_argument("book")
+    p_clip.add_argument("--voice", default=None)
+    p_clip.add_argument("--backend", default=None)
+
     args = ap.parse_args(argv)
     try:
         if args.cmd == "validate":
@@ -1235,6 +2026,10 @@ def main(argv=None):
             return cmd_freeze(args.book, args.voice, args.duration_sec, args.backend)
         if args.cmd == "verify":
             return cmd_verify(args.book)
+        if args.cmd == "prompt-clip":
+            return cmd_prompt_clip(args.book, args.voice, args.backend)
+        if args.cmd == "reference-take":
+            return cmd_reference_take(args.book, args.voice, args.backend, args.draws)
     except (ValueError, RuntimeError) as exc:
         print(f"casting: ERROR — {exc}", file=sys.stderr)
         return 3
