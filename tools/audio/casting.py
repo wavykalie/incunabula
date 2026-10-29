@@ -37,6 +37,14 @@ WHY THIS EXISTS
        frozen golden reference (`VOICE_CLONE_FROM_GOLDEN`) and refuses to run if any
        voice is unfrozen or if its hash/embedding has drifted (`verify`).
 
+  NOTE (clone-lock): chapter rendering no longer reads this module's freeze
+  manifest. `clone_lock.py` owns the render-time contract — a versioned cast
+  registry, a human listening approval, immutable golden references, single-pass
+  scene rendering and the per-chapter drift log — and `render-book.py` renders
+  only through it. The audition/approve/freeze commands here remain for casting
+  work and for books frozen under the older manifest; they are superseded for
+  chapter rendering.
+
 USAGE
   python tools/audio/casting.py validate <book-root>
   python tools/audio/casting.py audition <book-root> [--voice <id>] [--backend <name>]
