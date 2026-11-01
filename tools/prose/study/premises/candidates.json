@@ -1,0 +1,411 @@
+[
+  {
+    "id": "lit-01",
+    "genre": "literary",
+    "title_label": "ward logs",
+    "protagonist": "A 58-year-old night-shift hospital cleaner keeps a notebook of the things patients say when they think no one is listening.",
+    "situation": "A new administrator begins shredding the ward logs she has been quietly rescuing from the recycling for years.",
+    "conflict": "The logs record a death her own family was told never happened, and the only copy is in a bag under her sink.",
+    "setting": "A mid-sized city hospital and the estate on its edge, present day.",
+    "stakes": "The only surviving account of what happened that night, and the job that pays for her mother's care."
+  },
+  {
+    "id": "lit-02",
+    "genre": "literary",
+    "title_label": "switchboard",
+    "protagonist": "A 19-year-old hotel switchboard operator is the first in her family to reach university and works every weekend to stay there.",
+    "situation": "An off-season guest reports a brother missing, and the guest's account of the week does not match the hotel's records.",
+    "conflict": "Her supervisor wants the call log deleted before the police are called, and the log is the only proof the brother existed.",
+    "setting": "A shuttered coastal resort town in late autumn, present day.",
+    "stakes": "Her scholarship, her job, and a stranger who has no one else taking him seriously."
+  },
+  {
+    "id": "lit-03",
+    "genre": "literary",
+    "title_label": "obituaries",
+    "protagonist": "A 41-year-old obituary translator for a regional newspaper lives with a father who no longer recognises her.",
+    "situation": "The paper is bought by a group that wants flattering profiles of living donors instead of the dead.",
+    "conflict": "Compliance keeps her father at home; refusal ends the only income that pays for his care.",
+    "setting": "A shrinking industrial town on a river, present day.",
+    "stakes": "Her father's remaining years at home, and the last thing she is good at."
+  },
+  {
+    "id": "lit-04",
+    "genre": "literary",
+    "title_label": "the new building",
+    "protagonist": "A 67-year-old retired bus driver has rented the same flat for forty years and knows every neighbour by the sound of their door.",
+    "situation": "The building is sold, and the developer offers him a unit in the replacement tower on condition that he leaves quietly.",
+    "conflict": "Accepting saves him and helps empty the building of the people who cannot afford the tower.",
+    "setting": "A port city mid-redevelopment, present day.",
+    "stakes": "The neighbours' homes, and the version of himself he has been able to live with."
+  },
+
+  {
+    "id": "rom-01",
+    "genre": "contemporary romance",
+    "title_label": "shared custody",
+    "protagonist": "A 29-year-old veterinary technician, six months divorced, agrees to share custody of the dog with her ex-husband's new partner.",
+    "situation": "The dog is diagnosed with a condition that gives it a year, and the shared calendar becomes the only structure either of them has.",
+    "conflict": "They are falling for each other while the animal that brought them together is dying.",
+    "setting": "A small mountain town with one vet practice, present day.",
+    "stakes": "The friendship that makes the dog's last year bearable, and the ex-husband's forgiveness."
+  },
+  {
+    "id": "rom-02",
+    "genre": "contemporary romance",
+    "title_label": "the garden year",
+    "protagonist": "A 35-year-old wedding photographer has never had a relationship longer than four months and photographs other people's vows for a living.",
+    "situation": "A widower hires her to photograph a memorial garden through four seasons, one visit a month.",
+    "conflict": "He is still married to a memory, and she is falling for a man who keeps asking her to document what he cannot let go of.",
+    "setting": "Coastal California, present day.",
+    "stakes": "Her professional reputation, his grief, and the first risk she has taken in years."
+  },
+  {
+    "id": "rom-03",
+    "genre": "contemporary romance",
+    "title_label": "two ovens",
+    "protagonist": "A 44-year-old baker inherits a failing shop from the rival who put her out of business ten years earlier.",
+    "situation": "The rival's son co-owns the building, wants to sell, and has no idea the recipes are hers.",
+    "conflict": "Neither can afford to buy the other out, and the shop only works if they run it together.",
+    "setting": "A northern English town, present day.",
+    "stakes": "The shop, her name on the sign, and a decade of grudge she has organised her life around."
+  },
+  {
+    "id": "rom-04",
+    "genre": "contemporary romance",
+    "title_label": "the last tour",
+    "protagonist": "A 26-year-old sign-language interpreter is assigned to a deaf comedian's farewell tour.",
+    "situation": "Twelve cities, six weeks, and a performer who is losing his sight as well as his hearing.",
+    "conflict": "Her professional code forbids the relationship, and the tour is his last chance to be seen on his own terms.",
+    "setting": "A twelve-city club circuit, present day.",
+    "stakes": "Her certification, his farewell, and the two people who understand the material."
+  },
+
+  {
+    "id": "mys-01",
+    "genre": "mystery",
+    "title_label": "three fires",
+    "protagonist": "A 52-year-old insurance assessor has spent twenty years deciding which claims are honest.",
+    "situation": "Three unrelated house fires in three towns share a damage pattern that only appears when a fire is set to hide something.",
+    "conflict": "The common thread is her employer's largest client, and the file that would prove it is the one she signed off on.",
+    "setting": "A drought-prone inland region over one summer, present day.",
+    "stakes": "Her career, and the next house on the pattern."
+  },
+  {
+    "id": "mys-02",
+    "genre": "mystery",
+    "title_label": "the cassette",
+    "protagonist": "A 17-year-old finds a cassette in the pocket of a charity-shop coat and plays it on her grandfather's machine.",
+    "situation": "The voice on the tape describes a burglary at her own address, in detail, in the past tense.",
+    "conflict": "The burglary has not happened yet, and the police will not take a teenager seriously.",
+    "setting": "A commuter town with one bus an hour, present day.",
+    "stakes": "Her family's safety, and her grandfather, who owns the coat."
+  },
+  {
+    "id": "mys-03",
+    "genre": "mystery",
+    "title_label": "the donation",
+    "protagonist": "A 38-year-old museum registrar catalogues a collection donated by the museum's largest funder.",
+    "situation": "One object's paperwork predates the donor's birth, and the export licence carries a name that appears nowhere else.",
+    "conflict": "The donor's money is keeping three departments open, and the object is almost certainly stolen.",
+    "setting": "A provincial museum in a capital city, present day.",
+    "stakes": "The collection, her job, and a family still waiting for the object to come home."
+  },
+  {
+    "id": "mys-04",
+    "genre": "mystery",
+    "title_label": "the crossing",
+    "protagonist": "A 61-year-old retired ferry captain kept a private log of every crossing and every passenger for thirty years.",
+    "situation": "A man's alibi depends on a crossing the captain knows was cancelled for weather.",
+    "conflict": "The log proves the alibi false, and the man's son is the officer asking.",
+    "setting": "An island route off the Scottish coast, 1990s.",
+    "stakes": "A murder charge, a career, and thirty years of a habit that was never meant to be evidence."
+  },
+
+  {
+    "id": "thr-01",
+    "genre": "thriller",
+    "title_label": "flight plan",
+    "protagonist": "A 33-year-old air-traffic controller spots a flight plan filed under a licence belonging to a colleague who died last year.",
+    "situation": "The plan is legal, the aircraft is registered to a shell company, and the departure slot is in nine hours.",
+    "conflict": "Reporting it brings her family under surveillance by people who know her shift pattern.",
+    "setting": "A regional airport and the industrial belt around it, present day.",
+    "stakes": "Her children's safety, her licence, and whatever the flight is carrying."
+  },
+  {
+    "id": "thr-02",
+    "genre": "thriller",
+    "title_label": "the record",
+    "protagonist": "A 45-year-old court stenographer has typed every word of the county's trials for eighteen years.",
+    "situation": "She recognises a transcript she produced: two sentences have been changed, and the change convicts the defendant.",
+    "conflict": "Her signature is on the certified record, and the man who altered it knows what she did ten years ago.",
+    "setting": "A county courthouse in a mid-sized American city, present day.",
+    "stakes": "An innocent man's sentence, her liberty, and the machine she is the only witness to."
+  },
+  {
+    "id": "thr-03",
+    "genre": "thriller",
+    "title_label": "one container",
+    "protagonist": "A 28-year-old logistics coordinator runs humanitarian cargo through a port controlled by three armed factions.",
+    "situation": "One container of medicine is held at the dock, and all three factions have paid for it.",
+    "conflict": "Whoever she releases it to will use the shortage against the other two, and the patients are in all three districts.",
+    "setting": "A blockaded port city, present day.",
+    "stakes": "Nine hundred patients, her neutrality, and the convoy that has to leave at dawn."
+  },
+  {
+    "id": "thr-04",
+    "genre": "thriller",
+    "title_label": "the alert",
+    "protagonist": "A 50-year-old retired bomb-disposal officer now trains search dogs and trusts them more than people.",
+    "situation": "His own dog alerts on a package at his daughter's school, on a day the school is running a lockdown drill.",
+    "conflict": "The alert is either a hoax aimed at him or the real thing, and clearing the building means admitting publicly what he did in the war.",
+    "setting": "A suburban town outside a military base, present day.",
+    "stakes": "Four hundred children, his daughter's opinion of him, and the one call only he can make."
+  },
+
+  {
+    "id": "sf-01",
+    "genre": "science fiction",
+    "title_label": "the fragment",
+    "protagonist": "A 39-year-old orbital debris auditor is paid to decide which pieces of junk are worth tracking.",
+    "situation": "A fragment's trajectory implies a launch that no agency logged and a payload that never came down.",
+    "conflict": "The fragment is on a decay path toward a crewed station, and the audit that would flag it is the one her employer buried.",
+    "setting": "A commercial tracking station and low orbit, near future.",
+    "stakes": "Six crew, her clearance, and the difference between debris and a weapon."
+  },
+  {
+    "id": "sf-02",
+    "genre": "science fiction",
+    "title_label": "storage",
+    "protagonist": "A 22-year-old archivist on a generation ship is responsible for deleting files to keep the ship's storage under capacity.",
+    "situation": "One file deletes itself when she opens it and leaves a note addressed to her by name.",
+    "conflict": "The note describes a fault in the life-support schedule that the ship's council has voted not to record.",
+    "setting": "A generation ship eleven years into its voyage, no planet in sight.",
+    "stakes": "The archive, her position, and whether the next cohort is told the truth about the air."
+  },
+  {
+    "id": "sf-03",
+    "genre": "science fiction",
+    "title_label": "the survey",
+    "protagonist": "A 60-year-old soil scientist is on the last survey team before a planet is opened for settlement.",
+    "situation": "The samples show a biosphere that has been engineered, and the engineering is younger than the planet.",
+    "conflict": "Reporting it cancels the settlement contract that funds the survey, and someone has already begun clearing ground.",
+    "setting": "A surveyed planet with one landing field, near future.",
+    "stakes": "The planet's existing ecology, three thousand settlers in transit, and her own name on the clearance."
+  },
+  {
+    "id": "sf-04",
+    "genre": "science fiction",
+    "title_label": "the word for promise",
+    "protagonist": "A 31-year-old court interpreter is the only human certified for the first treaty negotiation with a non-human species.",
+    "situation": "The species' language has no word for promise, and the treaty is built on one.",
+    "conflict": "The delegation wants the nearest word translated as promise, and she knows the nearest word means something closer to debt.",
+    "setting": "A neutral station above a shared moon, far future.",
+    "stakes": "The treaty, two species' trust in translation, and her certification."
+  },
+
+  {
+    "id": "fan-01",
+    "genre": "fantasy",
+    "title_label": "the changing map",
+    "protagonist": "A 24-year-old mapmaker's apprentice has spent six years copying coastlines that never move.",
+    "situation": "Her maps begin to change overnight, but only on the copies she keeps for herself.",
+    "conflict": "The guild burns inaccurate maps, and the changes are showing a road that does not exist yet.",
+    "setting": "A harbour city and the surveys of its hinterland, pre-industrial.",
+    "stakes": "Her apprenticeship, the guild's charter, and the town the road is heading for."
+  },
+  {
+    "id": "fan-02",
+    "genre": "fantasy",
+    "title_label": "years on account",
+    "protagonist": "A 47-year-old debt collector for a temple that lends years instead of money has never defaulted a client.",
+    "situation": "Her own account is called in early, and the temple will not say who authorised it.",
+    "conflict": "Collecting what she owes means taking years from the only person who ever forgave her.",
+    "setting": "A river city of counting-houses and shrines, pre-industrial.",
+    "stakes": "Her remaining years, her daughter's future, and the ledger she has trusted her whole life."
+  },
+  {
+    "id": "fan-03",
+    "genre": "fantasy",
+    "title_label": "the queen stops",
+    "protagonist": "A 16-year-old beekeeper tends the hives that mark the valley's border and keep the passes closed.",
+    "situation": "The queen of the oldest hive stops laying, and the bees begin drifting into the next valley.",
+    "conflict": "The village elders want the hive burned, and the drift is the only sign of where her missing brother went.",
+    "setting": "A mountain valley with one road and one season, pre-industrial.",
+    "stakes": "The border, the harvest, and the last trace of her brother."
+  },
+  {
+    "id": "fan-04",
+    "genre": "fantasy",
+    "title_label": "the condemned's thoughts",
+    "protagonist": "A 55-year-old executioner is the only person who can hear the last thoughts of the condemned.",
+    "situation": "The next prisoner's thoughts are in a language no living person speaks, and they are addressed to him.",
+    "conflict": "He must carry out the sentence before he understands what the prisoner is confessing.",
+    "setting": "A walled capital with one gallows and a long list, pre-industrial.",
+    "stakes": "The prisoner's soul, his own, and the kingdom's belief in what he does."
+  },
+
+  {
+    "id": "hor-01",
+    "genre": "horror",
+    "title_label": "the night auditor",
+    "protagonist": "A 34-year-old night auditor works alone at a hotel that is never full.",
+    "situation": "The same guest checks in every night under a different name and always takes the same room.",
+    "conflict": "The guest has begun checking in under her name, and the register shows her signature.",
+    "setting": "A business hotel on an empty ring road, present day.",
+    "stakes": "Her identity, her shift, and the room she has to clean in the morning."
+  },
+  {
+    "id": "hor-02",
+    "genre": "horror",
+    "title_label": "one day behind",
+    "protagonist": "A 12-year-old is being bullied and has started eating lunch in the school boiler room.",
+    "situation": "A door in the boiler room opens into a copy of the school, one day behind.",
+    "conflict": "Everything she does there happens again tomorrow, and the people in it have started noticing her.",
+    "setting": "A comprehensive school in a small town, present day.",
+    "stakes": "Tomorrow, and the girl who will be blamed for what she does in it."
+  },
+  {
+    "id": "hor-03",
+    "genre": "horror",
+    "title_label": "the waiting room",
+    "protagonist": "A 43-year-old hospice nurse has sat with more than two hundred dying people.",
+    "situation": "Her last four patients have described the same waiting room, down to the colour of the chairs.",
+    "conflict": "The fifth patient is her mother, and she has started describing it too.",
+    "setting": "A hospice on the edge of a moor, present day.",
+    "stakes": "Her mother's last weeks, her own belief that she is a good nurse, and what is in the room."
+  },
+  {
+    "id": "hor-04",
+    "genre": "horror",
+    "title_label": "the tape",
+    "protagonist": "A 29-year-old sound engineer restores a 1970s recording for a private archive.",
+    "situation": "Under the music there is a voice describing the room she is working in, in the present tense.",
+    "conflict": "The voice is getting closer to her chair, and the archive wants the original returned by Friday.",
+    "setting": "A converted studio in a warehouse district, present day.",
+    "stakes": "Her hearing, her contract, and the thing the tape is counting down to."
+  },
+
+  {
+    "id": "his-01",
+    "genre": "historical fiction",
+    "title_label": "the unlicensed press",
+    "protagonist": "A 30-year-old widow runs her husband's printing press in a city where unlicensed presses are smashed.",
+    "situation": "A customer orders a pamphlet that names the men who ordered the last press destroyed.",
+    "conflict": "The job pays for her children's winter, and the customer is the man who signed her husband's warrant.",
+    "setting": "A European printing city, 1580s.",
+    "stakes": "The press, her children, and the record of what happened to her husband."
+  },
+  {
+    "id": "his-02",
+    "genre": "historical fiction",
+    "title_label": "the exchange",
+    "protagonist": "A 19-year-old telephone operator works the exchange during a strike she voted for.",
+    "situation": "The company keeps the exchange open with strike-breakers, and she is the only one who knows which lines the union is using.",
+    "conflict": "Every call she connects is evidence against her own side, and the police are asking her to remember them.",
+    "setting": "A manufacturing city during a general strike, 1919.",
+    "stakes": "The strike, her family's rent, and a friend who will be arrested tonight."
+  },
+  {
+    "id": "his-03",
+    "genre": "historical fiction",
+    "title_label": "the parish birth",
+    "protagonist": "A 40-year-old midwife in a rural parish has attended every birth in three villages for twenty years.",
+    "situation": "A magistrate requires her to testify about a birth she attended in a house where the child later disappeared.",
+    "conflict": "The truth protects the mother and destroys the family that has fed her through every winter.",
+    "setting": "An agricultural parish, 1790s.",
+    "stakes": "A mother's life, the midwife's licence to practise, and the village's trust."
+  },
+  {
+    "id": "his-04",
+    "genre": "historical fiction",
+    "title_label": "the light",
+    "protagonist": "A 26-year-old lighthouse keeper's daughter runs the light while her father is ill.",
+    "situation": "The occupying force orders the light kept on for its convoys, and the resistance uses the dark.",
+    "conflict": "Every night she chooses which ships to save, and both sides know the light is hers.",
+    "setting": "An occupied coast, 1943.",
+    "stakes": "Her father's life, the crews on both sides, and the village below the light."
+  },
+
+  {
+    "id": "adv-01",
+    "genre": "adventure",
+    "title_label": "the wet season",
+    "protagonist": "A 36-year-old cave surveyor maps systems that flood every spring and has never lost a team member.",
+    "situation": "Her team is two days from the entrance when the rain arrives early and the only exit is a passage she has not finished surveying.",
+    "conflict": "The unfinished passage may dead-end, and the injured member cannot survive the long route.",
+    "setting": "A limestone cave system in a monsoon region, present day.",
+    "stakes": "Four lives, her record, and the survey that justifies the expedition."
+  },
+  {
+    "id": "adv-02",
+    "genre": "adventure",
+    "title_label": "delivery",
+    "protagonist": "A 58-year-old skipper delivers other people's yachts across oceans and has stopped asking why.",
+    "situation": "He takes a three-week crossing with three strangers and a radio that only receives.",
+    "conflict": "The owner's instructions and the weather router disagree, and one of the crew is not who the paperwork says.",
+    "setting": "The North Atlantic, present day.",
+    "stakes": "The boat, the four of them, and the delivery fee that is his pension."
+  },
+  {
+    "id": "adv-03",
+    "genre": "adventure",
+    "title_label": "behind her",
+    "protagonist": "A 21-year-old wildfire lookout spends five months alone on a ridge with a radio and a compass.",
+    "situation": "She spots a fire behind her position, between her and the only trail down.",
+    "conflict": "Calling it in brings the crew up the trail, and the wind is turning toward the ridge.",
+    "setting": "A forested ridge in a dry summer, present day.",
+    "stakes": "Her crew, the valley below, and the one decision she has trained for."
+  },
+  {
+    "id": "adv-04",
+    "genre": "adventure",
+    "title_label": "the permit",
+    "protagonist": "A 40-year-old river guide leads a trip whose permit expired two days ago and knows the fine falls on her.",
+    "situation": "Her client has lied about his experience, and the river is running two grades above the booking.",
+    "conflict": "Turning back means the fine; continuing means the client's life in her hands on water he cannot read.",
+    "setting": "A mountain river with one put-in, present day.",
+    "stakes": "Her licence, the client, and the two porters who will not leave her."
+  },
+
+  {
+    "id": "com-01",
+    "genre": "comedy",
+    "title_label": "the opening act",
+    "protagonist": "A 30-year-old assistant to a minor celebrity handles the diary, the luggage and the apologies.",
+    "situation": "A booking error sends her employer to open a regional produce awards instead of a film premiere.",
+    "conflict": "The audience has no idea who he is, the compère is his ex-wife, and the trophy has already been engraved.",
+    "setting": "A hotel conference suite in a market town, present day.",
+    "stakes": "Her job, his dignity, and a crate of prize marrows."
+  },
+  {
+    "id": "com-02",
+    "genre": "comedy",
+    "title_label": "quarterly returns",
+    "protagonist": "A 48-year-old wedding officiant was ordained online and has just discovered the denomination requires quarterly reports.",
+    "situation": "The reports ask for details of ceremonies he performed from memory in a field.",
+    "conflict": "Filing honestly dissolves the denomination; filing badly means an audit of every wedding he has done.",
+    "setting": "A rural county with one registry office, present day.",
+    "stakes": "Four hundred marriages, his licence, and a couple whose wedding was in a barn."
+  },
+  {
+    "id": "com-03",
+    "genre": "comedy",
+    "title_label": "gracefully",
+    "protagonist": "A 25-year-old cheese roller has won his local hill four years running and is now sponsored.",
+    "situation": "The sponsor's contract pays a bonus if he places second, because the footage is better.",
+    "conflict": "His whole identity is winning, and the sponsor owns the hill's insurance.",
+    "setting": "A steep English hill with a cheese and a crowd, present day.",
+    "stakes": "His record, his sponsor's money, and the twelve-year-old who is faster than him."
+  },
+  {
+    "id": "com-04",
+    "genre": "comedy",
+    "title_label": "the film crew",
+    "protagonist": "A 52-year-old neighbourhood watch coordinator takes the role extremely seriously and has a lanyard.",
+    "situation": "A film crew shooting in the street at night looks exactly like a burglary ring to a man with a clipboard.",
+    "conflict": "His intervention makes the local news, and the production company wants him in the film.",
+    "setting": "A suburban street with one parking space, present day.",
+    "stakes": "His reputation, the crew's shoot, and the truth about the man he tackled."
+  }
+]

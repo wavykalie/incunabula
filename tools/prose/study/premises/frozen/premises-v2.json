@@ -1,0 +1,53 @@
+{
+  "study": "50-novel prose-tell study",
+  "design": "v1, amended per study/REDTEAM.md (C-dist for thresholds)",
+  "seed": 20261030,
+  "per_genre": 1,
+  "frozen_at": "2026-10-31",
+  "pool_file": "candidates.json",
+  "pool_sha256": "ef21700f5289a5d0c32291fbec39a53564d486ce4f50cc19ba5fb89943cb79b4",
+  "render": "protagonist | situation | conflict | setting | stakes joined by one space; no labels",
+  "premises": [
+    {
+      "id": "adv-03",
+      "genre": "adventure",
+      "title_label": "behind her",
+      "protagonist": "A 21-year-old wildfire lookout spends five months alone on a ridge with a radio and a compass.",
+      "situation": "She spots a fire behind her position, between her and the only trail down.",
+      "conflict": "Calling it in brings the crew up the trail, and the wind is turning toward the ridge.",
+      "setting": "A forested ridge in a dry summer, present day.",
+      "stakes": "Her crew, the valley below, and the one decision she has trained for.",
+      "text": "A 21-year-old wildfire lookout spends five months alone on a ridge with a radio and a compass. She spots a fire behind her position, between her and the only trail down. Calling it in brings the crew up the trail, and the wind is turning toward the ridge. A forested ridge in a dry summer, present day. Her crew, the valley below, and the one decision she has trained for.",
+      "words": 70
+    },
+    {
+      "id": "hor-01",
+      "genre": "horror",
+      "title_label": "the night auditor",
+      "protagonist": "A 34-year-old night auditor works alone at a hotel that is never full.",
+      "situation": "The same guest checks in every night under a different name and always takes the same room.",
+      "conflict": "The guest has begun checking in under her name, and the register shows her signature.",
+      "setting": "A business hotel on an empty ring road, present day.",
+      "stakes": "Her identity, her shift, and the room she has to clean in the morning.",
+      "text": "A 34-year-old night auditor works alone at a hotel that is never full. The same guest checks in every night under a different name and always takes the same room. The guest has begun checking in under her name, and the register shows her signature. A business hotel on an empty ring road, present day. Her identity, her shift, and the room she has to clean in the morning.",
+      "words": 69
+    },
+    {
+      "id": "sf-03",
+      "genre": "science fiction",
+      "title_label": "the survey",
+      "protagonist": "A 60-year-old soil scientist is on the last survey team before a planet is opened for settlement.",
+      "situation": "The samples show a biosphere that has been engineered, and the engineering is younger than the planet.",
+      "conflict": "Reporting it cancels the settlement contract that funds the survey, and someone has already begun clearing ground.",
+      "setting": "A surveyed planet with one landing field, near future.",
+      "stakes": "The planet's existing ecology, three thousand settlers in transit, and her own name on the clearance.",
+      "text": "A 60-year-old soil scientist is on the last survey team before a planet is opened for settlement. The samples show a biosphere that has been engineered, and the engineering is younger than the planet. Reporting it cancels the settlement contract that funds the survey, and someone has already begun clearing ground. A surveyed planet with one landing field, near future. The planet's existing ecology, three thousand settlers in transit, and her own name on the clearance.",
+      "words": 76
+    }
+  ],
+  "stratum": "long-form (exploratory, never pooled with the primary twenty)",
+  "target_words": 200000,
+  "excluded_by": "premises-v1.json",
+  "excluded_by_sha256": "e227039a981d8683c60d79ee98cae4da916ef30b762cca6eaa272e1a18b53178",
+  "count": 3
+}
