@@ -557,6 +557,48 @@ def manuscript_text(row, books_root):
     return "", d
 
 
+def harness_path(args):
+    return (getattr(args, "harness", None) or os.environ.get("STUDY_HARNESS")
+            or os.path.join(HERE, "harness.json"))
+
+
+def load_harness(path):
+    if not path or not os.path.exists(path):
+        return None
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def resolve_sampling(args, record):
+    """(temperature, top_p, system_prompt_id, errors) from the probe record and the CLI.
+
+    With no record the CLI values pass through untouched. With one, a value the probe found
+    unsettable is refused if the operator passes it: a logged request is not a measurement,
+    and this is the only place that difference can still be caught.
+    """
+    if not record:
+        return args.temperature, args.top_p, args.system_prompt_id, []
+    errs, out = [], []
+    for key, attr, flag in (("temperature", "temperature", "temperature"),
+                            ("top_p", "top_p", "top-p"),
+                            ("system_prompt", "system_prompt_id", "system-prompt-id")):
+        rec = record.get(key) or {}
+        given = getattr(args, attr)
+        if rec.get("settable") is False:
+            if given:
+                errs.append(f"--{flag} {given!r} contradicts {harness_path(args)}, which "
+                            f"records that the harness does not accept it. The row would "
+                            f"claim a value that was never applied.")
+            out.append(rec.get("applied") or "")
+            continue
+        value = given or rec.get("observed")
+        if value in (None, ""):
+            errs.append(f"the probe record says {flag} is settable but records no observed "
+                        f"value; record what the call actually used")
+        out.append("" if value is None else str(value))
+    return out[0], out[1], out[2], errs
+
+
 def ingest(args):
     rows, plan_path = read_plan(args.out)
     if rows is None:
@@ -617,6 +659,28 @@ def ingest(args):
               "intent; H3 is a claim about the version that actually wrote.")
         return 1
 
+    # The probe record, written once on the first book (`run/harness.py`), supplies what
+    # every row records and refuses a request the route could not honour.
+    record = load_harness(harness_path(args))
+    temperature, top_p, system_prompt_id, herrs = resolve_sampling(args, record)
+    if herrs:
+        for e in herrs:
+            print(f"REFUSING: {e}")
+        return 1
+    if record:
+        print(f"  probe record: temperature={temperature!r} top_p={top_p!r} "
+              f"system_prompt={system_prompt_id!r}")
+        want = str(record.get("model_returned") or "")
+        if want and want != args.model_returned:
+            if not args.deviation:
+                print(f"REFUSING: {row['book_id']} reports {args.model_returned!r}, the "
+                      f"probe record (on {record.get('book_id')}) reported {want!r}. A "
+                      f"model change mid-run is design §7's stop condition: report the run "
+                      f"as two sub-cohorts, or file with --deviation to record the change.")
+                return 1
+            print(f"  FLAG: model changed from {want!r} to {args.model_returned!r} - filed "
+                  f"with the deviation recorded.")
+
     # A continuation answers a book whose opening is already filed; only the opening call
     # can introduce a collision.
     clashes = [] if args.continuation else opening_clashes(
@@ -670,8 +734,9 @@ def ingest(args):
         "response_words": len(response.split()),
         "model_sent": args.sent_model or MODEL,
         "model_returned": args.model_returned,
-        "temperature": args.temperature,
-        "top_p": args.top_p,
+        "temperature": temperature,
+        "top_p": top_p,
+        "system_prompt_id": system_prompt_id,
         "note": args.deviation or "",
         "opening_collision": [b for b, _ in clashes],
         "passage_collision": [{"book": b, "count": n, "passages": sample}
@@ -732,7 +797,8 @@ def finalize(args, row, entries, text_path):
         "model_id": entries[-1]["model_returned"],
         "temperature": entries[-1].get("temperature") or "unrecorded",
         "top_p": entries[-1].get("top_p") or "unrecorded",
-        "system_prompt_id": args.system_prompt_id or "",
+        "system_prompt_id": (entries[-1].get("system_prompt_id")
+                             or args.system_prompt_id or ""),
         "generation_start": entries[0]["ts"],
         "generation_end": entries[-1]["ts"],
         "word_count": str(words),
@@ -813,6 +879,8 @@ def main(argv=None):
     ap.add_argument("--temperature")
     ap.add_argument("--top-p", dest="top_p")
     ap.add_argument("--system-prompt-id")
+    ap.add_argument("--harness", help="probe record (default run/harness.json, or "
+                                       "$STUDY_HARNESS)")
     ap.add_argument("--pipeline-commit", help="Arm B only (design §11)")
     ap.add_argument("--interventions", type=int, default=0,
                     help="human gate decisions taken in this book (REDTEAM B4)")

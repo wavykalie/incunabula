@@ -35,6 +35,10 @@ def check(name, ok, detail=""):
 
 def main():
     tmp = tempfile.mkdtemp(prefix="study-selftest-")
+    # No test may pick up a real probe record from the working tree: the run's own record
+    # changes what dispatch accepts, and a test that silently inherited it would be
+    # measuring last week's route.
+    os.environ["STUDY_HARNESS"] = os.path.join(tmp, "harness-none.json")
     try:
         print("== premises ==")
         r = run(os.path.join(HERE, "premises", "premise.py"))
@@ -179,6 +183,99 @@ def main():
         check("premise-pool calibration runs and probes its own loop",
               r.returncode == 0 and "the loop finds a seeded collision" in r.stdout,
               r.stdout[-400:])
+
+        print("== harness probe ==")
+        harness = os.path.join(HERE, "run", "harness.py")
+        hrec = os.path.join(tmp, "harness.json")
+        r = run(harness, "--template")
+        check("the probe asks its questions with a skeleton",
+              r.returncode == 0 and "model_returned" in r.stdout
+              and "settable" in r.stdout, r.stdout[-300:])
+        r = run(harness, "--init", "--out", hrec)
+        check("the probe skeleton is written",
+              r.returncode == 0 and os.path.exists(hrec), r.stdout[-200:])
+        r = run(harness, "--init", "--out", hrec)
+        check("the probe record refuses to overwrite itself", r.returncode == 2)
+        r = run(harness, "--check", "--out", hrec)
+        check("an unfilled record is not a measurement", r.returncode == 1,
+              r.stdout[-300:])
+
+        good = json.load(open(hrec, encoding="utf-8"))
+        good.update({"probed_at": "2026-10-31T12:00:00Z",
+                     "route": "Antigravity subagent",
+                     "model_returned": "gemini-3.8-flash-002",
+                     "version_source": "response modelVersion",
+                     "evidence": "A-01 response header, 2026-10-31"})
+        for key, applied in (("temperature", "harness default"),
+                             ("top_p", "harness default"),
+                             ("system_prompt", "pipeline-supplied only")):
+            good[key].update({"settable": False, "observed": None, "applied": applied})
+        with open(hrec, "w", encoding="utf-8") as fh:
+            json.dump(good, fh)
+        r = run(harness, "--check", "--out", hrec)
+        check("a filled record passes", r.returncode == 0, r.stdout[-400:])
+        check("the record says what every row will claim",
+              "harness default" in r.stdout and "modelVersion" in r.stdout,
+              r.stdout[-400:])
+
+        bad = json.loads(json.dumps(good))
+        bad["top_p"] = {"settable": True, "observed": None, "applied": ""}
+        with open(hrec, "w", encoding="utf-8") as fh:
+            json.dump(bad, fh)
+        r = run(harness, "--check", "--out", hrec)
+        check("settable-without-observed is refused, not claimed", r.returncode == 1,
+              r.stdout[-300:])
+        noversion = json.loads(json.dumps(good))
+        noversion["model_returned"] = None
+        with open(hrec, "w", encoding="utf-8") as fh:
+            json.dump(noversion, fh)
+        r = run(harness, "--check", "--out", hrec)
+        check("no returned version blocks the run", r.returncode == 1
+              and "no row can be filed" in r.stdout, r.stdout[-300:])
+        with open(hrec, "w", encoding="utf-8") as fh:
+            json.dump(good, fh)
+
+        dsp = os.path.join(HERE, "run", "dispatch.py")
+        hrun = os.path.join(tmp, "hrun")
+        hbooks = os.path.join(tmp, "hbooks")
+        hm = os.path.join(tmp, "h-manifest.csv")
+        r = run(dsp, "--plan", "--out", hrun)
+        check("a plan builds for the probe wiring test", r.returncode == 0, r.stdout[-300:])
+        hresp = os.path.join(tmp, "hresp1.txt")
+        with open(hresp, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write("Oskar counted the coins twice and put them back in his pocket. " * 100
+                     + "\n")
+        henv = {**os.environ, "STUDY_HARNESS": hrec}
+        common = ["--response", hresp, "--out", hrun, "--books-root", hbooks,
+                  "--manifest", hm]
+        r = run(dsp, "--ingest", "A-01", *common,
+                "--model-returned", "gemini-3.8-flash-002", "--temperature", "0.8",
+                env=henv)
+        check("a setting the probe says is unsettable is refused", r.returncode == 1,
+              r.stdout[-300:])
+        r = run(dsp, "--ingest", "A-01", *common,
+                "--model-returned", "gemini-3.8-flash-002", env=henv)
+        check("ingest takes the probe's applied values", r.returncode == 0, r.stdout[-300:])
+        with open(os.path.join(hbooks, "A-01", "logs", "prompts.jsonl"),
+                  encoding="utf-8") as fh:
+            hlog = json.loads(fh.readline())
+        check("the row records what was applied, not what was wished",
+              hlog["temperature"] == "harness default", str(hlog.get("temperature")))
+
+        hresp2 = os.path.join(tmp, "hresp2.txt")
+        with open(hresp2, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write("The bus was already late when Oskar reached the stop. Rain had "
+                     "stopped an hour before. " * 90 + "\n")
+        common2 = ["--response", hresp2, "--out", hrun, "--books-root", hbooks,
+                   "--manifest", hm]
+        r = run(dsp, "--ingest", "A-02", *common2,
+                "--model-returned", "gemini-3.8-flash-999", env=henv)
+        check("a modelVersion the probe did not see is refused", r.returncode == 1,
+              r.stdout[-300:])
+        r = run(dsp, "--ingest", "A-02", *common2,
+                "--model-returned", "gemini-3.8-flash-999",
+                "--deviation", "route served a newer build", env=henv)
+        check("a recorded model change still files", r.returncode == 0, r.stdout[-300:])
 
         print("== dispatch ==")
         rundir = os.path.join(tmp, "run")

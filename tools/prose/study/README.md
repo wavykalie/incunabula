@@ -34,7 +34,7 @@ study/
   PREREGISTRATION.md    primary endpoints, every feature's status, the classification rules
   README.md             this file
   manifest.py           the only place the manifest columns are defined
-  selftest.py           23 checks over the whole harness, run on fixtures
+  selftest.py           the whole harness on fixtures; prints its own check count
   premises/
     candidates.json     40 premises, 4 per genre, no person names, no style language
     premise.py          validate / render / seeded stratified sample / freeze / verify
@@ -44,12 +44,17 @@ study/
     README.md           why the primary arm has no voice, and what the sensitivity arm is
   run/
     dispatch.py         the run plan, the per-book dispatch card, and response ingest
+    harness.py          the route probe: sampling and modelVersion, captured once on A-01
+    harness.json        that record, filled in; dispatch reads it for every filing
     out/                RUNPLAN.csv, briefs/, payloads/  (git-ignored, derived)
   extract/
     features.py         the frozen extractor; imports the shipped gates, does not copy them
   analysis/
     analyze.py          distributions, paired A-vs-B, five-way classification, residual rule
     voices.py           the voice arm: this hand or voice-ness, per feature
+    cdist.py            the human baseline, and its holdout false-positive rate
+    check-fp.py         the two filing checks measured on human novels and on the premises
+    filing-checks-*.md  those measurements, as filed
   fixtures/
     make-fixtures.py    synthetic A/B/C books; NOT data, exists to test the plumbing
   corpus/
@@ -96,6 +101,8 @@ python analysis/analyze.py --features features --manifest books/manifest.csv --o
 python analysis/voices.py --features features --manifest books/manifest.csv
 
 # the run: plan first, then one ingest per response
+python run/harness.py --init                 # the two route facts, captured once on A-01
+python run/harness.py --check                # validate; says what every row will record
 python run/dispatch.py --plan                # 52 books -> run/out/{RUNPLAN.csv,briefs,payloads}
 python run/dispatch.py --ingest A-01 --response resp.txt \
     --model-returned gemini-3.8-flash-001 --finalize

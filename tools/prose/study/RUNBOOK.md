@@ -21,10 +21,35 @@ python run/dispatch.py --plan           # once. 52 books -> run/out/{RUNPLAN.csv
   filed (`DECISIONS.md` §7).
 - `run/out/` holds `RUNPLAN.csv`, one card per book in `briefs/`, the exact bytes in
   `payloads/`. It is git-ignored and derived; the filed books are not.
--Two facts to confirm once, on the first book, and record in that book's row: whether the
-harness accepts `--temperature`/`--top-p`, and whether each response returns a
-`modelVersion` (`DECISIONS.md` §7 item O3). If sampling cannot be set, record what was
-applied, not what was asked for.
+-Two facts about the route are still unmeasured (`DECISIONS.md` §7 item O3), and both decide
+what a row may claim. They are probed once, on the first call of the first book, and then
+read by every filing after it.
+
+### The probe record — once, on A-01
+
+```bash
+python run/harness.py --template     # the questions
+python run/harness.py --init         # writes run/harness.json to fill in
+python run/harness.py --check        # validates, and prints what every row will record
+```
+
+Fill it from A-01's **first** call and never by hand again: the route is a property of the
+run, not of a book, and retyping a value 52 times is how a wrong one gets in. `model_sent` is
+what we asked for; `model_returned` is what the response said it was. They are different
+facts and both are recorded.
+
+| what you find | what it forces |
+|---|---|
+| temperature or top-p can be set | `settable: true` and the **observed** value — the one the call actually used |
+| they cannot be set | `settable: false` and `applied`: the harness's own value. The report carries "sampling fixed" as a limitation |
+| the system prompt is harness-fixed | the same, under `system_prompt` |
+| every response reports `modelVersion` | record it; each row carries it |
+| no version is reported | `model_returned: null` and **stop**: `--check` refuses, because H3 is a claim about the version that wrote |
+
+From then on `dispatch.py` reads the record: it supplies each row's sampling values, refuses
+a `--temperature` the probe says cannot be set (a logged request is not a measurement), and
+refuses a book whose response reports a different `modelVersion` — design §7's mid-run model
+change — unless `--deviation` files it as a second sub-cohort.
 
 Both filing checks were calibrated before generation, on human novels and on the premises
 themselves: `analysis/filing-checks-fp.md` (1 collision in 5,886 unrelated-human pairs) and
@@ -238,6 +263,7 @@ two books refuse to file for a reason no deviation explains.
 [ ] card read; only the PAYLOAD section was sent
 [ ] fresh subagent, no shared context, gemini-3.8-flash
 [ ] modelVersion recorded from the response
+[ ] probe record filled on A-01 and passing `harness.py --check`
 [ ] response saved verbatim under run/out/responses/<ID>/
 [ ] ingest ran; no refusal, or a refusal I answered on purpose
 [ ] continuations: §3 sentence only, --continuation each time (Arm A)
