@@ -69,9 +69,15 @@ re-frozen, every row filed before the change belongs to the old sub-cohort — s
 
 Verified today: `extract/features.py <book-dir>` resolves `manuscript/chapters/*.md` and reads
 them as chapters (a two-chapter fixture got past loading and stopped only at the 33-word
-floor), while a book directory holding nothing but a flat `*-text.md` is **refused** —
-`no chapters and no text files`. So the chapter tree is the artifact that gets measured, and
-the copy in step 6 is not optional.
+floor). So the chapter tree is the artifact that gets measured, and the copy in step 6 is
+not optional.
+
+Since 2026-11-03 a flat `manuscript/naive-text.md` is **no longer refused**: it is split on
+its own chapter headings, which is what made the twenty Arm A books extractable. That
+removes a loud failure and leaves a quiet one in its place — a B book whose chapter tree
+was not copied still extracts, now from the filed text's headings instead of the pipeline's
+files, and the two can disagree. Step 7's chapter-count comparison is the check that would
+catch it; do not skip it because extraction stopped complaining.
 
 ## 3. One book, end to end
 
