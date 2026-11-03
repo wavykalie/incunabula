@@ -217,7 +217,9 @@ fact is not a covariate.
 
 **Counting**
 
-`books-armb/B-<id>/logs/operator.md`, one line per action:
+`books-armb/B-<id>/logs/operator.md`, one line per action. Copy the sheet from
+`run/operator-log-template.md` before step 1 rather than writing the format out again per
+book — it carries the four permitted kinds, the counting rule and the §4 logline field:
 
 ```
 | ts | phase | kind | what happened | option taken | counted |

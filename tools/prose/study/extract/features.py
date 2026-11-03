@@ -179,6 +179,12 @@ CHAPTER_LINE = re.compile(
     r"^(?:chapter|part|book)\s+(?:\d+|[ivxlcdm]+|one|two|three|four|five|six|seven|"
     r"eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|"
     r"eighteen|nineteen|twenty)\b.{0,60}$", re.I | re.M)
+# Character for character the rule `dispatch.py` counts a filed book's chapters with
+# (dispatch.py:774, in `finalize`). The extractor has to split on the same one: its chapter
+# count is checked against the row's at filing time (`ARM_B_BRIEFING.md` trap 1), and two
+# rules would report a count the row does not have. Verified against all twenty filed Arm A
+# rows on 2026-11-03 -- every one reproduces its `chapter_count` exactly.
+CHAPTER_HEAD = re.compile(r"(?m)^#{1,3}\s*(?:chapter|\d+[.:])", re.I)
 
 VOWELS = "aeiouy"
 
@@ -197,6 +203,33 @@ def strip_headers(text):
     return out
 
 
+def split_flat(text, name):
+    """Split one flat manuscript into chapters on the filer's own chapter rule.
+
+    Arm A books are filed as a single `manuscript/naive-text.md` -- the responses appended
+    into one continuous text, headings and all, with no chapter tree (Arm B and C-dist both
+    have one). Handing that back as one chapter starves `syn_chapter_sentlen_spread`, the
+    primary endpoint, of the thing it measures spread over: ARM_B_BRIEFING.md trap 1 reached
+    by a different road. The headings are in the text; they are read, not invented.
+
+    Text before the first chapter heading is the book's title line. It is attached to the
+    first chapter rather than dropped, so nothing is silently discarded -- `strip_headers`
+    takes it out of the analysis text either way, and `raw_words` still counts it.
+    """
+    marks = [m.start() for m in CHAPTER_HEAD.finditer(text)]
+    if not marks:
+        return [(name, text)]
+    out = []
+    for i, start in enumerate(marks):
+        end = marks[i + 1] if i + 1 < len(marks) else len(text)
+        body = text[start:end]
+        title = body.splitlines()[0].strip() if body.splitlines() else ""
+        if i == 0:
+            body = text[:start] + body
+        out.append((title or f"{name} {i + 1}", body))
+    return out
+
+
 def load_book(path):
     """Return (label, [(chapter_name, text)]). A directory is resolved the way the gates
     resolve it, so the study tree and the gate tree are the same tree."""
@@ -206,14 +239,26 @@ def load_book(path):
             return stem, [(os.path.basename(path), fh.read())]
     d = uni.resolve(path)
     if not d:
-        files = sorted(glob.glob(os.path.join(path, "*.txt")) +
-                       glob.glob(os.path.join(path, "*.md")))
+        # No chapter tree. Arm A ships its one flat manuscript under `manuscript/`, beside
+        # nothing else; a bare directory of text files is still read as one chapter each.
+        searched = ["", "manuscript"]
+        files = []
+        for sub in searched:
+            files = sorted(glob.glob(os.path.join(path, sub, "*.txt")) +
+                           glob.glob(os.path.join(path, sub, "*.md")))
+            if files:
+                break
         if not files:
-            raise SystemExit(f"no chapters and no text files under {path}")
+            raise SystemExit(f"no chapters and no text files under {path} "
+                             f"(looked in {', '.join(os.path.join(path, s) for s in searched)})")
         out = []
         for f in files:
             with open(f, encoding="utf-8", errors="ignore") as fh:
-                out.append((os.path.basename(f), fh.read()))
+                raw = fh.read()
+            if len(files) == 1:
+                out.extend(split_flat(raw, os.path.splitext(os.path.basename(f))[0]))
+            else:
+                out.append((os.path.basename(f), raw))
         return os.path.basename(os.path.normpath(path)), out
     return os.path.basename(os.path.dirname(os.path.dirname(os.path.normpath(d)))), uni.load(d)
 
@@ -577,9 +622,18 @@ def main(argv=None):
     if outdir:
         os.makedirs(outdir, exist_ok=True)
 
-    rows = []
+    rows, failed = [], []
     for t in targets:
-        book = extract(t)
+        try:
+            book = extract(t)
+        except SystemExit as exc:
+            # One unreadable book must not hide the nineteen that are readable: a directory
+            # of books is extracted in one pass, and stopping at the first failure makes the
+            # other results unavailable with no way to see which one broke. It is reported,
+            # counted, and the exit status still says something is wrong.
+            failed.append((t, str(exc)))
+            print(f"{os.path.basename(os.path.normpath(t)):<10} NOT EXTRACTED  {exc}")
+            continue
         rows.append(book)
         dest = os.path.join(outdir, f"{book['book']}.json") if outdir else None
         if dest:
@@ -591,6 +645,10 @@ def main(argv=None):
               f"{sum(1 for v in book['features'].values() if v is not None):>2} features"
               f"{f'  {unmeasured} unmeasured' if unmeasured else ''}"
               f"{'  -> ' + dest if dest else ''}")
+    if failed:
+        print(f"\n{len(failed)} of {len(targets)} target(s) not extracted: "
+              f"{', '.join(os.path.basename(os.path.normpath(t)) for t, _ in failed)}")
+        return 1
     return 0
 
 
