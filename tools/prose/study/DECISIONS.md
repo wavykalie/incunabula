@@ -383,3 +383,83 @@ Outcome: the fresh opening came back as 17,268 words of prose with no notice, an
 **55,948 words, 49 chapters, 7 calls**, its row carrying the withdrawal as its `deviations` text.
 Corpus state: **20 rows, 0 problems, 0 band notes; 20 of 20 manuscripts reproduce exactly from
 their own response files** (54,198–59,027 words, median 55,473).
+
+---
+
+## 2026-11-03 — `init-book` writes a registry that does not parse, on a fresh tree
+
+The frozen tree's `BOOKS.yaml` declares `books: []`, because books live in `test-books/` and
+a clone of this repo has none. `init-book.py` appends each new book as an indented block
+item without converting that flow sequence, so the first scaffold produces
+
+```yaml
+books: []
+  - path: B-01
+```
+
+which is not YAML. The registry then holds the book and cannot be read: `ductus.py contract`
+answers `BOOKS.yaml is missing or does not parse — the assignment cannot be resolved`, which
+is the first thing §3 step 3 asks for, so the run stops before phase 1 with no voice and no
+`ductus_id`.
+
+Found on **B-01's scaffold, 2026-11-03** — the first command of the first Arm B book, so
+every Arm B book would have met it.
+
+**Fixed as data, not code.** `books: []` → `books:` in the run's worktree leaves the pipeline
+byte-identical to `8265c48`; `git status` in that worktree shows only `BOOKS.yaml` and
+`books-armb/`, which is what running a book is supposed to change. Patching `init-book.py`
+would alter the artifact this arm exists to measure, before a word is drafted, and every B
+row's `pipeline_commit` would name a tree that did not write it. The defect is recorded here
+and belongs in the fix list for the arm after this one — along with the reason it was not
+fixed in place.
+
+The registry now holds one block item, so later books append to a sequence and do not hit
+it again; it is a first-book defect, confirmed by B-02 scaffolding cleanly if it does.
+
+---
+
+## 2026-11-03 — the premise ledger ships empty, so phase 1 cannot clear
+
+`check-premise-distinct.py` does the right thing with an empty ledger — it refuses with
+exit 2 rather than passing every premise it is shown — and that is exactly what happened on
+B-01: `ledger is empty. An empty ledger makes this gate silently pass everything, which is
+worse than it not existing.`
+
+Nothing is broken. `PREMISE_LEDGER.tsv` ships empty **by design**: the de-identification pass
+removed the author's own unpublished-book premises, because "a public template should not
+carry them" (`GATE_FREEZE.md`). The seed survives outside the public tree at
+`.private/record/PREMISE_LEDGER.seed.tsv` — three rows, six tab-separated columns, ignored by
+`.gitignore`.
+
+Phase 1's exit gates are `comps` and `premise`, so **no Arm B book can clear phase 1 while
+the ledger is empty.** The rows were restored into the run's copy only:
+`run/out/armb-wt/tools/prose/calibration/PREMISE_LEDGER.tsv` now carries the public file's
+comment header unchanged plus the three seed rows. The private premises stay inside
+`run/out/`, which is gitignored, and outside git.
+
+It is the same class as `BOOKS.yaml` — **data the pipeline reads, not the pipeline** — but
+with a consequence the registry fix did not have. `verify-freeze.sh` **does** hash this
+file (manifest row `tools/prose/calibration/PREMISE_LEDGER.tsv`, Freeze 5), so seeding it
+turns the verifier from `ok` to
+
+```
+calibration/PREMISE_LEDGER.tsv f06f9c4baabc47d5  CHANGED (frozen f4c03a83537f0270)
+```
+
+and `preflight.sh` fails on that row — `results would not be attributable`. The committed
+blob hashes to `f4c03a83537f0270`, which is what the manifest says; only the run's copy
+differs, and only in its data rows.
+
+The empty file is an artifact of de-identification, not a property of the author's
+instrument: the hash was recorded against a public template that deliberately carries none
+of the author's premises. So the repair is to re-record that **one row** with a dated note
+and re-run the verifier — a deliberate, recorded freeze change, not a bypass, and nothing
+like switching a gate off. That is the author's ruling to give, so the worktree is left
+seeded and no phase has been walked. The alternative, leaving the file empty, means Arm B
+has no book that can clear phase 1, because `comps` and `premise` are phase 1's only gates
+and one of them refuses by design.
+
+Consequence for the analysis: the distinctness gate compares against three premises, not
+against a catalogue. That is the instrument as designed, and every B row's `deviations`
+should not need to say anything about it — but a report claiming Arm B was checked for
+premise redundancy against a *frozen list* should say the list has three rows in it.
