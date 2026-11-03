@@ -14,7 +14,16 @@ conversation, a re-rolled opening.
 cd tools/prose/study
 python selftest.py                      # 51/51, rc 0. A red check stops the run.
 python run/dispatch.py --plan           # once. 52 books -> run/out/{RUNPLAN.csv,briefs,payloads}
+python preflight.py                     # rc 0 before you dispatch. Run it every session.
+python run/rehearse-armb.py             # before B-01: the filing path on throwaway books
 ```
+
+`preflight.py` re-verifies the three things a session takes for granted: the frozen
+premises still match their hashes and their own render, every plan payload still matches
+the digest in `RUNPLAN.csv` and still reproduces a frozen premise byte for byte, and the
+probe record is a measurement. Exit **1** means something disagrees — do not dispatch.
+Exit **2** means nothing is broken but the probe record is blank, which is the expected
+state before A-01's first call: dispatch can continue, no row can be filed.
 
 - `--plan` refuses to overwrite an existing plan. **Never** pass `--force` after a book has
   been drafted — the plan is the prompt record, and rewriting it relabels books already
@@ -211,6 +220,10 @@ A book that never produces novel-length text in **both** arms is design §13's s
 condition: stop and report it, do not improvise a replacement.
 
 ## 9. Arm B specifics
+
+The operating packet for this arm — the frozen commit, the per-book procedure, the operator
+script and the intervention count — is `ARM_B_BRIEFING.md`. Read it before B-01; the bullets
+below are the filing rules it expands.
 
 - **Primary B books carry no ductus.** `ductus_id` is the literal `UNASSIGNED`, the
   pipeline's own no-voice state (`DECISIONS.md` §3). Do not assign one; do not leave the

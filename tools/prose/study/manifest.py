@@ -16,6 +16,7 @@ import argparse
 import csv
 import json
 import os
+import re
 import sys
 
 FIELDS = (
@@ -68,8 +69,14 @@ def row_errors(row, seen):
         errs.append(f"duplicate book_id {bid!r}")
     if bid and arm and not bid.startswith(arm + "-"):
         errs.append(f"book_id {bid!r} does not start with its arm ({arm}-)")
-    if arm == "B" and not str(row.get("pipeline_commit", "")).strip():
-        errs.append("Arm B row has no pipeline_commit (design §11)")
+    commit = str(row.get("pipeline_commit", "")).strip()
+    if arm == "B":
+        if not commit:
+            errs.append("Arm B row has no pipeline_commit (design §11)")
+        elif not re.fullmatch(r"[0-9a-f]{40}", commit):
+            errs.append(f"pipeline_commit {commit!r} is not a full 40-character hash: a "
+                        f"short hash is not a version, and Arm B rows are compared on "
+                        f"which pipeline wrote them (ARM_B_BRIEFING.md, trap 3)")
     if arm in ("A", "B") and not str(row.get("prompt_log_path", "")).strip():
         errs.append(f"Arm {arm} row has no prompt_log_path (design §3/§11)")
     if arm == "B" and not str(row.get("ductus_id", "")).strip():

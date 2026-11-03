@@ -1,0 +1,24 @@
+{
+  "book_id": "A-01",
+  "probed_at": "2026-11-02T22:06:41+00:00",
+  "route": "Antigravity CLI (agy 1.4.12), headless --print, --dangerously-skip-permissions; model id gemini-3.8-flash",
+  "model_sent": "gemini-3.8-flash",
+  "model_returned": "gemini-3.8-flash-high",
+  "version_source": "CLI resolver log (model_resolver.go:155): alias gemini-3.8-flash resolved to gemini-3.8-flash-high; the author rules these the same model, 2026-11-02 (DECISIONS.md)",
+  "temperature": {
+    "settable": false,
+    "observed": null,
+    "applied": "harness default (agy --settings rejects 'temperature')"
+  },
+  "top_p": {
+    "settable": false,
+    "observed": null,
+    "applied": "harness default (no CLI control for top-p)"
+  },
+  "system_prompt": {
+    "settable": false,
+    "observed": null,
+    "applied": "agy harness prompt (a 10-token prompt reports 8,732 input tokens)"
+  },
+  "evidence": "A-01 opening call: run/out/agy/A-01/response.json, the stream-json init event, and the CLI log's resolver line, 2026-11-02"
+}

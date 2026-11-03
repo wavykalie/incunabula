@@ -27,9 +27,9 @@ Run on every sheet build, not asserted from memory:
 | D7a | **No person names** appear in any premise | §8.4 measures which names a model reaches for. Supplying "Mira" in the premise hands the name to both arms and deletes the measurement. |
 | D7b | **No `tone` and no `ending` field** | §6 allows both "if any". At the margin they are instructions about style or structure, and §6 forbids those. Uniform omission keeps the fields identical across all 20. |
 
-- [ ] D6 — approve the 66–91-word band (or name the band you want instead)
-- [ ] D7a — approve premises without person names
-- [ ] D7b — approve premises without tone/ending fields
+- [x] D6 — approve the 66–91-word band (or name the band you want instead)
+- [x] D7a — approve premises without person names
+- [x] D7b — approve premises without tone/ending fields
 
 ## The pairings
 
@@ -199,28 +199,28 @@ Capitalised multi-word sequences in the twenty: North Atlantic. Places are legit
 
 Tick the premises you approve as written. Anything left unticked is a change request: name the change at the bottom, and I will prepare `premises-v2.json` with the deviation logged. Changes are made **before** generation; after it, a premise change invalidates the pair it belongs to.
 
-- [ ] 01 · `adv-01` · adventure — the wet season (77w)
-- [ ] 02 · `adv-02` · adventure — delivery (66w)
-- [ ] 03 · `com-01` · comedy — the opening act (72w)
-- [ ] 04 · `com-02` · comedy — quarterly returns (69w)
-- [ ] 05 · `rom-01` · contemporary romance — shared custody (81w)
-- [ ] 06 · `rom-04` · contemporary romance — the last tour (67w)
-- [ ] 07 · `fan-01` · fantasy — the changing map (68w)
-- [ ] 08 · `fan-03` · fantasy — the queen stops (74w)
-- [ ] 09 · `his-01` · historical fiction — the unlicensed press (67w)
-- [ ] 10 · `his-03` · historical fiction — the parish birth (68w)
-- [ ] 11 · `hor-02` · horror — one day behind (70w)
-- [ ] 12 · `hor-04` · horror — the tape (69w)
-- [ ] 13 · `lit-01` · literary — ward logs (91w)
-- [ ] 14 · `lit-04` · literary — the new building (81w)
-- [ ] 15 · `mys-01` · mystery — three fires (75w)
-- [ ] 16 · `mys-02` · mystery — the cassette (72w)
-- [ ] 17 · `sf-01` · science fiction — the fragment (78w)
-- [ ] 18 · `sf-02` · science fiction — storage (82w)
-- [ ] 19 · `thr-02` · thriller — the record (77w)
-- [ ] 20 · `thr-04` · thriller — the alert (87w)
+- [x] 01 · `adv-01` · adventure — the wet season (77w)
+- [x] 02 · `adv-02` · adventure — delivery (66w)
+- [x] 03 · `com-01` · comedy — the opening act (72w)
+- [x] 04 · `com-02` · comedy — quarterly returns (69w)
+- [x] 05 · `rom-01` · contemporary romance — shared custody (81w)
+- [x] 06 · `rom-04` · contemporary romance — the last tour (67w)
+- [x] 07 · `fan-01` · fantasy — the changing map (68w)
+- [x] 08 · `fan-03` · fantasy — the queen stops (74w)
+- [x] 09 · `his-01` · historical fiction — the unlicensed press (67w)
+- [x] 10 · `his-03` · historical fiction — the parish birth (68w)
+- [x] 11 · `hor-02` · horror — one day behind (70w)
+- [x] 12 · `hor-04` · horror — the tape (69w)
+- [x] 13 · `lit-01` · literary — ward logs (91w)
+- [x] 14 · `lit-04` · literary — the new building (81w)
+- [x] 15 · `mys-01` · mystery — three fires (75w)
+- [x] 16 · `mys-02` · mystery — the cassette (72w)
+- [x] 17 · `sf-01` · science fiction — the fragment (78w)
+- [x] 18 · `sf-02` · science fiction — storage (82w)
+- [x] 19 · `thr-02` · thriller — the record (77w)
+- [x] 20 · `thr-04` · thriller — the alert (87w)
 
-- [ ] **All twenty approved as written** — no §12 answer is outstanding; this tick is the last gate before Arm A starts
+- [x] **All twenty approved as written** — no §12 answer is outstanding; this tick is the last gate before Arm A starts
 
 ### Changes requested
 
@@ -234,3 +234,13 @@ Tick the premises you approve as written. Anything left unticked is a change req
 
 Generated from `premises/frozen/premises-v1.json` (`sha256 e227039a981d8683…`) by `premises/review-sheet.py`. Every premise digest in this sheet is computed from the frozen text at build time, so a sheet that disagrees with the file cannot be produced — but this file is a *rendering* of that JSON, not the artifact. The bytes that count are in the JSON, and the digest above pins them.
 
+---
+
+## Sign-off received
+
+**2026-11-02** — approved in session by the author (Kalie), transcribed here by the study
+agent on the instruction to begin drafting. All twenty premises approved as written, and
+D6 (66–91-word band), D7a (no person names) and D7b (no tone/ending fields) approved.
+The premises themselves are unchanged: `premises-v1.json` still hashes to
+`e227039a981d8683…`. If any premise or deviation is not what you meant, untick it and say
+so **before Arm B** begins — after that, a change invalidates the pair it belongs to.

@@ -108,6 +108,7 @@ python run/dispatch.py --ingest A-01 --response resp.txt \
     --model-returned gemini-3.8-flash-001 --finalize
 
 # the run itself, per book, step by step: RUNBOOK.md
+python preflight.py                           # frozen premises + plan digests + probe record
 python selftest.py                            # the whole harness on fixtures, 51 checks
 ```
 

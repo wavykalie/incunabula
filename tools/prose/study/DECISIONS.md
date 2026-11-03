@@ -261,3 +261,125 @@ already built at n=109; the ten come later per decision 4.
 No §12 answer is now outstanding. What is left before the first Arm A word is the premise
 sign-off (O5), and the two facts about the Antigravity harness (O3) that decide what gets
 recorded on each row.
+
+---
+
+## 2026-11-02 — the route does not report a model version (O3)
+
+Measured on A-01's first call through the Antigravity CLI (`agy` 1.4.12), which is the
+route §12.1 names. Facts as found, not assumed:
+
+| question | answer | how it was measured |
+|---|---|---|
+| temperature / top-p settable | no | `--settings '{"temperature":0.7,"topP":0.95}'` returns `Error: --settings: unknown setting "temperature"` |
+| system prompt settable | no | the harness supplies one: a 10-token prompt reports 8,732 input tokens |
+| the response reports a modelVersion | **no** | `--output-format json` returns only conversation_id, status, response, duration_seconds, num_turns and usage; `stream-json`'s `init.model` echoes the id we sent, which is intent rather than a measurement; nothing is written under `%LOCALAPPDATA%/agy` to consult afterwards |
+
+Consequence, by this file's own §1 rule: **no Arm A or Arm B row can be filed on this
+route.** `model_id` would be the id we sent rather than the version that wrote, and H3 is a
+claim about the latter. `run/harness.json` records `model_returned: null` and
+`run/harness.py --check` refuses it — intended behaviour, not a bug to patch around.
+
+A second, independent blocker surfaced on the same call: headless mode auto-denies tools,
+and the model asked for a command instead of answering in text, so `response` came back
+empty with `denied_actions: [{"action": "command"}]`. Producing text needs either an
+allow-rule under `permissions.allow` or `--dangerously-skip-permissions`, which auto-approves
+every tool on this machine. That is a decision for the author, not for the study agent.
+
+`premises/frozen/premises-v1-review.md` was signed off in session on 2026-11-02 before this
+call; the premises themselves are unchanged and still hash to `e227039a981d8683…`, so the
+sign-off is not invalidated by either finding.
+
+### 2026-11-02 (later) — the author's ruling on the above
+
+Kalie's answer: `gemini-3.8-flash` and `gemini-3.8-flash-high` **are the same model** —
+Flash 3.8, with `-high` the effort tier the alias resolves to. So the alias is not a silent
+model swap, and the run proceeds. How a row records it:
+
+- `model_sent` stays the frozen literal `gemini-3.8-flash` (the plan's `model_id`, unchanged).
+- `model_returned` is the id the route's own resolver logs, `gemini-3.8-flash-high`, with
+  `version_source` naming `model_resolver.go:155` and this ruling.
+- The report carries one limitation sentence: model identity is the CLI resolver's id, not
+  an API-returned `modelVersion`, because the tier is what actually ran.
+
+A mid-run change still surfaces: the resolver logs per call, and `dispatch.py` refuses a
+`--model-returned` that disagrees with the probe record unless the change is filed as a
+separate sub-cohort. H3 is therefore measured at "Flash 3.8" granularity, not build
+granularity, and the report must say so.
+
+Tool access for the drafting call, same ruling: `--dangerously-skip-permissions`, chosen by
+the author, because headless auto-denial returns an empty response rather than a text
+answer. The grant is for one call in the book's own empty directory.
+
+---
+
+## 2026-11-02 — Arm A filed: 20 books, one row that cannot be re-derived
+
+All twenty Arm A rows are filed: 20 of 20 inside the 54,000–66,000 band (54,198–59,027,
+median 55,473), 35–74 chapters, 120 continuations in total, one model id on every row
+(`gemini-3.8-flash-high`, per the ruling above), and `manifest.py --check books/manifest.csv`
+reports `20 row(s), 0 problem(s), 0 band note(s)`. Two rows need saying out loud.
+
+### A-11 — interrupted, resumed, and filed with a recorded passage collision
+
+A-11's stream died mid-book with two calls on disk and only the opening filed (26,531 words).
+It was **resumed, not re-opened**: `run/out/agy/A-11/conversation.txt` holds the opening
+call's `conversation_id`, so the book continued its own conversation — a fresh opening would
+be a re-roll (§7). Call 02 was then filed after the fact through `dispatch.py`, which refused
+it: it shares a 24-word verbatim run with A-14,
+
+> drizzle that had no weight to it the sort of rain that did not fall so much as hang in the
+> air until your
+
+Diverging at the next word (`eyebrows` in A-14, `eyelashes` in A-11), one sentence of stock
+weather prose, in books that ran in separate conversations with separate working directories.
+Filed with `--deviation`, as §8.4 requires: the pair is now a logged event the analysis can
+exclude or flag, not a silent one. A-11 finished at 57,193 words in 6 calls.
+
+### A-20 — the filed text is not the concatenation of its responses
+
+Measured after the run, while auditing every row against its own response files:
+
+- `run/out/responses/A-20/01.txt` — the opening — is a **36-word Gemini filter notice**, and
+  that is what the log records (`kind: opening`, `response_words: 36`).
+- The filed manuscript of 55,570 words opens with prose that **appears in no response file**:
+  `# The Tell` / `The dog did not look at the door. He looked at the baseboard four inches to
+  the left of the strike plate…`.
+- Two passages inside `02.txt` are truncated mid-sentence by the same filter (`…would heat the
+  wire to seven hundred degrees Fahrenheit in eight-tenths of a second.` → notice). The
+  manuscript carries **different prose at both points** (`thick, stretched taut between the
+  threaded terminals like a single, dull strand of copper hair`; `unit, its green pilot lamp
+  unlit, its antenna lead coiled neatly around a cardboard core`), and that prose is in no
+  response file either.
+- Every response file still hashes to the `response_sha256` its log entry recorded, so this is
+  not hash drift: the manuscript simply is not what the pipeline appended.
+  `dispatch.append_text()` appends verbatim and nothing in `run/` strips a filter notice, and
+  no artifact in the repo carries the replacement text.
+
+A reproduction audit now runs over the corpus: each manuscript compared, whitespace-normalised,
+against the concatenation of its own filed responses. **19 of 20 reproduce exactly. A-20 does
+not** (net 66 words, plus the absent 36-word opening). Its row therefore cannot be re-derived
+from the record, which is the one thing every other row can do.
+
+**Ruling (Kalie, 2026-11-02): withdraw it and re-dispatch the frozen payload as a fresh book.**
+A row whose text cannot be re-derived from its own responses is not a row, whatever its word
+count; the replacement is cheap and the defect is not.
+
+Done, in this order:
+
+1. The attempt was archived, not deleted: `run/out/attempts/A-20-filtered/` holds the book dir,
+   the ten response files and the `agy` work dirs, so the finding above stays checkable.
+2. Its row was dropped from `books/manifest.csv`, leaving 19 — a withdrawal has to be reflected
+   in the record or the record is wrong. This is the only row ever removed, and it is here.
+3. Re-dispatched through `run/drive.py` from the **same frozen payload** (`payload_sha256`
+   unchanged), which is what keeps the premise pairing intact: the book is new, the input is not.
+4. `drive.py` gained a guard, because the cause was not the filter — it was the driver having no
+   idea a refusal had arrived. A response containing the filter notice now stops the book:
+   as an **opening** it raises `Stop` and files nothing; as a **continuation** it becomes a stall
+   note on the row. `--deviation` also passes through to `finalize`, so a replacement row can
+   carry its own provenance instead of needing a hand edit of the manifest afterwards.
+
+Outcome: the fresh opening came back as 17,268 words of prose with no notice, and A-20 filed at
+**55,948 words, 49 chapters, 7 calls**, its row carrying the withdrawal as its `deviations` text.
+Corpus state: **20 rows, 0 problems, 0 band notes; 20 of 20 manuscripts reproduce exactly from
+their own response files** (54,198–59,027 words, median 55,473).
