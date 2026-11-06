@@ -1,0 +1,336 @@
+{
+  "book": "C-dist2-139",
+  "path": "C:\\Users\\screa\\incunabula\\tools\\prose\\study\\books\\C-dist2-139",
+  "words": 25081,
+  "raw_words": 25117,
+  "header_words_removed": 36,
+  "chapters": 18,
+  "extractor": {
+    "script": "study/extract/features.py",
+    "version": "2"
+  },
+  "features": {
+    "lex_ai_term_hits": 0,
+    "lex_ai_terms_per_1k": 0.0,
+    "lex_ly_adverbs_per_1k": 10.525896,
+    "lex_hedges_per_1k": 0.318967,
+    "lex_opener_and_share": 0.00789,
+    "lex_opener_but_share": 0.024326,
+    "lex_opener_as_share": 0.017094,
+    "lex_opener_when_share": 0.015779,
+    "lex_opener_suddenly_share": 0.000657,
+    "lex_opener_top1_share": 0.086128,
+    "lex_ttr_rarefied": 0.432,
+    "syn_sent_words_mean": 16.489809,
+    "syn_sent_words_median": 13,
+    "syn_sent_words_sd": 12.134088,
+    "syn_short_sent_share": 0.148586,
+    "syn_long_sent_share": 0.066404,
+    "syn_em_dash_per_1k": 0.0,
+    "syn_semicolon_per_1k": 0.199354,
+    "syn_colon_per_1k": 5.023723,
+    "syn_exclamation_per_1k": 8.412743,
+    "syn_ellipsis_per_1k": 0.0,
+    "syn_dialogue_share": 0.457518,
+    "syn_correlative_per_1k": 0.0,
+    "syn_passive_proxy_per_1k": 5.581915,
+    "syn_commas_per_sentence": 0.90927,
+    "syn_para_words_mean": 13.841611,
+    "syn_para_cv": 88.962926,
+    "syn_oneline_para_share": 0.806291,
+    "syn_tag_said_share": 0.561111,
+    "syn_tag_breath_share": 0.088889,
+    "syn_chapter_sentlen_spread": 6.175782,
+    "str_chapters": 18,
+    "str_words": 25081,
+    "str_chapter_cv": 11.260308,
+    "str_chapter_min": 856,
+    "str_chapter_max": 1549,
+    "str_open_wake_share": 0.0,
+    "str_open_weather_share": 0.0,
+    "str_open_time_share": 0.111111,
+    "str_open_habitual_share": 0.0,
+    "str_coda_share": 0.0,
+    "str_frame_max_share": 0.0,
+    "str_ngram_repeat_per_1k": 0.239225,
+    "str_scene_mark_per_1k": 0.398708,
+    "str_arc_turns": 0.592356,
+    "str_arc_range": 0.046878,
+    "nme_distinct_first": 42,
+    "nme_distinct_surnames": 4,
+    "nme_names_per_1k": 1.834058,
+    "nme_ssa_top20_share": 0.0,
+    "nme_popular_list_share": 0.02381,
+    "nme_reference_unlisted_share": 0.97619,
+    "nme_syllables_mean": 2.02381,
+    "nme_a_endings_share": 0.095238,
+    "nme_alliterative_pairs": 0,
+    "nme_shared_surname_share": 0.25
+  },
+  "details": {
+    "ai_term_hits": {},
+    "opener_top5": [
+      [
+        "The",
+        131
+      ],
+      [
+        "He",
+        98
+      ],
+      [
+        "I",
+        54
+      ],
+      [
+        "It",
+        44
+      ],
+      [
+        "They",
+        42
+      ]
+    ],
+    "dialogue_turns": 1037,
+    "tagged_turns": 180,
+    "weather_openings": [],
+    "frame_share": {
+      "stall": 0.0,
+      "frame-opener": 0.0,
+      "coda-link": 0.0,
+      "refrain": 0.0,
+      "antithesis": 0.0
+    },
+    "names": {
+      "full": [
+        "Andrew Gibson",
+        "Harry Brady",
+        "King Brady",
+        "Niagara Falls",
+        "United States"
+      ],
+      "firsts": [
+        "American",
+        "Andrew",
+        "Astor",
+        "Battery",
+        "Bleecker",
+        "Bowery",
+        "Bradys",
+        "Broadway",
+        "Buffalo",
+        "Canada",
+        "Canadian",
+        "Canadians",
+        "Champagne",
+        "Clara",
+        "Collector",
+        "Croix",
+        "Custom",
+        "Customs",
+        "Dominion",
+        "Europe",
+        "Fifth",
+        "French",
+        "Frenchman",
+        "Grand",
+        "Harry",
+        "Havre",
+        "Holland",
+        "Jean",
+        "John",
+        "King",
+        "Lane",
+        "Lena",
+        "Montreal",
+        "Niagara",
+        "Paul",
+        "Reynard",
+        "Savoy",
+        "Toronto",
+        "United",
+        "Waldorf",
+        "York",
+        "Zen"
+      ],
+      "surnames": [
+        "Brady",
+        "Falls",
+        "Gibson",
+        "States"
+      ],
+      "counts": {
+        "Harry": 173,
+        "Brady": 146,
+        "Croix": 139,
+        "King": 136,
+        "Bradys": 64,
+        "Clara": 39,
+        "Gibson": 27,
+        "Collector": 23,
+        "Frenchman": 22,
+        "Custom": 20,
+        "Paul": 17,
+        "Canada": 12,
+        "Savoy": 12,
+        "York": 11,
+        "Montreal": 11,
+        "Toronto": 11,
+        "Broadway": 10,
+        "Jean": 9,
+        "French": 8,
+        "Niagara": 7,
+        "Canadian": 6,
+        "Buffalo": 6,
+        "Grand": 6,
+        "Lane": 5,
+        "Zen": 5,
+        "Holland": 5,
+        "Lena": 5,
+        "Canadians": 5,
+        "Astor": 5,
+        "Andrew": 4,
+        "John": 4,
+        "Havre": 4,
+        "American": 4,
+        "Reynard": 4,
+        "Decker": 4,
+        "Fifth": 3,
+        "Jacobs": 3,
+        "Raising": 3,
+        "Champagne": 3,
+        "Falls": 3
+      }
+    }
+  },
+  "cross": {
+    "opening": [
+      "the",
+      "bradys",
+      "as",
+      "custom",
+      "house",
+      "detectives"
+    ],
+    "closing": [
+      "read",
+      "the",
+      "bradys",
+      "and",
+      "the",
+      "runaway",
+      "boys",
+      "or",
+      "shadowing",
+      "the",
+      "circus",
+      "sharpers",
+      "which",
+      "will",
+      "be",
+      "the",
+      "next",
+      "number",
+      "of",
+      "secret",
+      "service"
+    ],
+    "chapter_first_sentences": [
+      [
+        "the",
+        "bradys",
+        "as",
+        "custom",
+        "house",
+        "detectives"
+      ],
+      [
+        "nine",
+        "smugglers"
+      ],
+      [
+        "caught",
+        "in",
+        "an",
+        "elevator"
+      ],
+      [
+        "the",
+        "clew",
+        "in",
+        "the",
+        "basin"
+      ],
+      [
+        "at",
+        "villain's",
+        "mercy"
+      ],
+      [
+        "two",
+        "men",
+        "in",
+        "box"
+      ],
+      [
+        "mysterious",
+        "woman",
+        "in",
+        "black"
+      ],
+      [
+        "gaining",
+        "few",
+        "points"
+      ],
+      [
+        "crossing",
+        "the",
+        "border"
+      ],
+      [
+        "serving",
+        "the",
+        "warrant"
+      ],
+      [
+        "subduing",
+        "tartar"
+      ],
+      [
+        "run",
+        "to",
+        "cover"
+      ],
+      [
+        "human",
+        "shield"
+      ],
+      [
+        "on",
+        "harlem",
+        "bridge"
+      ],
+      [
+        "pumping",
+        "prisoner"
+      ],
+      [
+        "the",
+        "capture",
+        "of",
+        "la",
+        "croix"
+      ],
+      [
+        "recovering",
+        "the",
+        "diamonds"
+      ],
+      [
+        "conclusion"
+      ]
+    ]
+  },
+  "unmeasured": []
+}

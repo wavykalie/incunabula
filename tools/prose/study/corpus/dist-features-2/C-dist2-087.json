@@ -1,0 +1,516 @@
+{
+  "book": "C-dist2-087",
+  "path": "C:\\Users\\screa\\incunabula\\tools\\prose\\study\\books\\C-dist2-087",
+  "words": 117552,
+  "raw_words": 117624,
+  "header_words_removed": 72,
+  "chapters": 36,
+  "extractor": {
+    "script": "study/extract/features.py",
+    "version": "2"
+  },
+  "features": {
+    "lex_ai_term_hits": 9,
+    "lex_ai_terms_per_1k": 0.076562,
+    "lex_ly_adverbs_per_1k": 17.736831,
+    "lex_hedges_per_1k": 1.310059,
+    "lex_opener_and_share": 0.025554,
+    "lex_opener_but_share": 0.024607,
+    "lex_opener_as_share": 0.005111,
+    "lex_opener_when_share": 0.004921,
+    "lex_opener_suddenly_share": 0.001514,
+    "lex_opener_top1_share": 0.07685,
+    "lex_ttr_rarefied": 0.420983,
+    "syn_sent_words_mean": 22.248722,
+    "syn_sent_words_median": 18,
+    "syn_sent_words_sd": 17.62393,
+    "syn_short_sent_share": 0.115843,
+    "syn_long_sent_share": 0.18569,
+    "syn_em_dash_per_1k": 0.0,
+    "syn_semicolon_per_1k": 14.563768,
+    "syn_colon_per_1k": 0.561454,
+    "syn_exclamation_per_1k": 5.274262,
+    "syn_ellipsis_per_1k": 0.008507,
+    "syn_dialogue_share": 0.393451,
+    "syn_correlative_per_1k": 0.059548,
+    "syn_passive_proxy_per_1k": 4.831904,
+    "syn_commas_per_sentence": 1.74011,
+    "syn_para_words_mean": 42.437545,
+    "syn_para_cv": 98.297254,
+    "syn_oneline_para_share": 0.435379,
+    "syn_tag_said_share": 0.730361,
+    "syn_tag_breath_share": 0.061571,
+    "syn_chapter_sentlen_spread": 8.582688,
+    "str_chapters": 36,
+    "str_words": 117552,
+    "str_chapter_cv": 15.670286,
+    "str_chapter_min": 2191,
+    "str_chapter_max": 4353,
+    "str_open_wake_share": 0.0,
+    "str_open_weather_share": 0.0,
+    "str_open_time_share": 0.055556,
+    "str_open_habitual_share": 0.0,
+    "str_coda_share": 0.0,
+    "str_frame_max_share": 0.111111,
+    "str_ngram_repeat_per_1k": 0.663536,
+    "str_scene_mark_per_1k": 0.127603,
+    "str_arc_turns": 0.573165,
+    "str_arc_range": 0.051653,
+    "nme_distinct_first": 73,
+    "nme_distinct_surnames": 14,
+    "nme_names_per_1k": 0.740098,
+    "nme_ssa_top20_share": 0.0,
+    "nme_popular_list_share": 0.054795,
+    "nme_reference_unlisted_share": 0.945205,
+    "nme_syllables_mean": 2.068493,
+    "nme_a_endings_share": 0.068493,
+    "nme_alliterative_pairs": 0,
+    "nme_shared_surname_share": 0.214286
+  },
+  "details": {
+    "ai_term_hits": {
+      "intricate": 1,
+      "landscape": 4,
+      "profound": 3,
+      "in the heart of": 1
+    },
+    "opener_top5": [
+      [
+        "I",
+        406
+      ],
+      [
+        "She",
+        331
+      ],
+      [
+        "It",
+        265
+      ],
+      [
+        "He",
+        211
+      ],
+      [
+        "The",
+        202
+      ]
+    ],
+    "dialogue_turns": 1983,
+    "tagged_turns": 471,
+    "weather_openings": [],
+    "frame_share": {
+      "stall": 0.0,
+      "frame-opener": 0.0,
+      "coda-link": 0.0,
+      "refrain": 0.1111111111111111,
+      "antithesis": 0.1111111111111111
+    },
+    "names": {
+      "full": [
+        "Albert Gisburne",
+        "Andrew Miller",
+        "Beatrice Miller",
+        "Caroline Miller",
+        "Cissy Hazeldine",
+        "Denis Wilde",
+        "Edwin Miller",
+        "Eustace Daintree",
+        "Guy Miller",
+        "Helen Romer",
+        "Herbert Pryme",
+        "Jimmy Griffiths",
+        "John Kynaston",
+        "Maurice Kynaston",
+        "Shadonake Bath",
+        "Sophy Macpherson",
+        "Tommy Daintree",
+        "Tripton Rectory",
+        "Vera Nevill",
+        "Vera Neville"
+      ],
+      "firsts": [
+        "Albert",
+        "Andrew",
+        "Arblet",
+        "Australia",
+        "Barry",
+        "Beatrice",
+        "British",
+        "Caroline",
+        "Chelsea",
+        "Christmas",
+        "Cissy",
+        "Clochette",
+        "Crupps",
+        "Denis",
+        "Eaton",
+        "Edwin",
+        "Eliza",
+        "England",
+        "English",
+        "Englishman",
+        "Esterworth",
+        "Esterworths",
+        "Eton",
+        "Eustace",
+        "Frampton",
+        "French",
+        "Frenchman",
+        "Geraldine",
+        "Guy",
+        "Helen",
+        "Herbert",
+        "Hoggs",
+        "Humph",
+        "Italian",
+        "Jameson",
+        "Jimmy",
+        "John",
+        "Jove",
+        "Kew",
+        "Kynastons",
+        "London",
+        "Lucien",
+        "Lutterton",
+        "Marinari",
+        "Marion",
+        "Mary",
+        "Maurice",
+        "Meadowshire",
+        "Millers",
+        "Minnie",
+        "Oxford",
+        "Paris",
+        "Parliament",
+        "Paul",
+        "Persian",
+        "Princes",
+        "Providence",
+        "Rev",
+        "Rome",
+        "Shadonake",
+        "Sophy",
+        "Sutton",
+        "Temple",
+        "Theodora",
+        "Tommy",
+        "Topsy",
+        "Tripton",
+        "Vera",
+        "Vevay",
+        "Vic",
+        "Walpole",
+        "Wilton",
+        "Wold"
+      ],
+      "surnames": [
+        "Bath",
+        "Daintree",
+        "Gisburne",
+        "Griffiths",
+        "Hazeldine",
+        "Kynaston",
+        "Macpherson",
+        "Miller",
+        "Nevill",
+        "Neville",
+        "Pryme",
+        "Rectory",
+        "Romer",
+        "Wilde"
+      ],
+      "counts": {
+        "Vera": 577,
+        "Kynaston": 313,
+        "Maurice": 277,
+        "John": 236,
+        "Helen": 195,
+        "Beatrice": 177,
+        "Miller": 149,
+        "Nevill": 103,
+        "Daintree": 85,
+        "Herbert": 84,
+        "Pryme": 81,
+        "Marion": 73,
+        "Arblet": 68,
+        "Eustace": 66,
+        "Romer": 65,
+        "Shadonake": 50,
+        "Wilde": 45,
+        "Denis": 42,
+        "London": 41,
+        "Hazeldine": 37,
+        "Tommy": 36,
+        "Esterworth": 32,
+        "Sutton": 29,
+        "Gisburne": 26,
+        "Eccles": 23,
+        "Meadowshire": 23,
+        "Walpole": 20,
+        "England": 18,
+        "Tripton": 18,
+        "Frenchman": 17,
+        "Guy": 17,
+        "Andrew": 15,
+        "Bath": 15,
+        "French": 14,
+        "Caroline": 14,
+        "Macpherson": 13,
+        "Cissy": 13,
+        "Lutterton": 12,
+        "Clochette": 12,
+        "Harlowe": 11
+      }
+    }
+  },
+  "cross": {
+    "opening": [
+      "the",
+      "vicar's",
+      "family"
+    ],
+    "closing": [
+      "her",
+      "experience",
+      "in",
+      "novel",
+      "writing",
+      "as",
+      "well",
+      "as",
+      "her",
+      "skill",
+      "in",
+      "inventing",
+      "and",
+      "delineating",
+      "characters",
+      "enables",
+      "her",
+      "to",
+      "put",
+      "before",
+      "the",
+      "reading",
+      "public",
+      "stories",
+      "that",
+      "are",
+      "full",
+      "of",
+      "interest",
+      "and",
+      "pure",
+      "in",
+      "tone",
+      "harrisburg",
+      "telegraph"
+    ],
+    "chapter_first_sentences": [
+      [
+        "the",
+        "vicar's",
+        "family"
+      ],
+      [
+        "kynaston",
+        "hall"
+      ],
+      [
+        "fanning",
+        "dead",
+        "ashes"
+      ],
+      [
+        "the",
+        "lay",
+        "rector"
+      ],
+      [
+        "little",
+        "pitchers",
+        "once",
+        "at",
+        "least",
+        "in",
+        "man's",
+        "life",
+        "if",
+        "only",
+        "for",
+        "brief",
+        "space",
+        "he",
+        "reverences",
+        "the",
+        "saint",
+        "in",
+        "the",
+        "woman",
+        "he",
+        "desires"
+      ],
+      [
+        "soir",
+        "at",
+        "walpole",
+        "lodge"
+      ],
+      [
+        "evening",
+        "reveries"
+      ],
+      [
+        "the",
+        "member",
+        "for",
+        "meadowshire"
+      ],
+      [
+        "engaged"
+      ],
+      [
+        "meeting",
+        "on",
+        "the",
+        "stairs"
+      ],
+      [
+        "an",
+        "idle",
+        "morning"
+      ],
+      [
+        "the",
+        "meet",
+        "at",
+        "shadonake"
+      ],
+      [
+        "peacock's",
+        "feathers"
+      ],
+      [
+        "her",
+        "wedding",
+        "dress"
+      ],
+      [
+        "vera's",
+        "message"
+      ],
+      [
+        "poor",
+        "wisdom",
+        "no",
+        "vain",
+        "alas"
+      ],
+      [
+        "an",
+        "unlucky",
+        "love",
+        "letter"
+      ],
+      [
+        "lady",
+        "kynaston's",
+        "plans"
+      ],
+      [
+        "what",
+        "she",
+        "waited",
+        "for"
+      ],
+      [
+        "morning",
+        "walk"
+      ],
+      [
+        "maurice's",
+        "intercession"
+      ],
+      [
+        "mr"
+      ],
+      [
+        "white",
+        "sunshade"
+      ],
+      [
+        "her",
+        "son's",
+        "secret"
+      ],
+      [
+        "st"
+      ],
+      [
+        "the",
+        "russia",
+        "leather",
+        "case"
+      ],
+      [
+        "dinner",
+        "at",
+        "ranelagh"
+      ],
+      [
+        "mrs"
+      ],
+      [
+        "wedding",
+        "tour"
+      ],
+      [
+        "if",
+        "could",
+        "die",
+        "why",
+        "cannot",
+        "forgo",
+        "forget",
+        "that",
+        "ever",
+        "loved",
+        "thee",
+        "that",
+        "ever",
+        "we",
+        "met"
+      ],
+      [
+        "an",
+        "eventful",
+        "drive"
+      ],
+      [
+        "by",
+        "the",
+        "vicarage",
+        "gate"
+      ],
+      [
+        "denis",
+        "wilde's",
+        "love"
+      ],
+      [
+        "garden",
+        "party"
+      ],
+      [
+        "shadonake",
+        "bath"
+      ],
+      [
+        "at",
+        "peace"
+      ]
+    ]
+  },
+  "unmeasured": []
+}

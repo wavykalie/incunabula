@@ -202,3 +202,52 @@ not AI vocabulary, and it is measuring it with a lexicon the repo never calibrat
 calibrated families in `calibration/measure.py` (A1, A3) contain none of `profound`,
 `navigate`, `landscape` or `vibrant`. If the row is kept, it should use those families; if a
 check is wanted, `profound` is the word, not `delve`.
+
+## Baseline check: the twelve against C-dist-2 (2026-11-06)
+
+Every row above sits on 87 human books, and several clear their band by a hundredth of a
+share. So the baseline was doubled: 188 more Project Gutenberg novels, selected by the same
+rule and disjoint by author (`corpus/dist-source-2.tsv`, `DECISIONS.md` §"C-dist-2"),
+extracted with the v2 extractor, 167 of them under the 120,000-word filter. C-dist is still
+the shipped threshold set; this is the sensitivity check.
+
+| # | feature | B med | band, C-dist (87) | band, C-dist-2 (167) | effect v2 → C-dist-2 | verdict |
+|---|---|---|---|---|---|---|
+| 1 | `str_open_weather_share` | 0.100 | 0.000..0.085 | 0.000..0.086 | 3.51 → 3.07 | holds |
+| 2 | `syn_tag_breath_share` | 0.168 | 0.000..0.107 | 0.000..0.108 | 3.62 → 3.14 | holds |
+| 3 | `lex_ttr_rarefied` | 0.506 | 0.383..0.464 | 0.394..0.463 | 2.86 → 2.68 | holds |
+| 4 | `lex_opener_top1_share` | 0.183 | 0.075..0.166 | 0.076..0.171 | 2.48 → 2.12 | holds |
+| 5 | `lex_hedges_per_1k` | 0.090 | 0.820..2.434 | 0.712..2.183 | 2.00 → 2.24 | holds |
+| 6 | `syn_para_cv` | 68.57 | 75.61..142.56 | 72.62..131.61 | 1.92 → 1.27 | holds |
+| 7 | `lex_ly_adverbs_per_1k` | 5.26 | 7.77..16.97 | 7.55..16.05 | 1.81 → 1.88 | holds |
+| 8 | `lex_ai_terms_per_1k` | 0.126 | 0.000..0.122 | 0.000..0.135 | 1.62 → 1.56 | **falls out** |
+| 9 | `lex_opener_as_share` | 0.003 | 0.004..0.017 | 0.004..0.018 | 1.42 → 1.22 | holds |
+| 10 | `lex_opener_but_share` | 0.009 | 0.011..0.059 | 0.013..0.056 | 1.42 → 1.14 | holds |
+| 11 | `syn_long_sent_share` | 0.042 | 0.057..0.335 | 0.047..0.322 | 1.07 → 0.70 | **falls out** |
+| 12 | `syn_sent_words_sd` | 10.01 | 11.42..25.49 | 10.27..23.87 | 1.04 → 0.96 | holds |
+
+Ten of the twelve keep their band and their test on nearly twice the human sample, including
+both rows re-read in the section above: weather's band moves by 0.001 and breath's by 0.0014,
+while both effects shrink by 13–14% and stay three human SDs wide. That is the strongest
+result in this memo: the two rows the matched-text audit touched are not baseline artefacts.
+
+The two that fall out are informative rather than embarrassing. `lex_ai_terms_per_1k` is a
+**primary endpoint**, and on the larger human sample the band top rises from 0.122 to 0.135,
+which puts Arm B's 0.126 inside it. That agrees with the row-8 reading — the effect was
+`profound` and domain words, not the calibrated tics — and it means the one primary row that
+depended on a narrow human band no longer clears one. `syn_long_sent_share` still sits below
+the new band (0.042 against a 0.047 floor) but its permutation p rises to 0.0585, so it fails
+the test rather than the band: it was always the weakest row and its 1.07 effect was carried
+by 87 human books.
+
+One row enters: `str_scene_mark_per_1k` (B 0.04, band 0.05..0.45, effect 0.88, p 0.0089). It
+was `fixed` on the smaller baseline and is outside on the larger one by a single hundredth.
+That is the same margin problem in reverse, and it is why the band edges and not the verdict
+labels are the thing to carry forward: a row within 0.01 of a band edge is a coin toss at
+this n, whatever the table says.
+
+Holdout false-positive rates on the new stratum, which is what a shipped threshold would have
+to live with: weather 2% (z −1.6), breath 5% (z −0.8), AI terms 11%, adverbs 18%, hedges 18%,
+TTR 18%, openers 14–15%, sentence-length SD 20%, long sentences 21%, paragraph CV 26%
+(z +0.7). The two rows this study just corrected are also the two whose bands generalise
+best to a fresh human sample.

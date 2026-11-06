@@ -1,0 +1,436 @@
+{
+  "book": "C-dist2-108",
+  "path": "C:\\Users\\screa\\incunabula\\tools\\prose\\study\\books\\C-dist2-108",
+  "words": 51183,
+  "raw_words": 51233,
+  "header_words_removed": 50,
+  "chapters": 25,
+  "extractor": {
+    "script": "study/extract/features.py",
+    "version": "2"
+  },
+  "features": {
+    "lex_ai_term_hits": 0,
+    "lex_ai_terms_per_1k": 0.0,
+    "lex_ly_adverbs_per_1k": 7.561104,
+    "lex_hedges_per_1k": 0.898736,
+    "lex_opener_and_share": 0.01755,
+    "lex_opener_but_share": 0.007468,
+    "lex_opener_as_share": 0.010082,
+    "lex_opener_when_share": 0.017177,
+    "lex_opener_suddenly_share": 0.0,
+    "lex_opener_top1_share": 0.085885,
+    "lex_ttr_rarefied": 0.399529,
+    "syn_sent_words_mean": 19.112397,
+    "syn_sent_words_median": 17.0,
+    "syn_sent_words_sd": 12.415076,
+    "syn_short_sent_share": 0.089993,
+    "syn_long_sent_share": 0.098208,
+    "syn_em_dash_per_1k": 0.0,
+    "syn_semicolon_per_1k": 0.566594,
+    "syn_colon_per_1k": 0.468906,
+    "syn_exclamation_per_1k": 4.689057,
+    "syn_ellipsis_per_1k": 0.0,
+    "syn_dialogue_share": 0.479183,
+    "syn_correlative_per_1k": 0.0,
+    "syn_passive_proxy_per_1k": 6.81867,
+    "syn_commas_per_sentence": 1.323002,
+    "syn_para_words_mean": 32.704792,
+    "syn_para_cv": 74.074148,
+    "syn_oneline_para_share": 0.368051,
+    "syn_tag_said_share": 0.719697,
+    "syn_tag_breath_share": 0.042929,
+    "syn_chapter_sentlen_spread": 6.56478,
+    "str_chapters": 25,
+    "str_words": 51183,
+    "str_chapter_cv": 12.165444,
+    "str_chapter_min": 1584,
+    "str_chapter_max": 2515,
+    "str_open_wake_share": 0.0,
+    "str_open_weather_share": 0.0,
+    "str_open_time_share": 0.0,
+    "str_open_habitual_share": 0.0,
+    "str_coda_share": 0.0,
+    "str_frame_max_share": 0.08,
+    "str_ngram_repeat_per_1k": 0.801047,
+    "str_scene_mark_per_1k": 0.078151,
+    "str_arc_turns": 0.580207,
+    "str_arc_range": 0.043868,
+    "nme_distinct_first": 53,
+    "nme_distinct_surnames": 14,
+    "nme_names_per_1k": 1.309028,
+    "nme_ssa_top20_share": 0.018868,
+    "nme_popular_list_share": 0.056604,
+    "nme_reference_unlisted_share": 0.924528,
+    "nme_syllables_mean": 1.943396,
+    "nme_a_endings_share": 0.037736,
+    "nme_alliterative_pairs": 1,
+    "nme_shared_surname_share": 0.0
+  },
+  "details": {
+    "ai_term_hits": {},
+    "opener_top5": [
+      [
+        "The",
+        230
+      ],
+      [
+        "I",
+        213
+      ],
+      [
+        "It",
+        153
+      ],
+      [
+        "He",
+        141
+      ],
+      [
+        "You",
+        81
+      ]
+    ],
+    "dialogue_turns": 1734,
+    "tagged_turns": 396,
+    "weather_openings": [],
+    "frame_share": {
+      "stall": 0.0,
+      "frame-opener": 0.0,
+      "coda-link": 0.0,
+      "refrain": 0.08,
+      "antithesis": 0.0
+    },
+    "names": {
+      "full": [
+        "Aunty Jane",
+        "Cole Tolford",
+        "Frank Shaw",
+        "George Fremont",
+        "Glen Howard",
+        "Harry Stevens",
+        "Jack Bosworth",
+        "James Cameron",
+        "Jim Scoby",
+        "Ned Nestor",
+        "Peter Fenton",
+        "Rio Grande",
+        "San Jose",
+        "Uncle Sam"
+      ],
+      "firsts": [
+        "America",
+        "Americans",
+        "Aunty",
+        "Aztecs",
+        "Besides",
+        "Bowery",
+        "Cairo",
+        "Chihuahua",
+        "Cole",
+        "Cumberland",
+        "Downs",
+        "English",
+        "Englishman",
+        "Fatty",
+        "Felix",
+        "Frank",
+        "George",
+        "Glen",
+        "Gordon",
+        "Greasers",
+        "Harry",
+        "Huh",
+        "Indian",
+        "Jack",
+        "James",
+        "Japan",
+        "Japs",
+        "Jere",
+        "Jim",
+        "Jimmie",
+        "Mexican",
+        "Mexicans",
+        "Mexico",
+        "Miguel",
+        "Mississippi",
+        "Nashville",
+        "Ned",
+        "Paso",
+        "Peter",
+        "Ren",
+        "Rio",
+        "San",
+        "Scanlon",
+        "Scott",
+        "Scouts",
+        "Smith",
+        "Spanish",
+        "Texas",
+        "Toltecs",
+        "Uncle",
+        "Washington",
+        "York",
+        "Zone"
+      ],
+      "surnames": [
+        "Bosworth",
+        "Cameron",
+        "Fenton",
+        "Fremont",
+        "Grande",
+        "Howard",
+        "Jane",
+        "Jose",
+        "Nestor",
+        "Sam",
+        "Scoby",
+        "Shaw",
+        "Stevens",
+        "Tolford"
+      ],
+      "counts": {
+        "Fremont": 323,
+        "Nestor": 321,
+        "Jimmie": 214,
+        "Cameron": 145,
+        "Frank": 143,
+        "Shaw": 63,
+        "York": 59,
+        "Mexico": 53,
+        "Scoby": 50,
+        "Miguel": 44,
+        "Mexican": 37,
+        "Rio": 35,
+        "Grande": 35,
+        "Tolford": 33,
+        "Gordon": 29,
+        "Ned": 28,
+        "Felix": 24,
+        "Fenton": 22,
+        "Scouts": 20,
+        "George": 17,
+        "Harry": 17,
+        "Jim": 14,
+        "Peter": 14,
+        "Stevens": 13,
+        "Washington": 12,
+        "Englishman": 11,
+        "Spanish": 10,
+        "Uncle": 9,
+        "Sam": 9,
+        "Jack": 9,
+        "English": 9,
+        "Texas": 8,
+        "San": 8,
+        "Jose": 8,
+        "Besides": 8,
+        "Aunty": 7,
+        "Paso": 7,
+        "Scanlon": 7,
+        "Glen": 6,
+        "Bowery": 6
+      }
+    }
+  },
+  "cross": {
+    "opening": [
+      "planning",
+      "vacation"
+    ],
+    "closing": [
+      "what",
+      "they",
+      "did",
+      "and",
+      "what",
+      "they",
+      "saw",
+      "and",
+      "heard",
+      "in",
+      "the",
+      "canal",
+      "zone",
+      "will",
+      "be",
+      "told",
+      "in",
+      "the",
+      "forthcoming",
+      "book",
+      "of",
+      "this",
+      "series",
+      "entitled",
+      "boy",
+      "scouts",
+      "in",
+      "the",
+      "canal",
+      "zone",
+      "or",
+      "plot",
+      "against",
+      "uncle",
+      "sam"
+    ],
+    "chapter_first_sentences": [
+      [
+        "planning",
+        "vacation"
+      ],
+      [
+        "member",
+        "of",
+        "the",
+        "wolf",
+        "patrol"
+      ],
+      [
+        "the",
+        "wolf",
+        "advises",
+        "flight"
+      ],
+      [
+        "the",
+        "wolf",
+        "talks",
+        "in",
+        "code"
+      ],
+      [
+        "the",
+        "wolf",
+        "in",
+        "the",
+        "bear's",
+        "bed"
+      ],
+      [
+        "two",
+        "black",
+        "bears",
+        "in",
+        "trouble"
+      ],
+      [
+        "signals",
+        "on",
+        "the",
+        "mountain"
+      ],
+      [
+        "strange",
+        "disappearance"
+      ],
+      [
+        "about",
+        "the",
+        "third",
+        "suspect"
+      ],
+      [
+        "the",
+        "wolf",
+        "meets",
+        "panther"
+      ],
+      [
+        "black",
+        "bear",
+        "and",
+        "diplomat"
+      ],
+      [
+        "wolf",
+        "and",
+        "panther",
+        "after",
+        "bear"
+      ],
+      [
+        "captured",
+        "the",
+        "wrong",
+        "boy"
+      ],
+      [
+        "the",
+        "case",
+        "is",
+        "well",
+        "stated"
+      ],
+      [
+        "accusing",
+        "each",
+        "other"
+      ],
+      [
+        "wolves",
+        "on",
+        "the",
+        "mountain"
+      ],
+      [
+        "plenty",
+        "of",
+        "black",
+        "bears"
+      ],
+      [
+        "fremont",
+        "and",
+        "the",
+        "renegade"
+      ],
+      [
+        "what",
+        "was",
+        "found",
+        "underground"
+      ],
+      [
+        "black",
+        "bears",
+        "to",
+        "the",
+        "rescue"
+      ],
+      [
+        "wolves",
+        "becoming",
+        "dangerous"
+      ],
+      [
+        "the",
+        "call",
+        "in",
+        "the",
+        "rain"
+      ],
+      [
+        "some",
+        "unexpected",
+        "arrivals"
+      ],
+      [
+        "the",
+        "story",
+        "of",
+        "the",
+        "crime"
+      ],
+      [
+        "ready",
+        "for",
+        "the",
+        "canal",
+        "zone"
+      ]
+    ]
+  },
+  "unmeasured": []
+}

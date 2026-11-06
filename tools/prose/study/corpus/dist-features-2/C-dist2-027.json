@@ -1,0 +1,323 @@
+{
+  "book": "C-dist2-027",
+  "path": "C:\\Users\\screa\\incunabula\\tools\\prose\\study\\books\\C-dist2-027",
+  "words": 33011,
+  "raw_words": 33055,
+  "header_words_removed": 44,
+  "chapters": 22,
+  "extractor": {
+    "script": "study/extract/features.py",
+    "version": "2"
+  },
+  "features": {
+    "lex_ai_term_hits": 1,
+    "lex_ai_terms_per_1k": 0.030293,
+    "lex_ly_adverbs_per_1k": 10.541941,
+    "lex_hedges_per_1k": 1.060253,
+    "lex_opener_and_share": 0.010951,
+    "lex_opener_but_share": 0.019597,
+    "lex_opener_as_share": 0.003458,
+    "lex_opener_when_share": 0.004035,
+    "lex_opener_suddenly_share": 0.001153,
+    "lex_opener_top1_share": 0.063977,
+    "lex_ttr_rarefied": 0.440848,
+    "syn_sent_words_mean": 19.026513,
+    "syn_sent_words_median": 15,
+    "syn_sent_words_sd": 18.472548,
+    "syn_short_sent_share": 0.167723,
+    "syn_long_sent_share": 0.131988,
+    "syn_em_dash_per_1k": 15.297931,
+    "syn_semicolon_per_1k": 13.450062,
+    "syn_colon_per_1k": 1.060253,
+    "syn_exclamation_per_1k": 9.118173,
+    "syn_ellipsis_per_1k": 0.0,
+    "syn_dialogue_share": 0.284844,
+    "syn_correlative_per_1k": 0.090879,
+    "syn_passive_proxy_per_1k": 7.33089,
+    "syn_commas_per_sentence": 1.596542,
+    "syn_para_words_mean": 36.883799,
+    "syn_para_cv": 122.531384,
+    "syn_oneline_para_share": 0.461453,
+    "syn_tag_said_share": 0.564885,
+    "syn_tag_breath_share": 0.068702,
+    "syn_chapter_sentlen_spread": 70.345736,
+    "str_chapters": 22,
+    "str_words": 33011,
+    "str_chapter_cv": 47.264539,
+    "str_chapter_min": 417,
+    "str_chapter_max": 3760,
+    "str_open_wake_share": 0.0,
+    "str_open_weather_share": 0.0,
+    "str_open_time_share": 0.0,
+    "str_open_habitual_share": 0.0,
+    "str_coda_share": 0.0,
+    "str_frame_max_share": 0.0,
+    "str_ngram_repeat_per_1k": 0.666445,
+    "str_scene_mark_per_1k": 0.151465,
+    "str_arc_turns": 0.632294,
+    "str_arc_range": 0.059786,
+    "nme_distinct_first": 42,
+    "nme_distinct_surnames": 1,
+    "nme_names_per_1k": 1.302596,
+    "nme_ssa_top20_share": 0.0,
+    "nme_popular_list_share": 0.02381,
+    "nme_reference_unlisted_share": 0.97619,
+    "nme_syllables_mean": 2.809524,
+    "nme_a_endings_share": 0.190476,
+    "nme_alliterative_pairs": 0,
+    "nme_shared_surname_share": 0.0
+  },
+  "details": {
+    "ai_term_hits": {
+      "profound": 1
+    },
+    "opener_top5": [
+      [
+        "The",
+        111
+      ],
+      [
+        "I",
+        100
+      ],
+      [
+        "Abellino",
+        64
+      ],
+      [
+        "He",
+        56
+      ],
+      [
+        "Rosabella",
+        52
+      ]
+    ],
+    "dialogue_turns": 420,
+    "tagged_turns": 131,
+    "weather_openings": [],
+    "frame_share": {
+      "stall": 0.0,
+      "frame-opener": 0.0,
+      "coda-link": 0.0,
+      "refrain": 0.0,
+      "antithesis": 0.0
+    },
+    "names": {
+      "full": [
+        "Cardinal Gonzaga"
+      ],
+      "firsts": [
+        "Abellino",
+        "Andreas",
+        "Buonarotti",
+        "Camilla",
+        "Cardinal",
+        "Cinthia",
+        "College",
+        "Conari",
+        "Contarino",
+        "Corfu",
+        "Doge",
+        "Dolabella",
+        "Elysium",
+        "Falieri",
+        "Flodoardo",
+        "Florence",
+        "Florentine",
+        "Highness",
+        "Lomellino",
+        "Manfrone",
+        "Matteo",
+        "Memmo",
+        "Monaldeschi",
+        "Naples",
+        "Neapolitan",
+        "Olympia",
+        "Paradise",
+        "Parozzi",
+        "Pietrino",
+        "Procurator",
+        "Republic",
+        "Rosabella",
+        "Rosalvo",
+        "Satan",
+        "Signoria",
+        "State",
+        "Struzza",
+        "Thomaso",
+        "Valeria",
+        "Venetian",
+        "Venetians",
+        "Venice"
+      ],
+      "surnames": [
+        "Gonzaga"
+      ],
+      "counts": {
+        "Rosabella": 200,
+        "Abellino": 197,
+        "Flodoardo": 169,
+        "Doge": 124,
+        "Venice": 105,
+        "Andreas": 73,
+        "Matteo": 37,
+        "Republic": 36,
+        "Lomellino": 35,
+        "Parozzi": 27,
+        "Camilla": 27,
+        "Contarino": 25,
+        "Conari": 23,
+        "Cinthia": 21,
+        "Cardinal": 20,
+        "Venetian": 17,
+        "Venetians": 17,
+        "Florentine": 16,
+        "Manfrone": 15,
+        "Falieri": 14,
+        "Rosalvo": 13,
+        "Memmo": 13,
+        "Gonzaga": 12,
+        "Monaldeschi": 11,
+        "Valeria": 9,
+        "Thomaso": 8,
+        "State": 8,
+        "Corfu": 8,
+        "Naples": 6,
+        "Olympia": 6,
+        "Florence": 6,
+        "Pietrino": 5,
+        "Dolabella": 4,
+        "Highness": 4,
+        "Elysium": 4,
+        "Procurator": 4,
+        "Buonarotti": 3,
+        "Signoria": 3,
+        "Satan": 3,
+        "Struzza": 3
+      }
+    }
+  },
+  "cross": {
+    "opening": [
+      "venice"
+    ],
+    "closing": [
+      "in",
+      "the",
+      "meanwhile",
+      "gentlemen",
+      "and",
+      "ladies",
+      "good",
+      "night",
+      "and",
+      "pleasant",
+      "dreams",
+      "attend",
+      "you"
+    ],
+    "chapter_first_sentences": [
+      [
+        "venice"
+      ],
+      [
+        "the",
+        "banditti"
+      ],
+      [
+        "the",
+        "trial",
+        "of",
+        "strength"
+      ],
+      [
+        "the",
+        "daggers"
+      ],
+      [
+        "solitude"
+      ],
+      [
+        "rosabella",
+        "the",
+        "doge",
+        "lovely",
+        "niece"
+      ],
+      [
+        "the",
+        "bravo",
+        "bride"
+      ],
+      [
+        "the",
+        "conspiracy"
+      ],
+      [
+        "cinthia",
+        "dwelling"
+      ],
+      [
+        "the",
+        "birthday"
+      ],
+      [
+        "the",
+        "florentine",
+        "stranger"
+      ],
+      [
+        "more",
+        "confusion"
+      ],
+      [
+        "the",
+        "violet"
+      ],
+      [
+        "the",
+        "assassin"
+      ],
+      [
+        "the",
+        "two",
+        "greatest",
+        "men",
+        "in",
+        "venice"
+      ],
+      [
+        "the",
+        "lovers"
+      ],
+      [
+        "dangerous",
+        "promise"
+      ],
+      [
+        "the",
+        "midnight",
+        "meeting"
+      ],
+      [
+        "the",
+        "decisive",
+        "day"
+      ],
+      [
+        "the",
+        "clock",
+        "strikes",
+        "five"
+      ],
+      [
+        "apparitions"
+      ],
+      [
+        "conclusion"
+      ]
+    ]
+  },
+  "unmeasured": []
+}

@@ -281,6 +281,28 @@ counts.
   Kalie for review before anything ships (§10). Nothing becomes a pipeline check on
   statistics alone.
 
+### C-dist-2, the second human stratum
+
+Built beside the baseline, never over it: slots `C-dist2-NNN`, its own source list, log and
+feature tree. C-dist stays the shipped threshold set (`SOURCE_POLICY.md` §4).
+
+```bash
+python corpus/fetch-dist.py --select --target 206 \
+    --skip-log corpus/dist-fetch-log.tsv --skip-rejects corpus/dist-rejects.tsv \
+    --out-source corpus/dist-source-2.tsv --slot-prefix C-dist2-
+python corpus/fetch-dist.py --fetch \
+    --source corpus/dist-source-2.tsv --log corpus/dist-fetch-log-2.tsv
+python corpus/fetch-dist.py --check --log corpus/dist-fetch-log-2.tsv
+python extract/features.py --all books --out /tmp/all      # or loop the C-dist2 dirs
+python analysis/cdist.py --features corpus/dist-features-2 \
+    --out corpus/dist-features-2
+```
+
+Expect ~8% length rejects between selection and fetch: select past the target. To re-score the
+residual table against the new stratum, point `analyze.py` at a directory holding Arm A and B
+from `features-v2/` plus the `C-dist2-*` JSONs, and compare `features.csv` band edges — do not
+pool the two human strata.
+
 ## 11. Stop and ask
 
 Stop the run, keep every file, and report — do not improvise — if: the drafting model

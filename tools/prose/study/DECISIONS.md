@@ -551,3 +551,34 @@ openers are a machine-prose habit, not a B-amendment effect. Row 2 barely moves 
 Arm B median 0.163 to 0.168) — the window defect was real and removing it does not explain the
 breath-tag gap. Full numbers in `RESIDUAL_TELLS_MEMO.md`; the scoring rule itself is unchanged,
 so the two readings remain comparable.
+
+## C-dist-2 — a second public-domain stratum (2026-11-06)
+
+**Why.** Every threshold in the report is a quantile of 87 usable human books, and several
+residual rows clear their band by a hundredth of a share. A band that moves when the human
+sample doubles is not a threshold, it is a sample. The question this stratum answers is
+whether the twelve are stable under more of the same kind of human prose — not whether the
+baseline is era-representative, which it still is not (SOURCE_POLICY.md §1).
+
+**How it was built.** The same selection rule (`corpus/fetch-dist.py` rules 1–4), the same
+catalogue, the same deterministic round-robin, with the 109 baseline ids and the 11
+known-rejected ids excluded before selection. 206 books selected, 188 fetched after 18 length
+rejections, 167 under the 120,000-word filter. Zero author overlap with the baseline by
+construction, since the one-work-per-author rule dedupes before selection. Slots are
+`C-dist2-NNN`, source list `corpus/dist-source-2.tsv`, log `corpus/dist-fetch-log-2.tsv`,
+features `corpus/dist-features-2/`. The fetcher gained `--out-source`, `--source`, `--log`,
+`--skip-log`, `--skip-rejects` and `--slot-prefix` so a second stratum cannot overwrite the
+first; defaults are unchanged.
+
+**What it keeps.** C-dist remains the shipped threshold set and is never re-fetched, re-mixed
+or re-selected (SOURCE_POLICY.md §4). C-dist-2 is derived through the v2 extractor, reported
+beside it, and never pooled: a shipped threshold quoted from the old baseline stays quotable,
+and a row that changes its mind at n=167 is recorded as band-fragile rather than correct on
+the bigger number.
+
+**What it cost.** Ten of the twelve residual rows keep both band and test, including the two
+corrected features (weather 0.000..0.086, breath 0.000..0.108; effects 3.07 and 3.14).
+`lex_ai_terms_per_1k`, a primary endpoint, falls inside the wider band and is no longer a
+residual tell; `syn_long_sent_share` fails the permutation test at p = 0.0585; and
+`str_scene_mark_per_1k` enters by one hundredth. Numbers in `RESIDUAL_TELLS_MEMO.md`
+§"Baseline check". The primary analysis on C-dist is unchanged.

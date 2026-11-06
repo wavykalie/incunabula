@@ -40,6 +40,16 @@ usage:
     python corpus/fetch-dist.py --select [--target 120]
     python corpus/fetch-dist.py --fetch [--limit N]
     python corpus/fetch-dist.py --check
+
+A second stratum is built beside the baseline, never over it: `--out-source`, `--source`,
+`--log` and `--slot-prefix` keep C-dist's files and slots untouched. The selection is the same
+deterministic list, optionally with the books already fetched removed by gutenberg id:
+
+    python corpus/fetch-dist.py --select --target 300 \
+        --skip-log corpus/dist-fetch-log.tsv \
+        --out-source corpus/dist-source-2.tsv --slot-prefix C-dist2-
+    python corpus/fetch-dist.py --fetch \
+        --source corpus/dist-source-2.tsv --log corpus/dist-fetch-log-2.tsv
 """
 
 import argparse
@@ -218,14 +228,15 @@ def select(cands, target):
     return taken
 
 
-def write_source(chosen, path=SOURCE):
+def write_source(chosen, path=SOURCE, prefix="C-dist-"):
     cols = ("slots", "gutenberg_id", "author", "title", "era_proxy", "birth_year",
             "genre_bucket", "subjects", "url")
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
         w = csv.DictWriter(fh, cols, delimiter="\t", extrasaction="ignore")
         w.writeheader()
         for i, c in enumerate(chosen, 1):
-            row = dict(c, slots=f"C-dist-{i:03d}",
+            row = dict(c, slots=f"{prefix}{i:03d}",
                        url=TEXT_URL.format(id=c["gutenberg_id"]))
             w.writerow(row)
     return path
@@ -387,15 +398,24 @@ def main(argv=None):
     except (AttributeError, OSError):
         pass
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--select", action="store_true", help="write dist-source.tsv")
+    ap.add_argument("--select", action="store_true", help="write the source list")
     ap.add_argument("--target", type=int, default=120)
     ap.add_argument("--fetch", action="store_true", help="download and file the corpus")
     ap.add_argument("--limit", type=int, default=0, help="fetch at most N (smoke test)")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--out-source", default=SOURCE, help="where --select writes (default: %(default)s)")
+    ap.add_argument("--source", default=SOURCE, help="which list --fetch reads")
+    ap.add_argument("--log", default=LOG, help="fetch log (default: %(default)s)")
+    ap.add_argument("--skip-log", default=None,
+                    help="a fetch log whose gutenberg ids --select must leave out")
+    ap.add_argument("--skip-rejects", default=None,
+                    help="a reject log whose gutenberg ids --select must leave out")
+    ap.add_argument("--slot-prefix", default="C-dist-",
+                    help="slot id prefix, e.g. C-dist2- for a second stratum")
     args = ap.parse_args(argv)
 
     if args.check:
-        return check()
+        return check(log=args.log)
 
     if args.select:
         if not os.path.exists(CATALOG):
@@ -404,10 +424,19 @@ def main(argv=None):
         with open(CATALOG, encoding="utf-8", errors="replace", newline="") as fh:
             rows = list(csv.DictReader(fh))
         cands = candidates(rows)
+        # Excluded before selection, not after: a book already fetched, or already rejected
+        # on length, must not consume a slot and leave the stratum one book short.
+        for path, label in ((args.skip_log, "already fetched"),
+                            (args.skip_rejects, "known-rejected")):
+            if path and os.path.exists(path):
+                skip = {r["gutenberg_id"] for r in read_source(path)}
+                before = len(cands)
+                cands = [c for c in cands if c["gutenberg_id"] not in skip]
+                print(f"{before - len(cands)} {label} id(s) left out")
         chosen = select(cands, args.target)
         if len(chosen) < args.target:
             print(f"WARN only {len(chosen)} of {args.target} slots could be filled")
-        path = write_source(chosen)
+        path = write_source(chosen, args.out_source, args.slot_prefix)
         eras = Counter(c["era_proxy"] for c in chosen)
         genres = Counter(c["genre_bucket"] for c in chosen)
         print(f"{len(rows)} catalogue row(s) -> {len(cands)} eligible -> "
@@ -418,10 +447,10 @@ def main(argv=None):
         return 0
 
     if args.fetch:
-        rows = read_source()
+        rows = read_source(args.source)
         if args.limit:
             rows = rows[:args.limit]
-        done = {r["slots"] for r in (read_source(LOG) if os.path.exists(LOG) else [])}
+        done = {r["slots"] for r in (read_source(args.log) if os.path.exists(args.log) else [])}
         ok = skip = fail = 0
         for row in rows:
             if row["slots"] in done:
@@ -437,7 +466,7 @@ def main(argv=None):
                     append_reject(row, why)
                 fail += 1
                 continue
-            append_log(rec)
+            append_log(rec, args.log)
             ok += 1
             print(f"  {rec['slots']:<12} {rec['gutenberg_id']:>6}  "
                   f"{rec['raw_words']:>7}w {rec['chapters']:>3}ch  {rec['title'][:52]}")
