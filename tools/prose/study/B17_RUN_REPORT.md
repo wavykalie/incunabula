@@ -76,9 +76,42 @@ refuses to advance on anything but 0. Final state: chain CLEAR through phase 6,
    record. Its READY verdict on the study was obtained before the cohort amendment and
    does not extend to this row.
 
-## 5. What this run does not show
+## 5. How the row is kept out of the pooled analysis
 
-It says nothing about whether the pipeline produces good books. Every gate here is
+The pooled comparison is produced by `analysis/analyze.py` at the study root. B-17 is a
+`B-` id, so the tool would count it as a sixteenth pipeline book and average a
+self-drafted text into the fifteen Flash-high pairs. It is therefore excluded by id in
+the documented invocation:
+
+```bash
+python extract/features.py --all books --out features
+python analysis/analyze.py --features features --manifest books/manifest.csv \
+    --out analysis/run --max-words 120000 --exclude-books "V,W,B-17"
+```
+
+That run reports `books A=20 B=15 C=87` and prints `excluded 1 book(s) by id: B-17`, so
+the exclusion is visible in the report rather than being a number a reader has to trust.
+B-17's own features are in `features/B-17.json` and its row is in the manifest; it is
+reported here, not in the primary distributions or the pairing.
+
+**The voice arm did not run, and this is a gap in the corpus, not in the tool.**
+`analysis/voices.py` compares `B-NNV` and `B-NNW` twins against their `B-NN` parents. No
+book in this study was drafted with a voice suffix, so there are no twins to compare and
+the script exits 2 with a message that names Arm C as the cause. That message is wrong —
+Arm C has 109 books in `features/` — and the real cause is the missing voice books. I did
+not edit the script's wording mid-study, because a message is not a measurement and the
+honest record is the one that says the arm has no corpus.
+
+One caption *was* corrected before the analysis was committed. `analyze.py` printed
+"these are the voice-sensitivity books" over any `--exclude-books` list, which would have
+described B-17 as a voice twin in the committed report. The note now names the voice books
+as one class and leaves every other excluded id to its own run report. No metric,
+threshold, corpus or comparison changed; the caption is the only edit.
+
+## 6. What this run does not show
+
+It says nothing about whether the pipeline produces good books, and it says nothing about
+voice sensitivity, because the voice twins that arm needs were never drafted. Every gate here is
 mechanical; `run-phases` states plainly that a CLEAR covers the gates and never the human
 column. It says nothing about the Flash-high comparison — that comparison has no B-17 in
 it. And it says nothing about reproducibility: a second `B-deepseek` run would be a

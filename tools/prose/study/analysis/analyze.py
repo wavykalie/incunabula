@@ -420,9 +420,10 @@ def write_outputs(books, rows, cross, outdir, args):
             f"The long-form stratum is exploratory and is never pooled with the primary "
             f"pairs (`DECISIONS.md` §2).\n")
     if getattr(args, "exclude_books", ""):
-        add(f"> Excluded by id: `{args.exclude_books}`. These are the voice-sensitivity "
-            f"books, compared to their own twins separately and never pooled into the "
-            f"primary distributions or pairing (`DECISIONS.md` §3).\n")
+        add(f"> Excluded by id: `{args.exclude_books}`. Voice-sensitivity books are "
+            f"compared to their own twins separately (`DECISIONS.md` §3); every other "
+            f"excluded id is excluded for the reason recorded in that book's run report. "
+            f"None are pooled into the primary distributions or pairing.\n")
     if n["C"] < 30:
         add(f"> **Arm C is n={n['C']}.** Thresholds derived from fewer than ~30 human books "
             f"are unstable and are not the basis for a scanner check "
