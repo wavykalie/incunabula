@@ -4,6 +4,10 @@ From `analysis/run/report.md`, run of 2026-11-06: Arm B (15 Flash-high books) ag
 (87 human books, after the 120,000-word filter). B-17 is not in these numbers — it is
 `B-deepseek` and held out of the pooled comparison.
 
+Rows 1 and 2 are read from the corrected extractor (`analysis/run-v2/report.md`, same books and
+same flags); every other row is unchanged from the v1 run. The correction and its reason are
+`DECISIONS.md` §"Extractor v2".
+
 A residual tell is a mechanical feature where the Arm B median sits outside the central 80%
 of Arm C, at least 0.5 sdC away, with a permutation p under 0.05. Ranked by effect, which is
 `|median_B − median_C| / sdC`: one unit means the pipeline sits one human-standard-deviation
@@ -13,8 +17,8 @@ from the human middle.
 
 | # | feature | family | effect | B med | C band | books outside | pairs toward human | replication | len rho |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | `str_open_weather_share` | structure | 4.84 | 0.175 | 0.000..0.083 | 12/15 | 8/15 | no | +0.04 |
-| 2 | `syn_tag_breath_share` | syntax | 3.72 | 0.163 | 0.002..0.090 | 11/15 | 1/15 | no | +0.14 |
+| 1 | `str_open_weather_share` | structure | 3.51 | 0.100 | 0.000..0.085 | 9/15 | 12/15 | no | +0.12 |
+| 2 | `syn_tag_breath_share` | syntax | 3.62 | 0.168 | 0.000..0.107 | 11/15 | 3/15 | no | +0.19 |
 | 3 | `lex_ttr_rarefied` | lexical | 2.86 | 0.506 | 0.383..0.464 | 15/15 | 0/15 | **yes** | −0.02 |
 | 4 | `lex_opener_top1_share` | lexical | 2.48 | 0.183 | 0.075..0.166 | 10/15 | 4/15 | no | −0.11 |
 | 5 | `lex_hedges_per_1k` | lexical | 2.00 | 0.090 | 0.820..2.434 | 15/15 | 9/15 | no | +0.16 |
@@ -33,19 +37,21 @@ chapters will not find the thing that moved.
 
 ## What to check, row by row
 
-**1. Weather openers — the strongest and most book-like.** 12 of 15 books open chapters on
-weather or time-of-day far more often than humans: B-07 (0.275), B-08 (0.250), B-05 (0.225)
-against a human band topping out at 0.083 and a human median of 0.000. Check whether this is
-a chapter-opening reflex ("the rain had not stopped", "morning came") or the premises'
-setting doing the work. Read the first paragraph of ten chapters across B-07 and B-08 and
-count how many start on sky, light or hour. If the count matches the feature, it is a real
-habit and a good candidate for a check.
+**1. Weather openers — the weaker of the two once the lexicon is corrected.** Nine of fifteen
+books sit above the human band top of 0.085: B-10 (0.175), B-02, B-05 and B-08 (0.150), B-06,
+B-07 and B-12 (0.125). But Arm A's median is 0.112 against Arm B's 0.100, and 12 of 20 naive
+books clear the same top. After the correction this is a machine-prose habit that both arms
+share, not something the B amendment added; v1's 4.84 was measuring interior temperature as
+much as sky. The row stays in the twelve because the rule never tests Arm A. As a scanner
+check it would flag naive and pipeline books alike; as a research row the question it leaves
+is why both machine arms reach for weather first.
 
-**2. Breath tags.** B sits at twice the top of the human band, and in 14 of 15 premise pairs
-Arm A was closer to the human middle than Arm B was — the pipeline made this worse, it did
-not merely fail to fix it. Worst: B-09 (0.228), B-07 (0.183), B-05 (0.182). Check that the
-extractor is counting dialogue tags ("she let out a breath", "he breathed") and not literal
-breathing in action. If it is tags, this is the clearest new tell in the set.
+**2. Breath tags — the clearest new tell in the set, and it survives the corrected window.**
+B's median is 0.168 against a band top of 0.107, and only 3 of 15 premise pairs moved toward
+the human middle: the pipeline made this worse, it did not merely fail to fix it. Worst: B-09
+(0.208), B-05 (0.191), B-03 (0.187), B-10 (0.186). The v2 window removed 2,657 borrowed tagged
+turns and 317 breath tags without moving the arm medians — the habit is whisper and murmur as
+the default said-bookism, not a counting artifact.
 
 **3. Rarefied vocabulary — replication row, do not act yet.** All 15 books sit above the
 band, in every one of 15 pairs. But this is a feature the repo has measured before as a null
@@ -107,25 +113,42 @@ baseline measured on C-dist,a threshold derived from that corpus, a false-positi
 ## Checks run on the matched text (2026-11-06)
 
 Three rows were cheap enough to settle by reading what the regex actually matched rather than
-by another analysis pass. The extractor was not changed and no feature was re-measured; these
-are readings of the frozen features against the filed text.
+by another analysis pass. For two of them the reading found a defect in the extractor, which
+was corrected as v2 and re-measured on all 145 books; v1 is preserved in `features/`, v2 in
+`features-v2/`, and the numbers below are v2 unless a sentence says v1.
 
-**Row 1, weather openers — a real habit, and not one Arm B introduced.** Every firing in the
-fifteen primary B books was printed and read: 97 chapter openings, about a fifth of which are
-not weather. The false positives are one consistent class — object temperature
-and interior heating ("the cold against the flat of Tess's thumb", B-05 ch1; "a cold ceramic
-mug", B-12 ch8; "cold sweat", B-11 ch24; the woodstove's "pulsing crimson heat", B-05 ch21),
-the proper noun *Cold Repository* (B-07 ch11 and ch12, two counts for one place name), and "a
-choking cloud" of silt (B-15 ch15). B-09 loses four of its nine firings to this class. The
-other four fifths are genuine scene-setting weather, often the first thing the chapter says:
-"The rain began at midnight" (B-07 ch17), "The first autumn frost fell from the gray sky"
-(B-08 ch10), "At twilight, the snow began to fall over Antwerp" (B-09 ch38).
+**Row 1, weather openers — half weather, half interior temperature.** All 97 v1 firings in the
+fifteen primary books were printed and read; 59 survive the corrected lexicon. Of the 46 that
+fall out, 27 are plainly not weather: object and body temperature ("the cold against the flat
+of Tess's thumb", B-05 ch1; "a cold ceramic mug", B-12 ch8; "cold sweat", B-11 ch24), interior
+heating (the woodstove's "pulsing crimson heat", B-05 ch21; "steam heat", B-06 ch17), the
+proper noun *Cold Repository* (B-07 ch11 and ch12 — two counts for one place name) and "a
+choking cloud" of silt (B-15 ch15). A further 18 are ambient temperature or bare `sun` ("the
+attic garret was cold enough to freeze water in the washbasin", B-07 ch5; "the morning sun
+streamed through the south-facing casement windows", B-05 ch38): a real descriptive habit, but
+temperature and light rather than weather. One is a landscape `sun` (B-02 ch37). So v1 was not
+four fifths weather; a third of its firings were a different habit wearing the same words.
 
-So the feature measures a real textual habit. What it does not measure is an Arm B effect:
-Arm A's median is 0.152 with 17 of 20 books outside the same band; Arm B's is 0.175 with 12
-of 15. The 4.84 effect is a distance from the human corpus that the baseline arm already has.
-Row 1 belongs in a list of pipeline tells, not in a list of things the B amendment caused —
-the memo's "8/15 A outside" column was the hint.
+The corrected lexicon:
+
+```python
+WEATHER = re.compile(r"\b(?:rain(?:ed|ing|s|y)?|snow(?:ed|ing|s|y)?|storm(?:s|ed|ing|y)?|"
+                     r"fog(?:s|gy)?|mist(?:s|y)?|frost(?:s|y)?|thunder(?:s|ed|ing|ous)?|"
+                     r"lightning|hail(?:ed|ing|s)?|sleet|drizzle|blizzard|gale(?:s)?|"
+                     r"downpour|squall(?:s)?|overcast|cloudy|sunlight|sunshine|"
+                     r"wind(?:s|y)?|clouds)\b", re.I)
+```
+
+with one rule beside it: a capitalised match counts only as the sentence's first word, which
+drops *Cold Repository* without a list of names. `heat`, `cold`, bare `sun` and singular
+`cloud` are gone deliberately — they are the words that matched stethoscopes, kettles and
+metaphors.
+
+Measured on Arm C (87 books, v2): median 0.000, p90 0.085, p95 0.121, maximum 0.222, with 9 of
+87 books above 0.085. Arm A has 12 of 20 above that line and Arm B 9 of 15. The effect does
+not survive as a B-versus-A claim — Arm B's median (0.100) is below Arm A's (0.112) and clears
+the 80% band by 0.015, less than one chapter opening per book (0.59 of 40) — but it survives as
+a machine-prose habit both arms share.
 
 **Time-of-day openers — the feature is not measuring time of day.** `str_open_time_share` is
 a temporal-preposition test (`^(when|at|on|in|by|that|the next|later|after|before|each|every|
@@ -139,23 +162,23 @@ That is a real timestamp-opening habit. It is also entirely an Arm A habit: A's 
 0.186, B's 0.150. There is no B-vs-A difference to explain, which is why the row is not in
 the twelve.
 
-**Row 2, breath tags — real habit, wrong denominator.** The feature counts the breath-family
-speech verbs (whisper, murmur, gasp, sigh, sob, choke, croak, pant) in an 80-character window
-after each closing quote; recomputed on the filed text it reproduces every stored value.
-Across the fifteen primary books: 914 such tags on 6,713 tagged turns, and whisper plus murmur
-are about four fifths of them. Literal breathing is 63 of 914, or 6.9%.
+**Row 2, breath tags — a real habit, and the window defect is not what produced it.** v1
+counted the breath-family speech verbs (whisper, murmur, gasp, sigh, sob, choke, croak, pant)
+in a flat 80-character window after each closing quote; recomputed on the filed text it
+reproduces every stored value. That window ran past the next opening quote: of 6,713 v1
+"tagged turns", 4,056 survive once the window ends at the next quote, and breath tags fall
+from 914 to 597. The borrowed ones belonged to the speaker below — B-09's "Can you breathe?"
+*she demanded* charged "breathe" to the previous line — and a whisper opening the next line
+was counted twice.
 
-Two defects matter more than the label. First, 317 of 914 (35%) are counted against a quote
-after a *second* opening quote has already appeared in the window: the tag belongs to the next
-speaker's line, and sometimes the matched verb is inside that line's speech — B-09's "Can you
-breathe?" *she demanded* counts "breathe" as a tag on the previous quote. Second, the
-remaining literal-breath hits include action beats: "Barnaby sighed", "breathing in the scent
-of chamomile", "allows the sheet to breathe".
-
-The habit is real and large — whisper and murmur as the default said-bookism, B 0.163 against
-A 0.080 and humans 0.031, worst B-09 at 0.228 — but the metric should not become a check
-until its window stops at the next quote. As an observation it is usable; as a rate it is 35%
-noise, and the noise sits in exactly the dialogue exchanges that carry the habit.
+The correction changes the count, not the finding: whisper and murmur remain about four fifths
+of breath tags, B's median rises from 0.163 to 0.168 against a band top of 0.107, the effect
+is 3.62 sdC, 11 of 15 books sit outside the band, and only 3 of 15 premise pairs moved toward
+the human middle. Literal breathing is still a minority of the matches (63 of 914 under v1),
+and action beats ("Barnaby sighed", "allows the sheet to breathe") still count. The habit is
+real and large — whisper and murmur as the default said-bookism — and the rate is now clean
+enough to quote. It is first in the set by effect (3.62 against row 1's 3.51), marginally
+ahead of weather; the numbering is left as filed so the rows keep one set of names.
 
 **Row 8, AI vocabulary — not a hole in the deslop list.** The matched terms for the two worst
 books:

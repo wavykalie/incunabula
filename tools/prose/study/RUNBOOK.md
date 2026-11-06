@@ -251,6 +251,20 @@ python analysis/voices.py --features features --manifest books/manifest.csv \
 python analysis/cdist.py --features corpus/dist-features --out corpus/dist-features
 ```
 
+The extractor is frozen at v1 for every number already reported. The v2 reading corrects two
+features after the matched-text audit (`DECISIONS.md` §"Extractor v2"); it is extracted into
+its own tree and never overwrites v1:
+
+```bash
+python extract/features.py --all books --out features-v2
+python analysis/analyze.py --features features-v2 --manifest books/manifest.csv \
+    --out analysis/run-v2 --max-words 120000 --exclude-books V,W
+```
+
+Quote v1 or v2 by name in any report — the two disagree on
+`str_open_weather_share` (B median 0.175 vs 0.100) and the v2 tree has its own tagged-turn
+counts.
+
 - `--max-words 120000` keeps the 200k long-form stratum out of the primary distributions
   and pairing; report that stratum separately.
 - `--exclude-books V,W` drops the six voice books, which would otherwise inflate Arm B from

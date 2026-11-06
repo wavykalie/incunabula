@@ -1,0 +1,518 @@
+{
+  "book": "C-dist-074",
+  "path": "C:\\Users\\screa\\incunabula\\tools\\prose\\study\\books\\C-dist-074",
+  "words": 36475,
+  "raw_words": 36548,
+  "header_words_removed": 73,
+  "chapters": 36,
+  "extractor": {
+    "script": "study/extract/features.py",
+    "version": "2"
+  },
+  "features": {
+    "lex_ai_term_hits": 1,
+    "lex_ai_terms_per_1k": 0.027416,
+    "lex_ly_adverbs_per_1k": 11.07608,
+    "lex_hedges_per_1k": 0.932145,
+    "lex_opener_and_share": 0.009839,
+    "lex_opener_but_share": 0.030411,
+    "lex_opener_as_share": 0.004472,
+    "lex_opener_when_share": 0.010733,
+    "lex_opener_suddenly_share": 0.0,
+    "lex_opener_top1_share": 0.105546,
+    "lex_ttr_rarefied": 0.4485,
+    "syn_sent_words_mean": 32.625224,
+    "syn_sent_words_median": 24.5,
+    "syn_sent_words_sd": 33.679511,
+    "syn_short_sent_share": 0.136852,
+    "syn_long_sent_share": 0.338104,
+    "syn_em_dash_per_1k": 0.0,
+    "syn_semicolon_per_1k": 12.967786,
+    "syn_colon_per_1k": 8.252228,
+    "syn_exclamation_per_1k": 2.878684,
+    "syn_ellipsis_per_1k": 0.0,
+    "syn_dialogue_share": 0.331158,
+    "syn_correlative_per_1k": 0.13708,
+    "syn_passive_proxy_per_1k": 6.936258,
+    "syn_commas_per_sentence": 2.822898,
+    "syn_para_words_mean": 63.214905,
+    "syn_para_cv": 107.352346,
+    "syn_oneline_para_share": 0.435009,
+    "syn_tag_said_share": 0.778146,
+    "syn_tag_breath_share": 0.009934,
+    "syn_chapter_sentlen_spread": 53.817544,
+    "str_chapters": 36,
+    "str_words": 36475,
+    "str_chapter_cv": 22.520859,
+    "str_chapter_min": 471,
+    "str_chapter_max": 1475,
+    "str_open_wake_share": 0.0,
+    "str_open_weather_share": 0.0,
+    "str_open_time_share": 0.027778,
+    "str_open_habitual_share": 0.027778,
+    "str_coda_share": 0.0,
+    "str_frame_max_share": 0.0,
+    "str_ngram_repeat_per_1k": 0.630569,
+    "str_scene_mark_per_1k": 0.411241,
+    "str_arc_turns": 0.571183,
+    "str_arc_range": 0.051095,
+    "nme_distinct_first": 26,
+    "nme_distinct_surnames": 4,
+    "nme_names_per_1k": 0.822481,
+    "nme_ssa_top20_share": 0.038462,
+    "nme_popular_list_share": 0.076923,
+    "nme_reference_unlisted_share": 0.884615,
+    "nme_syllables_mean": 2.230769,
+    "nme_a_endings_share": 0.115385,
+    "nme_alliterative_pairs": 0,
+    "nme_shared_surname_share": 0.0
+  },
+  "details": {
+    "ai_term_hits": {
+      "profound": 1
+    },
+    "opener_top5": [
+      [
+        "I",
+        118
+      ],
+      [
+        "The",
+        53
+      ],
+      [
+        "Temple",
+        50
+      ],
+      [
+        "He",
+        39
+      ],
+      [
+        "She",
+        37
+      ]
+    ],
+    "dialogue_turns": 589,
+    "tagged_turns": 302,
+    "weather_openings": [],
+    "frame_share": {
+      "stall": 0.0,
+      "frame-opener": 0.0,
+      "coda-link": 0.0,
+      "refrain": 0.0,
+      "antithesis": 0.0
+    },
+    "names": {
+      "full": [
+        "Captain Beauchamp",
+        "Charlotte Temple",
+        "Julia Franklin",
+        "Lucy Eldridge"
+      ],
+      "firsts": [
+        "America",
+        "Belcour",
+        "Blakeney",
+        "Captain",
+        "Charlotte",
+        "Chichester",
+        "Content",
+        "Corydon",
+        "Crayton",
+        "Earl",
+        "England",
+        "Eustatia",
+        "French",
+        "George",
+        "John",
+        "Julia",
+        "Lewis",
+        "Lucy",
+        "Mademoiselle",
+        "Montraville",
+        "Pont",
+        "Portsmouth",
+        "Providence",
+        "Rue",
+        "Weatherby",
+        "York"
+      ],
+      "surnames": [
+        "Beauchamp",
+        "Eldridge",
+        "Franklin",
+        "Temple"
+      ],
+      "counts": {
+        "Charlotte": 258,
+        "Montraville": 132,
+        "Temple": 94,
+        "Belcour": 74,
+        "Mademoiselle": 49,
+        "Beauchamp": 42,
+        "Eldridge": 33,
+        "Crayton": 33,
+        "Julia": 33,
+        "Lucy": 30,
+        "Rue": 27,
+        "Franklin": 23,
+        "York": 21,
+        "Pont": 18,
+        "England": 9,
+        "Portsmouth": 7,
+        "Chichester": 7,
+        "George": 6,
+        "Providence": 6,
+        "Weatherby": 6,
+        "America": 5,
+        "French": 5,
+        "Captain": 5,
+        "Lewis": 5,
+        "Content": 4,
+        "Blakeney": 4,
+        "Earl": 4,
+        "Eustatia": 4,
+        "Corydon": 3,
+        "John": 3,
+        "Familiar": 2,
+        "Countess": 2,
+        "Hymen": 2,
+        "Christian": 2,
+        "Rhode": 2,
+        "Island": 2,
+        "Pho": 1,
+        "Americans": 1,
+        "Arriving": 1,
+        "Argus": 1
+      }
+    }
+  },
+  "cross": {
+    "opening": [
+      "preface"
+    ],
+    "closing": [
+      "he",
+      "gave",
+      "her",
+      "shelter",
+      "that",
+      "night",
+      "beneath",
+      "his",
+      "hospitable",
+      "roof",
+      "and",
+      "the",
+      "next",
+      "day",
+      "got",
+      "her",
+      "admission",
+      "into",
+      "an",
+      "hospital",
+      "where",
+      "having",
+      "lingered",
+      "few",
+      "weeks",
+      "she",
+      "died",
+      "striking",
+      "example",
+      "that",
+      "vice",
+      "however",
+      "prosperous",
+      "in",
+      "the",
+      "beginning",
+      "in",
+      "the",
+      "end",
+      "leads",
+      "only",
+      "to",
+      "misery",
+      "and",
+      "shame"
+    ],
+    "chapter_first_sentences": [
+      [
+        "preface"
+      ],
+      [
+        "boarding",
+        "school"
+      ],
+      [
+        "domestic",
+        "concerns"
+      ],
+      [
+        "unexpected",
+        "misfortunes"
+      ],
+      [
+        "change",
+        "of",
+        "fortune"
+      ],
+      [
+        "such",
+        "things",
+        "are"
+      ],
+      [
+        "an",
+        "intriguing",
+        "teacher"
+      ],
+      [
+        "natural",
+        "sense",
+        "of",
+        "propriety",
+        "inherent",
+        "in",
+        "the",
+        "female",
+        "bosom"
+      ],
+      [
+        "domestic",
+        "pleasures",
+        "planned"
+      ],
+      [
+        "we",
+        "know",
+        "not",
+        "what",
+        "day",
+        "may",
+        "bring",
+        "forth"
+      ],
+      [
+        "when",
+        "we",
+        "have",
+        "excited",
+        "curiosity",
+        "it",
+        "is",
+        "but",
+        "an",
+        "act",
+        "of",
+        "good",
+        "nature",
+        "to",
+        "gratify",
+        "it"
+      ],
+      [
+        "conflict",
+        "of",
+        "love",
+        "and",
+        "duty"
+      ],
+      [
+        "nature's",
+        "last",
+        "best",
+        "gift",
+        "creature",
+        "in",
+        "whom",
+        "excell'd",
+        "whatever",
+        "could",
+        "to",
+        "sight",
+        "or",
+        "thought",
+        "be",
+        "nam'd"
+      ],
+      [
+        "cruel",
+        "disappointment"
+      ],
+      [
+        "maternal",
+        "sorrow"
+      ],
+      [
+        "embarkation"
+      ],
+      [
+        "necessary",
+        "digression"
+      ],
+      [
+        "wedding"
+      ],
+      [
+        "reflections"
+      ],
+      [
+        "mistake",
+        "discovered"
+      ],
+      [
+        "virtue",
+        "never",
+        "appears",
+        "so",
+        "amiable",
+        "as",
+        "when",
+        "reaching",
+        "forth",
+        "her",
+        "hand",
+        "to",
+        "raise",
+        "fallen",
+        "sister"
+      ],
+      [
+        "teach",
+        "me",
+        "to",
+        "feel",
+        "another's",
+        "woe",
+        "to",
+        "hide",
+        "the",
+        "fault",
+        "see",
+        "that",
+        "mercy",
+        "to",
+        "others",
+        "show",
+        "that",
+        "mercy",
+        "show",
+        "to",
+        "me"
+      ],
+      [
+        "sorrows",
+        "of",
+        "the",
+        "heart"
+      ],
+      [
+        "man",
+        "may",
+        "smile",
+        "and",
+        "smile",
+        "and",
+        "be",
+        "villain"
+      ],
+      [
+        "mystery",
+        "developed"
+      ],
+      [
+        "reception",
+        "of",
+        "letter"
+      ],
+      [
+        "what",
+        "might",
+        "be",
+        "expected"
+      ],
+      [
+        "pensive",
+        "she",
+        "mourn'd",
+        "and",
+        "hung",
+        "her",
+        "languid",
+        "head",
+        "like",
+        "fair",
+        "lily",
+        "overcharg'd",
+        "with",
+        "dew"
+      ],
+      [
+        "trifling",
+        "retrospect"
+      ],
+      [
+        "we",
+        "go",
+        "forward",
+        "again"
+      ],
+      [
+        "and",
+        "what",
+        "is",
+        "friendship",
+        "but",
+        "name",
+        "charm",
+        "that",
+        "lulls",
+        "to",
+        "sleep",
+        "shade",
+        "that",
+        "follows",
+        "wealth",
+        "and",
+        "fame",
+        "but",
+        "leaves",
+        "the",
+        "wretch",
+        "to",
+        "weep"
+      ],
+      [
+        "subject",
+        "continued"
+      ],
+      [
+        "reasons",
+        "why",
+        "and",
+        "wherefore"
+      ],
+      [
+        "which",
+        "people",
+        "void",
+        "of",
+        "feeling",
+        "need",
+        "not",
+        "read"
+      ],
+      [
+        "retribution"
+      ],
+      [
+        "conclusion"
+      ]
+    ]
+  },
+  "unmeasured": []
+}

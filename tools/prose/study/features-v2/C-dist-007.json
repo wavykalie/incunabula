@@ -1,0 +1,428 @@
+{
+  "book": "C-dist-007",
+  "path": "C:\\Users\\screa\\incunabula\\tools\\prose\\study\\books\\C-dist-007",
+  "words": 47133,
+  "raw_words": 47175,
+  "header_words_removed": 42,
+  "chapters": 21,
+  "extractor": {
+    "script": "study/extract/features.py",
+    "version": "2"
+  },
+  "features": {
+    "lex_ai_term_hits": 4,
+    "lex_ai_terms_per_1k": 0.084866,
+    "lex_ly_adverbs_per_1k": 8.635139,
+    "lex_hedges_per_1k": 1.676108,
+    "lex_opener_and_share": 0.004861,
+    "lex_opener_but_share": 0.029165,
+    "lex_opener_as_share": 0.007954,
+    "lex_opener_when_share": 0.008838,
+    "lex_opener_suddenly_share": 0.0,
+    "lex_opener_top1_share": 0.122846,
+    "lex_ttr_rarefied": 0.384766,
+    "syn_sent_words_mean": 20.826779,
+    "syn_sent_words_median": 18,
+    "syn_sent_words_sd": 14.619313,
+    "syn_short_sent_share": 0.111357,
+    "syn_long_sent_share": 0.136103,
+    "syn_em_dash_per_1k": 0.0,
+    "syn_semicolon_per_1k": 11.838839,
+    "syn_colon_per_1k": 0.360681,
+    "syn_exclamation_per_1k": 2.736936,
+    "syn_ellipsis_per_1k": 0.0,
+    "syn_dialogue_share": 0.438992,
+    "syn_correlative_per_1k": 0.021217,
+    "syn_passive_proxy_per_1k": 4.943458,
+    "syn_commas_per_sentence": 1.585506,
+    "syn_para_words_mean": 30.785761,
+    "syn_para_cv": 115.057121,
+    "syn_oneline_para_share": 0.517962,
+    "syn_tag_said_share": 0.686667,
+    "syn_tag_breath_share": 0.053333,
+    "syn_chapter_sentlen_spread": 5.868612,
+    "str_chapters": 21,
+    "str_words": 47133,
+    "str_chapter_cv": 14.10021,
+    "str_chapter_min": 1088,
+    "str_chapter_max": 2912,
+    "str_open_wake_share": 0.0,
+    "str_open_weather_share": 0.0,
+    "str_open_time_share": 0.0,
+    "str_open_habitual_share": 0.0,
+    "str_coda_share": 0.0,
+    "str_frame_max_share": 0.0,
+    "str_ngram_repeat_per_1k": 1.039611,
+    "str_scene_mark_per_1k": 0.297032,
+    "str_arc_turns": 0.583553,
+    "str_arc_range": 0.05484,
+    "nme_distinct_first": 30,
+    "nme_distinct_surnames": 8,
+    "nme_names_per_1k": 0.806229,
+    "nme_ssa_top20_share": 0.0,
+    "nme_popular_list_share": 0.066667,
+    "nme_reference_unlisted_share": 0.933333,
+    "nme_syllables_mean": 1.9,
+    "nme_a_endings_share": 0.033333,
+    "nme_alliterative_pairs": 0,
+    "nme_shared_surname_share": 0.25
+  },
+  "details": {
+    "ai_term_hits": {
+      "testament": 3,
+      "profound": 1
+    },
+    "opener_top5": [
+      [
+        "I",
+        278
+      ],
+      [
+        "She",
+        174
+      ],
+      [
+        "He",
+        99
+      ],
+      [
+        "The",
+        86
+      ],
+      [
+        "It",
+        85
+      ]
+    ],
+    "dialogue_turns": 1359,
+    "tagged_turns": 300,
+    "weather_openings": [],
+    "frame_share": {
+      "stall": 0.0,
+      "frame-opener": 0.0,
+      "coda-link": 0.0,
+      "refrain": 0.0,
+      "antithesis": 0.0
+    },
+    "names": {
+      "full": [
+        "Ann Grippen",
+        "East Indies",
+        "Frederic Augustus",
+        "John Redburn",
+        "Johnny Grippen",
+        "Katy Redburn",
+        "Matthew Guthrie",
+        "Mister Sneed",
+        "South Boston",
+        "Tommy Howard"
+      ],
+      "firsts": [
+        "America",
+        "Ann",
+        "Baltimore",
+        "Bible",
+        "Boo",
+        "Christian",
+        "Christmas",
+        "Colvin",
+        "East",
+        "Freddie",
+        "Frederic",
+        "Gordon",
+        "Grace",
+        "John",
+        "Johnny",
+        "Katy",
+        "Liverpool",
+        "Margaret",
+        "Mary",
+        "Matthew",
+        "Messrs",
+        "Michael",
+        "Mister",
+        "Nay",
+        "Reed",
+        "Runn",
+        "South",
+        "Testament",
+        "Tommy",
+        "Washington"
+      ],
+      "surnames": [
+        "Augustus",
+        "Boston",
+        "Grippen",
+        "Guthrie",
+        "Howard",
+        "Indies",
+        "Redburn",
+        "Sneed"
+      ],
+      "counts": {
+        "Katy": 548,
+        "Redburn": 100,
+        "Gordon": 96,
+        "Ann": 76,
+        "Tommy": 72,
+        "Grace": 55,
+        "Sneed": 53,
+        "Johnny": 51,
+        "Michael": 44,
+        "Howard": 34,
+        "Flynch": 28,
+        "Liverpool": 20,
+        "Grippen": 19,
+        "Colvin": 14,
+        "John": 12,
+        "Messrs": 11,
+        "Boston": 8,
+        "Washington": 7,
+        "America": 6,
+        "Baltimore": 6,
+        "Boo": 6,
+        "Guthrie": 5,
+        "Christian": 4,
+        "Margaret": 4,
+        "Testament": 3,
+        "Bible": 3,
+        "Nay": 3,
+        "Runn": 3,
+        "Reed": 3,
+        "Freddie": 3,
+        "Christmas": 3,
+        "Mary": 3,
+        "South": 2,
+        "Frederic": 2,
+        "Augustus": 2,
+        "Dennis": 2,
+        "Essex": 2,
+        "Matthew": 2,
+        "York": 2,
+        "Alas": 2
+      }
+    }
+  },
+  "cross": {
+    "opening": [
+      "katy",
+      "redburn",
+      "and",
+      "others",
+      "are",
+      "introduced"
+    ],
+    "closing": [
+      "if",
+      "you",
+      "are",
+      "poor",
+      "don't",
+      "be",
+      "too",
+      "proud",
+      "to",
+      "work",
+      "at",
+      "any",
+      "honest",
+      "occupation",
+      "but",
+      "be",
+      "too",
+      "proud",
+      "to",
+      "do",
+      "wrong",
+      "too",
+      "proud",
+      "to",
+      "degrade",
+      "yourself",
+      "in",
+      "your",
+      "own",
+      "eyes",
+      "by",
+      "doing",
+      "mean",
+      "act",
+      "and",
+      "in",
+      "this",
+      "sense",
+      "you",
+      "may",
+      "truly",
+      "be",
+      "poor",
+      "and",
+      "proud"
+    ],
+    "chapter_first_sentences": [
+      [
+        "katy",
+        "redburn",
+        "and",
+        "others",
+        "are",
+        "introduced"
+      ],
+      [
+        "the",
+        "history",
+        "of",
+        "the",
+        "silver",
+        "watch"
+      ],
+      [
+        "katy",
+        "and",
+        "master",
+        "simon",
+        "sneed",
+        "visit",
+        "the",
+        "pawnbroker's",
+        "shop"
+      ],
+      [
+        "katy",
+        "matures",
+        "magnificent",
+        "scheme"
+      ],
+      [
+        "katy",
+        "visits",
+        "mrs"
+      ],
+      [
+        "katy",
+        "prepares",
+        "stock",
+        "of",
+        "merchandise"
+      ],
+      [
+        "katy",
+        "makes",
+        "large",
+        "sale"
+      ],
+      [
+        "katy",
+        "sells",
+        "out",
+        "and",
+        "visits",
+        "the",
+        "mayor"
+      ],
+      [
+        "katy",
+        "talks",
+        "with",
+        "the",
+        "mayor",
+        "and",
+        "recovers",
+        "the",
+        "watch"
+      ],
+      [
+        "katy",
+        "in",
+        "distress",
+        "finds",
+        "champion"
+      ],
+      [
+        "katy",
+        "meets",
+        "with",
+        "extraordinary",
+        "success"
+      ],
+      [
+        "katy",
+        "pays",
+        "her",
+        "debts",
+        "and",
+        "tommy",
+        "goes",
+        "to",
+        "sea"
+      ],
+      [
+        "katy",
+        "employs",
+        "an",
+        "assistant"
+      ],
+      [
+        "master",
+        "simon",
+        "sneed",
+        "makes",
+        "mistake"
+      ],
+      [
+        "katy",
+        "gets",
+        "letter",
+        "from",
+        "liverpool"
+      ],
+      [
+        "ann",
+        "grippen",
+        "plays",
+        "tricks",
+        "upon",
+        "travelers"
+      ],
+      [
+        "the",
+        "sun",
+        "sets",
+        "and",
+        "the",
+        "night",
+        "comes",
+        "on"
+      ],
+      [
+        "katy",
+        "struggles",
+        "bravely",
+        "through",
+        "series",
+        "of",
+        "trials"
+      ],
+      [
+        "katy",
+        "resorts",
+        "to",
+        "loan"
+      ],
+      [
+        "mrs"
+      ],
+      [
+        "katy",
+        "goes",
+        "to",
+        "church",
+        "and",
+        "has",
+        "birthday",
+        "party"
+      ]
+    ]
+  },
+  "unmeasured": []
+}

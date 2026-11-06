@@ -12,6 +12,12 @@ What "frozen" means here: the constants in this file, together with the pre-regi
 feature list in `PREREGISTRATION.md`, are hashed at freeze time. Changing a regex after
 generation is a protocol deviation, not an edit.
 
+VERSION 2 (2026-11-06) is such a deviation, requested and recorded in `DECISIONS.md`: the
+dialogue-tag window now ends at the next opening quote, and the weather lexicography no
+longer counts body/object temperature, interior heating or capitalised proper nouns. The
+v1 values are unchanged in `features/` and reproducible from the commit that wrote them;
+v2 is written to `features-v2/` and never overwrites them.
+
 FEATURE NAMES ENCODE THEIR FAMILY AND THEIR UNIT:
     lex_  lexical      syn_  syntax      str_  structure
     nme_  names        (cross-book rows are computed in analysis/analyze.py)
@@ -61,6 +67,9 @@ nme = _load("check_names", "check-names.py")
 measure = _load("measure", os.path.join("calibration", "measure.py"))
 
 # ------------------------------------------------------------------ registry
+# v2 notes: `syn_tag_breath_share` and `str_open_weather_share` were re-read after the
+# first measurement showed the v1 window and lexicon were counting things they did not
+# define. Both keep their name and their pre-registered direction.
 # direction: "lower" = lower is more human / "higher" = higher is more human /
 #            "twosided" = distance from the human median matters, sign does not /
 #            "none" = a book-level outcome, not a paired feature.
@@ -102,7 +111,8 @@ _f("syn_exclamation_per_1k", "syntax")
 _f("syn_ellipsis_per_1k", "syntax", direction="twosided")
 _f("syn_dialogue_share", "syntax", direction="twosided")
 _f("syn_tag_said_share", "syntax", direction="twosided")
-_f("syn_tag_breath_share", "syntax")
+_f("syn_tag_breath_share", "syntax",
+   note="v2: tag window ends at the next opening quote")
 _f("syn_correlative_per_1k", "syntax", replication=True,
    note="A5 measured on normal English at 0.61/1k in published prose")
 _f("syn_passive_proxy_per_1k", "syntax", note="aux+participle proxy, over-counts adjectival passives")
@@ -119,7 +129,8 @@ _f("str_chapter_cv", "structure", direction="higher", note="U1, chapter length")
 _f("str_chapter_min", "structure", "none")
 _f("str_chapter_max", "structure", "none")
 _f("str_open_wake_share", "structure", direction="twosided")
-_f("str_open_weather_share", "structure", direction="twosided")
+_f("str_open_weather_share", "structure", direction="twosided",
+   note="v2: atmospheric only; no object/body temperature, no proper nouns")
 _f("str_open_time_share", "structure", direction="twosided")
 _f("str_open_habitual_share", "structure", direction="twosided")
 _f("str_coda_share", "structure", direction="lower", note="F1: 0 of 50 published chapters")
@@ -165,8 +176,16 @@ LY = re.compile(r"\b[a-z]{4,}ly\b")
 
 WAKE = re.compile(r"\b(woke|wakes|woken|awoke|awakened|opened (?:her|his|their|its) eyes|"
                   r"lay awake|could not sleep|sat up in bed)\b", re.I)
-WEATHER = re.compile(r"\b(rain|rained|raining|snow|snowed|snowing|sunlight|sun|wind|clouds?|"
-                     r"fog|mist|storm|heat|cold|frost|thunder)\b", re.I)
+# v2, atmospheric only. v1's list carried `heat`, `cold` and bare `sun`/`cloud`, which
+# matched a stethoscope's cold, a woodstove's heat, "Cold Repository" and a metaphor's
+# "choking cloud": about a fifth of its chapter-opening firings were not weather. What is
+# left is precipitation, wind, fog and sky state. A capitalised match that is not the
+# sentence's first word is read as a proper noun and skipped (see `weather_match`).
+WEATHER = re.compile(r"\b(?:rain(?:ed|ing|s|y)?|snow(?:ed|ing|s|y)?|storm(?:s|ed|ing|y)?|"
+                     r"fog(?:s|gy)?|mist(?:s|y)?|frost(?:s|y)?|thunder(?:s|ed|ing|ous)?|"
+                     r"lightning|hail(?:ed|ing|s)?|sleet|drizzle|blizzard|gale(?:s)?|"
+                     r"downpour|squall(?:s)?|overcast|cloudy|sunlight|sunshine|"
+                     r"wind(?:s|y)?|clouds)\b", re.I)
 TIME_OPENER = re.compile(r"^(?:when|at|on|in|by|that|the next|later|after|before|each|"
                          r"every|it was|for)\b", re.I)
 HABITUAL = re.compile(r"\b(always|never|every|used to|would)\b", re.I)
@@ -287,6 +306,20 @@ def syllables(word):
     return max(1, n)
 
 
+def weather_match(sentence):
+    """The first weather token in a sentence, or None.
+
+    A capitalised weather word that is not the sentence's first word is a proper noun
+    ("Cold Repository"), not weather. The sentence-start allowance is what keeps "Rain
+    lashed the roof" while dropping the name, without a list of names to maintain.
+    """
+    for m in WEATHER.finditer(sentence):
+        if m.group(0)[0].isupper() and re.search(r"[A-Za-z]", sentence[:m.start()]):
+            continue
+        return m.group(0)
+    return None
+
+
 def strip_dialogue(text):
     return tags.QUOTE.sub(" ", text)
 
@@ -370,10 +403,18 @@ def extract(path):
     out["syn_oneline_para_share"] = share(
         sum(1 for p in paras if len(uni.sentences(p)) == 1), len(paras))
 
-    # tags: look just after each quoted span, the way check-dialogue-tags.py does
+    # tags: look just after each quoted span, the way check-dialogue-tags.py does.
+    # v1 read a flat 80 characters, so when two short lines sat close together the window
+    # ran past the next opening quote: the tag was charged to the speaker above it, and a
+    # speech verb inside the NEXT line's dialogue ("Can you breathe?" she demanded) was
+    # read as this line's tag. v2 ends the window at the next opening quote. A tag between
+    # two quotes (a quote split by its attribution) still counts; a tag inside the next
+    # line's speech does not.
     said = breath = tagged = 0
     for m in tags.QUOTE.finditer(text):
-        window = text[m.end():m.end() + 80]
+        rest = text[m.end():m.end() + 80]
+        nxt = re.search(r"[\"\u201c]", rest)
+        window = rest[:nxt.start()] if nxt else rest
         tm = tags.TAG.search(window)
         if not tm:
             continue
@@ -406,17 +447,22 @@ def extract(path):
     out["str_chapter_max"] = max(ch_words) if ch_words else None
 
     opens = {"wake": 0, "weather": 0, "time": 0, "habitual": 0}
-    for _, t in chapters:
+    weather_hits = []
+    for chname, t in chapters:
         s = uni.sentences(t)
         if not s:
             continue
         first = s[0]
         opens["wake"] += bool(WAKE.search(first))
-        opens["weather"] += bool(WEATHER.search(first))
+        wm = weather_match(first)
+        opens["weather"] += bool(wm)
+        if wm:
+            weather_hits.append([chname, wm])
         opens["time"] += bool(TIME_OPENER.match(first.strip()))
         opens["habitual"] += bool(HABITUAL.search(first))
     for k, v in opens.items():
         out[f"str_open_{k}_share"] = share(v, len(chapters))
+    details["weather_openings"] = weather_hits
 
     coda = sum(1 for _, t in chapters if uni.CODA.search(uni.closing_paragraph(t)))
     out["str_coda_share"] = share(coda, len(chapters))
@@ -562,7 +608,7 @@ def extract(path):
     }
 
 
-VERSION = "1"
+VERSION = "2"
 
 
 # ------------------------------------------------------------------ cli

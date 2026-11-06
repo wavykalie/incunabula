@@ -525,3 +525,29 @@ pooled table used `--exclude-books "V,W,B-17"`, which held for exactly as long a
 operator retyped the flag correctly and silently did not hold when they did not. A holdout
 that depends on remembering a command line is not a holdout, so the flag is gone and the
 declaration carries it.
+
+## Extractor v2 — a post-freeze correction to two features (2026-11-06)
+
+**Why.** The matched-text audit in `RESIDUAL_TELLS_MEMO.md` printed what two residual rows
+were actually matching. `syn_tag_breath_share` read a flat 80-character window after each
+closing quote, which ran past the next opening quote: 2,657 of the 6,713 turns it called
+tagged were another line's tag or a verb inside that line's speech. `str_open_weather_share`
+counted object and body temperature, interior heating and the proper noun *Cold Repository* as
+weather. Both are measurement errors in the extractor, not findings about the prose.
+
+**What changed.** Version 2 of `extract/features.py` (a new `VERSION`, a corrected tag window,
+an atmospheric-only `WEATHER` with a proper-noun rule). No threshold, gate, pipeline file or
+filed book changed, and the arm labels were not consulted while the regexes were written — the
+correction came from reading v1's own matches for false positives.
+
+**What v1 keeps.** `features/` and `analysis/run/` are untouched, so every number already
+reported stays reproducible from the commit that wrote it. v2 goes to `features-v2/` and
+`analysis/run-v2/`; no reported v1 number is silently replaced, and a report that quotes these
+two features must say which version it read.
+
+**What it cost.** The residual set is unchanged at twelve, but row 1's effect falls from 4.84
+to 3.51 and its Arm B median from 0.175 to 0.100, which puts Arm A (0.112) above Arm B: weather
+openers are a machine-prose habit, not a B-amendment effect. Row 2 barely moves (3.72 to 3.62,
+Arm B median 0.163 to 0.168) — the window defect was real and removing it does not explain the
+breath-tag gap. Full numbers in `RESIDUAL_TELLS_MEMO.md`; the scoring rule itself is unchanged,
+so the two readings remain comparable.
