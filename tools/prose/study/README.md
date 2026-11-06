@@ -1,6 +1,8 @@
 # study — the 50-novel prose-tell study (harness)
 
-**State: harness plus the human distribution corpus. No A/B book has been generated.**
+**State: the study is complete — results are in `STUDY_REPORT.md`.** The text below describes
+the harness as it was built and is kept for provenance; its statements about books not yet
+generated are historical.
 Five of design §12's seven decisions are settled (`DECISIONS.md`): Gemini 3.8 Flash drafts
 both arms through subagents, DeepSeek runs the study, there are no blind raters, the human
 ten are deferred until after generation, the primary target is **60,000 words** with a
