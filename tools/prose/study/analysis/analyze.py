@@ -189,8 +189,34 @@ def infer(bid):
     return arm, premise
 
 
+def load_cohorts(path):
+    """Read the cohort a book declares about itself in the manifest's deviations field.
+
+    "cohort B-deepseek: operator=drafter" is a fact about the book, filed with it. A
+    hand-typed --exclude-books id is a fact about one command line: it is forgotten by the
+    next run, and until someone remembers to retype it the book is pooled into the arm
+    whose means this study exists to defend. So the declaration travels with the row.
+    """
+    out = {}
+    if not path or not os.path.exists(path):
+        return out
+    with open(path, encoding="utf-8-sig", newline="") as fh:
+        for row in csv.DictReader(fh):
+            bid = (row.get("book_id") or "").strip()
+            dev = row.get("deviations") or ""
+            cut = dev.find("cohort ")
+            if not bid or cut < 0:
+                continue
+            rest = dev[cut + 7:].strip()
+            tok = rest.split()[0].rstrip(":,") if rest else ""
+            if tok:
+                out[bid] = tok
+    return out
+
+
 def load_books(feature_dir, manifest):
     arm_of, premise_of, mrows = load_manifest(manifest)
+    cohort_of = load_cohorts(manifest)
     books = {}
     for name in sorted(os.listdir(feature_dir)):
         if not name.endswith(".json"):
@@ -203,6 +229,7 @@ def load_books(feature_dir, manifest):
         premise = premise_of.get(bid) or premise
         rec["arm"], rec["premise_id"] = arm, premise
         rec["manifest"] = mrows.get(bid, {})
+        rec["cohort"] = cohort_of.get(bid)
         books[bid] = rec
     return books
 
@@ -533,6 +560,61 @@ def write_outputs(books, rows, cross, outdir, args):
     return os.path.join(outdir, "report.md")
 
 
+def cohort_report(name, members, books, args):
+    """Write one declared cohort's own table, against the same Arm C band.
+
+    The cohort keeps its arm letter, so its own values land in the B column; every
+    pipeline and human book outside the cohort is removed from the subset, which is what
+    stops a held-out book from setting the mean it is being compared to. Pairing is empty
+    by construction and says so rather than printing a 0/0 that reads like a failure.
+    """
+    subset = {bid: rec for bid, rec in books.items() if rec["arm"] == "C"}
+    for bid in members:
+        if bid in books:
+            subset[bid] = books[bid]
+    rows = analyse(subset, args.band, args.min_effect, random.Random(args.seed),
+                   args.iters)
+    nl = chr(10)
+    lines = []
+    add = lines.append
+    add("# Cohort `" + name + "`")
+    add("")
+    add("Held out of the primary distributions and the pairing because the book declares "
+        "this cohort in its own manifest row, not because a command line asked for it.")
+    add("")
+    add("Books: " + ", ".join("`" + b + "`" for b in sorted(members)) +
+        " (n=" + str(len(members)) + ")")
+    add("")
+    add("Arm C band and permutation test are the ones the primary table uses, so a row "
+        "here is comparable to the row the cohort was held out of. The pairing is empty "
+        "by construction: a cohort of this kind has no Arm A twin.")
+    add("")
+    add("| feature | family | cohort med | C med | C band | outside | effect (sdC) | perm p |")
+    add("|---|---|---|---|---|---|---|---|")
+    shown = 0
+    for feat_name, r in rows.items():
+        if not r["vals"].get("B") or not r.get("outside"):
+            continue
+        lo, hi = r.get("band", (None, None))
+        shown += 1
+        add("| `" + feat_name + "` | " + r["meta"]["family"] + " | " +
+            fmt(med(r["vals"]["B"])) + " | " + fmt(r.get("c_med")) + " | " +
+            fmt(lo) + ".." + fmt(hi) + " | yes | " + fmt(r.get("effect")) + " | " +
+            fmt(r.get("perm_p"), 4) + " |")
+    if not shown:
+        add("| none | | | | | | | |")
+    add("")
+    add(str(shown) + " of " + str(len(rows)) + " feature(s) put the cohort median "
+        "outside the Arm C band. That is a description of the book, not a verdict on it: "
+        "one book cannot clear a significance test, and this table is not pooled with the "
+        "fifteen pairs for the same reason it is not pooled into them by hand.")
+    safe = "".join(ch if ch.isalnum() or ch in "-_." else "-" for ch in name)
+    path = os.path.join(args.out, "cohort-" + safe + ".md")
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        fh.write(nl.join(lines) + nl)
+    return path, shown
+
+
 def main(argv=None):
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -574,10 +656,33 @@ def main(argv=None):
         books.pop(b)
     if by_id:
         print(f"excluded {len(by_id)} book(s) by id: {', '.join(sorted(by_id))}")
+    cohorts = defaultdict(list)
+    for bid, rec in books.items():
+        if rec.get("cohort"):
+            cohorts[rec["cohort"]].append(bid)
+    if cohorts:
+        pool = dict(books)
+        books = {bid: rec for bid, rec in books.items() if not rec.get("cohort")}
+        print(f"held out by declaration: " + ", ".join(
+            f"{c} (n={len(ids)})" for c, ids in sorted(cohorts.items())))
+
     rng = random.Random(args.seed)
     rows = analyse(books, args.band, args.min_effect, rng, args.iters)
     cross = cross_book(books)
     path = write_outputs(books, rows, cross, args.out, args)
+    if cohorts:
+        nl = chr(10)
+        sec = ["", "## Held-out cohorts", ""]
+        for cname in sorted(cohorts):
+            cpath, shown = cohort_report(cname, cohorts[cname], pool, args)
+            sec.append(f"- `{cname}`: " + ", ".join(
+                f"`{b}`" for b in sorted(cohorts[cname])) +
+                f" - {shown} feature(s) outside the Arm C band, table in "
+                f"`{os.path.basename(cpath)}`. Declared in the manifest, not excluded by "
+                f"hand (DECISIONS.md).")
+        sec.append("")
+        with open(path, "a", encoding="utf-8", newline="") as fh:
+            fh.write(nl.join(sec) + nl)
 
     counts = Counter(r["class"] for r in rows.values())
     n = {a: sum(1 for r in books.values() if r["arm"] == a) for a in ARMS}

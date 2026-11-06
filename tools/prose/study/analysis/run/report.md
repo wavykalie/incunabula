@@ -4,7 +4,7 @@ Books: A=20  B=15  C=87   band=central 80% of Arm C   min effect=0.5 sdC
 
 > Length filter: books above 120,000 analysis words are excluded. The long-form stratum is exploratory and is never pooled with the primary pairs (`DECISIONS.md` §2).
 
-> Excluded by id: `V,W,B-17`. Voice-sensitivity books are compared to their own twins separately (`DECISIONS.md` §3); every other excluded id is excluded for the reason recorded in that book's run report. None are pooled into the primary distributions or pairing.
+> Excluded by id: `V,W`. Voice-sensitivity books are compared to their own twins separately (`DECISIONS.md` §3); every other excluded id is excluded for the reason recorded in that book's run report. None are pooled into the primary distributions or pairing.
 
 ## Classification by family
 
@@ -137,3 +137,8 @@ Each row still needs §10's remaining steps before it is a check: a human baseli
 - `len-confounded` marks |Spearman rho| >= 0.5 against book length; the length-matched sensitivity run in design §7 has not been applied here.
 - `no A-vs-C gap` marks a feature on which Arm A already sat at the human median. Those rows are counted as unclear, not fixed: the pipeline cannot be credited with closing a gap that was not there.
 - `C has no spread` marks a feature every human book scored identically on. No effect size can be computed against a zero-variance baseline, so those rows are reported and never called residual tells.
+
+## Held-out cohorts
+
+- `B-deepseek`: `B-17` - 24 feature(s) outside the Arm C band, table in `cohort-B-deepseek.md`. Declared in the manifest, not excluded by hand (DECISIONS.md).
+

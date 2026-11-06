@@ -255,6 +255,11 @@ python analysis/cdist.py --features corpus/dist-features --out corpus/dist-featu
   and pairing; report that stratum separately.
 - `--exclude-books V,W` drops the six voice books, which would otherwise inflate Arm B from
   20 to 26. Their premise ids (`02V`) can't enter the 20-pair comparison anyway.
+- A book that declares a cohort in its own manifest row (`deviations` beginning `cohort
+  B-deepseek: ...`) is held out of the primary distributions and the pairing by
+  `analyze.py` itself, and reported against the same Arm C band in
+  `analysis/run/cohort-<name>.md`. Never add such a book to `--exclude-books`: the
+  declaration travels with the row, the flag is retyped by whoever remembers it.
 - Arm C is inferred from the id prefix, so `books/C-dist-*` is the human distribution
   without any manifest rows. Without it `analyze.py` has no baseline and `voices.py`
   refuses to scale its deltas.

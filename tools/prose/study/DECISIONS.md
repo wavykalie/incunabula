@@ -516,3 +516,12 @@ python run/dispatch.py --ingest B-17 --response <final.txt> \
     --interventions <counted rows> --finalize \
     --deviation "cohort B-deepseek: operator=drafter (authorised 2026-11-06); model is the executing agent, no API modelVersion"
 ```
+
+**How the cohort stays out of the pooled analysis.** The same `deviations` field that files
+the cohort is where `analyze.py` reads it: a row whose deviations begin `cohort NAME:` is
+held out of the primary distributions and the A-vs-B pairing, and measured on its own
+against the same Arm C band in `analysis/run/cohort-NAME.md`. The first reading of the
+pooled table used `--exclude-books "V,W,B-17"`, which held for exactly as long as the next
+operator retyped the flag correctly and silently did not hold when they did not. A holdout
+that depends on remembering a command line is not a holdout, so the flag is gone and the
+declaration carries it.

@@ -80,19 +80,26 @@ refuses to advance on anything but 0. Final state: chain CLEAR through phase 6,
 
 The pooled comparison is produced by `analysis/analyze.py` at the study root. B-17 is a
 `B-` id, so the tool would count it as a sixteenth pipeline book and average a
-self-drafted text into the fifteen Flash-high pairs. It is therefore excluded by id in
-the documented invocation:
+self-drafted text into the fifteen Flash-high pairs. The row says so itself: its
+`deviations` field begins `cohort B-deepseek: operator=drafter`, and `analyze.py` reads
+that declaration, holds the book out of the primary distributions and the pairing, and
+measures it separately against the same Arm C band.
 
 ```bash
 python extract/features.py --all books --out features
 python analysis/analyze.py --features features --manifest books/manifest.csv \
-    --out analysis/run --max-words 120000 --exclude-books "V,W,B-17"
+    --out analysis/run --max-words 120000 --exclude-books "V,W"
 ```
 
-That run reports `books A=20 B=15 C=87` and prints `excluded 1 book(s) by id: B-17`, so
-the exclusion is visible in the report rather than being a number a reader has to trust.
-B-17's own features are in `features/B-17.json` and its row is in the manifest; it is
-reported here, not in the primary distributions or the pairing.
+That run reports `books A=20 B=15 C=87`, prints `held out by declaration: B-deepseek
+(n=1)`, and writes `analysis/run/cohort-B-deepseek.md`, which puts the book's medians
+against the same band the fifteen pairs are scored on. The exclusion is a property of the
+filing row and not of the command line: an operator who never reads this report still gets
+the fifteen pairs, because the book has already declared itself out of the pool.
+
+The first version of this section documented `--exclude-books "V,W,B-17"` instead. A flag
+that has to be retyped is one typo away from pooling a self-drafted book into the arm, and
+the declaration is not.
 
 **The voice arm did not run, and this is a gap in the corpus, not in the tool.**
 `analysis/voices.py` compares `B-NNV` and `B-NNW` twins against their `B-NN` parents. No
