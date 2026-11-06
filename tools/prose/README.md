@@ -38,7 +38,7 @@ surface of prose:
 check-narrative.py     what the book owes: debt, beat arcs, scene functions
                        (N1/N4 gate on declared contracts - reads no prose, L1's class)
 check-figurative.py    where the images pile up on one referent   (reports, never gates)
-check-dialogue-tags.py per-character speech-tag register          (reports, never gates)
+check-dialogue-tags.py per-character speech-tag register          (V3 gates; V1/V2 report)
 check-quantities.py    do the numbers agree with each other       (reports, never gates)
 ```
 
@@ -151,7 +151,7 @@ python check-errata.py                                      # the pipeline's own
 
 python check-narrative.py <book>/                           # N1/N4 gate; N2/N3 report
 python check-figurative.py <book>/                          # report only, cannot fail
-python check-dialogue-tags.py <book>/                       # report only, cannot fail
+python check-dialogue-tags.py <book>/                       # V3 gates; V1/V2 report
 python check-quantities.py <book>/                          # report only, cannot fail
 
 bash validate-controls.sh   # exits 2 if no corpus installed; 0 if all controls pass
@@ -333,6 +333,11 @@ which is what a bad metric looks like from the inside.
   "she" reports few attributed lines. It reads speech out of quotation marks (a quoted
   letter counts), and a name that is also a lowercase common word in the book is
   filtered out as a false positive — occasionally over-filtering a real one.
+  **V3 gates**, and it is the only row in this class that does: a breath-family share of
+  tagged spans above 0.107 fails the book (the p90 of 167 public-domain novels, so 5% of
+  human books exceed it; the pipeline's own fifteen run at median 0.168, 11/15 above).
+  Under 40 tagged spans the row is unmeasured and gates nothing, which is the same
+  sample-size discipline `check-drift.py` applies to a voice step.
 - `check-quantities.py` cannot see what a number applies to, so two same-unit values can
   be correct in two situations and Q2's spreads are observations. Ranges collapse to
   their first number. Q3's g-force notes come from physiology, not from a corpus: they

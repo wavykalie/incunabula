@@ -751,10 +751,13 @@ YEOF
 fi
 
 echo
-echo "=== Control 16/19: the narrative REPORT rows must not be able to fail (G1, V1, Q3, Q4)"
-# The control-8 lesson, one class down. check-figurative.py, check-dialogue-tags.py and
-# check-quantities.py measure PROSE with no corpus behind them - no caps, no fail lines -
-# and they must stay that way until a corpus is measured and the rows are re-derived.
+echo "=== Control 16/19: the remaining REPORT rows must not be able to fail (G1, V1, Q3, Q4)"
+# The control-8 lesson, one class down. check-figurative.py and check-quantities.py measure
+# PROSE with no corpus behind them - no caps, no fail lines - and they must stay that way
+# until a corpus is measured and the rows are re-derived. check-dialogue-tags.py keeps its
+# V1/V2 report rows in this loop; its V3 row is measured and declines to judge under 40
+# tagged spans, which is why this fixture still exits 0 (a fixture with a measured span
+# count and a breath-heavy tag register would legitimately fail).
 # The fixture's chapter-01 carries a figurative pile-up, tagged dialogue, and an
 # 8-gravity quantity, so this control asserts both halves at once: the detectors FIRE
 # on the fixture, and the findings CANNOT fail it. Either half alone is insufficient -

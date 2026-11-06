@@ -56,6 +56,12 @@ Run it on **every speaking character in this chapter**.
    on two verbs, or breath-family tags dominating outside the scenes that justify them are
    findings against `voice-matrix.md` — **specs without verification are wishes**, and this
    is the verification.
+
+   The measured line: V3 fails the book above **0.107** breath-family share of tagged
+   spans and warns above **0.082** (167 public-domain novels; 5% of human books exceed
+   the fail line; this pipeline's own books run at 0.168). A book-level failure is not
+   repaired in the chapter you are holding — it is repaired in `voice-matrix`'s cards,
+   where the per-character budget is 10% of that character's tagged lines.
 5. **Dialogue-to-prose ratio.** Compare against the genre target in the state file. Correct toward
    it, do not overshoot.
 6. **Register consistency.** A character's formality must hold across the chapter. A sudden

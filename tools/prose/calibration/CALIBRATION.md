@@ -313,7 +313,7 @@ published prose always passes:
 | `U2` per-chapter mean sentence length, spread | min 4.32 | FAIL under 3.0, warn under 4.0 |
 | `U3` share of chapters closing on a coda | 0% | FAIL above 25% |
 | `U4` share of single-sentence paragraphs | 50.3% | FAIL under 35%, warn under 50% |
-| `U5` paragraph-length CV | 86.9% | FAIL under 55%, warn under 75% |
+| `U5` paragraph-length CV | 86.9% | FAIL under 55%, warn under 73.7% (p10 of 167 public-domain novels, `../study` C-dist-2) |
 
 `U4` and `U5` measure page layout rather than sentences. Published prose gives a landing
 line its own paragraph (50–62% of paragraphs are one sentence) and lets paragraph lengths

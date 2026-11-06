@@ -53,7 +53,8 @@ THRESHOLDS ARE MEASURED
                                              ->  FAIL above 40% of chapters, warn above 30%
     one-sentence        published min 50.3%  ->  FAIL under 35%, warn under 50%
       paragraphs, share
-    paragraph-length CV published min 86.9%  ->  FAIL under 55%, warn under 75%
+    paragraph-length CV published min 86.9%  ->  FAIL under 55%, warn under 73.7%
+      (73.7% is the p10 of the 167 novels in tools/prose/study stratum C-dist-2)
 
 The last two come from the same principle applied to the paragraph: a writer breaks a
 paragraph to a single line when the line deserves the white space around it, and lets
@@ -160,7 +161,12 @@ CV_FAIL, CV_WARN = 22.0, 28.0
 SPREAD_FAIL, SPREAD_WARN = 3.0, 4.0
 CODA_SHARE_FAIL = 25.0
 ONELINE_FAIL, ONELINE_WARN = 35.0, 50.0
-PARACV_FAIL, PARACV_WARN = 55.0, 75.0
+# The FAIL line is the 1.5x-headroom floor from the published minimum and does not move:
+# tightening it to the human p10 would fail 26% of 167 public-domain novels. The WARN line
+# is that p10 (73.7%, tools/prose/study, C-dist-2, n=167), which fires on 12 of the 15 books
+# this pipeline wrote and on none of its 20 naive-draft books - a warning that names the
+# pipeline's own paragraph flattening without failing a human book for it.
+PARACV_FAIL, PARACV_WARN = 55.0, 73.7
 FRAME_FAIL, FRAME_WARN = 40.0, 30.0
 
 # U6 - the signature frame.
@@ -401,6 +407,8 @@ def check(label, chapters, convention="default"):
         failed += status == "FAIL"
         print(f"   {status:<5} U5  paragraph-length variance CV {para_cv:.0f}%  "
               f"(fail under {PARACV_FAIL:.0f}%, warn under {PARACV_WARN:.0f}%)")
+        print(f"          ^ warn line 73.7% is the p10 of 167 public-domain novels; it fires")
+        print(f"            on 12 of this pipeline's 15 books and none of its 20 naive drafts.")
         print(f"          ^ enforced. 0 of 140 public-domain English novels (13.06M words, five "
               f"eras)")
         print(f"            fall below the failure line, and machine prose is the flat one in "

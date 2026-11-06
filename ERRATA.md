@@ -128,3 +128,38 @@ visible, because a ledger with no recorded mistakes is a ledger being curated.
 - **state:**    observed
 - **proposes:** none. Three lists of the same tells is redundancy in the documentation,
                not a measurement; no threshold, rule, or regex moved.
+
+### 2026-11-06 — V3 gates, and U5's warn line moves to the measured p10
+- **row:**      V3 (new) | U5
+- **observed:** `check-dialogue-tags.py` gains V3, the first row in that class with a
+               measured population: the whole-book breath-family share of tagged spans,
+               fail above 0.107, warn above 0.082. The corpus is 167 public-domain
+               English novels (stratum C-dist-2 of `tools/prose/study`, frozen extractor
+               v2, disjoint from the 140 novels in `calibration/`), where 5% of books
+               exceed the fail line. The pipeline's fifteen books run at median 0.168 and
+               11 of 15 exceed it; the twenty naive-draft books exceed it six times. U5's
+               warn line moves 75 -> 73.7, that stratum's p10, which fires on 12 of the
+               fifteen pipeline books and none of the naive ones.
+- **n:**        167 human books; 35 pipeline and naive-draft books
+- **evidence:** `tools/prose/study/STUDY_REPORT.md` section 5.3;
+               `tools/prose/study/corpus/dist-features-2/cdist.csv`
+- **motive:**   aesthetic
+- **state:**    adopted
+- **proposes:** none further. The fail line is a corpus percentile and may not move on a
+               book's failure; the 1.5x headroom convention does not apply to a two-sided
+               band, and tightening the fail line to the p10 would fail 26% of humans.
+
+### 2026-11-06 — four study measures enter the Rejected registry
+- **row:**      (registry) — `PRINTERS_COPY.md` section 4
+- **observed:** The prose-tell study's AI-term cap, weather-opener gate, cross-book
+               name-reuse threshold and opening-similarity row are recorded as rejected,
+               each with the arm-level count that killed it. The Rejected registry goes
+               30 -> 34 entries, and `REJECTED_FLOOR` in `tools/prose/check-errata.py`
+               is raised to 34 in the same change.
+- **n:**        1 change; the counts behind it come from 167 human books and 35
+               pipeline/naive books
+- **evidence:** `PRINTERS_COPY.md` section 4; `tools/prose/check-errata.py`
+- **motive:**   aesthetic
+- **state:**    adopted
+- **proposes:** none. The rows now work in the other direction: a future proposal that
+               reaches for one of them has to argue with the count that rejected it.

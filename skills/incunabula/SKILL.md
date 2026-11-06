@@ -240,8 +240,10 @@ records debt, `proof-panel` declares each chapter's beat arc and each extended s
 function at Phase 4, `collator` audits the ledger against the text. The three
 prose-reading companions — `check-figurative.py` (two images fighting over one
 referent), `check-dialogue-tags.py` (per-character tag register vs. the voice matrix),
-`check-quantities.py` (numbers that disagree with each other) — are **report-only**:
-no measured corpus stands behind them, so they report and cannot fail anything.
+`check-quantities.py` (numbers that disagree with each other) — report, with one
+exception: `check-dialogue-tags.py`'s V3 row **gates** the book's breath-family share of
+tagged spans above 0.107 (p90 of 167 public-domain novels; 5% of human books exceed it).
+The other rows cannot fail anything: no measured corpus stands behind them.
 
 It gates with no corpus for the same reason `check-length.py` does: it compares a book
 to the obligations that book declared for itself, and there is no population it can

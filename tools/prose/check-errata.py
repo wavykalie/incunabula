@@ -76,7 +76,10 @@ import sys
 #
 # Raise it whenever a row is added. A floor left below the live count is slack the
 # guard cannot see through, and the next deletion lands inside it.
-REJECTED_FLOOR = 30
+#
+# 2026-11-06: 30 -> 34, the four measures the prose-tell study disproved. The floor moves
+# in the same change as the rows, so a later deletion has nowhere to hide.
+REJECTED_FLOOR = 34
 
 MODES = ("hand", "bulk", "auto")
 

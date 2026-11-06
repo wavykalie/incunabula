@@ -16,13 +16,24 @@ WHY THIS EXISTS
   own dialogue SHARE (register, not per-character behaviour), and `check-drift.py`
   watches the narrative voice, which does not shift while the dialogue flattens.
 
-WHY IT REPORTS AND NEVER GATES
-  There is no corpus of per-character speech-tag distributions in published prose, so
-  there is no measured population from which a cap could be derived. This directory
-  sets no threshold from an unmeasured number. Everything printed below is an
-  OBSERVATION with its counts attached; the rows cannot fail a book. Closing the
-  voice-matrix loop is a reader's judgment - this tool supplies the table the
-  judgment needs.
+WHAT GATES, AND WHAT ONLY REPORTS
+  V1 and V2 report, and cannot fail a book: there is no corpus of per-character
+  speech-tag distributions, so no per-character cap can be derived. Everything they
+  print is an OBSERVATION with its counts attached, and closing the voice-matrix loop
+  is still a reader's judgment.
+
+  V3 is the exception, and it is the only row in this class with a measured population
+  behind it. The whole-book breath-family share of tagged spans was measured on 167
+  public-domain English novels (13.4M words, `tools/prose/study` stratum C-dist-2, the
+  frozen extractor v2, disjoint from the 140 novels in `calibration/`): human median
+  0.048, p90 0.107, p95 0.121. The fifteen books this pipeline wrote sit at median
+  0.168 and 11 of 15 exceed the fail line; twenty naive-draft books exceed it six times.
+  That is the one row in the study that is both large and pipeline-specific, which is
+  why it is the one row here promoted to a gate.
+
+  Below MIN_TAGGED_FOR_V3 tagged spans the row declines to judge and says UNMEASURED:
+  a p90 is not placeable on forty events, and a book with little tagged dialogue is not
+  a book with a bad tag register.
 
 WHAT IT CANNOT DO
   It attributes by name within a short window of the quote; a tag with a pronoun
@@ -34,17 +45,20 @@ WHAT IT CANNOT DO
   `voice-matrix.md`; comparing the table against the spec is the reader's step,
   which is where `register` (Phase 3.1) sends it.
 
-ROWS (all report-only; the tool exits 0 on any content)
+ROWS (V1/V2 report; V3 gates when it can be measured)
   V1  per-character tag table: tagged lines, distinct verbs, top verb + share,
       breath-family share (whisper, gasp, breathe, pant, murmur, moan, sigh, ...)
   V2  observations: shared top verbs between characters, tag collapse, the
       unattributed share, and the per-chapter breath map - which chapters carry the
       breath-heavy tags - so the register question can be asked of the right scenes
       rather than of the book in general
+  V3  whole-book breath-family share of tagged spans. GATES above 0.107 (5% of 167
+      human books), warns above 0.082, and reports UNMEASURED under 40 tagged spans.
 
 EXIT CODES
-  0  ran and reported (findings or not - findings are never a failure here)
-  1  nothing checkable: a report from an empty read proves nothing
+  0  ran and passed: V1/V2 reported, and V3 passed, warned, or went unmeasured
+  1  V3 failed a book (breath-family share above 0.107)
+  2  nothing checkable: a report from an empty read proves nothing
 
 usage:  tools/prose/check-dialogue-tags.py [BOOK_DIR_OR_CHAPTER_DIR ...]
 """
@@ -65,6 +79,16 @@ BREATH = {"whisper", "whispered", "whispering", "gasp", "gasped", "gasping",
           "murmur", "murmured", "murmuring", "moan", "moaned", "moaning",
           "sigh", "sighed", "sighing", "choke", "choked", "choking", "sob",
           "sobbed", "sobbing", "whimper", "whimpered", "croak", "croaked"}
+# V3 - the one row here with a measured population behind it. Corpus: 167 public-domain
+# English novels, stratum C-dist-2 of tools/prose/study, extractor v2. Human breath-family
+# share of tagged spans: median 0.048, p90 0.107, p95 0.121. 5% of human books exceed the
+# fail line; the pipeline's fifteen run at median 0.168 (11/15 above), the naive arm 6/20.
+BREATH_FAIL, BREATH_WARN = 0.107, 0.082
+# A guard, not a threshold: 40 spans cannot place a p90, so V3 declines to judge below it.
+# The same principle as check-drift.py's size floor - a rate on too few events is noise
+# wearing a number. Unmeasured is reported and gates nothing, never read as a pass.
+MIN_TAGGED_FOR_V3 = 40
+
 VERBS = (BREATH | {"said", "says", "asked", "replied", "answered", "added",
                    "continued", "offered", "called", "shouted", "yelled",
                    "snapped", "muttered", "growled", "hissed", "spat", "barked",
@@ -192,8 +216,13 @@ def check(label, chapters):
         print("  REPORT-ONLY. Rows cannot fail a book; no per-character corpus exists.")
         return 0
 
+    tagged_total = sum(sum(c.values()) for c in verbs.values())
+    breath_total = sum(n for c in verbs.values() for v, n in c.items() if v in BREATH)
+    breath_share = breath_total / tagged_total if tagged_total else 0.0
+    failed = 0
+
     print(f"\n   --   V1  per-character speech-tag distribution "
-          f"({sum(sum(c.values()) for c in verbs.values())} tagged spans):")
+          f"({tagged_total} tagged spans):")
     print(f"{'character':<18}{'lines':>7}{'verbs':>7}{'top verb':>22}{'breath share':>14}")
     tops = {}
     for speaker in sorted(verbs, key=lambda s: -sum(verbs[s].values())):
@@ -204,6 +233,20 @@ def check(label, chapters):
         tops[speaker] = top
         print(f"{speaker:<18}{n:>7}{len(c):>7}{f'{top} ({topn})':>22}"
               f"{f'{100.0 * breath / n:.0f}%':>14}")
+    print()
+
+    if tagged_total >= MIN_TAGGED_FOR_V3:
+        status = "FAIL" if breath_share > BREATH_FAIL else (
+            "warn" if breath_share > BREATH_WARN else "ok")
+        failed += status == "FAIL"
+        print(f"   {status:<5} V3  breath-family share of tagged spans  "
+              f"{breath_share:.3f} ({breath_total}/{tagged_total})")
+        print(f"          basis: 167 public-domain novels - p90 0.107, p95 0.121; 5% of")
+        print(f"          human books exceed {BREATH_FAIL:.3f}. The pipeline's own fifteen:")
+        print(f"          median 0.168, 11/15 above.")
+    else:
+        print(f"   n/a   V3  breath-family share UNMEASURED - {tagged_total} tagged spans,")
+        print(f"          under the {MIN_TAGGED_FOR_V3}-span minimum for a p90 line.")
     print()
 
     # Pairwise observations only for speakers with enough tagged lines to have a
@@ -243,11 +286,12 @@ def check(label, chapters):
     if not printed:
         print("   --   V2  no collapse, no shared top tags at the listing lines.")
     print()
-    print("  REPORT-ONLY. The listing lines are parameters, not caps: no published")
-    print("  per-character tag distribution has been measured, so no threshold exists.")
-    print("  Compare this table against voice-matrix.md yourself - that comparison is")
-    print("  Phase 3.1 (`register`), and a spec the manuscript never verifies is a wish.")
-    return 0
+    print("  V1/V2 REPORT-ONLY. The listing lines are parameters, not caps: no published")
+    print("  per-character tag distribution has been measured, so no per-character")
+    print("  threshold exists. V3 is the measured row. Compare this table against")
+    print("  voice-matrix.md yourself - that comparison is Phase 3.1 (`register`), and a")
+    print("  spec the manuscript never verifies is a wish.")
+    return failed
 
 
 def main():
@@ -267,19 +311,21 @@ def main():
                             directory))
 
     checked = 0
+    failures = 0
     for label, directory in targets:
         chapters = load(directory)
         if not chapters:
             continue
         checked += 1
-        check(label, chapters)
+        failures += check(label, chapters)
         print()
 
     if checked == 0:
         print("check-dialogue-tags: nothing checkable - an empty read reports nothing.")
-        return 1
-    print(f"DIALOGUE-TAG REPORT DONE - {checked} manuscript(s) read. Report rows cannot fail.")
-    return 0
+        return 2
+    print(f"DIALOGUE-TAG REPORT DONE - {checked} manuscript(s) read, "
+          f"{failures} V3 failure(s).")
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":

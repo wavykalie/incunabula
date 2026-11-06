@@ -150,8 +150,10 @@ separate bundle, not part of this suite.)
 | **The gate runner** | checkpoints + on demand | `tools/run-gates.sh` — all of the above in one command, 17 rows, one verdict |
 
 Report-only companions (`check-surplus`, `check-recoverable`, `check-figurative`,
-`check-dialogue-tags`, `check-quantities`) inform but can never fail anything: no measured
-corpus stands behind them yet.
+`check-quantities`) inform but can never fail anything: no measured corpus stands behind
+them yet. `check-dialogue-tags.py` is the exception, because one of its rows now has a
+corpus: V1/V2 report, and V3 **gates** a book above 0.107 breath-family share of tagged
+spans (p90 of 167 public-domain novels; 5% of human books exceed it).
 
 **Two rules the gates enforce on themselves:**
 1. **Not-run is never a pass.** An empty scan fails; a skipped gate blocks like a failure.

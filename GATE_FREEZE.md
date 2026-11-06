@@ -38,23 +38,23 @@ locked tools, and each entry underneath tells the story of one change.
 | file | sha256 (first 16) | role |
 |---|---|---|
 | `tools/prose/deslop-check.sh` | `7462cde6e0dafacd` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 20 - A10a scoped to a report for mode: nonfiction, via conventions.py) |
-| `tools/prose/check-uniformity.py` | `64a8ce620b389687` | U1–U6 cross-chapter rows (Freeze 19 - mode reader via conventions.py) |
+| `tools/prose/check-uniformity.py` | `3bd21d61113564f2` | U1–U6 cross-chapter rows (Freeze 19 - mode reader via conventions.py) |
 | `tools/prose/check-drift.py` | `3e1a6b33fbafc5b5` | voice drift, size-dependent floor (Freeze 2 - Spearman tie fix) |
 | `tools/prose/check-arc.py` | `f2059aec8a9580cc` | A1 gate; A2–A4 report-only |
 | `tools/prose/check-surplus.py` | `7107a75155e8ffb5` | S1–S4, report-only (Freeze 19 - mode reader via conventions.py) |
 | `tools/prose/check-recoverable.py` | `591c61560d8c53b3` | tic × dialogue enrichment, report-only |
-| `tools/prose/check-errata.py` | `e9724056d7a3f18c` | protocol validator, reads no prose (Freeze 3 - floor 30) |
+| `tools/prose/check-errata.py` | `9ec8ad323196a202` | protocol validator, reads no prose (Freeze 3 - floor 30) |
 | `tools/prose/check-length.py` | `b0f77f89fba525ba` | declared-length row `L1` (Freeze 2 - added after the sons-of-heaven-v2 run exposed the deletion incentive; Freeze 8 - exit 3 for ungoverned) |
 | `tools/prose/check-names.py` | `b09d89d8ca4b7765` | cross-book cast-name collisions + default-name filter, reads no prose (Freeze 4 - added after the author found `Priya` in two books; Freeze 21 - nonfiction case via `conventions.py`) |
 | `tools/prose/calibration/NAME_FREQUENCY.tsv` | `f17e837f6f2ae0a5` | the name-frequency data `check-names.py` reads (Freeze 4) |
 | `tools/prose/calibration/NAME_FREQUENCY.md` | `75f6fa0dae36f327` | provenance + the tier reasoning; frozen because it states what the tiers mean (Freeze 4) |
-| `tools/prose/validate-controls.sh` | `4d559c43529c6a02` | the controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only; Freeze 13 - controls 13-16; Freeze 20 - control 17, NF scope arms; Freeze 21 - controls 18-19, names case + A24 pin) |
+| `tools/prose/validate-controls.sh` | `6b005f4cda33eecc` | the controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only; Freeze 13 - controls 13-16; Freeze 20 - control 17, NF scope arms; Freeze 21 - controls 18-19, names case + A24 pin) |
 | `tools/prose/check-premise-distinct.py` | `852541b840442e94` | premise job+engine collision vs the author's own catalogue (Freeze 5) |
 | `tools/prose/check-comps.py` | `9f47751a6a45aefa` | comp-title verification stamps; reads research/, not prose (Freeze 5) |
 | `tools/prose/calibration/PREMISE_LEDGER.tsv` | `f4c03a83537f0270` | the spent-premise data `check-premise-distinct.py` reads (Freeze 5) |
 | `tools/prose/check-narrative.py` | `3bf0bf46f318ab2c` | N1 debt (gates) / N2 beat repetition / N3 scene function / N4 ledger conformance (gates); reads no prose — the contract row, L1's class (re-keyed at the second update and Freezes 14–15; see below) |
 | `tools/prose/check-figurative.py` | `394cd0e402a7f8b9` | G1/G2 figurative pile-up reporter; report-only (re-keyed at the fourth update) |
-| `tools/prose/check-dialogue-tags.py` | `b646cff207ef723f` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second, fourth and Freeze 16 updates) |
+| `tools/prose/check-dialogue-tags.py` | `560f55fbbfbde7a8` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second, fourth and Freeze 16 updates) |
 | `tools/prose/check-quantities.py` | `4cc4a538dde7309e` | Q1–Q4 quantity extraction, spread, sanity notes, counted-noun conflicts; report-only (re-keyed at the third and fourth updates) |
 Manifest completeness, 2026-10-13: the seven rows above for
 The narrative and research checks — `check-premise-distinct.py`, `check-comps.py`,
@@ -208,3 +208,30 @@ green light somewhere: a change is recorded *in the manifest region*, above the 
 `## Freeze` heading, or it is frozen in fact and unchecked in fact; and a change that
 moves a threshold needs a **named corpus**, because a threshold re-derived from six
 books somebody liked has laundered a period confound into a permanent constant.
+
+### Change recorded 2026-11-06 — V3 gates on a measured corpus; four rejected measures enter the registry
+
+`check-dialogue-tags.py` gains `V3`: the whole-book breath-family share of tagged spans,
+failing above 0.107 and warning above 0.082. The corpus is 167 public-domain English
+novels (stratum C-dist-2 of `tools/prose/study`, frozen extractor v2, disjoint from the
+140 novels in `calibration/`), where 5% of books exceed the fail line; the pipeline's
+fifteen books run at median 0.168 and 11 of 15 exceed it, against 6 of 20 naive drafts.
+Below 40 tagged spans the row is UNMEASURED and gates nothing, so a dialogue-sparse book
+cannot be failed for a rate it cannot support.
+
+`check-uniformity.py` moves U5's warn line 75 -> 73.7, that stratum's p10, and prints its
+basis (12 of 15 pipeline books, 0 of 20 naive). The fail line stays 55: moving it to the
+p10 would fail 26% of the human books, which is the U4 lesson arriving a second time.
+
+`check-errata.py` raises `REJECTED_FLOOR` 30 -> 34 to carry the four measures the study
+disproved — the AI-term cap, the weather-opener gate, the name-reuse threshold and
+opening similarity — each recorded with its arm counts in `PRINTERS_COPY.md` §4.
+`validate-controls.sh` keeps its report-row control and now states why the tag tool's V3
+cannot fail that fixture. `tools/run-gates.sh` moves the tag row from the report class to
+the prose class, so a V3 failure blocks the book.
+
+Evidence at the time of the change: `check-dialogue-tags.py` fails the study's B-01 at
+0.136 (95 of 699 spans) and exits 1; `check-uniformity.py` warns B-01 at U5 63%;
+`check-errata.py` reports the registry at 34 and the protocol intact; the three Python
+files compile; both changed shell files pass `bash -n`. The re-keys above are for these
+edits only — no other threshold moved.

@@ -293,9 +293,11 @@ Three tools feed the ledger. `case-keeper` records debt at extraction pass 6.
 `proof-panel` declares the beat arc of each chapter and the function of each extended
 scene at Phase 4. `collator` audits the ledger against the text in both directions.
 
-Three companions read prose and report only: `check-figurative.py`,
-`check-dialogue-tags.py`, and `check-quantities.py`. No measured corpus stands behind
-them, so they can report and cannot fail anything.
+Two companions read prose and report only: `check-figurative.py` and
+`check-quantities.py`. No measured corpus stands behind them, so they can report and
+cannot fail anything. `check-dialogue-tags.py` is the exception: V1/V2 report, but V3
+gates a book above 0.107 breath-family share of tagged spans — the p90 of 167
+public-domain novels, with 5% of human books above it.
 
 The narrative gate gates without a corpus for the same reason as `check-length.py`: it
 compares a book with the obligations that the book declared for itself. No population can

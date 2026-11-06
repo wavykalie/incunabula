@@ -191,6 +191,15 @@ commercial fiction, memoir, romance, and prescriptive nonfiction. For simile ext
 the test is one sentence: does it restate, clarify, or unpack the image (cut), or does it
 add something the image cannot carry on its own (keep, and flag for review)?
 
+**Two tag budgets are measured, and both belong in the cards.** The breath-family
+budget is per character: whisper, gasp, pant, murmur, sigh and their relatives may carry
+at most **10% of that character's tagged lines**, and one reaching past that outside a
+scene that justifies it is off-card rather than atmospheric. Across tagged spans the book
+carries a ceiling of **0.107** (`check-dialogue-tags.py` V3: the p90 of 167 public-domain
+novels, so 5% of human books exceed it). The neutral verb is the default; *whisper* and
+*murmur* need a reason on the page — volume, distance, occlusion, a throat — or they are
+the said-bookism that flattens a whole cast.
+
 ### Section 5 — Benchmark samples
 
 What the writer actually internalises. Budget roughly 40% of the effort here, because a

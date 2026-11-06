@@ -62,7 +62,7 @@
 #             check-manuscript-integrity.py, check-pass-evidence.py:
 #             0 pass, 2 could-not-read / not-applicable -> NOT RUN, else fail.
 #   report    check-surplus.py, check-recoverable.py, check-figurative.py,
-#             check-dialogue-tags.py, check-quantities.py: 0 REPORTED,
+#             check-quantities.py: 0 REPORTED,
 #             findings never fail anything; a report that could not run is
 #             NOTED and gates nothing, because these rows cannot gate.
 
@@ -207,12 +207,15 @@ run_row "deslop-check.sh" prose "$PROSE/deslop-check.sh" "$CHAPTERS"
 run_row "check-uniformity.py" prose "$PROSE/check-uniformity.py" "$BOOK"
 run_row "check-drift.py" prose "$PROSE/check-drift.py" "$BOOK"
 run_row "check-arc.py" prose "$PROSE/check-arc.py" "$BOOK"
+# V3 is the one measured row in the tag tool; V1/V2 above it still report only. A book
+# under 40 tagged spans reads UNMEASURED and exits 0 (see the tool's MIN_TAGGED_FOR_V3),
+# so a dialogue-sparse book is not failed for a rate it cannot support.
+run_row "check-dialogue-tags.py" prose "$PROSE/check-dialogue-tags.py" "$BOOK"
 
 echo "== report-only companions (never gate) ========================="
 run_row "check-surplus.py" report "$PROSE/check-surplus.py" "$BOOK"
 run_row "check-recoverable.py" report "$PROSE/check-recoverable.py" "$BOOK"
 run_row "check-figurative.py" report "$PROSE/check-figurative.py" "$BOOK"
-run_row "check-dialogue-tags.py" report "$PROSE/check-dialogue-tags.py" "$BOOK"
 run_row "check-quantities.py" report "$PROSE/check-quantities.py" "$BOOK"
 
 echo "== narrative gate (Freeze 13) =================================="

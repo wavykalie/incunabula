@@ -132,6 +132,10 @@ For each flagged line: read it in context and decide — defect, or deliberate?
 - A repeated sentence start can be **anaphora** — a deliberate device. Anaphora is kept; accidental
   repetition is fixed.
 - A filter word in dialogue is often characterisation. It stays.
+- An epistemic qualifier — *perhaps*, *seemed*, *I think*, *as if* — is **not** filler.
+  The pipeline's narration carries them at 0.09 per 1,000 words against a human median of
+  1.31; stripping them is how that gap was made. A hedge that weakens a sentence the book
+  needs to assert is a defect; a hedge that marks what the narrator cannot know is voice.
 - An em-dash used as the character's actual interrupted thought stays.
 
 Report the false positives you rejected. A pass that "fixes" deliberate prose has done damage.
@@ -141,6 +145,9 @@ Report the false positives you rejected. A pass that "fixes" deliberate prose ha
 - Do not restructure, re-order, or re-write.
 - Do not change voice, imagery, or rhythm.
 - Do not silently apply a batch replacement. Apply line by line.
+- Do not normalise paragraph lengths. `U5` is a floor on paragraph-length variance, and a
+  cleanup pass that evens paragraphs out edits against the row that exists to catch it.
+  Merge or split only where the material demands it.
 - Do not chase a zero score. Human bestsellers score 0–13 on the Tic Scan; the target is
   genre-appropriate, not zero, and 0/20 is suspicious rather than clean.
 
