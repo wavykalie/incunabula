@@ -1,0 +1,24 @@
+{
+  "book_id": "B-17",
+  "probed_at": "2026-11-06T00:00:00+00:00",
+  "route": "Codebuff executing agent (DeepSeek V4.1 Flash), drafting in the operator context; no external subagent, no Antigravity call",
+  "model_sent": "deepseek-v4.1-flash",
+  "model_returned": "deepseek-v4.1-flash",
+  "version_source": "the executing agent's own platform identity (this session's model line). There is no API response envelope and therefore no modelVersion string; the row's H3 claim is a session-identity claim, weaker than a Flash 3.8 row's. DECISIONS.md, 2026-11-06 entry.",
+  "temperature": {
+    "settable": false,
+    "observed": null,
+    "applied": "executing-agent session default (no sampling control is exposed inside the context; nothing was requested or assumed)"
+  },
+  "top_p": {
+    "settable": false,
+    "observed": null,
+    "applied": "executing-agent session default (no sampling control is exposed inside the context)"
+  },
+  "system_prompt": {
+    "settable": false,
+    "observed": null,
+    "applied": "Codebuff agent system prompt plus the pipeline's skill layer (harness-fixed, not settable)"
+  },
+  "evidence": "ARM_B_SUB_AMENDMENT.md, 2026-11-06 entry, and DECISIONS.md, 2026-11-06 entry. This record covers the B-deepseek cohort only; preflight.py continues to validate run/harness.json for the Flash-high rows."
+}

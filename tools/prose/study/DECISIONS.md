@@ -463,3 +463,56 @@ Consequence for the analysis: the distinctness gate compares against three premi
 against a catalogue. That is the instrument as designed, and every B row's `deviations`
 should not need to say anything about it — but a report claiming Arm B was checked for
 premise redundancy against a *frozen list* should say the list has three rows in it.
+
+## 2026-11-06 — drafting route moves to the executing agent (cohort `B-deepseek`)
+
+**This changes an answered decision, so it is a dated note rather than a rewrite** (this
+file's own rule). Decision 1's answer and decision 7's division of labour are superseded for
+`B-16`…`B-20` only. `A-01`…`A-20` and `B-01`…`B-15` keep the route they were drafted on and
+are not re-run.
+
+**What forced it.** The Antigravity route is exhausted. Measured on 2026-11-06: the account
+served one substantive call (112 s, 11,656 output tokens for a 400-word file), then returned
+`429 … Resets in 73h58m` on every further call, on all three Flash tiers. A 60,000-word book
+needs at least seven calls of that size, so the route cannot draft one book inside its own
+reset window. On the owner's instruction the remaining five premises are drafted by **the
+executing agent — DeepSeek V4.1 Flash — in this context**, through the same Incunabula
+pipeline at the same frozen commit. Measurement: `ARM_B_SUB_AMENDMENT.md`, 2026-11-06.
+
+**What a `B-deepseek` row can and cannot claim.** It is a new cohort, reported as one. Four
+differences, none cosmetic:
+
+1. **Operator and drafter are one context.** The arm's validity rested on their separation: a
+   `prose` row was a stop condition precisely because a rescued book measures the rescuer.
+   Under this cohort every chapter is a `prose` row by construction, declared in the book's
+   `logs/operator.md` rather than hidden. So the cohort cannot support "the pipeline, not a
+   person, wrote this". It measures the pipeline's **instructions, gates and repair loop**
+   applied by an agent that is also writing the prose — and the report must say exactly that.
+2. **No API `modelVersion` exists to record.** O3's rule was "no returned version, no
+   filing". The executing agent has no response envelope naming a version, so `model_id`
+   records the session's identity string and the row's H3 claim is weaker than a Flash 3.8
+   row's. Filed with that written down, not with a version invented to satisfy a check.
+3. **`operator_interventions` is not comparable.** It keeps its meaning — counted gate
+   answers in the book's log — but nobody outside the drafting context makes them. Recorded,
+   never pooled with the fifteen human-operated rows.
+4. **Pairing is confounded.** `B-16`…`B-20` against `A-16`…`A-20` compares pipeline-plus-
+   DeepSeek against a naive Gemini conversation, so any difference is pipeline **and**
+   drafter. The primary result stays n = 15 Flash-high pairs; this cohort is separate and
+   never folded into it.
+
+**What did not change.** The frozen commit, the pipeline code, every gate and threshold, the
+payload bytes, one-book-at-a-time, and the filing checks. `preflight.py` still validates the
+Flash-high probe record and says nothing about this cohort, so each `B-deepseek` row carries
+its own probe record (`run/harness-deepseek.json`) and a `deviations` token naming the
+cohort — otherwise the manifest would attribute the wrong harness to the text.
+
+**Filing command for these rows:**
+
+```bash
+python run/dispatch.py --ingest B-17 --response <final.txt> \
+    --sent-model deepseek-v4.1-flash --model-returned deepseek-v4.1-flash \
+    --harness run/harness-deepseek.json \
+    --pipeline-commit 8265c48d12962ca233ed98bd10083edb072ec7f0 \
+    --interventions <counted rows> --finalize \
+    --deviation "cohort B-deepseek: operator=drafter (authorised 2026-11-06); model is the executing agent, no API modelVersion"
+```
