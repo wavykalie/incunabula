@@ -19,14 +19,21 @@ ductus/
 ## Create one
 
     python tools/ductus.py new my-voice --name "My Voice" --register "short declaratives"
+    python tools/ductus.py new my-voice --random   # a seeded persona from the palette
     python tools/ductus.py check      # every voice, its isolation, the unassigned books
     python tools/ductus.py cross      # any entry two voices both hold
     python tools/ductus.py list       # how far each voice has developed
+    python tools/ductus.py log test-books/my-book --chapter 1 \
+        --tone "cold, procedural" --register "first person, present" \
+        --survives "the measurement and the refusal"
+    python tools/ductus.py audit test-books/my-book
 
 Then **author it**. `new` writes the shape and nothing else; the identity is the
 creator's. An agent can write the contract and the ledger entries as it works, and it
 is free to invent a name and a life for the voice — a record's job is to say which
-persona it is reading, not to check the biography.
+persona it is reading, not to check the biography. `new --random` is the exception:
+it writes a complete seeded persona from the palette and marks it as generated, so a
+fresh book can start under a real voice without pretending the voice is a person.
 
 ## What develops
 
@@ -43,3 +50,17 @@ voice a hundred books in is still a voice.
 books that carry none instead of picking for them. A book with no ductus is drafted
 under the root `COMMONPLACE.md` alone — which is where every book in the catalogue was
 drafted.
+
+## Carryover between sessions
+
+A resolved contract is not enough if the next session cannot recover how the voice was
+applied. `ductus.py log` writes one section per chapter to
+`<book>/maintenance/DUCTUS_LOG.md`, naming the contract digest, the tone, the register,
+and what must survive the chapter. `ductus.py audit` fails if a chapter has no entry,
+if an entry has no tone/register/survival statement, or if the contract changed after
+the entry was written. `tools/check-ductus.py` is the thin wrapper the gate suite calls.
+
+At intake, `init-book.py --author "Name" --ductus SLUG` records the assignment and the
+resolved digests in `PROJECT_STATE.yaml`. `--ductus random` seeds a complete persona from
+the palette and assigns it to the new book; the persona is explicitly a generated voice,
+not a claim about a real person.

@@ -541,6 +541,8 @@ python tools/prune-stale.py                # do the standing claims match the pr
 python tools/errata-store.py check         # is the store behind ERRATA.md consistent?
 python tools/check-registry.py             # does the registry agree with the disk?
 python tools/ductus.py check               # do the voice contracts hold?
+python tools/ductus.py audit <book>       # does every chapter carry a current voice log?
+python tools/check-ductus.py <book>       # the same audit as a gate-suite row
 ```
 
 ## Provenance

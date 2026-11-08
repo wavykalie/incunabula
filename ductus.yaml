@@ -33,9 +33,10 @@
 #   that reads the shared file has no voice. `cross` reports an entry that appears in
 #   two ledgers, because a preference in both has stopped being either one's.
 #
-# NOT A GATE
-#   Nothing here is enforced against a book, and no voice may move a threshold: a
-#   measurement moves on a named corpus, never on a voice's taste.
+# NOT A PROSE GATE
+#   `check` enforces the layer's structure, and `audit` checks the per-book carryover
+#   log; neither judges prose and no voice may move a threshold. A measurement moves on
+#   a named corpus, never on a voice's taste.
 #
 # ASSIGNMENT
 #   The `ductus:` key in BOOKS.yaml is the assignment, and it is the author's to make.

@@ -31,17 +31,25 @@ WHY THE LEDGERS ARE ISOLATED
   preference in both has stopped being either one's.
 
 WHAT IT WILL NOT DO
-  - It will not invent a ductus. `new` writes a skeleton; the identity is authored by
-    a person or an agent, and an empty contract is reported as empty rather than
-    filled with house defaults.
+  - It does not invent a ductus by default. `new` writes a skeleton; `new --random`
+    writes a seeded persona from the palette, marked as generated, and an empty
+    contract is reported as empty rather than filled with house defaults.
   - It will not accept a missing ledger as an empty one, and it will not quietly
     assign a book to a voice: `ductus:` in BOOKS.yaml is the author's assignment, and
     `check` NAMES the unassigned books.
-  - It is not a gate. Nothing here is enforced against a book, and no ductus may move
-    a threshold — a measurement moves on a named corpus, never on taste.
+  - `check` is not a prose gate; `audit` is the per-book carryover check. Neither
+    moves a threshold — a measurement moves on a named corpus, never on taste.
 
 usage:  tools/ductus.py <command> [--root DIR]
-  new SLUG [--name "…"] [--register "…"]   create a voice (skeleton, to be authored)
+  new SLUG [--name "…"] [--register "…"] [--random]
+                                           create a voice (skeleton), or a seeded
+                                           contract from the random palette
+  log BOOK --chapter N --tone "…" --register "…" --survives "…"
+                                           record how the voice must carry into a
+                                           chapter; one section per chapter
+  audit BOOK                               check the book's ductus log is complete
+                                           and every chapter entry matches the live
+                                           contract digest
   check                                    every voice, its isolation, the unassigned books
   contract BOOK [--ductus SLUG]            WHAT A RUN DRAFTS UNDER: the resolved contract
                                            for a book, its digest, or UNASSIGNED. A book
@@ -60,8 +68,10 @@ EXIT
 """
 
 import contextlib
+import glob
 import io
 import os
+import random
 import re
 import shutil
 import sys
@@ -74,6 +84,8 @@ PROMOTIONS = "PROMOTIONS.md"
 CONTRACT = "ductus.md"
 LEDGER = "COMMONPLACE.md"
 ROOT_LEDGER = "COMMONPLACE.md"
+BOOK_LOG = "maintenance/DUCTUS_LOG.md"
+CHAPTER = re.compile(r"chapter[-_ ]?0*(\d+)", re.I)
 
 # The ledger entry types, same ceremony as the root COMMONPLACE.md. `list` counts them
 # to show development; none of them is enforced by anything.
@@ -255,6 +267,163 @@ seeding it with invented taste would make taste a default.
 # templates held here: a second copy of the documentation inside this file is a second
 # thing to keep true, and the docstring above already carries the part that matters.
 
+RANDOM_NAMES = (
+    "Bastorius Quinn", "Iris Vane", "Mara Venn", "Orrin Vale", "Sable Rook",
+    "Tobias Mire", "Nell Harrow", "Casper Wren", "Ada Fallow", "Rook Calder",
+)
+
+# A seeded ductus is a persona, not a claim about a real person. The palette gives the
+# fresh-book path a real voice to draft under; it is deliberately broad enough that two
+# random books do not share a register.
+RANDOM_PALETTES = (
+    {
+        "register": (
+            "Concrete, close, and bodily. The prose stays inside the character's "
+            "senses: texture, temperature, pressure, smell, the small physical facts "
+            "that reveal what the character cannot say. Sentences mix short physical "
+            "declarations with longer accumulations of detail. The environment is "
+            "never scenery; it is the character's inner state made visible."
+        ),
+        "refusals": (
+            "- No gore as decoration: violence must cost something on the page.\n"
+            "- No clean catharsis.\n"
+            "- No explaining a wound the scene has already shown.\n"
+            "- No abstract emotion as the subject of a sentence."
+        ),
+        "breaking": (
+            "Under pressure the sentences shorten and the body takes over: hands, "
+            "mouth, the weight of a room. Metaphor drops away. The voice does not get "
+            "louder; it gets more exact about what is physically happening."
+        ),
+        "benchmarks": (
+            "The floor was wet where the freezer had been, and the smell stayed in "
+            "the grout for three days.\n\n"
+            "He put his hand flat on the wall and left it there until the plaster "
+            "warmed under his palm.\n\n"
+            "She counted the teeth in the sink twice; the second count was for the "
+            "part of her that had already started lying."
+        ),
+    },
+    {
+        "register": (
+            "Documentary and oblique. The voice assembles reports, notes, marginalia "
+            "and fragments, and lets the reader feel the gaps between them. It is "
+            "precise about provenance and careless about consolation. The sentence is "
+            "usually flat, with one image allowed to open unexpectedly."
+        ),
+        "refusals": (
+            "- No conventional closure.\n"
+            "- No narrator who explains the architecture.\n"
+            "- No twist that depends on withholding a fact the record already contains.\n"
+            "- No decorative weirdness."
+        ),
+        "breaking": (
+            "Under pressure the documents get shorter and the annotations more "
+            "personal. The voice begins to address an absent reader, then stops "
+            "addressing anyone. The last fragment is always the shortest."
+        ),
+        "benchmarks": (
+            "The file is complete. That is the problem.\n\n"
+            "I have the photocopy. I do not have the report.\n\n"
+            "Nothing in this report was estimated; nobody measured the report."
+        ),
+    },
+    {
+        "register": (
+            "Cold, procedural, and exact. The voice prefers the passive where it hides "
+            "a decision, and the active where it assigns blame. Numbers recur. "
+            "Emotion arrives as a deviation from procedure, never as a speech."
+        ),
+        "refusals": (
+            "- No melodrama.\n"
+            "- No metaphor where a measurement will do.\n"
+            "- No villain explaining himself.\n"
+            "- No sentence that asks the reader to feel something the record does not "
+            "support."
+        ),
+        "breaking": (
+            "Under pressure the voice becomes more formal, then repeats a single "
+            "procedural phrase until it stops meaning anything. The break is in the "
+            "repetition, not in a raised voice."
+        ),
+        "benchmarks": (
+            "The request was refused. The refusal is not in the file.\n\n"
+            "The column for the inspecting officer is blank.\n\n"
+            "The second attendance was not authorised. The second attendance took "
+            "place."
+        ),
+    },
+    {
+        "register": (
+            "Lyrical, patient, and sensorily specific, with a long sentence that "
+            "earns its length through observed detail. The voice trusts weather, "
+            "light and distance to carry feeling. It is willing to be quiet for a "
+            "whole page."
+        ),
+        "refusals": (
+            "- No hurry.\n"
+            "- No simile that only decorates.\n"
+            "- No character announcing what the landscape means.\n"
+            "- No ending that resolves the weather."
+        ),
+        "breaking": (
+            "Under pressure the long sentence breaks into fragments of observation, "
+            "then returns to one clean declarative. The voice holds the concrete "
+            "noun longest and loses the adjective first."
+        ),
+        "benchmarks": (
+            "By afternoon the light had moved off the wall and the room was a "
+            "different room.\n\n"
+            "The field was not empty; it was holding still.\n\n"
+            "She waited until the rain had something to say, and then she went in."
+        ),
+    },
+)
+
+
+def arg_value(args, flag, default=None):
+    if flag not in args:
+        return default
+    i = args.index(flag)
+    return args[i + 1] if i + 1 < len(args) else None
+
+
+def seeded_contract(name, palette):
+    """A complete contract from the palette, explicitly a generated persona."""
+    return f"""# {name}
+
+*A ductus* — the individual character of a writing hand. This one was seeded by the
+random palette: it is a persona, not a claim about a real person. The seed is a starting
+contract, not a verdict; edit it and record the decision in this voice's ledger.
+
+**Status: seeded by random mode, 2026-11-07.** The agent that pilots this voice must read
+it before drafting, revision, auditing or scoring.
+
+## Identity
+
+{name} is a seeded authorial persona. The name is a fiction and the contract says so.
+What the voice has instead of a biography is a temperament: it notices the world through
+the register below, and it refuses the moves listed under Refusals even when they would be
+easy. It writes for a reader who is willing to be inside a body, a document or a room
+rather than above it.
+
+## Register
+
+{palette['register']}
+
+## Refusals
+
+{palette['refusals']}
+
+## Breaking
+
+{palette['breaking']}
+
+## Benchmarks
+
+{palette['benchmarks']}
+"""
+
 
 def cmd_new(root, args):
     slug = next((a for a in args if not a.startswith("--")), None)
@@ -264,8 +433,11 @@ def cmd_new(root, args):
     if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", slug):
         print(f"ductus: {slug!r} is not a slug — lowercase, digits and hyphens.")
         return 2
-    name = args[args.index("--name") + 1] if "--name" in args else slug
-    register = args[args.index("--register") + 1] if "--register" in args else None
+    random_mode = "--random" in args
+    name = arg_value(args, "--name")
+    if not name:
+        name = random.choice(RANDOM_NAMES) if random_mode else slug
+    register = arg_value(args, "--register")
     _press, ddir, err = press_config(root)
     if err == "no-yaml":
         print(f"ductus: no YAML parser here — {CONFIG} was not read (and not passed).")
@@ -274,7 +446,10 @@ def cmd_new(root, args):
     if os.path.exists(d):
         print(f"ductus: {ddir}/{slug} already exists — nothing created, nothing changed.")
         return 1
-    contract = NEW_CONTRACT.format(name=name)
+    if random_mode:
+        contract = seeded_contract(name, random.choice(RANDOM_PALETTES))
+    else:
+        contract = NEW_CONTRACT.format(name=name)
     if register:
         # Recorded verbatim as an ADDITIONAL section: the template's Register section
         # stays a placeholder, because a declared one-line register is the creator's
@@ -282,8 +457,13 @@ def cmd_new(root, args):
         contract += f"\n## Register (as declared by the creator)\n{register}\n"
     write_text(os.path.join(d, CONTRACT), contract)
     write_text(os.path.join(d, LEDGER), NEW_LEDGER.format(name=name))
-    print(f"ductus: created {ddir}/{slug}/ — {CONTRACT} (skeleton) and {LEDGER} (empty).")
-    print("  Author the contract, then draft: an agent pilots this voice by reading it.")
+    if random_mode:
+        print(f"ductus: created {ddir}/{slug}/ — {CONTRACT} (seeded) and {LEDGER} (empty).")
+        print("  This is a generated persona. Edit the contract if the seed is wrong; "
+              "record that decision in its ledger.")
+    else:
+        print(f"ductus: created {ddir}/{slug}/ — {CONTRACT} (skeleton) and {LEDGER} (empty).")
+        print("  Author the contract, then draft: an agent pilots this voice by reading it.")
     if register:
         print(f"  declared register recorded verbatim in {CONTRACT}: {register}")
     print("  `python tools/ductus.py check` reports a section still empty; it will not "
@@ -487,6 +667,194 @@ def cmd_contract(root, args):
           "in the session ledger so a result is attributable to the contract it was "
           "drafted under. Not packaging: the query letter and cover copy are written in "
           "the imprint's register, not the book's.")
+    return 0
+
+
+def _book_dir(root, rel, given):
+    """The book on disk. The registry path is workspace-relative, not repo-relative."""
+    candidates = [given, os.path.join(root, rel),
+                  os.path.join(root, "test-books", rel),
+                  os.path.join(root, "books", rel)]
+    for c in candidates:
+        if c and os.path.isdir(c):
+            return os.path.abspath(c)
+    return None
+
+
+def _resolved_contract(root, book):
+    """(rel, slug, contract, error) for the audit/log paths."""
+    _press, ddir, err = press_config(root)
+    if err:
+        return None, None, None, err
+    assignments = book_assignments(root)
+    if assignments is None:
+        return None, None, None, "books"
+    rel, slug, how = resolve_book(assignments, book)
+    if how == "ambiguous":
+        return None, None, None, "ambiguous"
+    if rel is None:
+        return None, None, None, "unregistered"
+    if not slug:
+        return rel, None, None, "unassigned"
+    contract = os.path.join(root, ddir, slug, CONTRACT)
+    if not os.path.isfile(contract):
+        return rel, slug, None, "missing"
+    if thin_sections(read_text(contract)):
+        return rel, slug, contract, "skeleton"
+    return rel, slug, contract, None
+
+
+def _chapter_file(book_dir, number):
+    for path in glob.glob(os.path.join(book_dir, "manuscript", "chapters", "chapter-*.md")):
+        m = CHAPTER.search(os.path.basename(path))
+        if m and int(m.group(1)) == number:
+            return path
+    return None
+
+
+def _chapter_title(path):
+    if not path:
+        return "Untitled"
+    for line in read_text(path).splitlines():
+        if line.startswith("# "):
+            title = line[2:].strip()
+            return re.sub(r"^Chapter\s+\d+\s*[—–-]\s*", "", title, flags=re.I)
+    return "Untitled"
+
+
+def cmd_log(root, args):
+    """Record one chapter's carryover entry in the book's ductus log."""
+    book = args[0] if args and not args[0].startswith("--") else None
+    if not book:
+        print("ductus: log needs a book — `ductus.py log test-books/some-book ...`.")
+        return 2
+    try:
+        number = int(arg_value(args, "--chapter", ""))
+    except (TypeError, ValueError):
+        print("ductus: log needs --chapter N.")
+        return 2
+    tone = arg_value(args, "--tone")
+    register = arg_value(args, "--register")
+    survives = arg_value(args, "--survives")
+    if not tone or not register or not survives:
+        print("ductus: log needs --tone, --register and --survives (each a real sentence).")
+        return 2
+
+    rel, slug, contract, err = _resolved_contract(root, book)
+    if err == "unassigned":
+        print(f"ductus: {rel} is UNASSIGNED — there is no voice to log.")
+        return 1
+    if err:
+        print(f"ductus: cannot log — {err} for {book!r}.")
+        return 1
+    bookdir = _book_dir(root, rel, book)
+    if not bookdir:
+        print(f"ductus: no book directory for {rel!r}.")
+        return 1
+    chapter = _chapter_file(bookdir, number)
+    title = _chapter_title(chapter)
+    current = digest(contract)
+    logpath = os.path.join(bookdir, BOOK_LOG)
+    rel_contract = os.path.relpath(contract, root).replace(os.sep, "/")
+    entry = (
+        f"## Chapter {number:02d} — {title}\n\n"
+        f"- **Contract:** {slug} sha256:{current}\n"
+        f"- **Tone:** {tone.strip()}\n"
+        f"- **Register:** {register.strip()}\n"
+        f"- **What must survive:** {survives.strip()}\n"
+    )
+    if os.path.isfile(logpath):
+        text = read_text(logpath).rstrip()
+    else:
+        text = (
+            f"# Ductus log — {os.path.basename(bookdir)}\n\n"
+            f"**Ductus:** {slug}  \n"
+            f"**Contract:** `{rel_contract}`  \n"
+            f"**Contract digest:** `sha256:{current}`\n\n"
+            "A fresh session reads this beside the contract. Every chapter must carry its own "
+            "entry; `ductus.py audit` checks completeness and digest parity.\n"
+        )
+    section = re.compile(rf"^##\s+Chapter\s+0*{number}\b.*?(?=^##\s+Chapter|\Z)",
+                         re.M | re.S)
+    if section.search(text):
+        text = section.sub(entry, text, count=1).rstrip() + "\n"
+    else:
+        text = text.rstrip() + "\n\n" + entry
+    write_text(logpath, text)
+    print(f"ductus: logged chapter {number:02d} under {slug} (sha256:{current}).")
+    print(f"  {os.path.relpath(logpath, root)}")
+    return 0
+
+
+def cmd_audit(root, args):
+    """The per-book check: every chapter has a current, readable carryover entry."""
+    if len(args) != 1:
+        print("usage: python tools/ductus.py audit <book-root>")
+        return 2
+    book = args[0]
+    rel, slug, contract, err = _resolved_contract(root, book)
+    if err == "unassigned":
+        print(f"ductus audit: NOT RUN — {rel} has no `ductus:` assignment. "
+              "Assign one at intake (`--ductus`), or record the absence deliberately.")
+        return 2
+    if err == "ambiguous":
+        print(f"ductus audit: {book!r} matches more than one registry entry.")
+        return 1
+    if err == "unregistered":
+        print(f"ductus audit: UNREGISTERED — {book!r} is not in BOOKS.yaml.")
+        return 1
+    if err:
+        print(f"ductus audit: REFUSED — {err} for {book!r}.")
+        return 1
+    _press, ddir, cfg_err = press_config(root)
+    if cfg_err:
+        print(f"ductus audit: {CONFIG} does not parse — {cfg_err}")
+        return 1
+    ledger = os.path.join(root, ddir, slug, LEDGER)
+    if not os.path.isfile(ledger):
+        print(f"ductus audit: FAIL — {slug!r} has no {LEDGER}.")
+        return 1
+    bookdir = _book_dir(root, rel, book)
+    if not bookdir:
+        print(f"ductus audit: no book directory for {rel!r}.")
+        return 1
+    chapters = sorted(glob.glob(os.path.join(bookdir, "manuscript", "chapters", "chapter-*.md")))
+    if not chapters:
+        print(f"ductus audit: no chapters under {bookdir}/manuscript/chapters — nothing to audit.")
+        return 2
+    logpath = os.path.join(bookdir, BOOK_LOG)
+    if not os.path.isfile(logpath):
+        print(f"ductus audit: FAIL — no {BOOK_LOG}. A fresh session has no carryover record.")
+        return 1
+    text = read_text(logpath)
+    current = digest(contract)
+    fails = []
+    if f"**Ductus:** {slug}" not in text:
+        fails.append(f"header does not name the assigned ductus {slug!r}")
+    for path in chapters:
+        m = CHAPTER.search(os.path.basename(path))
+        if not m:
+            continue
+        number = int(m.group(1))
+        section = re.search(rf"^##\s+Chapter\s+0*{number}\b(.*?)(?=^##\s+Chapter|\Z)",
+                            text, re.M | re.S)
+        if not section:
+            fails.append(f"chapter {number:02d} has no ductus entry")
+            continue
+        body = section.group(1)
+        if f"**Contract:** {slug} sha256:{current}" not in body:
+            fails.append(f"chapter {number:02d} was logged against a different contract digest")
+        for field in ("Tone", "Register", "What must survive"):
+            if not re.search(rf"\*\*{re.escape(field)}:\*\*\s*\S", body):
+                fails.append(f"chapter {number:02d} has no {field} entry")
+    print(f"ductus audit — {rel} under {slug} (sha256:{current})")
+    print(f"  chapters: {len(chapters)}   log: {os.path.relpath(logpath, root)}")
+    if fails:
+        for f in fails:
+            print(f"  FAIL    {f}")
+        print("ductus audit: FAIL — a fresh session cannot recover the voice for every chapter.")
+        return 1
+    print("ductus audit: PASS — every chapter has a current carryover entry.")
     return 0
 
 
@@ -741,6 +1109,7 @@ def main():
     if cmd in ("selftest", "--self-test"):
         return selftest()
     table = {"new": cmd_new, "check": lambda r, a: cmd_check(r, a),
+             "log": cmd_log, "audit": cmd_audit,
              "contract": cmd_contract,
              "cross": lambda r, a: cmd_cross(r, a), "list": cmd_list}
     if cmd not in table:

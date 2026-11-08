@@ -128,7 +128,14 @@ classify() {  # classify KIND RC OUT -> echoes status
   local kind="$1" rc="$2" out="$3"
   case "$kind" in
     prose)
-      if [ "$rc" -eq 0 ]; then
+      # A row can decline to judge one file and still exit 0: deslop-check.sh reports
+      # P1 and A25 as UNMEASURED below 667 words, the measured document-size floor
+      # (2026-11-07; 45 of 281 published documents under 667 failed P1 at the old
+      # 167-word floor). That is not a pass and not a failure, so it gets its own
+      # status and counts toward `unclear` like NOT RUN does.
+      if [ "$rc" -eq 0 ] && contains "RESULT: UNMEASURED" "$out"; then
+        echo UNMEASURED
+      elif [ "$rc" -eq 0 ]; then
         echo PASS
       elif contains "nothing checkable" "$out" || contains "no chapters found" "$out"; then
         echo "NOT RUN"
@@ -182,6 +189,7 @@ run_row() {  # run_row NAME KIND SCRIPT [ARGS...]
   case "$status" in
     FAIL)      fails=$((fails + 1)) ;;
     "NOT RUN") if [ "$kind" != report ]; then unclear=$((unclear + 1)); fi ;;
+    UNMEASURED) unclear=$((unclear + 1)) ;;
     RECORDED)  unclear=$((unclear + 1)) ;;
   esac
 }
@@ -201,6 +209,7 @@ run_row "check-premise-distinct.py" hygiene "$PROSE/check-premise-distinct.py" "
 echo "== cross-book and integrity ===================================="
 run_row "check-names.py" hygiene "$PROSE/check-names.py" "$BOOK"
 run_row "check-manuscript-integrity.py" hygiene "$ROOT/tools/check-manuscript-integrity.py" "$BOOK"
+run_row "check-ductus.py" hygiene "$ROOT/tools/check-ductus.py" "$BOOK"
 
 echo "== prose gate =================================================="
 run_row "deslop-check.sh" prose "$PROSE/deslop-check.sh" "$CHAPTERS"

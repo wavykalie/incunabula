@@ -25,6 +25,7 @@ What it does NOT do:
 
 Usage:
     python tools/init-book.py --path my-novel --title "My Novel" \
+        [--author "Name"] [--ductus SLUG|random] \
         [--status drafting] [--floor 80000] [--ceiling 95000] [--concept] \
         [--chapters-planned 30 --words-per-chapter 3000]
     python tools/init-book.py --self-test
@@ -39,8 +40,10 @@ Usage:
 """
 
 import argparse
+import hashlib
 import io
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -83,7 +86,12 @@ def write_text(path, text, mode="w"):
         fh.write(text)
 
 
-def append_registry(book_path, title, status, expected_manuscript):
+def file_digest(path):
+    with open(path, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()[:12]
+
+
+def append_registry(book_path, title, status, expected_manuscript, ductus=None, author=None):
     note = {
         "concept": "Concept stage; no manuscript expected yet.",
         "drafting": "Registered at creation by init-book.py.",
@@ -94,7 +102,9 @@ def append_registry(book_path, title, status, expected_manuscript):
         fh.write(
             f"\n  - path: {book_path}\n"
             f"    title: \"{title}\"\n"
-            f"    status: {status}\n"
+            + (f"    author: \"{author}\"\n" if author else "")
+            + (f"    ductus: {ductus}\n" if ductus else "")
+            + f"    status: {status}\n"
             f"    expected_manuscript: {str(expected_manuscript).lower()}\n"
             f"    note: \"{note} ({date.today().isoformat()})\"\n"
         )
@@ -190,6 +200,8 @@ def main(argv=None):
                          "this is the plan check-progress.py C1 checks the contract against")
     ap.add_argument("--concept", action="store_true",
                     help="shorthand for --status concept (no manuscript expected)")
+    ap.add_argument("--author", help="the name this book publishes under")
+    ap.add_argument("--ductus", help="a ductus slug, or 'random' to seed one")
     args = ap.parse_args(argv)
 
     if args.concept:
@@ -239,6 +251,41 @@ def main(argv=None):
         print(f"init-book: {book_root} already exists - nothing created, nothing registered.")
         return 1
 
+    # The ductus is decided before the book exists, which is the point: a fresh
+    # session must not have to guess whose hand it is writing in. `random` seeds a
+    # complete persona from the palette; a named slug must already be authored.
+    ductus = args.ductus
+    if ductus == "random":
+        slug = re.sub(r"[^a-z0-9]+", "-", book_path.lower()).strip("-") or "book"
+        cmd = [sys.executable, os.path.join(TOOLS_DIR, "ductus.py"),
+               "new", slug, "--random"]
+        if args.author:
+            cmd += ["--name", args.author]
+        proc = subprocess.run(cmd, capture_output=True, text=True)
+        if proc.returncode != 0:
+            print("init-book: the random ductus could not be created:")
+            print((proc.stdout or "") + (proc.stderr or ""))
+            return 1
+        ductus = slug
+        if not args.author:
+            # The generated contract names its persona on its first heading. Persist
+            # that name, or the registry would carry a voice with no author attached.
+            try:
+                with open(os.path.join(FRAMEWORK, "ductus", slug, "ductus.md"),
+                          encoding="utf-8") as fh:
+                    first = fh.readline().strip()
+                if first.startswith("# "):
+                    args.author = first[2:].strip()
+            except OSError:
+                pass
+    elif ductus:
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", ductus):
+            ap.error("--ductus must be a lowercase slug or 'random'")
+        if not os.path.isfile(os.path.join(FRAMEWORK, "ductus", ductus, "ductus.md")):
+            print(f"init-book: no ductus/{ductus}/ductus.md - create it first with "
+                  f"`python tools/ductus.py new {ductus}`.")
+            return 1
+
     expected_manuscript = args.status != "concept"
 
     # 1. scaffold
@@ -260,7 +307,8 @@ def main(argv=None):
             "# ============================================================================\n\n"
             "project:\n"
             f"  title: \"{args.title}\"\n"
-            f"  status: \"{'in_progress' if args.status in ('drafting', 'autonomous') else args.status}\"\n\n"
+            + (f"  author: \"{args.author}\"\n" if args.author else "")
+            + f"  status: \"{'in_progress' if args.status in ('drafting', 'autonomous') else args.status}\"\n\n"
         )
         if floor or ceiling:
             fh.write(
@@ -293,12 +341,27 @@ def main(argv=None):
                 "  # cannot check the contract against anything and reports NOT RUN -\n"
                 "  # a self-declared contract is the gap the 2026-10-13 audit found.\n\n"
             )
+        if ductus:
+            contract = os.path.join(FRAMEWORK, "ductus", ductus, "ductus.md")
+            ledger = os.path.join(FRAMEWORK, "ductus", ductus, "COMMONPLACE.md")
+            fh.write(
+                "voice:\n"
+                f"  state: \"resolved\"\n"
+                f"  ductus: \"{ductus}\"\n"
+                f"  contract_path: \"ductus/{ductus}/ductus.md\"\n"
+                f"  contract_digest: \"{file_digest(contract)}\"\n"
+                f"  ledger_path: \"ductus/{ductus}/COMMONPLACE.md\"\n"
+                f"  ledger_digest: \"{file_digest(ledger)}\"\n"
+                f"  resolved: \"{date.today().isoformat()}\"\n"
+            )
 
     # 3. register
     if expected_manuscript:
-        append_registry(book_path, args.title, args.status, True)
+        append_registry(book_path, args.title, args.status, True,
+                        ductus=ductus, author=args.author)
     else:
-        append_registry(book_path, args.title, args.status, False)
+        append_registry(book_path, args.title, args.status, False,
+                        ductus=ductus, author=args.author)
 
     # 4. verify THIS registration, do not assume it. The workspace registry may
     # carry pre-existing problems (books whose finished claims await their
@@ -338,6 +401,10 @@ def main(argv=None):
               f"inside the contract [{floor:,}, {ceiling:,}].")
     if args.status in ("drafting", "autonomous"):
         print("           status: in_progress is set - L1 records until you remove it at delivery.")
+    if ductus:
+        print(f"           ductus: {ductus} resolved and recorded in PROJECT_STATE.yaml.")
+    else:
+        print("           no ductus assigned; pass --ductus SLUG or --ductus random at intake.")
     return 0
 
 
