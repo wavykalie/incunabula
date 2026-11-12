@@ -63,8 +63,11 @@ before phase one and stay current throughout.
 **Modes.** Every session starts by establishing which one it is: **NEW**, **RESUME**,
 **UPGRADE** (bringing an existing project into the layer), or **REPAIR** (recovering a
 project whose layer was skipped). When both `STATE.yaml` and `PROJECT_STATE.yaml` exist,
-pick the primary using explicit decisions, completeness, phase progress, and update
-evidence — and never delete or silently overwrite the other.
+pick the primary **once**, using explicit decisions, completeness, phase progress, and
+update evidence; record the choice in the primary as `primary_state:` and read it from there
+for the rest of the run. Re-deciding it every session is how two state files become permanent
+process weight, and it is an error class nobody catches. Never delete or silently overwrite
+the other.
 
 **Scope contract (state files).** The engine owns `STATE.yaml` — the engine scope: phase
 position and session mode. `press-ledger` owns `PROJECT_STATE.yaml` — the session scope:
@@ -103,6 +106,16 @@ favour; a deliberate deviation is a recorded decision in that voice's ledger, ne
 silent drift. Taste earned while drafting under a voice is recorded in **that voice's**
 ledger, not the root one — nothing crosses between voices except a dated merge in
 `ductus/PROMOTIONS.md`.
+
+Carry the voice across sessions with the book's own log. Before drafting a chapter, run
+`python tools/ductus.py log <book-root> --chapter N --tone "…" --register "…" --survives "…"`;
+the entry records the contract digest and what the next session must preserve. On resume,
+read `maintenance/DUCTUS_LOG.md` beside the contract. `python tools/ductus.py audit
+<book-root>` fails if a chapter has no entry, if a quoted survival claim is missing from its
+chapter, or if the contract changed after the entry was written; `tools/check-ductus.py` is
+the gate-suite wrapper, and `python tools/ductus.py calibrate <book-root>` measures the book
+against the numeric lines the contract declares. A book assigned to a ductus without a
+current log is not ready for the next chapter.
 
 **Host contract.** Read the host contract at start and resume, and confirm the host can
 actually read the active prompt and write the project before claiming progress.
@@ -149,7 +162,7 @@ book finished until the proof pulls and the state-canon-voice consistency gate b
 2.5    Voice matrix        voice-matrix
 2.7    Case build          case-keeper (BUILD)
 2.8    Collation, outline  collator
-3      Drafting            setting          (one chapter at a time)
+3      Drafting            setting          (scene by scene; a chapter may take several calls)
 3.1    Register            register
 3.2    Catchword           catchword
 3.5    Quoin               quoin
@@ -172,12 +185,24 @@ the quoin runs. It does not fix anything; it breaks predictability. It cuts self
 similes, injects irrelevant thoughts where the mind is too focused, lets emotional control
 fail, deflates needless precision, removes the most predictable paragraph, roughens clean
 dialogue, and guarantees that a meaningful share of detail is pure texture rather than
-theme. The phase exists because any drafting system drifts toward order, and good books
-need moments of disorder.
+theme. It applies the operations a chapter's diagnosis calls for, not a fixed count:
+operation 1 wherever an overprint is present, operation 9 every time (uniformity is invisible
+from inside one chapter), and the rest where the chapter has gone too smooth. The phase
+exists because any drafting system drifts toward order, and good books need moments of
+disorder — a per-chapter quota manufactures the same disorder everywhere, which is its own
+tell.
 
 ---
 
 ## The required gates
+
+### The variety rule
+
+One rule, stated once here and applied to three surfaces: **no device carries two consecutive
+units.** The surfaces are the structural approach chapter to chapter, the hook type chapter to
+chapter, and the join type between scenes. The phase-gate lines below say *(variety rule)* and
+restate nothing; this is the rule. A repeat the material demanded is a recorded decision, not
+an exemption — the record is what the rule reads.
 
 ### Prose gate
 
@@ -255,7 +280,7 @@ perfectly, which is why collator's full pass runs before the row is consulted.
 Required at every phase, and never satisfied by a layer that was never created.
 
 - `CANON_LEDGER.yaml`, the active voice contracts, and the pruning log exist. Their absence at a later phase is a repair, recorded as run late.
-- Check-in before the work: state, canon, recent session entries, and the phase prompt read; chapter status and word counts reconciled against the actual files; a changed-file scan done; duplicates merged; provenance and verification stamps added.
+- Check-in before the work: state, canon, recent session entries, and the phase prompt read; chapter status and word counts reconciled against the actual files; a changed-file scan done; duplicates merged; provenance and verification stamps added. The mechanical half is `bash tools/preflight.sh` plus `python tools/check-registry.py` — run them and record their verdict instead of re-deriving it by hand, and let the runner's own phase record stand as the history entry for a phase that did not run.
 - Check-out after the work: state, canon, voice contract, document registry, and pruning log updated, and the phase gate re-run before progress is claimed.
 - A session log entry exists for the session, and a history entry exists for every phase — including the phases that did not run. A skipped step is recorded as skipped.
 - The primary state file parses under a real parser. A file that will not parse means no downstream gate could have read it: report, repair, re-verify.
@@ -263,7 +288,7 @@ Required at every phase, and never satisfied by a layer that was never created.
 - Unresolved conflicts reported by identifier with their blocking scope, so an open conflict cannot pass as a settled fact.
 - Nothing archived or deleted without path, archive path, replacement, reason, and date. Pruning reduces active context; it does not erase history.
 - Gate evidence recorded: the `run-gates.sh` summary table — command, exit status, documents scanned, failing rows with rule identifiers — and the control run. A gate without a recorded verdict is a gate that did not run.
-- Every phase-level pass is complete only with its artifact file on disk: `register` leaves the blind-sort table with its verdict; `catchword` leaves hook/pull scores and the hook-type log; `quoin` leaves the operation log (at least five operations); `composing` leaves the diff-review note; `proof-panel` leaves persona verdicts, the tic scan, and the independence grade; `proof-pull` leaves the round log. A claim without the artifact is a FAIL, not a pass. (`tools/check-pass-evidence.py` verifies presence; it reads no prose and judges no manuscript.)
+- Every phase-level pass is complete only with its artifact file on disk: `register` leaves the blind-sort table with its verdict; `catchword` leaves hook/pull scores and the hook-type log; `quoin` leaves the operation log (the diagnosis, the operations applied, and the operations declined with their reasons); `composing` leaves the diff-review note; `proof-panel` leaves persona verdicts, the tic scan, and the independence grade; `proof-pull` leaves the round log. A claim without the artifact is a FAIL, not a pass. (`tools/check-pass-evidence.py` verifies presence; it reads no prose and judges no manuscript.)
 - Progress is tracked as gated words — words in chapters with complete pass files. Chapters-drafted is informational.
 - No chapter under 2,000 words or 50% of its planned length without a recorded waiver (reason, outline actuals updated, session-log entry). A waiver is not a routine device: a second consecutive waiver, or one that leaves the running total behind the outline's plan (row `L2` of `tools/check-progress.py` reports that running total; row `C1` there fails a contract that contradicts the outline's plan, so the band cannot be shrunk to fit the output), is a stop-the-line event escalated to the human. A recurring waiver is itself the pattern.
 - Grade-C evaluations are diagnostic only and cannot advance phases. Where no independent critic exists, checkpoints belong to the human; self-votes stand in for nobody.
@@ -279,14 +304,14 @@ proves nothing and is never recorded as a pass.
 
 - **1 → 1.5** market study with comps, genre conventions, a length target, an engagement type, and explicit user approval of direction.
 - **1.5 → 2** three to five personas; a primary that drives writing and a hostile that drives evaluation; deal-breakers and triggers on each.
-- **2 → 2.5** character profiles with chaos (wound, lie, arc, irrelevant obsession, distortion, unprompted memory, failed emotional management); a chapter outline carrying emotional anchors and emotional surprises instead of intensity numbers; an opening strategy; a structural approach per chapter with no consecutive repeats; a transition plan drawing on at least five distinct join types with none used twice in a row; theme as a question; ranked engagement types; re-read architecture; a chosen stylistic device; user approval.
+- **2 → 2.5** character profiles with wound, lie, and arc for every principal, and the disorder devices (irrelevant obsession, distortion, unprompted memory, failed emotional management) **assigned by fit rather than carried by every character** — they are devices, not a template, and characters should differ in kind and not only in which quirk was assigned; a chapter outline carrying emotional anchors and emotional surprises instead of intensity numbers; `story-spine.md` with the ends decided (true state, false surface, thread endings, twist seeds, multi-scene chapters, flippable lines) and the means left loose; an opening strategy; a structural approach per chapter *(variety rule)*; a transition plan *(variety rule)*; theme as a question; ranked engagement types; re-read architecture; a chosen stylistic device; user approval.
 - **2.5 → 2.7** the voice matrix exists with a global profile, per-character cards including how each voice breaks, a differentiation matrix showing at least three distinguishing markers per pair, the anti-pattern checklist, and benchmark samples; the voice bank holds at least ten samples, including at least three that demonstrate voice under pressure and two irrelevant-thought samples.
 - **2.7 → 2.8** the entity file was built from foundation and outline, tracking every character, location, and timeline entry.
 - **2.8 → 3** the outline collation found no critical issues; warnings logged, and each either addressed or deferred with a reason.
-- **3 → 3.1** the chapter is written, its self-report saved with chaos moments, the ugly sentence, impulse deviations, the scan result, and the structural approach used, and the **prose gate passes**. A chapter that fails the scan does not enter the manuscript however well it reads. No passage delivers information naked: every expository load is carried by conflict, a wrong first answer, a concrete object, withheld context, or a cost the character pays for not knowing.
+- **3 → 3.1** the chapter is written, its self-report saved with chaos moments, the ugly sentence, impulse deviations, the scan result, and the structural approach used, and the **prose gate passes**. A chapter that fails the scan does not enter the manuscript however well it reads. No passage delivers information naked: every expository load is carried by something that does a second job in the passage. Conflict, a wrong first answer, a concrete object, withheld context, and a cost paid for not knowing are the five known carriers, not a closed list — a new carrier is legal when it does two jobs at once, and the gate asks what else the passage is doing, never which of five it used.
 - **3.1 → 3.2** register ran; the blind sort passes for every speaking character in the chapter; the dialogue-to-prose ratio sits inside the genre target.
-- **3.2 → 3.5** the hook and pull are scored at or above the genre floor, and the hook type differs from the previous chapter's.
-- **3.5 → 3.7** the quoin applied at least five of its nine operations, including operation 9, and preserved the emotional anchor. Every three to five chapters, the case tracker updates.
+- **3.2 → 3.5** the hook and pull are scored at or above the genre floor, and the hook type obeys the variety rule.
+- **3.5 → 3.7** the quoin ran, its report records the diagnosis and the operations it declined, operation 9 was judged against the previous two chapters' numbers, and the emotional anchor is preserved. Every three to five chapters, the case tracker updates.
 - **3.7 → 3.8** the quoin report is saved and the anchor intact.
 - **3.8 → 4** the composing pass is run and an agent has reviewed its diffs for false positives.
 - **4 → 4.5** the prose gate passes, the score is calculated per chapter and globally, weaknesses are ranked by taxonomy with citations, the top three weaknesses and the top three strengths to preserve are named, the tic scan ran against genre targets, the character-chaos check ran, and the keepsake anchors were counted. The chapter's **beat arc and extended scene functions are declared** into `NARRATIVE_LEDGER.yaml`, and any new obligation the chapter opened is recorded as a debt entry — declarations are what the narrative gate later checks.
@@ -359,9 +384,11 @@ estimate, engagement recommendation, and the prose-rules file for the drafting s
 **Readership** — `readership` for three to five personas, naming the primary, the hostile,
 and the stretch reader.
 
-**Foundation** — `forme` for characters with chaos, an outline carrying anchors and
-surprises and structural approaches, the opening strategy, the voice bank, theme as
-question, re-read architecture, and cultural vocabulary.
+**Foundation** — `forme` for characters with wound, lie, and arc (plus the disorder devices
+the characters' own logic calls for), an outline carrying anchors and surprises and
+structural approaches, `story-spine.md` with the ends decided and the means left loose, the
+opening strategy, the voice bank, theme as question, re-read architecture, and cultural
+vocabulary.
 
 **Voice matrix** — `voice-matrix` for the global profile, per-character cards, the
 differentiation matrix, and benchmark samples. It is prescriptive.
@@ -371,7 +398,8 @@ differentiation matrix, and benchmark samples. It is prescriptive.
 **Outline collation** — `collator` on foundation, outline, and voice matrix: timeline
 feasibility, nobody in two places, information flow, threads with planned resolutions.
 
-**Drafting** — `setting` for one chapter, given the outline entry for that chapter, the
+**Drafting** — `setting` for one chapter — or for the next scene of a chapter the spine
+marks multi-scene — given the outline entry for that chapter, the
 voice bank including the pressure samples, the previous chapter, the structural approach
 that must differ from the previous chapter's, and the instruction to write similes raw
 rather than extending them. Chapter written to the manuscript folder, self-report to the
@@ -384,8 +412,8 @@ dialogue, tag-to-beat ratio. Narrative prose untouched.
 first and last few sentences below threshold, and never repeating the previous chapter's
 hook type.
 
-**Quoin** — `quoin`, at least five of its nine operations including operation 9,
-preserving the anchor, report saved to evaluations.
+**Quoin** — `quoin`, diagnosing the chapter and applying the operations the diagnosis names,
+operation 9 always, preserving the anchor, report saved to evaluations.
 
 **Case update** — `case-keeper` in UPDATE mode after each batch.
 
@@ -447,9 +475,15 @@ The system scores its own output, which is maximum bias, so the rules are explic
 
 The score is the floor: the lowest dimension of the seven.
 
+**A score is a band, not a measurement.** Report each dimension to the nearest half point and
+read it as a band of ±0.5; the instrument does not resolve 7.5 from 7.0, and a gate compares
+the bottom of the band. A floor of 7.0 with a band reading 7.0–7.5 passes; a floor of 7.5 with
+that same band does not. Any precision finer than that is a number the system invented about
+itself.
+
 | # | Dimension | Measures | Evaluation hook |
 |---|---|---|---|
-| 1 | Originality | what this book does that nothing else does | name three unique elements; fewer than three caps at 7.0 |
+| 1 | Originality | what this book does that nothing else does | judged, not counted: one unmistakable thing beats three borrowable ones, and no list of three earns a score by itself |
 | 2 | Theme | depth of the central question | present in at least 80% of chapters without being stated; a character stating it caps at 7.0 |
 | 3 | Characters | dimensionality, contradiction, chaos, arc | chaos populated; blind sort passes; secondary characters have lives |
 | 4 | Prose and voice | sentence quality, identifiable personality, anti-AI compliance, pressure voice | three random pages identify the voice; the tic scan meets the genre target; the voice changes under stress |
@@ -507,6 +541,69 @@ adjust any downstream chapter that the change touches, and log the decision with
 rationale. The outline is a living document: a successful deviation means the outline was
 wrong, not the chapter.
 
+## The chapter is the unit, not the call
+
+One outline row is one chapter; one chapter is not one drafting call. A chapter that is
+several scenes — or a document cluster — is drafted scene by scene across as many calls as it
+takes, and the material sets the number. What must not happen is the reverse: a long book
+built as many short chapters because each call writes roughly two thousand words, so the only
+thing that can grow is the count. Total length is enforced (`check-length.py`); chapter length
+has no target (`DRAFTING_FRAMEWORK.md`); the spine lists the multi-scene chapters so the split
+is planned rather than improvised. A chapter assembled from several scenes is the normal way
+to get a long chapter.
+
+## The story spine
+
+Phase 2 also produces `story-spine.md`, beside the outline and not inside it. It decides the
+*ends*: the true state of the world, the false surface the reader is told, where each thread
+lands, each twist's seed and payoff chapters, which chapters are multi-scene, and the early
+lines that will return with their meaning flipped. The outline keeps its current granularity —
+how a chapter gets there is where impulse deviations live, and an outline detailed enough to
+transcribe turns drafting into transcription.
+
+`collator` checks the spine against the plan at 2.8 and against the text at 5.6: a payoff with
+no seed, or a seed that never pays, is a spine finding. A kept deviation updates the spine
+exactly as it updates the outline.
+
+## Layered books
+
+A book may declare `structure: layered`: a document set rather than a manuscript, where the
+layers accuse each other and the contradiction is the design. For those books, and only where
+the intake declares it:
+
+- **Canon is per layer.** Every `CANON_LEDGER.yaml` and voice contract carries a `layer:` key.
+  A contradiction between layers is content; a contradiction within a layer is a finding. No
+  layer resolves another's value — the channel firewall applied to fiction.
+- **The outline is architecture.** The spine records the document layers, the nesting depth,
+  and where the interruptions fall (`forme`).
+- **Layout is a drafting decision.** The composing pass (3.8) decides the typographic rules and
+  checks them, before evaluation. `presswork` formats what 3.8 decided; it does not decide it.
+- **The gates are scoped per layer.** `deslop-check.sh`, the tic scan, `check-uniformity.py`
+  and the 5.6 collation run per layer, and "world rules unbroken" becomes "broken only where
+  the architecture says they break". One layer is never measured against another.
+- **The score is re-scoped, not waived.** Chapter-based dimensions are suspended for a book
+  whose unit is a document or a page; the configurable seventh dimension carries the book's own
+  stated rule (surreal, custom), and the commercial indices are reported as inapplicable rather
+  than as failures. An anti-commercial form is not failed for refusing airport readability it
+  never asked for.
+
+**The honest limit.** The `layer:` key and the per-layer scoping are declared in the book's
+state and read by the skills; the frozen tools are not rewritten to split a book into layers,
+so a layered book's gate evidence is assembled per layer by the run while the freeze still
+applies to the instrument as a whole. That gap between the declaration and the tooling is
+recorded as one rather than papered over.
+
+## Three runners, one engine
+
+| What you want | Run | What it is |
+|---|---|---|
+| One book, start to finish, minimal steering | `incunabula-auto "<idea>"` | The full engine, autonomous, stopping only at three checkpoints (foundation, manuscript, delivery) |
+| To steer every phase | `incunabula` | The same engine, driven by hand: `start`, `write`, `evaluate`, `revise`, `score`, `deliver` |
+| A small project, or a host that only reads and writes files | `incunabula-codex` | The contract layer (intake, canon, voice contracts) and an optional 8-phase compact pipeline |
+
+The first two are one engine with a different amount of pilot. The third is a smaller
+pipeline that must never be swapped in silently for the full one.
+
 ## Systemic patterns
 
 After each evaluation, check for a pattern recurring across two or more consecutive
@@ -558,6 +655,13 @@ orchestrator enforces the targets. Targets are genre-adjusted: a clean literary 
 carries zero to three, memoir zero to four, commercial fiction zero to eight, prescriptive
 nonfiction zero to twelve. A manuscript scoring zero across all twenty-two is suspicious rather
 than perfect.
+
+**Five rows are measurements; the other seventeen are taste.** Rows 3, 4, 11, 21 and 22 are
+the ones with a corpus behind them (`PRINTERS_COPY.md` §3: `D2`, `D1`, the independently
+counted overprint, `F1`/`A24`, `A25`), and they are the only rows that can fail a book
+outright. The rest are craft judgement — worth looking at, and not evidence. Keep the two
+kinds apart before whoever is deciding what to obey, or the taste rows borrow the authority
+of the measured ones.
 
 1. Forced symmetry — by day one thing, by night another.
 2. Empty poetic vocabulary — tapestry, symphony, dance, journey.
