@@ -21,7 +21,7 @@ ductus/
     python tools/ductus.py new my-voice --name "My Voice" --register "short declaratives"
     python tools/ductus.py new my-voice --random   # a seeded persona from the palette
     python tools/ductus.py check      # every voice, its isolation, the unassigned books
-    python tools/ductus.py cross      # any entry two voices both hold
+    python tools/ductus.py cross      # any entry, or contract, two voices both hold
     python tools/ductus.py list       # how far each voice has developed
     python tools/ductus.py log test-books/my-book --chapter 1 \
         --tone "cold, procedural" --register "first person, present" \
@@ -58,7 +58,16 @@ applied. `ductus.py log` writes one section per chapter to
 `<book>/maintenance/DUCTUS_LOG.md`, naming the contract digest, the tone, the register,
 and what must survive the chapter. `ductus.py audit` fails if a chapter has no entry,
 if an entry has no tone/register/survival statement, or if the contract changed after
-the entry was written. `tools/check-ductus.py` is the thin wrapper the gate suite calls.
+the entry was written. A survival line that quotes an object — `the brass lever` — is a
+claim, and audit fails when the chapter no longer contains it; the unquoted part is prose
+written for the next session's eye, so it is reported with the words that are missing and
+not enforced. `tools/check-ductus.py` is the thin wrapper the gate suite calls.
+
+`ductus.py calibrate <book>` measures the book against the numeric lines the contract
+declares — negation, subject openings, texture — and exits 1 where the book leaves one.
+It reads a fenced `ductus-invariants` block when a contract has one and the prose form
+otherwise, and prints which it read. It is deliberately not in the gate suite: a declared
+line is enforced where the author runs it.
 
 At intake, `init-book.py --author "Name" --ductus SLUG` records the assignment and the
 resolved digests in `PROJECT_STATE.yaml`. `--ductus random` seeds a complete persona from

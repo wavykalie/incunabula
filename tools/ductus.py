@@ -39,6 +39,9 @@ WHAT IT WILL NOT DO
     `check` NAMES the unassigned books.
   - `check` is not a prose gate; `audit` is the per-book carryover check. Neither
     moves a threshold — a measurement moves on a named corpus, never on taste.
+  - `calibrate` reads the lines a contract DECLARES and measures the book against
+    them. It never adjusts a line to fit a book: when the book leaves a declared line,
+    the report says so and exits 1, and the fix is prose or a dated contract change.
 
 usage:  tools/ductus.py <command> [--root DIR]
   new SLUG [--name "…"] [--register "…"] [--random]
@@ -47,16 +50,21 @@ usage:  tools/ductus.py <command> [--root DIR]
   log BOOK --chapter N --tone "…" --register "…" --survives "…"
                                            record how the voice must carry into a
                                            chapter; one section per chapter
-  audit BOOK                               check the book's ductus log is complete
-                                           and every chapter entry matches the live
-                                           contract digest
+  audit BOOK                               check the book's ductus log is complete,
+                                           every chapter entry matches the live
+                                           contract digest, and every quoted survival
+                                           claim is present in its chapter
+  calibrate BOOK                           measure the book against the numeric lines
+                                           its contract declares, and fail where the
+                                           book leaves them
   check                                    every voice, its isolation, the unassigned books
   contract BOOK [--ductus SLUG]            WHAT A RUN DRAFTS UNDER: the resolved contract
                                            for a book, its digest, or UNASSIGNED. A book
                                            assigned to a voice whose contract is still a
                                            skeleton is REFUSED — a phase may not draft
                                            under a voice nobody authored.
-  cross                                    report an entry held by two ledgers
+  cross                                    report an entry held by two ledgers, and two
+                                           contracts that are the same voice
   list                                     each voice and how far it has developed
   --self-test
 
@@ -70,10 +78,12 @@ EXIT
 import contextlib
 import glob
 import io
+import itertools
 import os
 import random
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 
@@ -93,6 +103,19 @@ ENTRY_KINDS = ("decision", "preference", "outcome", "promotion")
 ENTRY_HEADING = re.compile(r"^#{2,3}\s+(?:\d{4}-\d{2}-\d{2}\s+[—-]\s+)?(\w+)", re.M)
 
 CONTRACT_SECTIONS = ("identity", "register", "refusals", "breaking", "benchmarks")
+
+# The survival line is the one part of a log entry that can be checked against the
+# chapter rather than against the log. Two forms, and only one of them is enforced:
+#   - a QUOTED span is a claim of literal presence, and audit fails without it.
+#   - the rest of the line is prose written for the next session's eye ("the
+#     instruction that sounds like protection"). Matching it literally would fail
+#     entries whose chapters are correct, so it is reported, never enforced.
+SURVIVES = re.compile(r"\*\*What must survive:\*\*\s*(.+)", re.M)
+QUOTED_CLAIM = re.compile(r"[`\"\u201c]([^`\"\u201c\u201d\n]{3,})[`\"\u201d]")
+SURVIVES_STOP = set("""the a an and or of to in on at for with from by as is was were be been
+being his her its their them that this those not no did do does had has have but if then than so up down
+out into over under about after before when while there here what which who all any both each few more
+most other some such only own same too very can will just said says one once""".split())
 
 
 def utf8_stdout():
@@ -190,6 +213,160 @@ def held_headings(path):
     return [m.group(1).strip() for m in DATED_ENTRY.finditer(read_text(path))]
 
 
+def _words(text):
+    return re.findall(r"[a-z0-9']+", text.lower().replace("\u2019", "'"))
+
+
+def _flat(text):
+    """Words only, single-spaced — a quote is matched as words, not as characters,
+    so punctuation and smart apostrophes cannot make a present phrase look absent."""
+    return " ".join(_words(text))
+
+
+def survival_claims(body):
+    """(quoted, items) — an entry's survival line, split into checkable claims."""
+    m = SURVIVES.search(body)
+    if not m:
+        return [], []
+    line = m.group(1).strip()
+    quoted = [q.strip() for q in QUOTED_CLAIM.findall(line) if q.strip()]
+    plain = QUOTED_CLAIM.sub(" ", line)
+    items = []
+    for chunk in re.split(r"[,;]", plain):
+        chunk = re.sub(r"^\s*(?:and|but)\s+", "", chunk.strip(), flags=re.I)
+        if _words(chunk):
+            items.append(chunk)
+    return quoted, items
+
+
+DUP_MIN_GRAMS = 20
+# CALIBRATED 2026-11-11 on this press's four contracts: the worst honest pair shares 7.4%
+# of any section (study-voice-a <-> study-voice-b, identity). Palette 1 shares 68% of
+# kalie-kirch's Register and palette 2 shares 64% of bastorius-quinn's, which is what the
+# line is for: 40% sits far above the observed honest maximum and below a paste.
+DUP_SHARE = 0.40
+
+
+def section_grams(text):
+    words = _words(text)
+    return {" ".join(words[i:i + 6]) for i in range(len(words) - 5)}
+
+
+def contract_sections(text):
+    """{section: six-gram set} for a contract's five sections."""
+    out = {}
+    for m in re.finditer(r"^##\s+(\w+)\s*$(.*?)(?=^##\s|\Z)", text, re.M | re.S):
+        name = m.group(1).lower()
+        if name in CONTRACT_SECTIONS:
+            out[name] = section_grams(m.group(2))
+    return out
+
+
+def duplicate_share(sections_a, sections_b):
+    """(share, section) of the most-overlapping section; (0.0, None) if none is big
+    enough to judge. Containment against the smaller side, not Jaccard: a contract that
+    pastes another voice's Register and adds to it is that voice wearing more words."""
+    best = (0.0, None)
+    for name in CONTRACT_SECTIONS:
+        a, b = sections_a.get(name, set()), sections_b.get(name, set())
+        small = min(len(a), len(b))
+        if small < DUP_MIN_GRAMS:
+            continue
+        share = len(a & b) / small
+        if share > best[0]:
+            best = (share, name)
+    return best
+
+
+def palette_registers():
+    return [section_grams(p["register"]) for p in RANDOM_PALETTES]
+
+
+PROSE_INVARIANTS = {
+    "negation": "negation",
+    "subject_openings": "subject openings",
+    "texture": "texture words",
+}
+
+
+def contract_invariants(text):
+    """(dict, source) — the numeric lines a contract declares.
+
+    Fenced `ductus-invariants` block first; otherwise the prose form this press's
+    contracts actually use ("no higher than **38** per 10,000"). The source string is
+    printed, because a number read out of prose is a number the reader must be able to
+    audit: an instrument that quietly guesses which integer it is enforcing is worse
+    than one that reports it.
+    """
+    m = re.search(r"```ductus-invariants\s*\n(.*?)```", text, re.S)
+    if m:
+        inv = {}
+        for line in m.group(1).splitlines():
+            if ":" in line:
+                key, value = line.split(":", 1)
+                key = key.strip().lower().replace(" ", "_")
+                try:
+                    inv[key] = int(value.strip())
+                except ValueError:
+                    pass
+        if inv:
+            return inv, "the contract's ductus-invariants block"
+    inv = {}
+    for key, phrase in PROSE_INVARIANTS.items():
+        for line in text.splitlines():
+            low = line.lower()
+            if phrase not in low:
+                continue
+            # The comparator is required, not the first integer on the line. This book's
+            # contract carries "The negation row ... A pass on 2026-11-11 rewrote 268 of
+            # the 557 ..." above the invariant bullet, and reading the first integer
+            # made the declared limit 2026 -- a number that silently enforces nothing.
+            m = re.search(r"no (?:higher|more) than\s*\*{0,2}(\d+)", low)
+            if not m:
+                continue
+            inv[key] = int(m.group(1))
+            break
+    source = ("the prose invariants (no ductus-invariants block)" if inv else "")
+    return inv, source
+
+
+def compare_invariants(inv, measured):
+    """[(key, declared_limit, value, within)] — the judgement, with no printing in it."""
+    rows = []
+    for key in ("negation", "subject_openings", "texture"):
+        if key in inv and key in measured:
+            rows.append((key, inv[key], measured[key], measured[key] <= inv[key]))
+    return rows
+
+
+def _stem(word):
+    """Enough of a stem that opens/opened and handle/handles are one word.
+
+    Measured on this project's own log: without it, "the door opens six centimeters"
+    was reported absent from a chapter that says "opened", which makes the advisory a
+    report about inflection rather than about content.
+    """
+    for suffix in ("ing", "ed", "es", "s"):
+        if len(word) > len(suffix) + 3 and word.endswith(suffix):
+            return word[:-len(suffix)]
+    return word
+
+
+def survival_check(chapter_text, body):
+    """(quoted, missing_quoted, items, missing_items) for one chapter."""
+    quoted, items = survival_claims(body)
+    flat = _flat(chapter_text)
+    present = {_stem(w) for w in _words(chapter_text)}
+    missing_quoted = [q for q in quoted if _flat(q) and _flat(q) not in flat]
+    missing_items = []
+    for item in items:
+        content = [(w, _stem(w)) for w in _words(item) if w not in SURVIVES_STOP]
+        gone = [w for w, stem in content if stem not in present]
+        if gone:
+            missing_items.append((item, gone))
+    return quoted, missing_quoted, items, missing_items
+
+
 def book_assignments(root):
     data, err = load_yaml(os.path.join(root, BOOKS))
     if err or not isinstance(data, dict):
@@ -273,8 +450,15 @@ RANDOM_NAMES = (
 )
 
 # A seeded ductus is a persona, not a claim about a real person. The palette gives the
-# fresh-book path a real voice to draft under; it is deliberately broad enough that two
-# random books do not share a register.
+# fresh-book path a real voice to draft under.
+#
+# PROVENANCE, MEASURED 2026-11-11. Two of the four palettes below are not independent
+# inventions: palette 1's Register shares 30 of 44 six-word runs (68%) with the authored
+# `kalie-kirch` contract, and palette 2's shares 64% with `bastorius-quinn`. The comment
+# here used to claim the palettes were "deliberately broad enough that two random books do
+# not share a register"; that is false for half of them, so a seeded contract now names
+# its palette's source and `cross` reports the overlap instead of documentation asserting
+# it away.
 RANDOM_PALETTES = (
     {
         "register": (
@@ -381,6 +565,11 @@ RANDOM_PALETTES = (
 )
 
 
+# Which palettes were taken from an existing authored contract, and from which one.
+# `cross` measures the overlap; this map is the claim the measurement is checked against.
+PALETTE_PROVENANCE = {1: "kalie-kirch", 2: "bastorius-quinn"}
+
+
 def arg_value(args, flag, default=None):
     if flag not in args:
         return default
@@ -388,8 +577,15 @@ def arg_value(args, flag, default=None):
     return args[i + 1] if i + 1 < len(args) else None
 
 
-def seeded_contract(name, palette):
+def seeded_contract(name, palette, index=1):
     """A complete contract from the palette, explicitly a generated persona."""
+    source = PALETTE_PROVENANCE.get(index)
+    provenance = (
+        f"Palette {index} is derived from the authored `{source}` contract, so a voice "
+        "seeded from it begins inside that voice; `cross` reports the measured overlap."
+        if source else
+        "A palette seed is a starting contract, not an independent invention."
+    )
     return f"""# {name}
 
 *A ductus* — the individual character of a writing hand. This one was seeded by the
@@ -398,6 +594,8 @@ contract, not a verdict; edit it and record the decision in this voice's ledger.
 
 **Status: seeded by random mode, 2026-11-07.** The agent that pilots this voice must read
 it before drafting, revision, auditing or scoring.
+
+**Provenance:** palette {index} of {len(RANDOM_PALETTES)}. {provenance}
 
 ## Identity
 
@@ -447,7 +645,8 @@ def cmd_new(root, args):
         print(f"ductus: {ddir}/{slug} already exists — nothing created, nothing changed.")
         return 1
     if random_mode:
-        contract = seeded_contract(name, random.choice(RANDOM_PALETTES))
+        seeded = random.randrange(len(RANDOM_PALETTES))
+        contract = seeded_contract(name, RANDOM_PALETTES[seeded], seeded + 1)
     else:
         contract = NEW_CONTRACT.format(name=name)
     if register:
@@ -829,6 +1028,9 @@ def cmd_audit(root, args):
     text = read_text(logpath)
     current = digest(contract)
     fails = []
+    quoted_checked = 0
+    unquoted_entries = 0
+    advisory = []
     if f"**Ductus:** {slug}" not in text:
         fails.append(f"header does not name the assigned ductus {slug!r}")
     for path in chapters:
@@ -847,8 +1049,28 @@ def cmd_audit(root, args):
         for field in ("Tone", "Register", "What must survive"):
             if not re.search(rf"\*\*{re.escape(field)}:\*\*\s*\S", body):
                 fails.append(f"chapter {number:02d} has no {field} entry")
+        quoted, missing_quoted, items, missing_items = survival_check(
+            read_text(path), body)
+        quoted_checked += len(quoted)
+        if not quoted:
+            unquoted_entries += 1
+        for phrase in missing_quoted:
+            fails.append(f"chapter {number:02d}: the entry says {phrase!r} must survive, "
+                         "and the chapter does not contain it")
+        for item, gone in missing_items:
+            advisory.append((number, item, gone))
     print(f"ductus audit — {rel} under {slug} (sha256:{current})")
     print(f"  chapters: {len(chapters)}   log: {os.path.relpath(logpath, root)}")
+    print(f"  survival: {quoted_checked} quoted claim(s) checked against the chapters")
+    if unquoted_entries:
+        print(f"  survival: {unquoted_entries} of {len(chapters)} entr(ies) quote nothing, "
+              "so their survival line is prose — reported below, and not enforced")
+    for number, item, gone in advisory[:12]:
+        print(f"  ADVISORY chapter {number:02d}: {item!r} — "
+              f"{', '.join(gone)} not found in the chapter")
+    if len(advisory) > 12:
+        print(f"  ADVISORY … {len(advisory) - 12} more")
+
     if fails:
         for f in fails:
             print(f"  FAIL    {f}")
@@ -863,19 +1085,124 @@ def cmd_cross(root, args):
     if err == "no-yaml":
         print("ductus: no YAML parser here — nothing was checked (and not passed).")
         return 3
+    slugs = ductus_dirs(root, ddir)
     seen = {}
-    for slug in ductus_dirs(root, ddir):
+    for slug in slugs:
         for h in held_headings(os.path.join(root, ddir, slug, LEDGER)):
             seen.setdefault(h, []).append(slug)
     leaks = {h: s for h, s in seen.items() if len(s) > 1}
-    print(f"ductus cross — {len(seen)} distinct entr(ies) across the voices")
-    for h, slugs in sorted(leaks.items()):
-        print(f"  LEAK    {h!r} appears in {', '.join(slugs)} — a preference in two "
+
+    authored, skeleton = {}, []
+    for slug in slugs:
+        path = os.path.join(root, ddir, slug, CONTRACT)
+        if not os.path.isfile(path):
+            continue
+        text = read_text(path)
+        if thin_sections(text):
+            skeleton.append(slug)
+        else:
+            authored[slug] = contract_sections(text)
+
+    dupes = []
+    for a, b in itertools.combinations(sorted(authored), 2):
+        share, section = duplicate_share(authored[a], authored[b])
+        if share >= DUP_SHARE:
+            dupes.append((a, b, share, section))
+
+    print(f"ductus cross — {len(seen)} distinct entr(ies), {len(authored)} compared "
+          f"contract(s) of {len(slugs)} voice(s)")
+    for h, holders in sorted(leaks.items()):
+        print(f"  LEAK    {h!r} appears in {', '.join(holders)} — a preference in two "
               "ledgers has stopped being one voice's. Merge it deliberately in "
               f"{ddir}/{PROMOTIONS}, or remove it from the voice it was not earned by.")
-    if leaks:
+    for a, b, share, section in dupes:
+        print(f"  DUPLICATE  {a} and {b}: {share * 100:.0f}% of {section}'s six-word "
+              "runs are shared — two contracts, one voice. Separate them, or merge one "
+              f"deliberately in {ddir}/{PROMOTIONS}.")
+    if skeleton:
+        print(f"  NOTE    {len(skeleton)} skeleton contract(s) not compared: "
+              f"{', '.join(skeleton)}")
+    for index, register in enumerate(palette_registers(), 1):
+        for slug in sorted(authored):
+            share, _section = duplicate_share({"register": register}, authored[slug])
+            if share < DUP_SHARE:
+                continue
+            if PALETTE_PROVENANCE.get(index) == slug:
+                print(f"  NOTE    palette {index} is derived from {slug} "
+                      f"({share * 100:.0f}% of its Register's six-word runs) — a voice "
+                      "seeded from it begins inside that voice.")
+            else:
+                print(f"  NOTE    palette {index}'s Register is {share * 100:.0f}% shared "
+                      f"with {slug}'s — a voice seeded from it begins inside that "
+                      "voice, by construction.")
+    if leaks or dupes:
         return 1
-    print("ductus cross: no entry appears in more than one voice's ledger.")
+    print("ductus cross: no entry and no contract is held by two voices.")
+    return 0
+
+
+def cmd_calibrate(root, args):
+    """Measure the book against the numeric lines its contract declares."""
+    book = next((a for a in args if not a.startswith("--")), None)
+    if not book:
+        print("ductus: calibrate needs a book — `ductus.py calibrate test-books/some-book`.")
+        return 2
+    rel, slug, contract, err = _resolved_contract(root, book)
+    if err == "unassigned":
+        print(f"ductus calibrate: NOT RUN — {rel} carries no `ductus:` assignment, so "
+              "no contract declares lines to measure it against.")
+        return 2
+    if err:
+        print(f"ductus calibrate: cannot calibrate — {err} for {book!r}.")
+        return 1
+    bookdir = _book_dir(root, rel, book)
+    if not bookdir:
+        print(f"ductus calibrate: no book directory for {rel!r}.")
+        return 1
+    inv, source = contract_invariants(read_text(contract))
+    if not inv:
+        print(f"ductus calibrate: NOTHING MEASURED — {slug}'s contract declares no "
+              "numeric invariants (no `ductus-invariants` block, and no prose line for "
+              "negation / subject openings / texture words).")
+        return 2
+    gate = os.path.join(root, "tools", "prose", "check-monotony.py")
+    if not os.path.isfile(gate):
+        print(f"ductus calibrate: NOTHING MEASURED — no {os.path.relpath(gate, root)}.")
+        return 2
+    proc = subprocess.run([sys.executable, gate, bookdir], capture_output=True, text=True)
+    out = (proc.stdout or "") + (proc.stderr or "")
+    measured = {}
+    for key, pattern in (("subject_openings", r"M2 subject openings: ([\d.]+)%"),
+                         ("negation", r"M3 'did not': ([\d.]+) per 10k"),
+                         ("texture", r"M4 texture words: ([\d.]+) per 10k")):
+        m = re.search(pattern, out)
+        if m:
+            measured[key] = float(m.group(1))
+    if len(measured) < 3:
+        print("ductus calibrate: NOTHING MEASURED — the monotony gate's output could "
+              "not be read, so nothing was passed.")
+        for line in out.strip().splitlines()[-4:]:
+            print(f"  {line}")
+        return 2
+    labels = {"negation": "'did not' per 10k",
+              "subject_openings": "% of sentences opening He/She/name",
+              "texture": "texture words per 10k"}
+    print(f"ductus calibrate — {rel} under {slug}")
+    print(f"  limits read from {source}")
+    fails = []
+    for key, limit, value, within in compare_invariants(inv, measured):
+        print(f"  {labels[key]:42} measured {value:6.1f}   declared {limit:<4} "
+              f"{'PASS' if within else 'FAIL'}")
+        if not within:
+            fails.append(f"{key}: {value:g} against a declared {limit:g}")
+    if fails:
+        print(f"ductus calibrate: FAIL — the book leaves {len(fails)} line(s) its own "
+              "contract declares.")
+        for f in fails:
+            print(f"  {f}")
+        return 1
+    print("ductus calibrate: PASS — the book sits inside every numeric line its contract "
+          "declares.")
     return 0
 
 
@@ -1066,6 +1393,79 @@ def selftest():
                    .replace(same, ""))
         ok(cmd_cross(tmp, []) == 0, "cross: removing the duplicate clears the leak")
 
+        # --- the survival check: a claim the chapter can contradict -----------------
+        bookdir = os.path.join(tmp, "test-books", "some-book")
+        os.makedirs(os.path.join(bookdir, "manuscript", "chapters"), exist_ok=True)
+        chapter = os.path.join(bookdir, "manuscript", "chapters", "chapter-01.md")
+        with_lever = ("# 1 — The Cellar\n\nThe brass lever was bedded in the pine stile. "
+                      "She counted the seven handles twice.\n")
+        write_text(chapter, with_lever)
+        assign("folio")
+        rc = cmd_log(tmp, [bookdir, "--chapter", "1", "--tone", "cold",
+                           "--register", "plain past", "--survives",
+                           "`the brass lever`, the gray cap and the seven handles"])
+        ok(rc == 0, "log: an entry is written for a real chapter")
+        rc, out = captured(cmd_audit, tmp, [bookdir])
+        ok(rc == 0 and "1 quoted claim(s) checked" in out,
+           "audit: a quoted survival claim the chapter contains passes")
+        ok("ADVISORY" in out and "gray" in out,
+           "audit: the unquoted part of the line is reported, not enforced")
+        write_text(chapter, "# 1 — The Cellar\n\nShe counted the seven handles twice.\n")
+        rc, out = captured(cmd_audit, tmp, [bookdir])
+        ok(rc == 1 and "the brass lever" in out and "chapter 01" in out,
+           "audit: a quoted claim the chapter no longer contains FAILS and is named")
+        cmd_log(tmp, [bookdir, "--chapter", "1", "--tone", "cold",
+                      "--register", "plain past", "--survives", "the seven handles"])
+        rc, out = captured(cmd_audit, tmp, [bookdir])
+        ok(rc == 0 and "quote nothing" in out,
+           "audit: an entry that quotes nothing says so instead of passing silently")
+
+        # --- calibrate: the contract's numbers, measured ---------------------------
+        inv, source = contract_invariants(
+            "```ductus-invariants\nnegation: 38\nsubject_openings: 30\ntexture: 130\n```\n")
+        ok(inv == {"negation": 38, "subject_openings": 30, "texture": 130}
+           and "block" in source,
+           "calibrate: the machine block is read as declared limits")
+        prose = ("- **negation** — \"did not\" no higher than **38** per 10,000. Under 30 "
+                 "is the target.\n"
+                 "- **subject openings** — no more than **30%** of sentences.\n"
+                 "- **texture words** — the seven above no higher than **130** per 10,000.\n")
+        inv2, source2 = contract_invariants(prose)
+        ok(inv2 == inv and "no ductus-invariants block" in source2,
+           "calibrate: the prose fallback reads the same limits, and says which it read")
+        landmine = ("The negation row has since been repaired. A pass on 2026-11-11 "
+                    "rewrote 268 of the 557 constructions.\n"
+                    "- **negation** — \"did not\" no higher than **38** per 10,000. "
+                    "Under 30 is the target; 45 is a book that cannot say what happens.\n")
+        inv3, _src3 = contract_invariants(landmine)
+        ok(inv3.get("negation") == 38,
+           "calibrate: a date and a count on a nearby line do not become the limit")
+        rows = compare_invariants({"negation": 38, "texture": 130},
+                                  {"negation": 22.2, "subject_openings": 28.9,
+                                   "texture": 135.9})
+        ok([r[3] for r in rows] == [True, False],
+           "calibrate: a book under a declared line passes it, and over one fails it")
+        rc, out = captured(cmd_calibrate, tmp, [bookdir])
+        ok(rc == 2 and "declares no numeric invariants" in out,
+           "calibrate: a contract that declares nothing is NOT MEASURED, not passed")
+
+        # --- cross: two contracts that are the same voice ---------------------------
+        register = ("This voice writes close third person past tense in plain modern "
+                    "English, short declaratives, objects placed by the hand rather "
+                    "than described, no interior commentary, no metaphor the character "
+                    "would not make, and a refusal to explain what the scene has "
+                    "already shown.")
+        for slug in ("dupea", "dupeb"):
+            d = os.path.join(tmp, "ductus", slug)
+            write_text(os.path.join(d, CONTRACT),
+                       f"# {slug}\n\n## Identity\nA voice, seeded.\n\n## Register\n"
+                       f"{register}\n\n## Refusals\n- none.\n\n## Breaking\nShorter.\n\n"
+                       "## Benchmarks\nOne line only.\n")
+            write_text(os.path.join(d, LEDGER), f"# COMMONPLACE — {slug}\n")
+        rc, out = captured(cmd_cross, tmp, [])
+        ok(rc == 1 and "DUPLICATE" in out and "dupea" in out,
+           "cross: two contracts sharing a Register are reported as one voice")
+
         # the interface: a command reached through main() must actually run
         argv, sys.argv = sys.argv, ["ductus.py", "check", "--root", tmp]
         try:
@@ -1109,7 +1509,7 @@ def main():
     if cmd in ("selftest", "--self-test"):
         return selftest()
     table = {"new": cmd_new, "check": lambda r, a: cmd_check(r, a),
-             "log": cmd_log, "audit": cmd_audit,
+             "log": cmd_log, "audit": cmd_audit, "calibrate": cmd_calibrate,
              "contract": cmd_contract,
              "cross": lambda r, a: cmd_cross(r, a), "list": cmd_list}
     if cmd not in table:

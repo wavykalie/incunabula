@@ -48,7 +48,7 @@
 #      manuscript/chapters under the book root
 #
 # ROW CLASSES (how each tool's exit code is read)
-#   prose     deslop-check.sh, check-uniformity.py, check-drift.py,
+#   prose     deslop-check.sh, check-uniformity.py, check-monotony.py, check-drift.py,
 #             check-arc.py: 0 pass, else fail - except an output saying
 #             "nothing checkable" / "no chapters found", which is NOT RUN.
 #             An empty scan is a FAIL by the scanner's own design.
@@ -210,10 +210,16 @@ echo "== cross-book and integrity ===================================="
 run_row "check-names.py" hygiene "$PROSE/check-names.py" "$BOOK"
 run_row "check-manuscript-integrity.py" hygiene "$ROOT/tools/check-manuscript-integrity.py" "$BOOK"
 run_row "check-ductus.py" hygiene "$ROOT/tools/check-ductus.py" "$BOOK"
+# The contract's own numbers, measured. check-monotony.py prints its rates against the
+# published band and enforces only M1; this row reads the limits the assigned ductus
+# DECLARES (negation, subject openings, texture) and fails the book where it leaves one.
+# A book with no `ductus:` reads NOT RUN, the same as any other undeclared contract.
+run_row "ductus.py calibrate" contract "$ROOT/tools/ductus.py" "calibrate" "$BOOK"
 
 echo "== prose gate =================================================="
 run_row "deslop-check.sh" prose "$PROSE/deslop-check.sh" "$CHAPTERS"
 run_row "check-uniformity.py" prose "$PROSE/check-uniformity.py" "$BOOK"
+run_row "check-monotony.py" prose "$PROSE/check-monotony.py" "$BOOK"
 run_row "check-drift.py" prose "$PROSE/check-drift.py" "$BOOK"
 run_row "check-arc.py" prose "$PROSE/check-arc.py" "$BOOK"
 # V3 is the one measured row in the tag tool; V1/V2 above it still report only. A book
