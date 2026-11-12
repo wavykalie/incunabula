@@ -1,0 +1,45 @@
+# LANES.tsv — one corpus per register, and which book each lane governs.
+#
+# WHAT THIS FILE IS
+#   The register lane a ductus is measured against. A lane is a corpus, not a genre: the
+#   books in it are all in the register a book in that lane should sound like. The ductus
+#   names the lane in its Provenance, and `tools/prose/ductus-fit.py` measures the
+#   resonant excerpts against that lane's documents.
+#
+# WHAT A LANE IS NOT
+#   - Not a bucket for books that share a subject. Three horror novels in three registers
+#     are three lanes, or one bad lane.
+#   - Not the slop rule set. The scanner's rules are shared and genre-free, and its
+#     caps are GLOBAL: one set in deslop-check.sh serves every lane. So a cap re-derived
+#     on a second lane moves the first lane's thresholds too. That is an open design
+#     question (per-lane caps need a scanner change, and a change to a cap is a freeze
+#     event), not something this file resolves. What varies by lane today is the
+#     comparison a ductus is measured against - which is what ductus-fit.py reads.
+#   - Not a place to park text. Corpus files stay local and untracked
+#     (calibration/.gitignore); only this path is in the repository.
+#
+# SIZE
+#   A lane is 5-10 books, roughly 500k-1M words, all in the target register. The caps are
+#   set at 1.5x the worst single document, so a thousand-book lane would loosen every cap
+#   toward meaninglessness and average the register into "books". The tool prints the
+#   measured size against this rule on every run; it does not enforce it, because a lane
+#   under construction has to be measurable to be finished.
+#
+# WHERE A LANE LIVES
+#   `path` is where the lane belongs. A checkout may hold the corpus under a book's own
+#   calibration directory instead - the copies .gitignore explicitly allows - and
+#   `ductus-fit.py` resolves a missing registered path to exactly one such copy, printing
+#   which one it used. Two copies is a refusal, not a guess.
+#
+# COLUMNS (tab-separated; a space-separated row is a parse error, not a guess)
+#   lane     slug the ductus names
+#   role     governing | planned | control  (only one governing lane per book)
+#   register one line: what a book in this lane sounds like
+#   books    how many books are installed, 0 if none
+#   words    measured words installed, 0 if none
+#   path     repo-relative directory holding the documents
+#   note     provenance and limits, one line
+lane	role	register	books	words	path	note
+light-novel	governing	translated Japanese light novel: dialogue-dense, short paragraphs, a narrator who tells	3	175144	tools/prose/calibration/corpus/elaina	Wandering Witch vols 1/2/5 — the Death Game lane's register, and the corpus every current cap was derived from
+action-voice	planned	contemporary American action and horror: kinetic, funny, sentences that move	0	0	tools/prose/calibration/corpus/action-voice	the borrow list — governs the Parts Still Warm book-two lane and the Advent horror lane; build before either drafts
+native-control	control	native-English commercial narrative, 1923-27	3	270149	tools/prose/calibration/corpus/montgomery	one author, three books, a century old: a cross-check that can refute a rule, never set one
