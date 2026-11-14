@@ -60,6 +60,26 @@ DUP_PER_W=2000       # P2 fail above 1 duplicate per 2000 words (min 1 allowed).
 # must pass; the slop fixture runs to 9 and still fails. Measured, not chosen.
 FRAG_RUN=7
 
+# P1's FLOOR IS THE DOCUMENT-SIZE FLOOR, MEASURED - NOT 167, THE ARITHMETIC ONE.
+# The row allows OPEN_PER_N occurrences per OPEN_PER_W words, so 167 is the length at
+# which ONE occurrence first fits. That arithmetic floor was added on 2026-11-06 after
+# two 78- and 96-word layers failed on a single opener. It was not enough: a rate
+# calibrated on chapters still fails ordinary published letters.
+#
+# Measured 2026-11-07 on 410 published epistolary documents (seven novels, staged by
+# fetch-document-layers.py): 45 of the 281 documents under 667 words fail P1 (16%,
+# across Emily Montague, The Coquette and Humphry Clinker), while only 2 of the 129 at
+# 667-1,500 fail (1.6%, both at 5+ occurrences). A letter that opens two sentences
+# "I have" at 176 words is not a defect; it is how the form opens sentences. Below
+# 667 the row reports UNMEASURED and the share test is not applied either - the share
+# test failed 22 of those same human documents, so it is not a scale-free rescue at
+# this size.
+#
+# Above the floor nothing changed: rate OR share, exactly as before. The two human
+# documents that still fail at 1,303 and 1,434 words carry 5 and 9 instances; those
+# are repetitions the row is entitled to name.
+P1_MIN_WORDS=667
+
 # ------------------------------------------------- the explanatory coda (F1, A24)
 # The closing move that turns the chapter's meaning over and hands the reader the
 # interpretation: "That is why...", "Which is why...", "It is also why...",
@@ -175,7 +195,7 @@ DENSITY=(
   'A15b|participial -ing|3|1000|||, (realizing|knowing|feeling|understanding|reflecting|ensuring|allowing)'  # worst 1.69/1k
   'A23|parenthetical dash|3|1000|||—[^—\n]{1,70}—'                                                         # worst 1.79/1k
   'A24|explanatory coda|1|1000|1|2000|(which|that|this) is (also )?why|it is (also )?why|that is (what|the) (makes|thing)|the (next|following) chapter is'  # worst 0.88/1k
-  'A25|antithesis formula|3|2000|1|2000|(was|were|is|are) not\b[^.!?]{0,50}[.!?] +(It|That|This|He|She|They) (was|were|is|are)'  # worst published CHAPTER 0.93/1k; raised from 1/2000, see REPORT block header. The \b after "not" is a bug fix, not a retune - see Freeze 7
+  'A25|antithesis formula|3|2000|1|2000|(was|were|is|are) not\b[^.!?]{0,50}[.!?] +(It|That|This|He|She|They) (was|were|is|are)'  # worst published CHAPTER 0.93/1k; raised from 1/2000, see REPORT block header. The \b after "not" is a bug fix, not a retune - see Freeze 7. 2026-11-07: below 667 words the fail line reports UNMEASURED (see density_entry)
   'D3|-ly adverbs|26|1000|20|1000|(^|[^a-z])[a-z]{4,}ly([^a-z]|$)'                                         # worst 24.30/1k
 )
 
@@ -236,6 +256,7 @@ NOTE_DASHSPELL=1  # D1 counts U+2014 only, and 55% of a 140-novel corpus contain
 
 fail=0
 warn=0
+unmeasured=0
 
 rate() { awk -v n="$1" -v w="$2" 'BEGIN{ if (w<1) w=1; printf "%.2f", n*1000/w}'; }
 
@@ -256,8 +277,38 @@ density_entry() {
   wn=${rest%%|*}; rest=${rest#*|}
   ww=${rest%%|*}; rest=${rest#*|}
   re=${rest}
+  # A25's fail line is a rate whose denominator is 2,000 words: 3 occurrences per
+  # 2,000. Below ceil(2,000/3) = 667 words, ONE real antithesis exceeds that cap by
+  # arithmetic alone, exactly as P1's rate does below its document floor. The row reports
+  # UNMEASURED there and keeps its cap for every file at or above it. The floor is
+  # computed from this row's own fail fields, so a future retune of the cap moves
+  # the floor with it instead of leaving a stale length behind.
+  #
+  # Measured basis: 410 published epistolary documents of 167-1,500 words (seven
+  # novels, `calibration/fetch-document-layers.py`) contain ZERO A25 failures, 281
+  # of them under 667 words. So the floor changes no published document's verdict;
+  # it only stops the row judging a document smaller than its own denominator.
+  # The Ashgrove Inventory's 612-word annotation layer that failed on one real
+  # antithesis was measured BEFORE this floor existed, which is the sequencing the
+  # freeze requires.
   n=$(grep -oE "$re" "$f" | wc -l | tr -d ' ')
   r=$(rate "$n" "$words")
+
+  # Zero instances pass at any length: there is no rate to compute and nothing to judge.
+  # One instance below 667 words cannot be judged; two or more above it are judged as
+  # before. This is the same shape as P1's share test - a scale-free fact (none here)
+  # may pass, a rate that needs a denominator may not.
+  if [ "$id" = "A25" ] && [ "$n" -gt 0 ]; then
+    a25_min=$(( (aw + an - 1) / an ))
+    if [ "$words" -lt "$a25_min" ]; then
+      printf '   --    %-5s %-22s UNMEASURED at %s words (x%s; the rate needs %s\n' \
+        "$id" "$name" "$words" "$n" "$a25_min"
+      printf '                                          for one occurrence, so one here cannot be judged)\n'
+      unmeasured=$((unmeasured + 1))
+      return
+    fi
+  fi
+
   suffix=""
   [ -n "$tag" ] && suffix="  [$tag]"
   if [ $(( n * aw )) -gt $(( an * words )) ]; then
@@ -532,7 +583,12 @@ scan_file() {
   [ "$nsent" -gt 0 ] || nsent=1
 
   share=$(awk -v a="$mopen" -v b="$nsent" 'BEGIN{printf "%.1f", 100*a/b}')
-  if [ $(( mopen * OPEN_PER_W )) -gt $(( OPEN_PER_N * words )) ] || awk -v s="$share" -v c="$OPEN_SHARE_PCT" 'BEGIN{exit !(s>c)}'; then
+  if [ "$words" -lt "$P1_MIN_WORDS" ]; then
+    printf '   --    P1    anaphora abuse          UNMEASURED at %s words (the document floor\n' "$words"
+    printf '                                          is %s; a rate calibrated on chapters cannot\n' "$P1_MIN_WORDS"
+    printf '                                          judge a document this short)\n'
+    unmeasured=$((unmeasured + 1))
+  elif [ $(( mopen * OPEN_PER_W )) -gt $(( OPEN_PER_N * words )) ] || awk -v s="$share" -v c="$OPEN_SHARE_PCT" 'BEGIN{exit !(s>c)}'; then
     printf '   FAIL  P1    anaphora abuse          "%s" x%s (%s%% of sentences)\n' "$mkey" "$mopen" "$share"
     fail=1
   else
@@ -651,6 +707,12 @@ for target in "$@"; do
 done
 
 echo
+if [ "$fail" -eq 0 ] && [ "$unmeasured" -gt 0 ]; then
+  echo "RESULT: UNMEASURED - $unmeasured row(s) could not judge this file: it is shorter"
+  echo "        than that row's own denominator. NOT a pass. The caller must treat this"
+  echo "        as unmeasured, and a phase may not be claimed on it."
+  exit 0
+fi
 if [ "$fail" -eq 0 ] && [ "$warn" -eq 0 ]; then
   echo "RESULT: PASS (mechanical only - read it aloud before calling it clean)"
   exit 0

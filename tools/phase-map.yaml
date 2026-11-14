@@ -49,6 +49,14 @@
 #                       1 the same rule waived in more than 3 consecutive chapters
 #                       (the waiver is the pattern), 2 no ledger (NOT RUN),
 #                       3 a malformed entry (refusal)
+#     check-monotony    0 pass (warnings allowed), 1 a repeated template inside the
+#                       sentences, 2 too little text to measure. Calibrated
+#                       2026-11-11 against the same six published volumes
+#                       check-uniformity uses: the five-word-run row is enforced as a
+#                       share of chapters (a count failed five of the six volumes),
+#                       and the three density rows are printed against the published
+#                       band and are advisory. It is wired in because the row that
+#                       finds this fault should be the row that reports it.
 #     preflight / check-registry  0 ready; anything else refuses the run
 #
 # Parsed by tools/phase-state.py (python3 stdlib only; a strict subset of YAML —
@@ -65,6 +73,7 @@ gates:
   comps: "python tools/prose/check-comps.py {book}"
   premise: "python tools/prose/check-premise-distinct.py {book}"
   deslop: "bash tools/prose/deslop-check.sh {chapters}"
+  world: "python tools/prose/check-world.py {book}"
   uniformity: "python tools/prose/check-uniformity.py {book}"
   drift: "python tools/prose/check-drift.py {book}"
   arc: "python tools/prose/check-arc.py {book}"
@@ -74,6 +83,7 @@ gates:
   pass-evidence: "python tools/check-pass-evidence.py {book}"
   check-eval: "python tools/prose/check-eval.py {book}"
   waivers: "python tools/prose/check-waivers.py {book}"
+  monotony: "python tools/prose/check-monotony.py {book}"
 
 phases:
   - id: "1"
@@ -93,9 +103,9 @@ phases:
   - id: "2"
     name: "Foundation"
     skill: "forme"
-    artifacts: ["foundation.md", "outline.md"]
+    artifacts: ["foundation.md", "outline.md", "story-spine.md"]
     gates: []
-    human: "characters with chaos; outline carrying emotional anchors and surprises, structural approaches, a transition plan; theme as a question; user approval"
+    human: "characters with wound, lie and arc, plus disorder devices assigned by fit; outline carrying emotional anchors and surprises, structural approaches, a transition plan (variety rule); the story spine with the ends decided; theme as a question; user approval"
 
   - id: "2.5"
     name: "Voice matrix"
@@ -123,7 +133,7 @@ phases:
     skill: "setting"
     artifacts: ["manuscript/chapters/"]
     gates: ["deslop"]
-    human: "one chapter written with its self-report; a chapter that fails the scan does not enter the manuscript; the read-aloud half of the prose gate stays with the skill layer"
+    human: "one chapter written with its self-report, or the next scene of a chapter the spine marks multi-scene; a chapter that fails the scan does not enter the manuscript; the read-aloud half of the prose gate stays with the skill layer"
 
   - id: "3.1"
     name: "Register"
@@ -144,7 +154,7 @@ phases:
     skill: "quoin"
     artifacts: []
     gates: ["pass-evidence"]
-    human: "at least five of the nine operations applied, including operation 9; the emotional anchor preserved"
+    human: "the quoin diagnosed the chapter and recorded the operations it declined; operation 9 judged against the previous two chapters' numbers; the emotional anchor preserved"
 
   - id: "3.7"
     name: "Case update"
@@ -157,14 +167,14 @@ phases:
     name: "Composing"
     skill: "composing"
     artifacts: []
-    gates: ["pass-evidence", "waivers", "uniformity", "drift", "arc"]
+    gates: ["pass-evidence", "waivers", "uniformity", "drift", "arc", "monotony"]
     human: "the mechanical pass run with every diff reviewed for false positives; a uniformity failure fixed or waived in writing (the waiver ledger is the runner's waive command, phase-map aside)"
 
   - id: "4"
     name: "Evaluation"
     skill: "proof-panel"
     artifacts: []
-    gates: ["deslop", "waivers", "uniformity", "drift", "arc", "narrative", "pass-evidence", "check-eval"]
+    gates: ["deslop", "world", "waivers", "uniformity", "drift", "arc", "narrative", "pass-evidence", "check-eval", "monotony"]
     human: "scores per dimension with citations, the weakness taxonomy ranked, the tic scan at genre targets, the chaos check, keepsake anchors counted, and beat arcs plus scene functions declared into NARRATIVE_LEDGER.yaml"
 
   - id: "4.5"

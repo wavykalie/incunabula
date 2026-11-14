@@ -67,8 +67,27 @@ Bad reviews are entered verbatim. Paraphrase is how evidence becomes flattering.
 
 ## The ledger
 
-**No entries yet.** Taste starts empty and fills from your own choices; a preference
-written before the decisions that earn it is a preference nobody tested.
+### 2026-11-06 — promotion — the editor-guide candidate set, adopted in hand mode
+
+- **surface:**  craft — `skills/incunabula/SKILL.md`, `skills/quoin`, `skills/setting`,
+  `skills/voice-matrix`, `skills/forme`, `skills/collator`, `skills/case-keeper`,
+  `skills/composing`, `skills/reader-swarm`, `skills/bestseller-studio`,
+  `DRAFTING_FRAMEWORK.md`, `PROGRAM_MAP.md`, `tools/phase-map.yaml`
+- **hypothesis:** the 2026-11-06 editor guide's candidates — a diagnostic quoin instead of a
+  per-chapter quota, disorder assigned as devices rather than carried as a checklist, one
+  variety rule, banded scores, a tic list that marks which rows are measurements, open
+  exposition carriers, multi-scene chapters, a story spine, and a declared profile for layered
+  books. Each candidate's own hypothesis and expected effect are in `EDITOR_GUIDE.md`.
+- **verifiers:** freeze — no frozen tool was edited, so `verify-freeze.sh` was not re-run;
+  controls — not run; catalogue regression — **SKIPPED**; held-out comparison — **SKIPPED**;
+  proof-panel — **SKIPPED**. Adopted on the editor's instruction, which is a `hand`-mode act
+  under §3, not a stack that passed.
+- **reverts:** `git revert` of the rollout commit restores the previous text. No attribution
+  record, freeze manifest, `BOOKS.yaml` entry or archived skill was touched.
+
+**No taste entries yet.** The promotion above is a change record, not taste: taste starts
+empty and fills from your own choices, and a preference written before the decisions that
+earn it is a preference nobody tested.
 
 Three things to know before the first entry:
 

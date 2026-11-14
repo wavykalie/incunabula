@@ -37,8 +37,8 @@ databases yourself from the manuscript.
 
 ## The audits
 
-Five core audits, plus a sixth that only runs when the entity file is present. Every
-finding is critical, warning, or minor.
+Five core audits, then two conditional ones: the entity file and the spine. Every finding
+is critical, warning, or minor.
 
 ### 1. Characters
 
@@ -188,6 +188,29 @@ anything in two or more chapters or with dialogue is a warning, and anything in 
 plot-critical scene is critical.
 
 ---
+
+### 7. The spine — only when `story-spine.md` exists
+
+`story-spine.md` is what the book promised itself: the true state, the false surface, thread
+endings, the twist seed map, the multi-scene chapters, and the flippable lines. Check it in
+both directions, because a plan and a manuscript drift apart in opposite ways.
+
+- **A payoff with no seed** — a reveal, reversal, or flipped line that lands without the
+  earlier scene the spine names as its seed. Warning, and critical when the whole book turns
+  on it.
+- **A seed that never pays** — planted deliberately and dropped. Warning mid-book, a
+  blocking finding at the full pass before delivery.
+- **A thread ending the spine declares** that the text has not reached, or reached
+  differently without the spine being updated. A kept deviation updates the spine the same
+  way it updates the outline.
+- **A multi-scene chapter drafted as one call** — the tell is a chapter that reads like a
+  summary of scenes rather than the scenes. Point at the outline row and the spine line.
+
+For a layered book (`structure: layered`), the spine carries the architecture and every
+finding is scoped to its layer: a contradiction between layers is content, a contradiction
+within one is a finding, and "world rules unbroken" is checked as "broken only where the
+architecture says they break". Never measure one layer against another — a footnote layer and
+a main-text layer have nothing to say to each other.
 
 ## Cross-reference sweeps
 

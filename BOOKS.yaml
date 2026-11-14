@@ -16,6 +16,10 @@
 #   autonomous = the random button (tools/roll-brief.py): a rolled niche, no author at
 #   the wheel, checkpoints approved by subagent vote. Judged at its own gates.
 # expected_manuscript: does the suite's prose gates apply to it?
+# series: the series this book belongs to, as a slug. It names the middle layer of the
+#   ductus hierarchy - author -> series -> book - and resolves to
+#   <ductus dir>/<voice>/series/<series>.md. A declared series with no contract is a
+#   REFUSED declaration, not an absent one: `tools/ductus.py contract` refuses it.
 #
 # A book may exist on disk but be deliberately absent from this list (a private
 # title). check-registry.py prunes those from its on-disk scan when they are
@@ -27,4 +31,27 @@
 # no chapters. Both mean NOT RUN. Add your first book below.
 # ============================================================================
 
-books: []
+books:
+  - path: tide-register
+    title: "The Tide Register"
+    status: drafting
+    expected_manuscript: true
+    note: "Registered at creation by init-book.py. (2026-11-06)"
+
+  - path: ashgrove-inventory
+    title: "The Ashgrove Inventory"
+    author: "Bastorius Quinn"
+    ductus: bastorius-quinn
+    status: complete
+    expected_manuscript: true
+    note: "Registered at creation by init-book.py. (2026-11-06)"
+
+
+  - path: the-parts-still-warm
+    title: "The Parts Still Warm"
+    author: "Kalie Kirch"
+    ductus: dana-voss
+    series: the-parts-still-warm
+    status: drafting
+    expected_manuscript: true
+    note: "Registered at creation by init-book.py. (2026-11-07) Restarted 2026-11-12 under ductus dana-voss; draft 2026-11-12 archived."

@@ -37,7 +37,8 @@ locked tools, and each entry underneath tells the story of one change.
 
 | file | sha256 (first 16) | role |
 |---|---|---|
-| `tools/prose/deslop-check.sh` | `7462cde6e0dafacd` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 20 - A10a scoped to a report for mode: nonfiction, via conventions.py) |
+| `tools/prose/deslop-check.sh` | `e63d9ccda4f03b10` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 20 - A10a scoped to a report for mode: nonfiction, via conventions.py; 2026-11-06 - P1 floor; 2026-11-07 - P1 and A25 take the 667-word document floor, below which both report UNMEASURED) |
+| `tools/prose/check-world.py` | `8c388d1e6e58a699` | world-physics lexicon gate: reads <book>/WORLD_RULES.txt and fails a chapter that puts a ground vehicle, a wheeled cart, a road fuel or a rubber tyre in a city that carries on backs and flies its freight (Freeze 22 - added 2026-11-09 after two ground-vehicle leaks reached drafted chapters and were caught only by reading) |
 | `tools/prose/check-uniformity.py` | `3bd21d61113564f2` | U1–U6 cross-chapter rows (Freeze 19 - mode reader via conventions.py) |
 | `tools/prose/check-drift.py` | `3e1a6b33fbafc5b5` | voice drift, size-dependent floor (Freeze 2 - Spearman tie fix) |
 | `tools/prose/check-arc.py` | `f2059aec8a9580cc` | A1 gate; A2–A4 report-only |
@@ -56,6 +57,7 @@ locked tools, and each entry underneath tells the story of one change.
 | `tools/prose/check-figurative.py` | `394cd0e402a7f8b9` | G1/G2 figurative pile-up reporter; report-only (re-keyed at the fourth update) |
 | `tools/prose/check-dialogue-tags.py` | `560f55fbbfbde7a8` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second, fourth and Freeze 16 updates) |
 | `tools/prose/check-quantities.py` | `4cc4a538dde7309e` | Q1–Q4 quantity extraction, spread, sanity notes, counted-noun conflicts; report-only (re-keyed at the third and fourth updates) |
+| `tools/prose/check-monotony.py` | `5cd4b18586b77829` | M1-M4 monotony inside the sentences: repeated five-grams, subject-opening share, negation density, texture density. **Calibrated 2026-11-11** against the six published English volumes; M1 is a share of chapters, M2-M4 are advisory bands (Freeze 23, revision 2) |
 Manifest completeness, 2026-10-13: the seven rows above for
 The narrative and research checks — `check-premise-distinct.py`, `check-comps.py`,
 `calibration/PREMISE_LEDGER.tsv`, `check-narrative.py`, `check-figurative.py`,
@@ -165,7 +167,8 @@ value. "fail < 22%, warn < 28%" means the row fails the book below 22% and warns
 | `D1` em dash | **report-only** | control sits at 0.00/1k; cap clears 14% of published chapters |
 | `D2` rule of three | **report-only** | cap clears 18.6% of published chapters |
 | `D3` adverb density | enforced | clears every published chapter; detector value unproven |
-| `A25` antithesis | fail > 3/2000 | 1.5× the worst published chapter (0.93/1k) |
+| `A25` antithesis | fail > 3/2000, **UNMEASURED below 667 words** | 1.5× the worst published chapter (0.93/1k); 410 published documents, 0 failures |
+| `P1` anaphora | fail > 6/1000 or >15% of sentences, **UNMEASURED below 667 words** | 45 of 281 published documents under 667 fail the rate; 2 of 129 above 667 (5 and 9 instances) |
 | `A1` reversals per bin | size-dependent, 0.35 at ≤2 windows | 0 of 40 published novel means fall below |
 | drift | size-dependent, 3.41 at 4 ch → 1.40 at 20+ | worst published book at each chapter count |
 
@@ -235,3 +238,209 @@ Evidence at the time of the change: `check-dialogue-tags.py` fails the study's B
 `check-errata.py` reports the registry at 34 and the protocol intact; the three Python
 files compile; both changed shell files pass `bash -n`. The re-keys above are for these
 edits only — no other threshold moved.
+
+### Change recorded 2026-11-06 — P1 stops judging a document shorter than its own denominator
+
+`deslop-check.sh` gains a floor under `P1`: below `ceil(OPEN_PER_W / OPEN_PER_N)` = **167
+words** the row reports `UNMEASURED` instead of failing, and the file exits 0 printing
+`RESULT: UNMEASURED`. `tools/run-gates.sh` maps that to a new `UNMEASURED` status which
+counts toward `unclear`, so it blocks a phase claim exactly like NOT RUN and is never
+read as a pass. Both files pass `bash -n`.
+
+**Why.** Scoping the prose gate per document layer for a `structure: layered` book put
+P1 on documents of 78, 96, 131 and 132 words. The cap allows 6 occurrences per 1,000
+words, so those documents allow 0.47 to 0.79 of an occurrence: the *first* repeated
+opener fails, and the only way to pass is to lengthen the document. Two of the four
+failures were arithmetic of exactly that kind. The other two were real repetition
+('the garden' x4 in 540 words, 'I have' x4 in 650) and were fixed in the prose, not
+accommodated by the instrument.
+
+**No threshold moved.** Every cap, numerator and denominator is unchanged, and every
+file at or above 167 words computes exactly what it computed before. The floor is taken
+from the row's own constants, so a future change to `OPEN_PER_N` moves it rather than
+leaving a stale number behind.
+
+**Named basis, and its limit.** The derivation is arithmetic from P1's existing cap,
+itself calibrated on 175,144 words of published narrative. No corpus of *document
+layers* exists and none is claimed here: the entry does not assert that 167 words is the
+right size for a document, only that below it the row cannot judge one. **Domain check:**
+no chapter file in the catalogue is under 167 words except `test-books/_audio-smoke`
+(102 and 126 words, an audio fixture outside the prose gate), so no finished book's
+verdict can change — a proof by domain rather than a sample.
+
+**Evidence at the time of the change.** `validate-controls.sh` with the shipped fixtures
+exits 2 (PARTIAL): the harness-detects-bad-output arm passes, the human-corpus arm needs
+`HUMAN_CORPUS` and remains unverified in that direction, exactly as the 2026-10-15 entry
+records. The 638-file reference corpus in `calibration/corpus/` is too slow to serve as a
+pre-commit control and was not used to gate this edit; that is a limitation of the
+evidence, not a pass. `check-dialogue-tags.py` and the report-only rows are untouched.
+The re-key above is for this edit only:
+`deslop-check.sh` `7462cde6e0dafacd` -> `951d50fa406043ab`.
+
+### Change recorded 2026-11-06, same day — the P1 floor keeps the scale-free test
+
+The floor above suppressed the whole row below 167 words, including the **share** test,
+which has no denominator and judges a short document perfectly well. A 150-word document
+repeating one opener in four sentences is 20% of sentences and would have been recorded
+UNMEASURED, which is wrong: the rate is unusable there, the share is not.
+
+Below the floor the branch now applies the share test (fail above `OPEN_SHARE_PCT` = 15% of
+sentences) and reports UNMEASURED only when that test is silent too. Above the floor nothing
+changed: rate OR share, exactly as before.
+
+Evidence, on synthetic probe documents with real sentence counts: 144 words, 10 sentences,
+one repeat (10% share) -> UNMEASURED; 121 words, 3 of 10 sentences (30% share) -> FAIL on the
+share test; 318 words above the floor with one repeat (3.1/1k) -> PASS on the rate. An earlier
+draft of this entry quoted a probe whose sentences carried no full stops, which made "share of
+sentences" meaningless; the figures above are the rerun, and the bad figures are recorded here
+rather than quietly replaced.
+The eight per-layer scans are unchanged by the refinement: 4 PASS, 4 UNMEASURED, and the
+four UNMEASURED rows sit at 5.3% and 10.0% share, both under the 15% test.
+
+**Fingerprint supersedes the one in the entry above**, which is left as written because a
+dated entry records what was done on its date: `deslop-check.sh` `951d50fa406043ab` -> `dfaa5a58b68dd6fd`.
+
+### Change recorded 2026-11-07 — both rate rows take the 667-word document floor; the widened corpus overturns the 44-document zero
+
+`deslop-check.sh` now reports both `P1` and `A25` as UNMEASURED below **667 words**. `P1`'s
+floor moves from 167 (the arithmetic minimum for one occurrence) to 667; the share test is
+not applied below 667 either. A25's floor is `ceil(2,000/3)` = 667, from its own fail
+denominator. `tools/run-gates.sh` already maps `RESULT: UNMEASURED` to `unclear`.
+
+**The widened corpus.** `fetch-document-layers.py` now stages seven public-domain epistolary
+novels at their own document boundaries - Evelina (41 documents), Frankenstein (3), Humphry
+Clinker (40), Pamela (20), Clarissa vol. 1 (20), The Coquette (67), Emily Montague (219) -
+**410 documents**: 23 under 167 words, 124 at 167-400, 134 at 400-667 and 129 at 667-1,500.
+
+**What it measured, and what it overturns.** Under the 167-word floor, **47 of 410 documents
+fail P1** (Emily Montague 33, The Coquette 11, Humphry Clinker 3), 45 of them under 667
+words. The earlier "0 P1 failures in 44 documents" did not generalize: 41 of those 44 were
+Evelina, whose letters happen not to repeat an opener, while Emily Montague's letters open
+"I have"/"I am" as a matter of form. The share test failed 22 of the same human documents, so
+it is not a scale-free rescue below chapter size. Above 667, P1 fails **2 of 129** documents
+(1.6%): 1,303 and 1,434 words, carrying 5 and 9 instances. Those are repetition the row is
+entitled to name. With the floor in place the human corpus has **2 P1 failures, 0 A25
+failures, and 1 A25 UNMEASURED** (a 264-word document with one antithesis).
+
+**The floor is not an amnesty.** The two surviving P1 failures and the 18 documents that fail
+another row are unchanged. What the floor stops is a rate rule failing a published letter for
+opening two sentences the same way at 176 words, which is what 45 of 281 human documents did.
+
+**Probes.** A 285-word published letter that failed `P1 "i am" x2 (10.5%)` now reports
+`UNMEASURED at 285 words` and exits 0; a 1,303-word published letter still fails
+`P1 "it is" x5 (16.7%)` and exits 1. On a 656-word letter with one antithesis appended: at
+666 words the old A25 row reads `FAIL 1.50 per 1k` and exits 1, the new row reads
+`UNMEASURED at 666 words` and exits 0; at 667 words both pass; with two antitheses at 678
+words both fail `2.95 per 1k`.
+
+**Evidence at the time of the change.** All 410 documents were re-scanned through the frozen
+scanner after the edit: **20 failing files, 2 P1, 0 A25, 265 UNMEASURED**. The AI-written
+control (`study/books/C-dist2-094`, 32 chapters) still fails **12 of 32** (D3, A11a, A4, A17),
+so discrimination is intact. `bash -n` passes. The shipped fingerprint supersedes `dfaa5a58b68dd6fd`;
+the intermediate probe builds were not used for a generation run and are not recorded as
+freezes. The re-key is `dfaa5a58b68dd6fd` -> `e63d9ccda4f03b10`; `verify-freeze.sh` is re-run
+below.
+
+### Change recorded 2026-11-09 - a new gate: `check-world.py` (Freeze 22)
+
+Added because the same defect reached the page twice. Two sweeps of the drafted chapters of
+the parts still warm found ground vehicles the world forbids: a delivery truck, two vans, four
+trucks, a tram, a diesel exhaust and a hand-truck in prose that had already passed every cap in
+the deslop gate. The slop gate measures how prose is written and cannot see what it asserts, so a
+chapter can be clean and still put a lorry in a city whose streets carry nothing heavier than a
+barrow.
+
+This gate closes that class: the lexicon is book-local, one rule per line, and a book with no
+lexicon exits 2 rather than passing. It is wired into the phase-4 gate set beside `deslop`, which
+means a chapter cannot be counted as drafted while contradicting its own artifacts.
+
+Evidence at the time of the change: positive control (a plant line naming a truck, diesel and
+tyres) fails with three rule hits and exit 1; negative control (a barrow, iron rims, coal smoke)
+passes with exit 0; a book directory with no rules file exits 2; and the four drafted chapters of
+the parts still warm pass after the prose was corrected. The tool measures no style, holds no caps,
+and cannot be mistaken for a change to an existing gate: nothing already in the manifest moved, and
+`verify-freeze.sh` reports FREEZE HOLDS with the new row in place.
+
+### Change recorded 2026-11-11 - a new gate: `check-monotony.py`, calibrated the same day (Freeze 23)
+
+Added because a book passed every prose row in this directory while cycling a template
+inside its sentences: 597 "did not" in 130,000 words, nine uses of "Tap Two looked at the"
+across seven chapters, eight of "the man said, his voice" across four. `check-uniformity.py`
+compares chapters to each other and cannot see any of that; `deslop-check.sh` counts
+per-chapter rates and each of those is a low rate in every chapter. Both instruments were
+working as designed and the defect sat between them.
+
+Four rows: M1 repeated five-grams (six or more uses across four or more chapters), M2
+subject-opening share, M3 "did not" per 10k, M4 texture density. M4 subtracts the determiner
+and partitive senses of *flat*, because in the test book that word is the apartment and raw
+counting made the row report 349 texture uses of a noun - an instrument error found by using
+the instrument, fixed in the row with its reason as a comment.
+
+**The thresholds are provisional and the row says so in its own docstring.** They sit just
+above one book's post-repair baseline (M1 6, M2 0.34, M3 45, M4 150) and are not derived
+from a named corpus. By this file's own rule a threshold without a named corpus is not a
+measurement, and this entry does not claim one. The calibration TODO is to run the row over
+the same six English fiction volumes `check-uniformity.py` was calibrated on; until that is
+done the row can lock in a repair but cannot say what published prose reads like.
+
+It is wired into phases 3.8 and 4 in `tools/phase-map.yaml`, and into the prose class of
+`tools/run-gates.sh`, for the reason the 3.8 row exists: a gate that is not wired is not run,
+and a gate that is not run cannot be calibrated against books as they are actually drafted.
+`run-gates.sh` carries its own row list, so wiring the phase map alone would have left the
+row unrun in the direct suite - which is the same defect this entry is about, one layer up.
+
+Evidence at the time of the change. On the test book, before the prose repair the row exited
+1 with M1 six runs (worst 9), M3 42.9 and M4 135.3; after the repair it exits 0 with M1 0,
+M2 29.3%, M3 42.8 and M4 135.2, two warnings standing. A first automatic pass was reverted
+after the row showed it had created a new eight-chapter cluster ("kept his head still") and
+left a sentence reading "kept his head still toward the door"; the thirty hand edits that
+replaced it are the only prose changes in that report. `check-world.py` exits 0,
+`check-length.py` exits 4 (the book still declares `status: in_progress`), and
+`verify-freeze.sh` reports FREEZE HOLDS with the new row in place.
+
+### Revision 2, 2026-11-11 — the provisional monotony thresholds were calibrated, and one row changed shape
+
+The entry above shipped `check-monotony.py` with thresholds set just above one book's
+post-pass baseline and labelled provisional. They were then calibrated the same day, by
+`tools/prose/calibration/monotony-units.py`, which stages each of the six published English
+fiction volumes `check-uniformity.py` uses as chapters and runs the **shipped** gate over
+it — a threshold derived from a second implementation measures the second implementation.
+
+What the six volumes measured:
+
+    volume              chapters   M2 subj. openings   M3 "did not"/10k   M4 texture/10k
+    Austen, P&P            61            8.3%               10.1               2.2
+    Bronte, Jane Eyre      38            5.3%                7.0              15.7
+    Bronte, Wuthering      33            8.9%                8.9               9.7
+    Eliot, Middlemarch     86            9.0%                9.3               6.8
+    Hardy, Tess            60           10.1%               13.0              14.0
+    Stoker, Dracula        25            9.2%                n/a               6.9
+
+**M1 changed shape, and that is the finding.** Its absolute test — a five-word run used six
+times or more across four or more chapters — **failed five of the six published volumes**.
+A count does not scale with book length: Middlemarch repeats one run twenty times across 86
+chapters, and a rule that calls Middlemarch monotonous is measuring length, not prose. M1
+now fails a run that appears in 30% or more of a book's chapters. Every published volume
+passes at that share, and this book's original defect (one formula in 7 of 13 chapters,
+54%) still fails it, so the row keeps the power it was built for.
+
+**M2, M3 and M4 are printed against the band and are not enforced**, and each refusal is a
+measurement rather than a preference:
+
+- **M2** the corpus is 1813–1897, where periodic syntax suppresses subject openings. The
+  measured band is 5.3–10.1%; a 1.5×-headroom line at 15% would fail most contemporary
+  commercial fiction, and this project owns no modern corpus with which to check that.
+- **M3** the corpus is contraction-free exactly as this book is (557 "did not" to four
+  "didn't"), so the comparison is fair — and the book is 3.3× the worst volume. A fair
+  comparison is not the same thing as a defect, and enforcement of a rate the voice
+  contract declares as its own mode would be a gate punishing an author for their voice.
+- **M4** the palette (gray, cold, heavy, dry) is this book's subject matter. Gating it
+  would push the author off the word the book is about, which is the judgement U6 already
+  recorded when it removed "Nobody X" from its frame list.
+
+All six volumes now exit 0, and the book exits 0 with three warnings that state its
+distance from published practice. The old pass was weaker than it looked: the negation
+line was 45.0 against a measured worst of 13.0, so no book could have failed it. Removing a
+line that could not fire is not a loosening of the gate; it is the gate saying what it
+knows. Enforcement of M2–M4 waits on a modern commercial corpus, and that requirement is
+recorded in the tool's docstring rather than in a comment nobody reads.

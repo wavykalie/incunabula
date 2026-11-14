@@ -1684,3 +1684,177 @@ What did NOT move: no cap was re-derived, no regex changed, no new row was added
 sweep measured; the scoping re-keys the gate's relationship to one register; and the
 zero-tolerance rows that the sweep could not clear (A19/A21/A24/A25) stay live so the
 gate keeps the ability to fail the register the corpus could not test.
+
+## Validation re-run, 2026-11-07
+
+validate-controls.sh exits **0**: all 19 controls behave as predicted, 0 skipped, 0 failed.
+
+- Control 1 (human prose must pass): **51 documents, 0 failing** - the full reference corpus
+  (48 narrative documents plus 3 back matter), 177,620 words.
+- Controls 4-7 (uniformity and drift): **303 published chapter files across v01/v02/v05**
+  (61, 38 and 60 chapters). Uniformity PASS on every volume; drift PASS on every volume; both
+  positive controls fail as designed (CV 0.8% on the sliced chapter; voice-step 4.53 against a
+  cap of 1.94).
+- Control 10 (nonfiction U1): 6 published nonfiction volumes staged, none failed; Darwin's
+  Journal of Researches reads 28.2% and still passes under the nonfiction scoping.
+- Control 2 (slop fixture): FAIL with 16 failing rows.
+
+**What this settles.** The caps are verified against the full reference corpus again: 51
+documents, 0 failing, the same result the calibration table above records. No cap changed, so
+this is a regression check and not a re-derivation. The earlier run on this date used a
+3-document Montgomery substitute because the multi-volume staging was slow; this run points
+control 1 at the corpus itself and the substitute is withdrawn.
+
+**What is still missing.** Control 3, the AI-written discrimination arm, is skipped: Hollow
+Bridge is not installed in this checkout, and the harness says so rather than counting the
+skip as a pass. So the suite verifies that human prose passes and that synthetic slop, uniform
+manuscripts, two-voice manuscripts and monotone arcs all fail; it does not re-demonstrate that
+the scanner separates published AI-written prose from published human prose.
+
+## Control 3 restored, and a document-layer corpus, 2026-11-07
+
+### Control 3: an AI-written control that is not the gate's own output
+
+`validate-controls.sh` skipped control 3 because `AI_CONTROL` defaults to empty. The first
+candidate tried was `test-books/sons-of-heaven-v2` - eleven final chapters from an observed
+end-to-end run of this pipeline. Result: **11 of 11 passed**, so the control failed, and that
+failure is the useful part. A book drafted under these caps was iterated against them; asking
+the scanner to separate that book from human prose is asking it to fail its own output.
+`demo-books/muzzle-and-marrow`, the pilot whose failures were kept, passes cleanly too.
+
+The control now points at `tools/prose/study/books/C-dist2-094/manuscript/chapters` - 32
+chapters of AI-written prose drafted for a style study, outside this gate loop: **12 failing,
+20 passing**. That is the mix the control exists to detect.
+
+    HUMAN_CORPUS=.../corpus/elaina VOLUME_CORPUS=.../corpus/multivolume \
+    AI_CONTROL=.../study/books/C-dist2-094/manuscript/chapters \
+      bash tools/prose/validate-controls.sh      # exit 0, all 19 controls
+
+Caveat, stated because provenance is the whole argument: the study drafts are machine-written
+and unpublished. They demonstrate discrimination; they are not Hollow Bridge and do not
+replace it.
+
+### A document-layer corpus
+
+`P1` and `A25` are rate rules, so document size decides the verdict before the prose is read:
+at 2,000 words one instance is 0.50/1k, at 540 words it is 1.85/1k. Ashgrove's layers run
+161-941 words, so `fetch-document-layers.py` stages published prose at its **own** document
+boundaries - epistolary novels, not chapters cut into pieces, because a cut manufactures
+opener repetition at every boundary.
+
+44 documents (Evelina, 41 letters; Frankenstein, the 3 Walton letters), 167-1,500 words, every
+one scanned with the frozen instrument: **0 `P1` failures, 0 `A25` failures**, in every size
+band, including the 19 under 667 words.
+
+That is the answer the floors needed. The caps are not too tight for human documents of layer
+size; human letters do not contain the antithesis formula or repeat an opener often enough for
+a rate to bite. The arithmetic still holds - one instance in a 600-word document fails - but
+the measured base rate of such a document is zero in 44.
+
+**Correction, 2026-11-07: that zero did not generalize.** Forty-one of those 44 documents were
+Evelina letters. The widened corpus below has 47 `P1` failures in 410 documents, 45 of them
+under 667 words. The paragraph above is kept as the record of what the smaller sample said.
+
+### The corpus widened, 2026-11-07
+
+44 documents from two books was a thin base rate, and 41 of them came from one book. The
+fetcher now stages seven epistolary novels: Humphry Clinker (40 documents), Pamela (20),
+Clarissa vol. 1 (20), The Coquette (67) and Emily Montague (219), alongside Evelina (41) and
+Frankenstein (3) - **410 documents**, 23 under 167 words, 124 at 167-400, 134 at 400-667 and
+129 at 667-1,500.
+
+The result overturned the earlier zero. Under the 167-word floor, **47 of 410 fail `P1`**
+(Emily Montague 33, The Coquette 11, Humphry Clinker 3), 45 under 667 words; above 667,
+**2 of 129** fail (1,303 and 1,434 words, 5 and 9 instances). `A25`: **0 failures**, 1
+unmeasured (264 words, one antithesis). The share test failed 22 of the same human documents,
+so it is not a scale-free rescue below chapter size. Neither sample is "human prose" in
+general - one was 41/44 Evelina, the new one is dominated by Emily Montague's "I have"
+letters - and the difference between them is the finding.
+
+Both rate rows therefore take a **667-word document floor**: `A25` from its own denominator
+(`ceil(2,000/3)`), `P1` from the measured break between 16% (45/281) and 1.6% (2/129). Below
+it both report UNMEASURED and the share test is not applied; above it, `P1` keeps rate OR
+share and `A25` keeps its cap. Both decisions and their probes are in `GATE_FREEZE.md`,
+2026-11-07.
+
+**Corpus defect found and recorded.** `fetch-multivolume.py` labels Gutenberg 209 as
+`stoker-dracula`; 209 is *The Turn of the Screw*. The staged v05 volume therefore carries Henry
+James under a Stoker filename. Controls 4-7 read chapters, not titles, so the control result
+stands, but the label is wrong and a reader checking provenance would be misled. The new fetcher
+verifies every id against the Gutenberg `Title:` header and refuses a mismatch;
+`fetch-multivolume.py` is left unchanged because re-staging would move a corpus the controls
+were measured on.
+
+## Corpus audit, 410 documents, 2026-11-07
+
+The widened document corpus is **410 published documents / 233,271 words**: 23 under 167,
+124 at 167-399, 134 at 400-666, 74 at 667-999, 55 at 1,000-1,499. The raw per-document scan
+is `corpus-audit-410.txt`. P1 and A25 are excluded from the table below because their
+667-word floors were set from this corpus in the section above; D2 and D1 are report-only
+and cannot fail anything.
+
+| row | cap | fails | word range | worst /1k | what the failures are |
+|---|---:|---:|---|---:|---|
+| D2 rule of three | 5/1000 | 61 | 97-1,318 | 12.99 | report-only; 5 under 167, 22 at 167-399, 17 at 400-666, 17 at 667-1,499 |
+| A10b forum filler | 2/1000 | 8 | 104-835 | 9.62 | 2 under 167, 2 at 167-399, 3 at 400-666, 1 at 667-1,499; seven are one hit, one is two hits at 835 |
+| D3 -ly adverbs | 26/1000 | 5 | 152-615 | 34.75 | 152/32.89, 227/26.43, 259/34.75, 608/26.32, 615/26.02 |
+| A11b soft conclusion | 1/2000 | 1 | 1,143 | 0.87 | one hit |
+| A15b participial -ing | 3/1000 | 1 | 214 | 4.67 | one hit |
+| A1a delve family | 2/1000 | 1 | 482 | 2.07 | one hit |
+| A2b manner adverbs | 2/1000 | 1 | 523 | 3.82 | two hits |
+| A3a grandiose nouns | 2/1000 | 1 | 372 | 2.69 | one hit |
+| A4 serves-as dodge | 1/2000 | 1 | 595 | 1.68 | one hit |
+| A5 negative parallelism | 2/1000 | 1 | 1,303 | 2.30 | three hits |
+| D1 em dash | 10/1000 | 1 | 902 | 12.20 | report-only; 11 hits |
+
+**No new floor.** The two rows with more than one failure do not reproduce the P1 pattern:
+
+- **D3 is the one open calibration question.** Its five failures all sit under 667, but four
+  are close to the cap (26.02, 26.32, 26.43, 32.89 against 26) and the fifth is 34.75 at 259
+  words. A 667 floor would hide all five, including the 34.75 document, which is the only
+  evidence here that the cap is too tight for short human documents. The correct response is
+  a D3 re-calibration on a larger corpus, not a document floor. Recorded, not re-keyed.
+- **A10b is seven one-hit documents and one two-hit document.** The one-hit floor is 500 words;
+  the 835-word document carries two hits (2.40/1k), so a 667 floor would remove seven of eight
+  and leave the real violation. Eight failures in 410 documents is not the 47-in-410 P1
+  pattern, and fitting a floor to seven one-hit documents is fitting the sample.
+- **The singletons do not justify a floor.** A11b and A4 have one-hit floors of 2,000 words;
+  A5 has three hits at 1,303 words, a real 2.30/1k failure that a 2,000-word floor would hide.
+  A1a, A2b, A3a and A15b are one document each; a floor fitted to one document per row would
+  move four caps on the strength of four documents.
+
+The 667-word floors for P1 and A25 stand. No cap changed in this audit. The D3 outlier and
+the 835-word A10b document are the two rows to revisit when the corpus is next widened.
+
+## 15. The monotony gate: calibrated same-day, and one row had to change shape
+
+`check-monotony.py` (§ none of this file until now) shipped with thresholds set just above
+one book's post-pass baseline. That is the one thing this file has never permitted, so it
+was calibrated by `monotony-units.py`, which stages the same six published volumes used
+above and runs the shipped gate on them.
+
+| volume | chapters | M2 openings | M3 "did not"/10k | M4 texture/10k |
+|---|---|---|---|---|
+| Austen, *Pride and Prejudice* | 61 | 8.3% | 10.1 | 2.2 |
+| Bronte, *Jane Eyre* | 38 | 5.3% | 7.0 | 15.7 |
+| Bronte, *Wuthering Heights* | 33 | 8.9% | 8.9 | 9.7 |
+| Eliot, *Middlemarch* | 86 | 9.0% | 9.3 | 6.8 |
+| Hardy, *Tess* | 60 | 10.1% | 13.0 | 14.0 |
+| Stoker, *Dracula* | 25 | 9.2% | n/a | 6.9 |
+
+**The M1 finding.** The absolute spread test (6+ uses in 4+ chapters) failed five of the
+six volumes. Middlemarch repeats a run 20 times over 86 chapters. A count measures book
+length; a share measures repetition. M1 now fails at 30% of chapters.
+
+**A defect the calibration exposed in M4.** "gray" was matched US-only, so it scored 0.0
+on five volumes and looked like a stylistic absence when it was an orthography one. The
+row now counts `gr[ae]y`. This is the same class of error as A20 (curly quotes counted as
+decoration): a metric that encodes a spelling convention rather than the thing measured.
+
+**Why three rows are advisory.** M2's band belongs to periodic nineteenth-century syntax;
+M3's rate belongs to a declared voice mode; M4's palette is the book's subject. Each is the
+pattern this file already records twice — `U4` and `Nobody X` — and the response is the
+same: print the number and the band, do not fail a book for writing in its own register.
+A 1.5×-headroom line built from this corpus would fail contemporary commercial prose, and
+no modern corpus exists here to check that, so the burden of proof sits with the next
+person who wants the row enforced.

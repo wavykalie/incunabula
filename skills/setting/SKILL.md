@@ -172,7 +172,7 @@ Information has to reach the reader, and the moment a passage exists *only* to d
 the prose dies. The rule: **naked exposition fails**, unless the telling is itself a scene
 with someone at stake in it.
 
-Five ways to dress it, all of which also advance something else:
+Five carriers that work, and none of them is a closed list:
 
 1. **Conflict carriage.** Two people who want different things and know different amounts.
    The information surfaces because they disagree, never because one explains to the other.
@@ -189,11 +189,25 @@ Five ways to dress it, all of which also advance something else:
    rules of the world are taught by the damage, which also gives the reader a reason to
    remember them.
 
+**The test for any carrier, including a sixth you invent.** It has to do at least two jobs in the passage: deliver the fact and something else — characterise, worldbuild, build tension, make someone pay. A carrier that only delivers is naked exposition in a costume. That test, not the list, is the rule; the list is only what has worked so far.
+
 **Density.** Even disguised, information arrives in two or three units a page at most.
 Alternate an informative passage with one that does nothing but live in the scene. Three
 consecutive explanatory units is a wall, however well disguised.
 
 ---
+
+## 5.1 Devices a scene can carry
+
+These are scene moves, not book-wide requirements, and they are assigned to characters in `voice-matrix.md` rather than to the book. Use the ones this scene needs. A device in every chapter is a tic, and the tic scan will say so.
+
+- **Concurrent characterising action.** Deliver the information while the character is doing something physical that is itself characterisation — the wrong drawer, the hand that will not stay still, the joke that lands badly. The passage then does three jobs at once: information, humour, character.
+- **Naming the offstage.** Name people who never appear — two or three a book, recorded in `CANON_LEDGER.yaml` so they cannot contradict later. An offstage name that also creates pressure (someone mentions a player the protagonist is afraid of) disappears into the book; one that only decorates shows.
+- **Inverting the place.** Name the reader's default expectation for a location, then invert one of them: the asylum is safe and home is not. One per major location, and the inversion should cost someone something, or it is set dressing.
+- **Description by absence.** One place a book is described by what is gone from it rather than what is in it — the emptied room, the sky with no planes. History arrives without a history lesson.
+- **The overheard.** Where the reader must learn something the POV character cannot be told, let them overhear or come upon it once or twice a book rather than breaking point of view. The information stays legitimate and the discovery carries tension.
+
+Two devices belong to a character's voice rather than to a scene, and are specified in `voice-matrix.md`: the fact digression (a character who explains the world in trivia, half of it wrong, which characterises, worldbuilds, and delivers the rules at once) and the retrospective intrusion (*it was not until much later that I understood*), which is the voice of experience speaking over the voice of innocence and needs a frequency cap.
 
 ## 6. Nonfiction prose
 

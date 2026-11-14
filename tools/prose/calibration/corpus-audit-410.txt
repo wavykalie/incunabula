@@ -1,0 +1,134 @@
+documents 410 total words 233271
+
+RATE ROWS WITH HUMAN FAILURES (P1/A25 excluded from this table)
+row   fails  bands                              words of failures       max/1k
+D2       61  <167:5, 167-399:22, 400-666:17, 667-1499:17 97-1318               12.99
+A10b      8  <167:2, 167-399:2, 400-666:3, 667-1499:1 104-835                 9.62
+D3        5  <167:1, 167-399:2, 400-666:2       152-615                34.75
+A11b      1  667-1499:1                         1143-1143                0.87
+A15b      1  167-399:1                          214-214                 4.67
+A1a       1  400-666:1                          482-482                 2.07
+A2b       1  400-666:1                          523-523                 3.82
+A3a       1  167-399:1                          372-372                 2.69
+A4        1  400-666:1                          595-595                 1.68
+A5        1  667-1499:1                         1303-1303                2.30
+D1        1  667-1499:1                         902-902                12.20
+
+DETAIL FOR EVERY ROW WITH A HUMAN FAILURE
+
+D2  (61 failing documents)
+    97w   1 hits   10.31/1k  brooke-emily-montague__doc-071.txt
+   107w   1 hits    9.35/1k  brooke-emily-montague__doc-184.txt
+   122w   1 hits    8.20/1k  brooke-emily-montague__doc-147.txt
+   136w   1 hits    7.35/1k  brooke-emily-montague__doc-168.txt
+   154w   2 hits   12.99/1k  burney-evelina__doc-016.txt
+   168w   1 hits    5.95/1k  richardson-clarissa-v1__doc-001.txt
+   180w   1 hits    5.56/1k  brooke-emily-montague__doc-154.txt
+   186w   1 hits    5.38/1k  burney-evelina__doc-020.txt
+   189w   1 hits    5.29/1k  burney-evelina__doc-007.txt
+   189w   1 hits    5.29/1k  foster-coquette__doc-017.txt
+   190w   1 hits    5.26/1k  burney-evelina__doc-038.txt
+   193w   1 hits    5.18/1k  brooke-emily-montague__doc-190.txt
+   198w   1 hits    5.05/1k  brooke-emily-montague__doc-133.txt
+   198w   1 hits    5.05/1k  smollett-humphry-clinker__doc-040.txt
+   303w   3 hits    9.90/1k  brooke-emily-montague__doc-158.txt
+   309w   2 hits    6.47/1k  richardson-pamela__doc-014.txt
+   311w   2 hits    6.43/1k  brooke-emily-montague__doc-073.txt
+   327w   2 hits    6.12/1k  brooke-emily-montague__doc-122.txt
+   333w   2 hits    6.01/1k  brooke-emily-montague__doc-038.txt
+   348w   2 hits    5.75/1k  foster-coquette__doc-008.txt
+   366w   2 hits    5.46/1k  brooke-emily-montague__doc-030.txt
+   368w   3 hits    8.15/1k  foster-coquette__doc-020.txt
+   372w   3 hits    8.06/1k  burney-evelina__doc-041.txt
+   373w   2 hits    5.36/1k  brooke-emily-montague__doc-151.txt
+   376w   2 hits    5.32/1k  richardson-pamela__doc-009.txt
+   386w   2 hits    5.18/1k  brooke-emily-montague__doc-054.txt
+   389w   2 hits    5.14/1k  foster-coquette__doc-011.txt
+   412w   3 hits    7.28/1k  smollett-humphry-clinker__doc-027.txt
+   414w   3 hits    7.25/1k  richardson-pamela__doc-011.txt
+   419w   3 hits    7.16/1k  richardson-pamela__doc-007.txt
+   504w   4 hits    7.94/1k  brooke-emily-montague__doc-167.txt
+   511w   3 hits    5.87/1k  brooke-emily-montague__doc-199.txt
+   515w   3 hits    5.83/1k  smollett-humphry-clinker__doc-013.txt
+   523w   6 hits   11.47/1k  smollett-humphry-clinker__doc-005.txt
+   543w   3 hits    5.52/1k  brooke-emily-montague__doc-194.txt
+   550w   3 hits    5.45/1k  brooke-emily-montague__doc-134.txt
+   553w   3 hits    5.42/1k  brooke-emily-montague__doc-082.txt
+   559w   3 hits    5.37/1k  foster-coquette__doc-057.txt
+   576w   3 hits    5.21/1k  brooke-emily-montague__doc-006.txt
+   576w   3 hits    5.21/1k  foster-coquette__doc-030.txt
+   601w   5 hits    8.32/1k  foster-coquette__doc-001.txt
+   635w   4 hits    6.30/1k  brooke-emily-montague__doc-022.txt
+   640w   5 hits    7.81/1k  brooke-emily-montague__doc-195.txt
+   662w   5 hits    7.55/1k  foster-coquette__doc-051.txt
+   719w   5 hits    6.95/1k  richardson-pamela__doc-003.txt
+   726w   4 hits    5.51/1k  smollett-humphry-clinker__doc-017.txt
+   739w   4 hits    5.41/1k  smollett-humphry-clinker__doc-038.txt
+   784w   5 hits    6.38/1k  brooke-emily-montague__doc-042.txt
+   786w   4 hits    5.09/1k  brooke-emily-montague__doc-170.txt
+   802w   9 hits   11.22/1k  brooke-emily-montague__doc-013.txt
+   849w   5 hits    5.89/1k  brooke-emily-montague__doc-055.txt
+   883w   6 hits    6.80/1k  smollett-humphry-clinker__doc-012.txt
+   944w   5 hits    5.30/1k  burney-evelina__doc-010.txt
+   958w   9 hits    9.39/1k  richardson-pamela__doc-012.txt
+   992w   5 hits    5.04/1k  burney-evelina__doc-036.txt
+   996w   5 hits    5.02/1k  smollett-humphry-clinker__doc-016.txt
+  1006w   6 hits    5.96/1k  brooke-emily-montague__doc-014.txt
+  1007w   8 hits    7.94/1k  smollett-humphry-clinker__doc-021.txt
+  1086w   9 hits    8.29/1k  smollett-humphry-clinker__doc-028.txt
+  1090w   6 hits    5.50/1k  smollett-humphry-clinker__doc-009.txt
+  1318w   8 hits    6.07/1k  smollett-humphry-clinker__doc-034.txt
+
+A10b  (8 failing documents)
+   104w   1 hits    9.62/1k  richardson-clarissa-v1__doc-003.txt
+   152w   1 hits    6.58/1k  brooke-emily-montague__doc-189.txt
+   332w   1 hits    3.01/1k  brooke-emily-montague__doc-058.txt
+   364w   1 hits    2.75/1k  brooke-emily-montague__doc-152.txt
+   445w   1 hits    2.25/1k  brooke-emily-montague__doc-100.txt
+   454w   1 hits    2.20/1k  smollett-humphry-clinker__doc-008.txt
+   482w   1 hits    2.07/1k  brooke-emily-montague__doc-069.txt
+   835w   2 hits    2.40/1k  brooke-emily-montague__doc-192.txt
+
+D3  (5 failing documents)
+   152w   5 hits   32.89/1k  brooke-emily-montague__doc-189.txt
+   227w   6 hits   26.43/1k  brooke-emily-montague__doc-129.txt
+   259w   9 hits   34.75/1k  brooke-emily-montague__doc-113.txt
+   608w  16 hits   26.32/1k  foster-coquette__doc-005.txt
+   615w  16 hits   26.02/1k  foster-coquette__doc-055.txt
+
+A11b  (1 failing documents)
+  1143w   1 hits    0.87/1k  burney-evelina__doc-011.txt
+
+A15b  (1 failing documents)
+   214w   1 hits    4.67/1k  brooke-emily-montague__doc-137.txt
+
+A1a  (1 failing documents)
+   482w   1 hits    2.07/1k  brooke-emily-montague__doc-069.txt
+
+A2b  (1 failing documents)
+   523w   2 hits    3.82/1k  smollett-humphry-clinker__doc-005.txt
+
+A3a  (1 failing documents)
+   372w   1 hits    2.69/1k  burney-evelina__doc-041.txt
+
+A4  (1 failing documents)
+   595w   1 hits    1.68/1k  foster-coquette__doc-043.txt
+
+A5  (1 failing documents)
+  1303w   3 hits    2.30/1k  brooke-emily-montague__doc-117.txt
+
+D1  (1 failing documents)
+   902w  11 hits   12.20/1k  richardson-pamela__doc-002.txt
+
+ONE-HIT FLOOR (words at which 1 hit is exactly at cap) for each row that failed
+  A10b  cap 2/1000  one-hit floor  500w  two-hit floor 1000w
+  A11b  cap 1/2000  one-hit floor 2000w  two-hit floor 4000w
+  A15b  cap 3/1000  one-hit floor  334w  two-hit floor  667w
+  A1a   cap 2/1000  one-hit floor  500w  two-hit floor 1000w
+  A2b   cap 2/1000  one-hit floor  500w  two-hit floor 1000w
+  A3a   cap 2/1000  one-hit floor  500w  two-hit floor 1000w
+  A4    cap 1/2000  one-hit floor 2000w  two-hit floor 4000w
+  A5    cap 2/1000  one-hit floor  500w  two-hit floor 1000w
+  D1    cap 10/1000  one-hit floor  100w  two-hit floor  200w
+  D2    cap 5/1000  one-hit floor  200w  two-hit floor  400w
+  D3    cap 26/1000  one-hit floor   39w  two-hit floor   77w

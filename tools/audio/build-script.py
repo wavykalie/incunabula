@@ -105,12 +105,33 @@ PARALINGUISTIC_CUES = {
     "chuckled": "[laughter]",
 }
 
+# Narration is fed to the engine one sentence at a time. A whole paragraph in a
+# single call comes back at ~4.5 words/sec with no beat between sentences
+# (measured: 101 words in 22.1 s); sentence-sized calls with an explicit pause
+# give each intonation arc its own breath and land the chapter near the 150-170
+# wpm an audiobook is read at, instead of at 240.
+SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?\u2026])\s+(?=[\"'\u201c\u2018(A-Z0-9])")
+
+
+def split_sentences(text):
+    """Split narration into sentence-sized utterances for the engine."""
+    parts = [p.strip() for p in SENTENCE_SPLIT_RE.split(text or "") if p.strip()]
+    if parts:
+        return parts
+    return [text.strip()] if (text or "").strip() else []
+
+
 DEFAULT_PAUSES_MS = {
     "heading_after": 1400,
-    "sentence_after": 350,
-    "paragraph_after": 650,
-    "dialogue_turn_after": 450,
-    "attribution_after": 220,
+    "sentence_after": 400,
+    # Gaps are inside the performance, not between tracks: 650/450/220 ms after
+    # every short line turned a dialogue-heavy chapter into a staccato of
+    # separately-intoned fragments separated by silence. Tighter gaps let the
+    # reader's ear carry the sentence across a quote boundary instead of hearing
+    # the segment split.
+    "paragraph_after": 450,
+    "dialogue_turn_after": 300,
+    "attribution_after": 120,
     "scene_break": 2200,
     "chapter_end": 3500,
 }
@@ -121,6 +142,140 @@ DEFAULT_STYLE = {
     "volume": 0.0,
     "emotion": "neutral",
 }
+
+
+# ---------------------------------------------------------------------------
+# Emotion sheets (per-line delivery overrides)
+# ---------------------------------------------------------------------------
+
+# The renderer can only speak delivery it is told about, and prose attribution verbs
+# ("he whispered", "she sighed") are the only cue the builder can read out of the
+# text — a chapter written in flat speech tags therefore renders 100% neutral with
+# no paralinguistic tags at all (measured: Muzzle and Marrow ch-01, 119/119 segments
+# neutral, 0 tags). An emotion sheet is the human/session-authored layer that fills
+# that gap: one file per chapter, keyed by stable segment_id, applied on top of the
+# derived style. Nothing in the manuscript is marked up.
+#
+#   schema: incunabula.audiobook.emotion.v1
+#   chapter: 1
+#   source_sha256: <sha256 of manuscript/chapters/chapter-01.md>   # optional guard
+#   lines:
+#     seg0007:
+#       emotion: weary          # key of EMOTION_PHRASES in renderer.py
+#       speed: 0.95             # optional multipliers/offsets on the base style
+#       pitch: -0.03
+#       volume: -2
+#       tags: [sigh]            # [sigh] [breath] [laughter] [cough] [chuckle]
+EMOTION_SHEET_SCHEMA = "incunabula.audiobook.emotion.v1"
+EMOTION_SHEET_KEYS = {"speed", "pitch", "volume", "emotion", "tags", "note"}
+EMOTION_SHEET_TAGS = {"sigh", "sighing", "breath", "breathing", "laughter", "laugh",
+                      "chuckle", "cough"}
+
+
+def emotion_sheet_path(book_root, ch_num, sheet_dir=None):
+    base = sheet_dir or os.path.join(book_root, "audiobook", "emotion")
+    return os.path.join(base, f"chapter-{ch_num:02d}.yaml")
+
+
+def load_emotion_sheet(path):
+    """Return (sheet_dict_or_None, problems). A missing sheet is not an error."""
+    problems = []
+    if not path or not os.path.isfile(path):
+        return None, problems
+    try:
+        import yaml
+        with open(path, "r", encoding="utf-8") as fh:
+            sheet = yaml.safe_load(fh) or {}
+    except Exception as exc:
+        return None, [f"{path}: cannot parse emotion sheet ({exc})"]
+    if not isinstance(sheet, dict):
+        return None, [f"{path}: emotion sheet must be a mapping"]
+    schema = sheet.get("schema")
+    if schema not in (None, EMOTION_SHEET_SCHEMA):
+        problems.append(f"{path}: schema {schema!r} is not {EMOTION_SHEET_SCHEMA}")
+    lines = sheet.get("lines")
+    if lines is None:
+        lines = {}
+    if not isinstance(lines, dict):
+        return None, problems + [f"{path}: 'lines' must be a mapping of segment_id -> overrides"]
+    for seg_id, over in lines.items():
+        if not isinstance(over, dict):
+            problems.append(f"{path}: {seg_id}: override must be a mapping")
+            continue
+        unknown = set(over) - EMOTION_SHEET_KEYS
+        if unknown:
+            problems.append(
+                f"{path}: {seg_id}: unknown key(s) {', '.join(sorted(unknown))} "
+                f"(allowed: {', '.join(sorted(EMOTION_SHEET_KEYS))})")
+        tags = over.get("tags") or []
+        if isinstance(tags, str):
+            tags = [tags]
+        for t in tags:
+            if str(t).strip().lower() not in EMOTION_SHEET_TAGS:
+                problems.append(
+                    f"{path}: {seg_id}: tag {t!r} is not one this engine can perform "
+                    f"({', '.join(sorted(EMOTION_SHEET_TAGS))})")
+    return sheet, problems
+
+
+def apply_emotion_sheet(script_obj, sheet, sheet_rel, ch_num):
+    """Fold an emotion sheet onto the built segments. Returns (applied, problems).
+
+    Refuses (does not silently ignore) a sheet that names segments this chapter does
+    not have: a renamed or re-split chapter would otherwise keep rendering the old
+    performance under the new text."""
+    if not sheet:
+        return 0, []
+    problems = []
+    segs = {s["segment_id"]: s for s in script_obj.get("segments", [])}
+    if sheet.get("source_sha256"):
+        have = script_obj.get("source_sha256")
+        if have and sheet["source_sha256"] != have:
+            problems.append(
+                f"emotion sheet {sheet_rel} was written for manuscript sha256 "
+                f"{str(sheet['source_sha256'])[:12]}… but the chapter is {have[:12]}… — "
+                f"re-author the sheet for the current text")
+    applied = 0
+    for seg_id, over in (sheet.get("lines") or {}).items():
+        seg = segs.get(str(seg_id))
+        if seg is None:
+            problems.append(
+                f"emotion sheet {sheet_rel}: segment {seg_id!r} is not in chapter {ch_num} "
+                f"(script has {len(segs)} segments)")
+            continue
+        if seg.get("kind") == "pause":
+            problems.append(
+                f"emotion sheet {sheet_rel}: segment {seg_id!r} is a pause; "
+                f"pauses carry no delivery")
+            continue
+        style = dict(seg.get("style") or DEFAULT_STYLE)
+        for key in ("speed", "pitch", "volume"):
+            if key in over and over[key] is not None:
+                try:
+                    style[key] = round(float(over[key]), 3)
+                except (TypeError, ValueError):
+                    problems.append(
+                        f"emotion sheet {sheet_rel}: {seg_id}: {key} must be a number")
+        if over.get("emotion"):
+            style["emotion"] = str(over["emotion"]).strip().lower()
+        tags = over.get("tags") or []
+        if isinstance(tags, str):
+            tags = [tags]
+        tags = [t.strip().lower() for t in tags if str(t).strip()]
+        seg["style"] = style
+        if tags:
+            existing = [t for t in (seg.get("paralinguistic_tags") or [])]
+            merged = existing + [t for t in tags if t not in existing]
+            seg["paralinguistic_tags"] = merged
+            spoken = seg.get("spoken_text", "")
+            for t in tags:
+                marker = f"[{t}]"
+                if marker.lower() not in spoken.lower():
+                    spoken = f"{marker} {spoken}".strip()
+            seg["spoken_text"] = spoken
+        seg["emotion_sheet"] = sheet_rel
+        applied += 1
+    return applied, problems
 
 
 # ---------------------------------------------------------------------------
@@ -902,17 +1057,20 @@ def build_chapter_script(
         quotes = list(QUOTE_SPAN_RE.finditer(para))
         if not quotes:
             spoken = normalize_spoken_text(para)
-            segments.append({
-                "segment_id": next_seg_id(),
-                "kind": "narration",
-                "speaker": "NARRATOR",
-                "raw_text": para,
-                "spoken_text": spoken,
-                "style": dict(narrator_style),
-                "paralinguistic_tags": [],
-                "pause_after_ms": pauses["paragraph_after"],
-                "lexicon_hits": find_lexicon_hits(para),
-            })
+            sentences = split_sentences(spoken)
+            for s_idx, sentence in enumerate(sentences):
+                is_last_sentence = (s_idx == len(sentences) - 1)
+                segments.append({
+                    "segment_id": next_seg_id(),
+                    "kind": "narration",
+                    "speaker": "NARRATOR",
+                    "raw_text": sentence,
+                    "spoken_text": sentence,
+                    "style": dict(narrator_style),
+                    "paralinguistic_tags": [],
+                    "pause_after_ms": pauses["paragraph_after"] if is_last_sentence else pauses["sentence_after"],
+                    "lexicon_hits": find_lexicon_hits(sentence),
+                })
             continue
 
         # Paragraph-level speaker attribution, then interleave pieces
@@ -951,17 +1109,21 @@ def build_chapter_script(
                 spoken = normalize_spoken_text(nar_for_tts)
                 if not spoken:
                     continue
-                segments.append({
-                    "segment_id": next_seg_id(),
-                    "kind": "narration",
-                    "speaker": "NARRATOR",
-                    "raw_text": nar_raw,
-                    "spoken_text": spoken,
-                    "style": dict(narrator_style),
-                    "paralinguistic_tags": [],
-                    "pause_after_ms": pauses["paragraph_after"] if is_last_in_para else pauses["attribution_after"],
-                    "lexicon_hits": find_lexicon_hits(nar_raw),
-                })
+                piece_pause = pauses["paragraph_after"] if is_last_in_para else pauses["attribution_after"]
+                sentences = split_sentences(spoken)
+                for s_idx, sentence in enumerate(sentences):
+                    is_last_sentence = (s_idx == len(sentences) - 1)
+                    segments.append({
+                        "segment_id": next_seg_id(),
+                        "kind": "narration",
+                        "speaker": "NARRATOR",
+                        "raw_text": nar_raw if len(sentences) == 1 else sentence,
+                        "spoken_text": sentence,
+                        "style": dict(narrator_style),
+                        "paralinguistic_tags": [],
+                        "pause_after_ms": piece_pause if is_last_sentence else pauses["sentence_after"],
+                        "lexicon_hits": find_lexicon_hits(sentence),
+                    })
             else:
                 speaker, verb = plan[(q_start, q_end)]
                 if speaker != "NARRATOR":
@@ -1039,6 +1201,9 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="Build structured narration scripts from a frozen manuscript.")
     ap.add_argument("book", help="Path to the book root directory")
     ap.add_argument("--chapter", default=None, help="Optional single chapter number or filename")
+    ap.add_argument("--emotion-dir", default=None,
+                    help="Directory of per-chapter emotion sheets "
+                         "(default: <book>/audiobook/emotion)")
     ap.add_argument("--paralinguistic-cap", type=int, default=None,
                     help="Max paralinguistic tags per character per chapter (default: 2)")
     ap.add_argument("--out-dir", default=None,
@@ -1088,6 +1253,8 @@ def main(argv=None):
 
     written_files = []
     total_segs = 0
+    emotion_problems = []
+    sheet_dir = args.emotion_dir or os.path.join(book_root, "audiobook", "emotion")
     for ch_num, ch_fname, ch_text in chapters:
         script_obj = build_chapter_script(
             ch_num=ch_num,
@@ -1101,6 +1268,17 @@ def main(argv=None):
             pauses=pauses,
             voice_gender=voice_gender,
         )
+        sheet_path = emotion_sheet_path(book_root, ch_num, sheet_dir)
+        sheet, sheet_problems = load_emotion_sheet(sheet_path)
+        emotion_problems.extend(sheet_problems)
+        if sheet:
+            sheet_rel = os.path.relpath(sheet_path, book_root).replace("\\", "/")
+            applied, problems = apply_emotion_sheet(script_obj, sheet, sheet_rel, ch_num)
+            emotion_problems.extend(problems)
+            script_obj.setdefault("emotion_sheet", {})["file"] = sheet_rel
+            script_obj["emotion_sheet"]["lines_applied"] = applied
+            script_obj["emotion_sheet"]["notes"] = str(sheet.get("notes") or "")
+
         out_path = os.path.join(out_dir, f"chapter-{ch_num:02d}.json")
         with open(out_path, "w", encoding="utf-8", newline="\n") as fh:
             json.dump(script_obj, fh, indent=2, ensure_ascii=False)
@@ -1108,12 +1286,30 @@ def main(argv=None):
         written_files.append((ch_num, out_path, script_obj["summary"]))
         total_segs += script_obj["summary"]["total_segments"]
 
+    if emotion_problems:
+        print("build-script: REFUSED — emotion sheet problems:", file=sys.stderr)
+        for p in emotion_problems:
+            print(f"  - {p}", file=sys.stderr)
+        return 1
+
     print("=" * 67)
     print(f"## build-script   {book_root}")
     print("=" * 67)
     print(f"   chapters built:     {len(written_files)}")
     print(f"   total segments:     {total_segs}")
     print(f"   paralinguistic cap: {cap} per speaker per chapter")
+    for ch_num, out_path, summ in written_files:
+        sheet = None
+        try:
+            with open(out_path, "r", encoding="utf-8") as fh:
+                sheet = json.load(fh).get("emotion_sheet")
+        except (OSError, ValueError):
+            sheet = None
+        if sheet:
+            print(f"   emotion sheet ch-{ch_num:02d}: {sheet['file']} "
+                  f"({sheet['lines_applied']} line override(s))")
+        else:
+            print(f"   emotion sheet ch-{ch_num:02d}: none (derived delivery only)")
     print(f"   lexicon entries:    {len(lexicon_entries)} indexed forms")
     for ch_num, out_path, summ in written_files:
         rel_out = os.path.relpath(out_path, book_root).replace("\\", "/")

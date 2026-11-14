@@ -118,6 +118,30 @@ meant to improve across books, and a ledger that nobody validates is a ledger co
 confident opinions. It also refuses to let the **rejected**-measures registry shrink, which
 is the one failure a self-improving layer cannot detect about itself.
 
+## The returning phrase (a book-level check, not a per-chapter one)
+
+One early line, strong in its first context, returns late with its meaning reversed — the same
+words now carrying the opposite. That is not repetition; repetition repeats, this one turns.
+
+It cannot be done in the chapter loop, because at chapter three there is no early line to
+return to. Check it in batch mode and at the end of the manuscript: if the book already has
+one, protect it and see that nothing smooths it away; if it has a strong early line the
+ending could turn, that is a `setting` brief and a spine entry, not a composing edit. Do not
+manufacture one from a line that was only ever a setup — a plant that exists to be paid off
+is the thing this pass is supposed to notice, not add.
+
+## Layout, where the book declares `structure: layered`
+
+For an ergodic or layered book, typography carries meaning: a word in a second colour, a
+struck-through name, text that narrows as a corridor narrows. That is a drafting decision,
+not a delivery detail, so it is decided and checked here — at 3.8, before evaluation scores
+the book — and `presswork` only formats what this pass decided.
+
+Record the book's typographic rules as rules with their own checklist (what the mark is, what
+it means, where it is licensed, what it must never mark), check every occurrence against
+them, and report deviations. A rule with no meaning is decoration; a mark that appears
+without its rule is a typo the reader will read as one.
+
 ## The Review Gate
 
 **You do not apply a diff you have not read.** The counters flag candidates; they do not decide.

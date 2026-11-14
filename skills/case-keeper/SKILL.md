@@ -118,6 +118,8 @@ organizations:
     facts: [{ fact: "...", source: "ch-02:p3" }]
 ```
 
+**A layered book.** Where the project declares `structure: layered` (a document set rather than a manuscript — see `skills/incunabula/SKILL.md`), every entry carries a `layer:` key and there is one ledger scope per layer. A conflict *across* layers is content, not a conflict, and is never raised; a conflict *within* a layer is raised exactly as it is for any book. No layer may resolve another layer's value — that is the channel firewall applied to fiction, and it is what stops the book's deliberate contradiction being recorded as defects.
+
 **Conventions.** Slugs are lowercase and hyphenated with no accents. Sources are always
 `ch-XX:pYY`. Object status runs open (introduced, unresolved), closed (paid off),
 background, destroyed, or lost. Knowledge methods are exactly one of the five listed.
@@ -168,7 +170,7 @@ contradiction with the previous chapter gets a note. Not a fix.
 **3. New entities.** Find proper nouns and capitalised phrases not yet tracked and classify
 each as character, location, or organisation. Before adding, check whether it is actually
 an alias of something already there — a shared first name, a place name that is a known
-subset. When unsure, add it with `needs_review: true` rather than guess.
+subset. When unsure, add it with `needs_review: true` rather than guess. A person who is spoken of but never appears is tracked as `mentioned_only: true` with the chapter that names them: two or three offstage names a book is texture, and ledgering them is what stops a later chapter contradicting one. Do not track a stranger the book never refers to again.
 
 **4. Objects.** Refresh `last_mentioned` for tracked objects, and add new ones that carry
 narrative weight — described with unusual care, handed over, taken, triggering a reaction;

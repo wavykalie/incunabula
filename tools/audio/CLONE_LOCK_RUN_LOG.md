@@ -104,30 +104,45 @@ character, from that character's book prose), a human listening pass, `approve`,
 `freeze`, then `render-book.py`. That listening pass is deliberately not something
 this change can perform.
 
-## 4. Not exercised here
+## 4. Ming-3.0-tts-tiny `podcast` engine — run and verified on CPU
 
-- **Ming-3.0-tts-tiny `podcast` engine.** Downloaded on 2026-10-29 (30 shards,
-  16.7 GiB) and its release preflight passes (`tools/preflight_tiny.py`: config,
-  tokenizer, decode and prompt contract all ok). It cannot execute on this machine:
-  the checkpoint's Kimi-Delta layers need `fla-core`, which imports `triton`, and
-  there is no Triton backend for Windows/AMD. Sequence of measurements:
+Downloaded on 2026-10-29 (30 shards, 16.7 GiB); its release preflight passes
+(`tools/preflight_tiny.py`: config, tokenizer, decode and prompt contract). The
+blocker was never the model: the Kimi-Delta layers need `fla-core`, which imports
+`triton`, and there is no Triton backend for Windows/AMD.
 
-  ```
-  tiny preflight            ok  (16.7 GiB, transformers==4.46.3, no fla needed at
-                                 preflight time)
-  tiny load, CPU            ImportError: This checkpoint has Kimi-Delta
-                                 linear-attention layers, which need fla-core
-  pip install fla-core      ok  (fla-core 0.6.0)
-  import fla                ModuleNotFoundError: No module named 'triton'
-  pip install triton        no matching distribution (no Windows wheel)
-  pip install triton-windows  cp312 abi3 wheel, CUDA backend only
-  ```
+```
+tiny preflight            ok  (16.7 GiB, transformers==4.46.3)
+tiny load, CPU            ImportError: Kimi-Delta layers need fla-core
+pip install fla-core      ok  (fla-core 0.6.0)
+import fla                ModuleNotFoundError: No module named 'triton'
+pip install triton        no matching distribution (no Windows wheel)
+pip install triton-windows  cp312 abi3 wheel, CUDA backend only
+```
 
-  So the single-pass multi-speaker path is verified through the renderer
-  contract with the deterministic backend, not against the production engine.
-  With the tiny checkpoint absent or unloadable, a `ming3` scene render raises
-  `MING3_TINY_INSTALL_HELP` rather than stitching — that refusal is the intended
-  behaviour, and it is what a full-book render will report on this host.
+`tools/audio/ming_torch_kda.py` replaces the four symbols `ming_tiny` imports with
+the same math in plain torch; the renderer installs it before importing the engine.
+The 8 GiB card is not used (this torch build is CPU-only and the weights are
+16.7 GiB), so the scene renders out of system RAM.
+
+```
+KDA vs fla naive ref      gate modes 0.0 | chunked 4.8e-06 | incremental 6e-08
+AudioVAE round-trip       reference transcribes back to its own text verbatim
+podcast scene, 3 turns    9.84 s audio in 91.7 s wall (incl. 14 s load)
+                          transcript = script, line for line
+                          metadata: kda_backend=ming_torch_kda (pure-torch KDA)
+throughput                ~8x slower than realtime (~0.6 s per 80 ms step)
+```
+
+The first transcript checks in this session were wrong, not the audio: the ASR
+harness fed faster-whisper a 44.1 kHz array, which it reads as 16 kHz, so every
+clip played 2.76x fast and Whisper answered with fluent nonsense. `asr-check.py`
+now resamples explicitly. Anything measured with the old harness is void.
+
+With the tiny checkpoint absent or unloadable, a `ming3` scene render still raises
+`MING3_TINY_INSTALL_HELP` rather than stitching.
+
+## 5. Not exercised here
 - **ECAPA on production audio.** The drift numbers above come from the
   deterministic engine's voiceprint. The 0.70 floor's calibration note
   (`CLONE_LOCK.md`, step 6) comes from the 0.615–0.905 band recorded in

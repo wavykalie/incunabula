@@ -4,25 +4,26 @@
 #   The register lane a ductus is measured against. A lane is a corpus, not a genre: the
 #   books in it are all in the register a book in that lane should sound like. The ductus
 #   names the lane in its Provenance, and `tools/prose/ductus-fit.py` measures the
-#   resonant excerpts against that lane's documents.
+#   resonant excerpts against that lane's documents. `tools/prose/corpus-report.py`
+#   measures the lanes against each other and against the caps.
 #
 # WHAT A LANE IS NOT
 #   - Not a bucket for books that share a subject. Three horror novels in three registers
 #     are three lanes, or one bad lane.
 #   - Not the slop rule set. The scanner's rules are shared and genre-free, and its
 #     caps are GLOBAL: one set in deslop-check.sh serves every lane. So a cap re-derived
-#     on a second lane moves the first lane's thresholds too. That is an open design
-#     question (per-lane caps need a scanner change, and a change to a cap is a freeze
-#     event), not something this file resolves. What varies by lane today is the
-#     comparison a ductus is measured against - which is what ductus-fit.py reads.
+#     on a second lane moves the first lane's thresholds too. `corpus-report.py` prints
+#     what each lane's own worst document would imply, because that is the evidence for
+#     the decision; it does not make it. Per-lane caps need a scanner change and are a
+#     freeze event (CORPUS_MAP.md section 6, ductus-designer open question 5).
 #   - Not a place to park text. Corpus files stay local and untracked
 #     (calibration/.gitignore); only this path is in the repository.
 #
 # SIZE
-#   A lane is 5-10 books, roughly 500k-1M words, all in the target register. The caps are
+#   A lane is 5-10 works, roughly 500k-1M words, all in the target register. The caps are
 #   set at 1.5x the worst single document, so a thousand-book lane would loosen every cap
-#   toward meaninglessness and average the register into "books". The tool prints the
-#   measured size against this rule on every run; it does not enforce it, because a lane
+#   toward meaninglessness and average the register into "books". The tools print the
+#   measured size against this rule on every run; neither enforces it, because a lane
 #   under construction has to be measurable to be finished.
 #
 # WHERE A LANE LIVES
@@ -33,13 +34,30 @@
 #
 # COLUMNS (tab-separated; a space-separated row is a parse error, not a guess)
 #   lane     slug the ductus names
-#   role     governing | planned | control  (only one governing lane per book)
+#   role     governing | control | planned | study  (only one governing lane per book)
 #   register one line: what a book in this lane sounds like
-#   books    how many books are installed, 0 if none
-#   words    measured words installed, 0 if none
+#   books    works installed, as declared by the registry (corpus-report prints the
+#            measured count beside it and calls a disagreement DRIFT)
+#   words    measured words installed, as declared
 #   path     repo-relative directory holding the documents
 #   note     provenance and limits, one line
-lane	role	register	books	words	path	note
-light-novel	governing	translated Japanese light novel: dialogue-dense, short paragraphs, a narrator who tells	3	175144	tools/prose/calibration/corpus/elaina	Wandering Witch vols 1/2/5 — the Death Game lane's register, and the corpus every current cap was derived from
-action-voice	planned	contemporary American action and horror: kinetic, funny, sentences that move	0	0	tools/prose/calibration/corpus/action-voice	the borrow list — governs the Parts Still Warm book-two lane and the Advent horror lane; build before either drafts
-native-control	control	native-English commercial narrative, 1923-27	3	270149	tools/prose/calibration/corpus/montgomery	one author, three books, a century old: a cross-check that can refute a rule, never set one
+#   works    distinct works, when it differs from `books` (one series = one work)
+#   era      when the prose was published. The axis that confounds every row that moved
+#            after 1900; "unrecorded" is a true value and a guess is not.
+#   status   INSTALLED | INSTALLED ELSEWHERE | NOT INSTALLED
+#   answers  what this lane can actually settle
+#   cannot   the questions it must never be asked
+#
+# The first seven columns are required and are read by header name; later columns may be
+# added without touching a tool. Widened 2026-11-12 (CORPUS_MAP.md): the registry had a
+# register and no era, no work count, and no statement of what a lane could answer.
+lane	role	register	books	words	path	note	works	era	status	answers	cannot
+light-novel	governing	translated Japanese light novel: dialogue-dense, short paragraphs, a narrator who tells	3	175144	tools/prose/calibration/corpus/elaina	Wandering Witch vols 1/2/5 - one author, one translator: every cap in deslop-check.sh was derived from this series	1	unrecorded	INSTALLED ELSEWHERE	what that one series does; the eight caps as they currently stand	anything about a second author, a second register, or modern commercial prose; and it cannot be re-measured at its registered path in this checkout
+action-voice	governing	contemporary American action and horror: kinetic, funny, sentences that move	5	837388	tools/prose/calibration/corpus/action-voice	Child, Abercrombie, Sanderson, Bennett, Muir - local copies, lawfully acquired, analysed locally, never committed or redistributed (SOURCE_POLICY.md s3); the borrow list installed 2026-11-12; governs The Parts Still Warm and the Advent horror book	5	1997-2019	INSTALLED	the action register's pace: mean sentence 12.8, 42.9% of sentences at eight words or fewer, mean paragraph 31.7; and which current caps this lane already fails	a thriller's number specifically - one of the five is contemporary and four are secondary-world; pace claims about weird fiction; set a cap until per-lane caps are a freeze event
+weird-texture	study	weird fiction: the uncanny made physical, long sentences, dense visual texture	1	55656	tools/prose/calibration/corpus/weird-texture	VanderMeer, Annihilation - one work, local copy, never committed; the texture reference behind the Parts Still Warm contract's uncanny, deliberately not a pace model	1	2014	INSTALLED	what dense physical texture costs in sentence length and short share (18.1 mean, 20.0% at eight words or fewer); an upper bound for a texture budget	govern anything at one work; pace; anything in the action register
+native-control	control	native-English commercial narrative, 1923-27	3	279281	tools/prose/calibration/corpus/montgomery	one author, three books, a century old: a cross-check that can refute a rule, never set one	3	1923-1927	INSTALLED	whether a rule is a rule of prose or one translator's habit	modern idiom, genre, anything after 1927
+era-prepublished	control	English narrative prose 1813-1897: long sentences, low dialogue share, full paragraphs	6	945622	tools/prose/calibration/corpus/multivolume	Austen, Bronte x2, Eliot, Hardy, Stoker - the only corpus on disk inside the 5-10 work rule, and every year of it is pre-1900	6	1813-1897	INSTALLED	era-relative questions and the size of the era confound	anything contemporary; it is not modern and cannot stand in for it
+nonfiction-discursive	control	argumentative and expository nonfiction: a mind building a case from evidence	8	1337146	tools/prose/calibration/corpus/nonfiction	Dana, Darwin x3, Douglass, Muir, Ruskin, Smith - installed and unregistered until 2026-11-12; governs the first nonfiction book, and until then can only refute a fiction lane's rule	8	18th-early 20th c.	INSTALLED	the nonfiction register; and it shows which fiction caps published exposition already fails	fiction, and modern nonfiction (Carnegie is not public domain in the US until 2032); three Darwin works break the one-work-per-author rule
+prescriptive-advice	control	how-to and advice prose: second person, direct address, imperatives	7	963203	tools/prose/calibration/corpus/prescriptive	Bennett, Chavasse, James, Marden, Montessori, Rousseau, Smiles - the register the scanner's tropes were derived from	7	19th-early 20th c.	INSTALLED	the advice register, and which of the scanner's rows exist only there	any fiction lane; a different reader contract
+contemporary-commercial	planned	modern commercial fiction: the register no public-domain corpus can hold	0	0	tools/prose/calibration/corpus/contemporary-commercial	C-mod - needs ~30 lawfully held works before it is a threshold source (SOURCE_POLICY.md s4); the only route to settling M2 and M4	0	2020s	NOT INSTALLED	the rows nothing here can settle: M2 subject openings, M4 texture, D1 em dash, paragraph length	everything until the modern registry has rows
+layers	study	dialogue and narration layers split from the era works	0	232862	tools/prose/calibration/corpus/layers	study material for the layer split - 410 documents cut from 7 works, not 410 works; measured, never a register	7	19th-early 20th c.	INSTALLED	whether a dialogue/narration split carries a signal	not a register; must never govern a book

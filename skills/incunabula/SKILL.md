@@ -158,6 +158,7 @@ book finished until the proof pulls and the state-canon-voice consistency gate b
 ```
 1      Research            scout
 1.5    Readership          readership
+1.8    Ductus              ductus-designer
 2      Foundation          forme
 2.5    Voice matrix        voice-matrix
 2.7    Case build          case-keeper (BUILD)
@@ -383,6 +384,12 @@ estimate, engagement recommendation, and the prose-rules file for the drafting s
 
 **Readership** — `readership` for three to five personas, naming the primary, the hostile,
 and the stretch reader.
+
+**Ductus** — `ductus-designer` for the book's voice contract, designed from what the author
+wants and from text that sounds like it, with the corpus-fit check run before a word of the
+contract is written. It writes `ductus.md` beside the foundation and never writes prose. If
+the book carries a press ductus, that voice is the parent and its refusals bind. Output is
+frozen before chapter one; a change after drafting starts is a dated decision.
 
 **Foundation** — `forme` for characters with wound, lie, and arc (plus the disorder devices
 the characters' own logic calls for), an outline carrying anchors and surprises and

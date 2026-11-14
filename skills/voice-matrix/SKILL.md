@@ -90,6 +90,8 @@ language itself shows strain. How feeling arrives (suddenly, gradually, accumula
 displaced), and whether humour is present at all, and — if it is — when it leaves. The
 departure of humour is an emotional event in itself.
 
+**Description density.** Fix the book's point on the Balzac–Chekhov continuum and write it down: is description a thick, accumulating surface, or one telling detail and move on? This is a choice, not a default, and it is the governor on every device in Section 2 — a dense book can carry more of them, a spare book fewer. The recorded density is a consistency check at `composing` (drift between the first half and the second is the common failure), never a threshold: no number of this density goes into a gate.
+
 **Vocabulary.** The private words the book uses repeatedly, each with the resonance it is
 carrying, and a list of words the book never uses. The usual AI fingerprints belong on
 that list with a one-line reason each. Name the world the vocabulary comes from: a book
@@ -144,6 +146,7 @@ chapters. A mini card for the rest.
   what specifically breaks in their speech.
 - **Three signature moves.** Recurring behaviours that fingerprint their sections, each
   with an expected frequency and what it reveals.
+- **Voice devices.** Which of the book's optional devices this character carries, and why: the fact digression (trivia, half of it wrong), the retrospective intrusion (and its frequency cap), the offstage people this character mentions, the concurrent action they deliver information through. Leave the field empty for most characters — **not every character needs one, and a device given to a character with no reason for it is the author's hand in the scene.** Assign by fit, never to fill a template.
 - **Blind-sort markers.** Three things that identify this character with the name removed.
   Check them against every other character: if any marker could belong to someone else, it
   is not a marker yet.
@@ -225,7 +228,8 @@ technique that makes the distinction work and how it applies here.
 3. **Differentiate.** Put all POV properties side by side, force apart any pair sharing two or more, build the matrix, and confirm three blind-sort differences per pair. Fewer than three means revise.
 4. **Budget.** Set the genre-calibrated budgets, refined against research data if it exists.
 5. **Sample.** Write the benchmarks, then read them aloud. Do they sound like a specific person, or like competent writing? If the latter, rewrite — the goal is specificity, not quality.
-6. **Validate.** Run the blind sort on every character. Check the cards against the foundation (the foundation wins on conflict). Sanity-check that the budgets are achievable rather than punishing. Scan the samples for any word the document itself forbids. Confirm the profile fits the genre or that any subversion is deliberate. And compare rest against pressure for each character: if you have to squint to see the difference, the pressure spec is too weak.
+6. **Assign devices.** Give the book's optional devices to the characters whose logic calls for them, and record the ones deliberately left unassigned. One device per thread; two devices doing the same job in the same thread is the author showing their hand.
+7. **Validate.** Run the blind sort on every character. Check the cards against the foundation (the foundation wins on conflict). Sanity-check that the budgets are achievable rather than punishing. Scan the samples for any word the document itself forbids. Confirm the profile fits the genre or that any subversion is deliberate. And compare rest against pressure for each character: if you have to squint to see the difference, the pressure spec is too weak.
 
 ---
 

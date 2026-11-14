@@ -233,6 +233,23 @@ with certainty at the end.
 
 ---
 
+## 6. The spine — the ends decided, the means loose
+
+Front-load the backbone, not the bulk. What has to be decided before chapter one is the *ends*:
+
+- **True state of the world** — what is actually the case, including what the reader will not be told for a hundred pages.
+- **False surface** — the version the reader is told, and who is telling it.
+- **Thread endings** — where each thread lands, and which ones are deliberately left open.
+- **Twist seed map** — each planned recontextualisation (a reveal, a relationship reversal, a hidden motivation, an unreliable narrator, a world that is not what it seems, a moral inversion, a time shift, a perspective flip), the chapter its seed is planted in, and the chapter it pays off in.
+- **Multi-scene chapters** — which chapters are several scenes or a document cluster and will be drafted across more than one call.
+- **Flippable lines** — the early lines that will return late with their meaning reversed.
+
+That is `story-spine.md`, saved beside `outline.md` and not inside it. What stays loose is the *means*: how each chapter gets from one beat to the next, scene by scene. An outline detailed enough to transcribe turns drafting into transcription, which is the documented failure of the two-bucket plan. The chapter outline keeps its current granularity; the spine is where the ends live.
+
+A seed that exists only to pay off later is a visible plant. Give each seed a second job in its first appearance — the early line that gets flipped has to mean something the first time, and the offstage name has to matter when it is first mentioned — and decide the twist at outline time, because a twist decided at chapter twenty reads as one stapled on.
+
+**A layered book** (`structure: layered` in the state) puts its architecture here: the document layers, how deep the nesting runs, and where the interruptions fall. For that book the spine is the plan.
+
 ## Integration test
 
 The document is one thing, not five. The character should embody the question — their
@@ -257,6 +274,7 @@ they stay intact, the wound and the question are disconnected. Fix it here, not 
 6. Theme as question, woven at four scales
 7. The symbol and motif system
 8. The relationship-mirror map
+9. The spine, in `story-spine.md`: true state, false surface, thread endings, twist seeds, multi-scene chapters, flippable lines
 
 This is the reference for the whole run. Route later changes through `press-ledger` so
 nothing drifts silently away from it.

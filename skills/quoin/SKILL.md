@@ -1,6 +1,6 @@
 ---
 name: quoin
-description: Predictability-breaking pass for a drafted chapter. Runs after the Writer and before the Evaluator. Applies at least five of its nine operations to inject human noise, cut self-explaining similes (the Overprint), and unsettle the system's compulsion toward order. It does not fix problems and it does not improve the prose — it makes the chapter less predictable. Use in Incunabula Phase 3.5.
+description: Predictability-breaking pass for a drafted chapter. Runs after the Writer and before the Evaluator. Diagnoses what the chapter is, then applies the operations the diagnosis names — a decision, not a count — to inject human noise, cut self-explaining similes (the Overprint), and unsettle the system's compulsion toward order. It does not fix problems and it does not improve the prose — it makes the chapter less predictable. Use in Incunabula Phase 3.5.
 ---
 
 # the Quoin
@@ -13,7 +13,7 @@ default and its disease. Your job is to unsettle it. You do **not** fix problems
 improve sentences, and you do **not** make the chapter better in any way an editor would recognise.
 You make it **less predictable**.
 
-A chapter that arrives polished and leaves polished has failed this pass.
+A chapter that arrives polished and leaves polished has usually failed this pass; where it has not, the report is where you say why.
 
 ## When You Run
 
@@ -32,7 +32,12 @@ draft — otherwise the wash of disruption never reaches the score.
 
 ## The Nine Operations
 
-Apply **at least five**. Apply more when the chapter reads too smoothly.
+**This is a diagnostic, not a quota.** A fixed count applied to every chapter produces the same predictable messiness the pass exists to prevent, so the count is gone. Diagnose the chapter first — over-smoothed, over-explained, over-orderly — and apply the operations that answer the diagnosis. A chapter that needs two gets two. A chapter that needs none is a finding: write it down and say why the chapter already carries its own disorder.
+
+Two things are not optional:
+
+- **Operation 1, the Overprint** — where overprints are present they come out. This is the one operation that is a measurement rather than a taste.
+- **Operation 9, uniform shape** — the only operation that reads other chapters, and uniformity is invisible from inside one chapter. It runs on every chapter, and "not needed" is a judgement it has to state with the previous two chapters' numbers behind it.
 
 1. **Cut self-explaining similes (the Overprint).** Find every comparison the narrator completes and
    explains. Delete the explanation. Keep the image. `"The water is louder than expected. Not
@@ -94,7 +99,8 @@ Write the quoin report to `evaluations/quoin-chapter-[N].md`:
 ```markdown
 # Quoin: Chapter [N]
 
-**Operations applied:** [n] of 9 — [list which]
+**Diagnosis:** [what this chapter is, in one line]
+**Operations applied:** [which, and why those]
 **Shape variance:** prev two chapters [words, words] · this chapter [words] · closing moves [prev / prev / this]
 **Uniformity broken:** yes / not needed — [what was varied, or why the chapter had to keep its shape]
 **Emotional anchor (from outline):** [text]
@@ -108,7 +114,7 @@ Write the quoin report to `evaluations/quoin-chapter-[N].md`:
 | 1 | Cut Overprint | p.12 | "…explanation…" | "…image only…" |
 
 ## Not done
-[Operations deliberately skipped and why]
+[Operations deliberately declined, each with the diagnosis that declined it]
 
 ## Handoff
 The chapter is ready for `proof-panel`. Disruptions here are intentional: the Evaluator must not

@@ -21,6 +21,18 @@ already state:
             self-evaluation), the −0.8 self-evaluation calibration is applied
             HERE and printed as the calibrated floor. The agent never subtracts
             it from itself; rule 6 of the anti-inflation protocol is mechanical.
+  5. SCOPE  an ergodic book may suspend a dimension, but only the BOOK may do
+            it: `score_scoping: mode: ergodic`, a non-empty `reason:`, and the
+            dimension's number in `suspended_dimensions`, all in
+            PROJECT_STATE.yaml. An evaluation row saying SUSPENDED with no such
+            declaration fails; a suspension outside the declared list fails; a
+            suspension with no stated reason fails. The floor is then the
+            minimum of the dimensions actually scored, and it prints with its
+            count so a reader can see it is not a seven-dimension floor. The
+            rule exists because the alternative - reading a suspension from the
+            evaluation file - lets the party being scored drop a row it dislikes.
+            The declaration is the author's, made at intake, where a reviewer
+            can read it before the scores exist.
 
 NOT A GATE and deliberately absent from GATE_FREEZE.md's manifest: same
 exemption class as check-pass-evidence.py — it enforces rules that already
@@ -41,8 +53,9 @@ Usage:
 Exit codes:
     0  every rule holds (the calibration line still prints when it applies)
     1  at least one violation: an uncited score, a delta breach without an
-       EVIDENCE block, a floor that is not the minimum, or a score table that
-       does not carry the seven dimensions
+       EVIDENCE block, a floor that is not the minimum, a score table that does
+       not account for all seven dimensions, or a suspension the book did not
+       declare
     2  no evaluation files under the book root — NOT RUN, never a pass
 """
 
@@ -57,6 +70,11 @@ ROW_SEP = re.compile(r"^\s*\|[\s:|-]+\|\s*$")
 FLOOR = re.compile(r"(?:\*\*Floor:?\s*|Incunabula Score:?\s*)([0-9]+(?:\.[0-9]+)?)", re.I)
 EVIDENCE_BLOCK = re.compile(r"EVIDENCE:\s*(.*)", re.I)
 SELF = re.compile(r"grade\s*C|self[- ](?:evaluation|scored|eval)", re.I)
+# A suspended row: the score cell says so instead of holding a number.
+SUSPENDED_CELL = re.compile(r"^\s*(?:SUSPENDED|N/?A|NOT[ -]SCORED)\b", re.I)
+# The book-level declaration (candidate 18), read from the book root. Kept in the
+# same file every gate reads for mode, so a book declares its scoping once.
+SC_BLOCK = re.compile(r"^score_scoping:\s*$(.*?)(?=^\S|\Z)", re.M | re.S)
 
 # canonical dimension names, matched on a normalised cell
 DIMS = (
@@ -68,6 +86,9 @@ DIMS = (
     ("emotion", "Emotion"),
     ("config", "Configurable"),
 )
+
+# the number the book's `suspended_dimensions` list uses for each name
+DIM_NUMBER = {name: i + 1 for i, (_, name) in enumerate(DIMS)}
 
 # a citation is a quoted span or a location reference — anything else is a wish
 QUOTE = re.compile(r"[\"“”«»‘’'].*[\"“”«»‘’']|\u201c|\u201d")
@@ -104,11 +125,50 @@ def chapter_key(path):
     return int(m.group(1)) if m else 0
 
 
+def scoping_of(book_root):
+    """The book's own score scoping, or None when it declares none.
+
+    {"mode", "suspended" (set of dimension numbers), "reason"}. A `score_scoping:`
+    block without `mode: ergodic` is returned as-is and does NOT license a
+    suspension: the mode is the licence, so a block that merely lists numbers
+    cannot switch the rule off by being present.
+    """
+    head = ""
+    for name in ("PROJECT_STATE.yaml", "STATE.yaml"):
+        path = os.path.join(book_root, name)
+        if os.path.isfile(path):
+            try:
+                with open(path, encoding="utf-8", errors="ignore") as fh:
+                    head = fh.read(8000)
+            except OSError:
+                head = ""
+            break
+    m = SC_BLOCK.search(head)
+    if not m:
+        return None
+    block = m.group(1)
+    mode = re.search(r"^[ \t]+mode[ \t]*:[ \t]*[\"']?([A-Za-z0-9_-]+)", block, re.M)
+    susp = re.search(r"^[ \t]+suspended_dimensions[ \t]*:[ \t]*\[([^\]]*)\]", block, re.M)
+    reason = re.search(r"^[ \t]+reason[ \t]*:[ \t]*[\"']?(.+?)[\"']?\s*$", block, re.M)
+    dims = set()
+    if susp:
+        for token in re.split(r"[,\s]+", susp.group(1).strip()):
+            if token.isdigit():
+                dims.add(int(token))
+    return {
+        "mode": (mode.group(1).strip().lower() if mode else None),
+        "suspended": dims,
+        "reason": (reason.group(1).strip() if reason else ""),
+    }
+
+
 def parse_file(path):
-    """-> dict with dimensions {name: (score, evidence)}, floor, self_scored."""
+    """-> dict with dimensions {name: (score, evidence)}, suspended {name: reason},
+    floor, self_scored."""
     with open(path, encoding="utf-8") as fh:
         text = fh.read()
     dims = {}
+    suspended = {}
     for line in text.splitlines():
         if "|" not in line or ROW_SEP.match(line):
             continue
@@ -117,6 +177,10 @@ def parse_file(path):
             continue
         name = dim_name(cells[0])
         if name is None:
+            continue
+        if SUSPENDED_CELL.match(cells[1]):
+            # a suspension, not a score: the row still has to say why
+            suspended[name] = " | ".join(cells[2:]).strip()
             continue
         try:
             score = float(cells[1])
@@ -130,50 +194,107 @@ def parse_file(path):
     qualifies = any(QUOTE.search(b) or LOCATION.search(b) for b in blocks)
     return {
         "dims": dims,
+        "suspended": suspended,
         "floor": floor,
         "self_scored": bool(SELF.search(text[:1200])),
         "evidence_block": qualifies,
     }
 
 
-def check_file(path, failures):
+def check_file(path, failures, scoping=None):
     name = os.path.basename(path)
     print("---- %s" % name)
     data = parse_file(path)
     dims = data["dims"]
-    if not dims:
+    susp = data["suspended"]
+    if not dims and not susp:
         fail("%s: no score table with the seven dimensions - nothing checkable "
              "(a file in evaluations/ that is not an evaluation should not match "
              "the eval patterns)" % name, failures)
         return data
 
-    # 1. CITE
+    # 5. SCOPE - checked before the count, because a suspension is only a row if
+    # the book's own declaration licenses it. The evaluator cannot suspend a
+    # dimension, and cannot choose which ones.
+    if susp:
+        if not scoping or scoping["mode"] != "ergodic":
+            fail("%s suspends %s, but the book declares no `score_scoping: "
+                 "mode: ergodic` at its root - a dimension is suspended by the "
+                 "book's declaration, never by an evaluation file" %
+                 (name, ", ".join(sorted(susp))), failures)
+        else:
+            if not scoping["reason"]:
+                fail("the book's score_scoping block suspends %s with no `reason:`"
+                     " - a suspension nobody has to justify is a dropped row" %
+                     ", ".join("dim %d" % DIM_NUMBER[d] for d in sorted(susp)), failures)
+            undeclared = [d for d in sorted(susp)
+                          if DIM_NUMBER[d] not in scoping["suspended"]]
+            if undeclared:
+                fail("%s suspends %s, which the book's suspended_dimensions list "
+                     "does not name (declared: %s) - the evaluator cannot add a "
+                     "suspension the book did not make" %
+                     (name, ", ".join(undeclared),
+                      ", ".join("dim %d" % n for n in sorted(scoping["suspended"]))
+                      or "none"), failures)
+            for d in sorted(susp):
+                if not susp[d]:
+                    fail("%s suspends %s with no reason in the row - the evidence "
+                         "cell has to say why, not just that it did" % (name, d),
+                         failures)
+            if not undeclared and all(susp.values()):
+                ok("suspension declared by the book and matched here: %s" %
+                   ", ".join("dim %d (%s)" % (DIM_NUMBER[d], d) for d in sorted(susp)))
+    elif scoping and scoping["mode"] == "ergodic" and scoping["suspended"]:
+        # The inverse direction. A declared suspension this evaluation did not
+        # use is reported, never failed: an evaluator may legitimately score a
+        # dimension it was not required to drop, and an evaluation written
+        # before the declaration existed must stay acceptable. But silence would
+        # make the declaration invisible in the run that ignored it.
+        print("   --    the book declares %s suspended and this file scores it anyway - "
+              "declared scoping not applied in this file (reported, not failed)"
+              % ", ".join("dim %d" % n for n in sorted(scoping["suspended"])))
+
+    # 1. CITE (scored rows only: a suspension is not a number and cites nothing)
     missing = [d for d, (_, ev) in sorted(dims.items()) if not has_citation(ev)]
     if missing:
         fail("%s: score(s) with no passage citation: %s - a number without a "
              "citation is invalid (anti-inflation rule 2)" % (name, ", ".join(missing)),
              failures)
-    else:
+    elif dims:
         ok("every scored dimension cites a passage")
 
-    # score table completeness: the floor is the minimum of SEVEN
-    if len(dims) != 7:
-        fail("%s: the table scores %d of the 7 dimensions - the Platen is the "
-             "minimum across all seven" % (name, len(dims)), failures)
+    # score table completeness: seven rows, whether scored or suspended
+    if len(dims) + len(susp) != 7:
+        if susp:
+            fail("%s: the table scores %d and suspends %d of the 7 dimensions - "
+                 "a suspension still has to name its row" %
+                 (name, len(dims), len(susp)), failures)
+        else:
+            fail("%s: the table scores %d of the 7 dimensions - the Platen is the "
+                 "minimum across all seven" % (name, len(dims)), failures)
 
     # 3. FLOOR
-    if data["floor"] is None:
+    if not dims:
+        print("   --    %s: every dimension suspended - there is no floor to check" % name)
+    elif data["floor"] is None:
         print("   --    %s: no reported floor - arithmetic NOT CHECKED" % name)
     else:
         real = min(s for s, _ in dims.values())
+        over = ("the %d scored dimension%s (suspended: %s; not comparable to a "
+                "seven-dimension floor)" %
+                (len(dims), "" if len(dims) == 1 else "s",
+                 ", ".join("dim %d" % DIM_NUMBER[d] for d in sorted(susp)))) if susp \
+            else "the seven dimensions"
         if abs(real - data["floor"]) > 1e-9:
             fail("%s: reported floor %.1f is not the minimum of its dimensions "
                  "(%.1f) - the floor is the score, never an average" %
                  (name, data["floor"], real), failures)
         else:
-            ok("reported floor %.1f is the minimum of the seven dimensions" % real)
+            ok("reported floor %.1f is the minimum of %s" % (real, over))
 
     # 4. CALIB - the subtraction happens here, not in the agent's head
+    if not dims:
+        return data
     real = min(s for s, _ in dims.values())
     if data["self_scored"]:
         print("   --    %s: SELF-SCORED (provenance header) - calibrated floor "
@@ -203,9 +324,18 @@ def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(newline="\n")
 
+    scoping = scoping_of(book)
+
     print("===================================================================")
     print("check-eval - score integrity against the anti-inflation protocol")
     print("book: %s   (%d evaluation file(s))" % (book, len(files)))
+    if scoping:
+        print("scoping: mode=%s  suspended_dimensions=%s  reason=%s" % (
+            scoping["mode"] or "(none)",
+            sorted(scoping["suspended"]) or "(none)",
+            ("recorded" if scoping["reason"] else "MISSING")))
+    else:
+        print("scoping: none declared by the book - a SUSPENDED row would fail here")
     print("===================================================================")
     failures = []
 
@@ -219,9 +349,19 @@ def main():
         print("== %s: %s" % (label, " -> ".join(os.path.basename(p) for p in chain)))
         prev = None
         for path in chain:
-            data = check_file(path, failures)
+            data = check_file(path, failures, scoping)
             # 2. DELTA
             if prev is not None:
+                # A dimension moving from scored to suspended raises the floor
+                # without a score moving, so it is printed rather than passed
+                # over. It is not a failure: the declaration is book-level and
+                # visible, and an evaluation genuinely written before the
+                # declaration existed must remain acceptable.
+                for d in sorted(set(prev["dims"]) & set(data["suspended"])):
+                    print("   --    %s was scored in the previous evaluation of this "
+                          "chapter and is suspended here - the floor is now the "
+                          "minimum of the scored rows, and the book's declaration "
+                          "is where that has to be argued" % d)
                 for d in sorted(set(prev["dims"]) & set(data["dims"])):
                     before = prev["dims"][d][0]
                     after = data["dims"][d][0]
@@ -243,7 +383,7 @@ def main():
     if failures:
         print("check-eval: FAIL - %d violation(s) of the anti-inflation rules." % len(failures))
         return 1
-    print("check-eval OK - citations, deltas and floor arithmetic all hold.")
+    print("check-eval OK - citations, deltas, scope and floor arithmetic all hold.")
     return 0
 
 

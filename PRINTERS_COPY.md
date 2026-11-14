@@ -77,9 +77,9 @@ description, the rejected candidates and the bugs found while validating live in
 | `U5` | paragraph-length CV ≥ 55% | 3 published volumes **and 140 public-domain English novels, 13.04M words, five eras — 0 failures** | enforced |
 | `U6` | signature-frame spread | 3 published volumes; worst single frame in 23% of chapters | enforced |
 | `A1` | emotional reversals per bin ≥ 0.45 | 140 novels, 13.04M words: min 0.469, **0 failures**; flags 27% of the measurable machine corpus. **The null is 0.5** — human prose sits above it, machine prose sits on it | enforced, see §5 |
-| `D1`–`D3`, `A24`, `A25` | em-dash cap, rule-of-three, adverb density, coda density, antithesis density | Elaina corpus 175k/48 docs **+ Montgomery 270k** — both pass | enforced, **register caveat in CALIBRATION §10** |
+| `D1`–`D3`, `A24`, `A25` | em-dash cap, rule-of-three, adverb density, coda density, antithesis density | Elaina corpus 175k/48 docs **+ Montgomery 270k** — both pass | enforced, **register caveat in CALIBRATION §10**; `A25`'s fail line is UNMEASURED below 667 words (2026-11-07) |
 | `F1` | closing coda as a *position* | 0 of 50 chapters — categorical, not a rate. **Survived a second corpus** | hard |
-| `P1` | opener repetition | Elaina corpus | enforced |
+| `P1` | opener repetition | Elaina corpus | enforced; **UNMEASURED below 667 words** (2026-11-07, 45 of 281 published documents under 667 failed the rate) |
 | `P3` | fragment run | Elaina corpus; **Montgomery carries a legitimate run of 29** | **warn only** — a cap passing 29 also passes the slop fixture's 9 |
 | `A1a`, `A2a`, `A3a`, `A19`, `A21` | word-list rules | **all five false-positived on Montgomery** | **demoted from hard to a rate cap**, tagged in output |
 | `A26` | default name clusters | **the AI-written control only** — the human corpus cannot confirm or deny a list of names | warn only |

@@ -236,6 +236,7 @@ another.
 |---|---|---|
 | `deslop-check.sh` | one chapter | slop: per-1k rules, anaphora, duplication, fragment runs, and the closing coda as a *position* |
 | `check-uniformity.py` | the whole book | monotony: chapter-length variance, rhythm spread, coda distribution, signature-frame spread, paragraph layout |
+| `check-monotony.py` | the whole book | monotony inside the sentences: repeated five-word runs (enforced, as a share of chapters), subject-opening share, negation density, texture density (the last three printed against the published band, advisory) |
 | `check-drift.py` | the whole book | a voice shift: a measurable change in sentence habits between the first chapters and the last |
 | `check-arc.py` | the whole book | a flat emotional arc: a book whose direction never reverses |
 

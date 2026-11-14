@@ -110,6 +110,12 @@ A fourth entrance exists for **small projects**: the 8-phase compact pipeline in
 press loop → final score → colophon). It is opt-in only and never substitutes itself for
 the full engine silently.
 
+**How they relate.** `incunabula-auto` is the `incunabula` engine with the pilot removed:
+same phases, same gates, same state, stopping at three checkpoints. `incunabula` is that engine
+driven by hand. `incunabula-codex` is the contract layer (intake, canon, voice contracts) plus
+a smaller pipeline, for a small project or a host that can only read and write files. Full
+engine first; the compact pipeline when the project or the host asks for it.
+
 ---
 
 ## 4. The feature inventory
@@ -120,6 +126,7 @@ the full engine silently.
 |---|---|---|
 | 1 | `scout` | market research, comps, positioning |
 | 1.5 | `readership` | 3–5 reader personas, including a hostile one |
+| 1.8 | `ductus-designer` | the book's voice contract, with the corpus-fit check run before it is written |
 | 2 | `forme` | foundation: characters with inner contradictions, outline, theme as a question |
 | 2.5 | `voice-matrix` | per-character voice specs, including how each voice breaks under pressure |
 | 2.7 / 3.7 / 5.5 | `case-keeper` | the book's fact inventory (build / update / update) |
@@ -144,7 +151,7 @@ separate bundle, not part of this suite.)
 
 | Gate | Runs on | Question it answers |
 |---|---|---|
-| **Prose gate** | every prose phase | `deslop-check.sh` (per-chapter machine tells) · `check-uniformity.py` (are the chapters suspiciously alike?) · `check-drift.py` (does the voice shift mid-book?) · `check-arc.py` (does the emotional direction ever reverse?) |
+| **Prose gate** | every prose phase | `deslop-check.sh` (per-chapter machine tells) · `check-uniformity.py` (are the chapters suspiciously alike?) · `check-monotony.py` (does every sentence start the same way?) · `check-drift.py` (does the voice shift mid-book?) · `check-arc.py` (does the emotional direction ever reverse?) |
 | **Narrative gate** | evaluation + delivery | `check-narrative.py` against `NARRATIVE_LEDGER.yaml`: every set-up paid off or explicitly deferred; no beat/scene monotony |
 | **Maintenance gate** | every phase | state, canon, and pruning log exist and reconcile; nothing resolved silently |
 | **The gate runner** | checkpoints + on demand | `tools/run-gates.sh` — all of the above in one command, 17 rows, one verdict |
@@ -180,7 +187,7 @@ spans (p90 of 167 public-domain novels; 5% of human books exceed it).
 | `ductus/<name>/ductus.md` | the voice contract an agent pilots: identity, register, refusals, how it breaks under pressure, benchmark lines |
 | `ductus/<name>/COMMONPLACE.md` | that voice's own taste ledger, with the root ledger's ceremony |
 | `ductus/PROMOTIONS.md` | the only channel between voices — a dated, deliberate merge; nothing else crosses |
-| `tools/ductus.py` | `new` · `check` · `contract` · `cross` · `list` — and `contract` is what a phase calls |
+| `tools/ductus.py` | `new` · `check` · `contract` · `cross` · `list` · `log` · `audit` — `contract` is what a phase calls; `audit` checks the book's carryover log |
 
 Isolation here is the same rule the channels obey (`SELF_IMPROVEMENT.md` §2): a preference
 earned by one voice is not evidence for another, `cross` reports an entry two ledgers both
@@ -232,8 +239,9 @@ person still decides.
 2. **Dialogue pass** (`register`) — blind-sort every speaking character; fix voice bleeding.
 3. **Openings/endings** (`catchword`) — score hook and pull; rewrite below threshold;
    never repeat the previous chapter's hook type.
-4. **Disruption** (`quoin`) — at least five operations that break predictability while
-   preserving the emotional anchor.
+4. **Disruption** (`quoin`) — the operations the chapter's diagnosis calls for, always
+   including the shape check against the previous two chapters, while preserving the emotional
+   anchor.
 5. **Mechanical pass** (`composing`) — em dashes, overprints, adverbs, filter words; every
    diff reviewed by a human eye before it lands.
 6. **Evaluate** (`proof-panel`) — a fresh evaluator, in a context that never wrote this:

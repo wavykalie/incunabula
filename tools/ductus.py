@@ -18,6 +18,21 @@ WHAT A DUCTUS IS
   promotions through the verifier stack. `list` is the surface for watching that
   happen — decisions, preferences, outcomes, last activity per voice.
 
+THE HIERARCHY
+  Three layers, and a book resolves through all of them:
+
+    ductus/<voice>/ductus.md                the author's hand
+    ductus/<voice>/series/<series>.md       the series the book belongs to
+    <book>/ductus.md                        the hand on this material
+
+  `series:` in BOOKS.yaml names the middle layer, and a book resolves book -> series ->
+  voice, reporting which of them it used. Each layer may TIGHTEN the one above it and may
+  never loosen it. The middle layer exists because a multi-volume project otherwise loses
+  it: a persona is a hand and a book is one volume of it, so the throttle volume one spent
+  a hundred thousand words learning has nowhere to be written down for volume two, and the
+  next volume starts again from a persona that never selected it. A declared series with no
+  contract is REFUSED, the way a declared voice with no contract already is.
+
 WHY THE LEDGERS ARE ISOLATED
   Taste does not transfer between voices. A rule earned by one ductus is not evidence
   for another, and the root `COMMONPLACE.md` is not a substitute for either. Evidence
@@ -59,10 +74,12 @@ usage:  tools/ductus.py <command> [--root DIR]
                                            book leaves them
   check                                    every voice, its isolation, the unassigned books
   contract BOOK [--ductus SLUG]            WHAT A RUN DRAFTS UNDER: the resolved contract
-                                           for a book, its digest, or UNASSIGNED. A book
-                                           assigned to a voice whose contract is still a
-                                           skeleton is REFUSED — a phase may not draft
-                                           under a voice nobody authored.
+                                           for a book — its own, else its series', else its
+                                           voice's — with digests, or UNASSIGNED. A book
+                                           assigned to a voice whose contract is a
+                                           skeleton is REFUSED, and so is a declared
+                                           series with no contract: a phase may not draft
+                                           under layers nobody authored.
   cross                                    report an entry held by two ledgers, and two
                                            contracts that are the same voice
   list                                     each voice and how far it has developed
@@ -95,6 +112,7 @@ CONTRACT = "ductus.md"
 LEDGER = "COMMONPLACE.md"
 ROOT_LEDGER = "COMMONPLACE.md"
 BOOK_LOG = "maintenance/DUCTUS_LOG.md"
+SERIES_DIR = "series"   # <ductus dir>/<voice>/series/<series>.md — the middle layer
 CHAPTER = re.compile(r"chapter[-_ ]?0*(\d+)", re.I)
 
 # The ledger entry types, same ceremony as the root COMMONPLACE.md. `list` counts them
@@ -376,6 +394,37 @@ def book_assignments(root):
         if isinstance(b, dict):
             out.append((b.get("path"), b.get("ductus")))
     return out
+
+
+def series_of(root, rel):
+    """(series slug, how) for a registry path; (None, why) when it declares none.
+
+    Read from BOOKS.yaml, the same file that assigns the voice, because the series is part
+    of the assignment rather than a fact about a directory. Exact path first, then a unique
+    basename, exactly as `resolve_book` does it: a series read off a guessed path is a
+    layer nobody declared.
+    """
+    data, err = load_yaml(os.path.join(root, BOOKS))
+    if err or not isinstance(data, dict):
+        return None, "books"
+    rows = [b for b in (data.get("books") or []) if isinstance(b, dict)]
+
+    def norm(p):
+        return str(p).replace("\\", "/").rstrip("/")
+
+    def slug_of(row):
+        return str(row.get("series") or "").strip() or None
+
+    want = norm(rel)
+    for row in rows:
+        if row.get("path") and norm(row["path"]) == want:
+            return slug_of(row), "exact"
+    base = os.path.basename(want)
+    hits = [row for row in rows
+            if row.get("path") and os.path.basename(norm(row["path"])) == base]
+    if len(hits) == 1:
+        return slug_of(hits[0]), "basename"
+    return None, "ambiguous" if hits else "none"
 
 
 NEW_CONTRACT = """# {name}
@@ -840,9 +889,9 @@ def cmd_contract(root, args):
         return 0
 
     d = os.path.join(root, ddir, slug)
-    contract = os.path.join(d, CONTRACT)
+    parent = os.path.join(d, CONTRACT)
     ledger = os.path.join(d, LEDGER)
-    if not os.path.isfile(contract):
+    if not os.path.isfile(parent):
         print(f"ductus: REFUSED — {rel} is assigned to {slug!r}, and there is no "
               f"{ddir}/{slug}/{CONTRACT}. A phase does not draft under a voice that "
               "does not exist.")
@@ -851,15 +900,55 @@ def cmd_contract(root, args):
         print(f"ductus: REFUSED — {slug!r} has no {ddir}/{slug}/{LEDGER}. Its taste "
               "could not be recorded, which is the one thing the ledger is for.")
         return 1
-    thin = thin_sections(read_text(contract))
+    thin = thin_sections(read_text(parent))
     if thin:
         print(f"ductus: REFUSED — {ddir}/{slug}/{CONTRACT} is still a skeleton "
               f"({', '.join(thin)}). Author it, or remove the assignment from "
               "BOOKS.yaml so the book is drafted under the root ledger openly.")
         return 1
+    child = _book_contract(root, rel, book)
+    if child:
+        untitled = thin_sections(read_text(child))
+        if untitled:
+            print(f"ductus: REFUSED — {_relpath(root, child)} is a skeleton "
+                  f"({', '.join(untitled)}). A book contract under a real voice is still "
+                  "a contract nobody authored: author it, or delete it so the book is "
+                  "openly drafted under the parent alone.")
+            return 1
 
-    print(f"ductus: {rel} is drafted under {slug}")
-    print(f"  contract: {ddir}/{slug}/{CONTRACT}  sha256:{digest(contract)}")
+    series_slug, _how = series_of(root, rel)
+    series = _series_contract(root, ddir, slug, series_slug) if series_slug else None
+    if series_slug and not series:
+        print(f"ductus: REFUSED — {rel} declares `series: {series_slug}` in BOOKS.yaml, and "
+              f"there is no {ddir}/{slug}/{SERIES_DIR}/{series_slug}.md. A declared series "
+              "is a layer, not a label: author it, or take the key out so the volumes are "
+              "openly drafted under the voice alone.")
+        return 1
+    if series:
+        thin_series = thin_sections(read_text(series))
+        if thin_series:
+            print(f"ductus: REFUSED — {_relpath(root, series)} is a skeleton "
+                  f"({', '.join(thin_series)}). Every volume after this one would inherit "
+                  "an unauthored layer: author it, or take the series key out.")
+            return 1
+
+    if series and child:
+        about = " — voice, series, and its own ductus"
+    elif series:
+        about = " and its series"
+    elif child:
+        about = " and its own ductus"
+    else:
+        about = ""
+    print(f"ductus: {rel} is drafted under {slug}{about}")
+    if child:
+        print(f"  book contract:   {_relpath(root, child)}  sha256:{digest(child)}")
+    if series:
+        print(f"  series contract: {_relpath(root, series)}  sha256:{digest(series)}")
+    if child or series:
+        print(f"  parent:          {ddir}/{slug}/{CONTRACT}  sha256:{digest(parent)}")
+    else:
+        print(f"  contract: {ddir}/{slug}/{CONTRACT}  sha256:{digest(parent)}")
     print(f"  ledger:   {ddir}/{slug}/{LEDGER}  "
           f"{os.path.getsize(ledger)} byte(s)  sha256:{digest(ledger)}")
     print("  read before: drafting, revision, auditing and scoring. Record these digests "
@@ -880,8 +969,43 @@ def _book_dir(root, rel, given):
     return None
 
 
+def _relpath(root, path):
+    """A path for printing, repo-relative and slash-separated whatever the platform."""
+    return os.path.relpath(path, root).replace(os.sep, "/")
+
+
+def _book_contract(root, rel, given):
+    """The book's own ductus.md, when it has one.
+
+    A persona contract is the author's hand; a book's contract is that hand on this
+    material. The book's file wins when it exists — `ductus-designer` writes one beside
+    foundation.md — and the persona stays the parent. Without this preference a
+    book-level contract was dead paper: `contract`, `calibrate`, `log` and `audit` all
+    read the persona and never the file the book was designed under, so a book could be
+    re-registered toward a new register and nothing that measures it would notice.
+    """
+    bd = _book_dir(root, rel, given)
+    if not bd:
+        return None
+    path = os.path.join(bd, CONTRACT)
+    return path if os.path.isfile(path) else None
+
+
+def _series_contract(root, ddir, slug, series):
+    """The middle layer: <ductus dir>/<voice>/<series dir>/<series>.md.
+
+    A persona is the hand and a book is one volume of it, so without this layer a series
+    loses its middle: volume one's pace band is written in volume one's own file and volume
+    two starts again from the persona. `ductus-designer`'s open question 4 has said since the
+    skill was written that each volume is written "under a series parent"; until BOOKS.yaml
+    could name the series there was no file behind that sentence.
+    """
+    path = os.path.join(root, ddir, slug, SERIES_DIR, series + ".md")
+    return path if os.path.isfile(path) else None
+
+
 def _resolved_contract(root, book):
-    """(rel, slug, contract, error) for the audit/log paths."""
+    """(rel, slug, contract, error) for the audit/log paths: book, else series, else voice."""
     _press, ddir, err = press_config(root)
     if err:
         return None, None, None, err
@@ -895,12 +1019,27 @@ def _resolved_contract(root, book):
         return None, None, None, "unregistered"
     if not slug:
         return rel, None, None, "unassigned"
-    contract = os.path.join(root, ddir, slug, CONTRACT)
-    if not os.path.isfile(contract):
+    parent = os.path.join(root, ddir, slug, CONTRACT)
+    if not os.path.isfile(parent):
         return rel, slug, None, "missing"
-    if thin_sections(read_text(contract)):
-        return rel, slug, contract, "skeleton"
-    return rel, slug, contract, None
+    if thin_sections(read_text(parent)):
+        return rel, slug, parent, "skeleton"
+    series_slug, _how = series_of(root, rel)
+    series = None
+    if series_slug:
+        series = _series_contract(root, ddir, slug, series_slug)
+        if not series:
+            return rel, slug, None, "missing-series"
+        if thin_sections(read_text(series)):
+            return rel, slug, series, "skeleton"
+    child = _book_contract(root, rel, book)
+    if child:
+        if thin_sections(read_text(child)):
+            return rel, slug, child, "skeleton"
+        return rel, slug, child, None
+    if series:
+        return rel, slug, series, None
+    return rel, slug, parent, None
 
 
 def _chapter_file(book_dir, number):
@@ -1318,9 +1457,10 @@ def selftest():
                            t, flags=re.M | re.I)
             write_text(p, t)
 
-        def assign(slug):
+        def assign(slug, series=None):
+            key = f"    series: {series}\n" if series else ""
             write_text(os.path.join(tmp, BOOKS),
-                       f"books:\n  - path: some-book\n    ductus: {slug}\n")
+                       f"books:\n  - path: some-book\n    ductus: {slug}\n{key}")
 
         # the documented default, named, and not a silent pass
         write_text(os.path.join(tmp, BOOKS), "books:\n  - path: some-book\n")
@@ -1466,6 +1606,35 @@ def selftest():
         ok(rc == 1 and "DUPLICATE" in out and "dupea" in out,
            "cross: two contracts sharing a Register are reported as one voice")
 
+        # --- the series layer: book -> series -> voice ----------------------------
+        author("folio")
+        series_text = ("# The Sequence\n\n## Identity\nOne man, six volumes.\n\n"
+                       "## Register\nThe instrument does not change.\n\n"
+                       "## Refusals\n- no reset.\n\n## Breaking\nThe same book twice.\n\n"
+                       "## Benchmarks\nPending, and not invented.\n")
+        serie = os.path.join(tmp, "ductus", "folio", SERIES_DIR, "the-sequence.md")
+        write_text(serie, series_text)
+        assign("folio", "the-sequence")
+        rc, out = captured(cmd_contract, tmp, ["some-book"])
+        ok(rc == 0 and "series contract" in out and "the-sequence" in out,
+           "contract: a book resolves through its series, and the report names the layer")
+        _r, _s, resolved_s, err_s = _resolved_contract(tmp, "some-book")
+        ok(err_s is None and resolved_s == serie,
+           "resolution: a book with no contract of its own is measured against its series")
+        os.remove(serie)
+        rc, out = captured(cmd_contract, tmp, ["some-book"])
+        ok(rc == 1 and "REFUSED" in out and "the-sequence" in out,
+           "contract: a declared series with no contract REFUSES the run")
+        write_text(serie, series_text)
+        own = os.path.join(bookdir, CONTRACT)
+        write_text(own, "# Some Book\n\n## Identity\nThis book.\n\n## Register\nShort.\n\n"
+                        "## Refusals\n- none.\n\n## Breaking\nFaster.\n\n"
+                        "## Benchmarks\nOne line.\n")
+        _r, _s, resolved_own, err_own = _resolved_contract(tmp, "some-book")
+        ok(err_own is None and resolved_own == own,
+           "resolution: a book's own contract still wins over its series")
+        os.remove(own)
+
         # the interface: a command reached through main() must actually run
         argv, sys.argv = sys.argv, ["ductus.py", "check", "--root", tmp]
         try:
@@ -1487,7 +1656,8 @@ def selftest():
         return 1
     print(f"SELF-TEST PASS — {len(checks)} assertions (creation, slug safety, the "
           "unauthored report and its clearing, the contract interface and every "
-          "refusal path, isolation, missing ledger, stray dir, assignment, development "
+          "refusal path, the book/series/voice resolution and its precedence, "
+          "isolation, missing ledger, stray dir, assignment, development "
           "counts, leak detection, dispatch).")
     return 0
 

@@ -60,6 +60,17 @@ proto-recoverable.py   the recoverable-inconsistency prototype (scratch)
 fetch-multivolume.py   downloads a multi-volume Gutenberg corpus for controls 4-7
 ```
 
+`ductus-fit.py` answers a different question and gates nothing: **does the calibration
+corpus fight the voice a book is asking for?** It measures a book's resonant excerpts and
+the governing lane's corpus with the same arithmetic, per document, and names every
+dimension where the excerpt sits outside the corpus's range or past a gate cap — reading
+the caps out of `deslop-check.sh` rather than retyping them. `calibration/LANES.tsv` says
+which corpus governs which register. Run it **before** a ductus is written
+(`skills/ductus-designer`), because its job is to stop a book being drafted toward a hand
+the corpus cannot describe: the caps are set at 1.5× the worst document, so a register the
+corpus has never seen reads as deviation while the gate still passes it. A missing corpus,
+or fewer than 500 excerpt words, is `NOT RUN` and exits 2 or 3 — never a pass.
+
 **Every limit in this directory is wrong for some book, and it is known why.** Each was
 measured on one kind of sample and is enforced on another:
 
@@ -148,6 +159,7 @@ python check-surplus.py manuscript/                         # report only, alway
 python check-length.py <book>/                              # L1; 0 ok, 1 short/long, 2 not run
 python check-recoverable.py manuscript/                     # report only, always exits 0
 python check-errata.py                                      # the pipeline's own protocol
+python ductus-fit.py <book>/ --lane action-voice            # report only; corpus fit
 
 python check-narrative.py <book>/                           # N1/N4 gate; N2/N3 report
 python check-figurative.py <book>/                          # report only, cannot fail
@@ -466,3 +478,16 @@ split — `HUMAN_CORPUS=corpus/montgomery`, `VOLUME_CORPUS=corpus/multivolume` �
 suite completes in **about three minutes**. "Run it somewhere it can take ten minutes"
 stands as belt-and-braces; the ten-minute figure measures the mistake, not the suite.
 The run is recorded in `GATE_FREEZE.md` under the Freeze 13 entries.
+
+
+## A pass is a measurement, and the instrument that found the fault grades it
+
+Recorded 2026-11-11, from the one time this went wrong. `check-monotony.py` found a book
+repeating six formulas; an automatic pass then replaced "did not turn his head" with "kept
+his head still" in eight chapters, which is the same defect in a new vocabulary, and left a
+sentence reading "kept his head still toward the door". The pass was reverted and redone by
+hand, thirty edits at a time, with the same gate as the scoreboard.
+
+The rule: any mechanical edit to prose is run twice through the row that motivated it —
+once to see the fault, once to prove the repair did not manufacture a new one. An
+automatic pass that improves a metric while installing a fresh formula improves the metric.

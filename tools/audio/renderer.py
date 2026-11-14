@@ -358,6 +358,49 @@ def _ming3_device():
         return "cpu"
 
 
+def _install_tiny_kda_backend():
+    """Make `ming_tiny` importable where `fla-core` cannot import Triton.
+
+    The tiny release's 18 Kimi-Delta layers import `fla.ops.kda`, which imports
+    Triton. Triton has no CPU backend and no AMD backend on Windows, so on a
+    CPU-only or AMD-Windows workstation the import fails before a single weight is
+    read, even though the math is ordinary torch. `ming_torch_kda` supplies the
+    four symbols `ming_tiny` imports (ShortConvolution, FusedRMSNormGated,
+    chunk_kda, fused_recurrent_kda) in plain torch, verified against fla's own
+    naive KDA reference. It must be installed *before* `ming_tiny` is imported.
+
+    Returns `(module_or_None, note)`. The note is the backend provenance the scene
+    metadata records; a host whose Triton works gets fla's own kernels and None.
+    """
+    path = os.path.join(HERE, "ming_torch_kda.py")
+    if not os.path.isfile(path):
+        return None, None
+    spec = importlib.util.spec_from_file_location("audio_ming_torch_kda", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    installed, note = module.install()
+    print(f"[clone-lock] ming3 KDA backend: {note}", flush=True)
+    return (module if installed else None), note
+
+
+def _patch_tiny_cpu_runtime(module, device):
+    """Apply the two CPU-only shims the release's decode path needs.
+
+    On CUDA the engine wraps decode in autocast and its AudioVAE calls carry the
+    module dtype; off CUDA it does neither, so bf16 weights meet fp32 sampling
+    tensors and CampPlus receives a bfloat16 array its numpy front-end cannot
+    represent. These patches restore the same arithmetic on CPU. Called only after
+    `ming_tiny` is importable, since both patch that package's classes.
+    """
+    if device != "cpu":
+        raise RuntimeError(
+            "ming_torch_kda: the pure-torch KDA backend is CPU-only in this "
+            f"stage, but MING3_DEVICE selected {device!r}. Install a "
+            "Triton-capable fla-core for GPU runs, or set MING3_DEVICE=cpu.")
+    module.patch_cpu_decode_dtype()
+    module.patch_cpu_autocast()
+
+
 def _import_ming_tiny():
     """Import the tiny release's `ming_tiny` package (podcast / multi-speaker)."""
     try:
@@ -572,6 +615,7 @@ class Ming3Renderer:
     embedding_kind = "camplus"
     _model = None
     _tiny_model = None
+    _tiny_kda_backend = None
 
     def _tiny_engine(self):
         """Ming-3.0-tts-tiny, the release that carries the `podcast` task.
@@ -582,9 +626,14 @@ class Ming3Renderer:
         """
         if Ming3Renderer._tiny_model is None:
             try:
+                device = _ming3_device()
+                kda_module, note = _install_tiny_kda_backend()
                 MingTinyTTS = _import_ming_tiny()
+                if kda_module is not None:
+                    _patch_tiny_cpu_runtime(kda_module, device)
+                Ming3Renderer._tiny_kda_backend = note
                 Ming3Renderer._tiny_model = MingTinyTTS.from_pretrained(
-                    _ming3_tiny_model_path(), device=_ming3_device())
+                    _ming3_tiny_model_path(), device=device)
             except Exception as exc:
                 raise RuntimeError(
                     f"{MING3_TINY_INSTALL_HELP}\n({type(exc).__name__}: {exc})") from exc
@@ -631,7 +680,7 @@ class Ming3Renderer:
         prompt_texts = [cast[c]["transcript"] for c in order]
 
         model = self._tiny_engine()
-        waveform = model.generate(
+        output = model.generate(
             task="podcast",
             text=script,
             prompt_wav=prompt_wavs,
@@ -639,6 +688,9 @@ class Ming3Renderer:
             seed=MING3_PODCAST_SEED,
             temperature=0.0,
         )
+        # MingTinyTTS.generate returns the release's generation record, not a bare
+        # tensor; the waveform inside it is [batch, channel, samples].
+        waveform = getattr(output, "waveform", output)
         if waveform is None or waveform.numel() == 0:
             raise RuntimeError(
                 f"engine produced no audio for a {len(turns)}-turn scene "
@@ -662,6 +714,7 @@ class Ming3Renderer:
             "engine_model": _ming3_tiny_model_path(),
             "seed": MING3_PODCAST_SEED,
             "temperature": 0.0,
+            "kda_backend": Ming3Renderer._tiny_kda_backend,
             "duration_sec": round(duration, 3),
         })
         return {"wav_path": out_wav_path, "duration_sec": round(duration, 3),

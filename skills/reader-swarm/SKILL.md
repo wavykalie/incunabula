@@ -12,6 +12,16 @@ diagnostic instrument.
 It does not certify cultural approval, publication readiness, or bestseller odds. Simulated
 readers are proxies, nothing more.
 
+## Where this sits
+
+The evaluation chain is the `readership` personas plus `proof-panel`; that pair is the
+coherent one, and the personas built at 1.5 are already the audience a chapter is judged
+against. This skill is an instrument off that chain, not a phase of it. Inventing a fresh
+audience per phase adds verdicts to reconcile instead of evidence, so run the light preset
+when a market read is genuinely wanted, and the full swarm only when the question is
+crowd-level: many readers, niche risk, public reaction, package framing. A swarm is never
+run because a phase ended.
+
 ## When to use it
 
 - Panels larger than a normal beta read.

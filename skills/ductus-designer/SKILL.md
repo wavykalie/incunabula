@@ -61,6 +61,12 @@ python tools/ductus.py contract <book-root>
   and record `parent: none` in Provenance. That is a legitimate state, not a gap.
 - **REFUSED** — the assignment names a voice whose contract is a skeleton. Stop and report.
   Do not design a book contract on top of a voice nobody authored.
+- **A series layer prints too, when the book belongs to one.** `series:` in `BOOKS.yaml`
+  names it, and the contract resolves **book → series → voice**, naming every layer it
+  used. The series contract (`<ductus dir>/<voice>/series/<series>.md`) binds this book the
+  way the parent does: the book may tighten it and may never loosen it. A book that
+  declares a series with no contract is REFUSED, not defaulted, because every volume after
+  it inherits the layer.
 
 ## Excerpts
 
@@ -89,6 +95,11 @@ replace the quotes with paraphrases that preserve the rhythm.
 Draw at least **500 words total** — a page or more per excerpt, 2–5 excerpts. The tool
 refuses to judge fit below that, and it is right to: at 300 words a per-1,000-word rate is
 one or two hits, and the report would be a verdict about type, not about voice.
+
+Before any excerpt, quoted line or benchmark leaves the book tree, run
+`python tools/prose/check-excerpts.py <book-root>`. It fails on a missing source line, on
+fewer than 500 pooled words, and on any git-tracked file that carries an 8-word run from
+the excerpts — the threshold in `SOURCE_POLICY.md` for `local-copy` text.
 
 ## The step that matters: the corpus-fit check
 
@@ -278,9 +289,11 @@ weak evidence**, and saying who ran it is part of the record.
 - **It reports the fight; it does not resolve it.** "The action lane needs 5–10 books in
   its own register" is a recommendation with its evidence attached. Adding corpus is a
   separate action, run separately, recorded separately.
-- **One ductus per book.** The contract is the book's voice, not the series'. A series
-  carries a parent ductus that each volume's contract is written under; two books in one
-  series may share a parent and must not share a contract.
+- **One ductus per book, written under a series ductus.** The contract is the book's voice,
+  not the series'. The series layer (`<ductus dir>/<voice>/series/<series>.md`, resolved
+  from `series:` in `BOOKS.yaml`) holds what must survive every volume; each volume's
+  contract is written under it, may tighten it and may not loosen it. Two books in one
+  series share a series and must not share a contract.
 - **Studies use one shared neutral test ductus.** A study that gives each arm its own voice
   is measuring the voice, not the pipeline.
 - **It never writes the book's prose.** No sample paragraphs invented for the benchmarks,
@@ -337,10 +350,12 @@ what changes if it is ruled the other way. None of them blocks a run.
    Default: yes, for the five sections `tools/ductus.py` reads, with this skill's
    additional sections after them. If the engine's format is ruled the authority, Register,
    Refusals and Breaking need mapping, and the fit/provenance sections need a home.
-4. **One ductus per series, or one per book with the series ductus as parent?**
-   Default: one per book, written under a series parent. A series voice that is one file
-   cannot let volume two be a different book, and the pipeline's evidence is that a book's
-   register is specific to its material.
+4. **Resolved 2026-11-12 — one per book, written under a series parent.** The default was
+   right and unimplemented: the hierarchy had two levels, so "under a series parent" named
+   nothing. It is now a file the engine resolves (`series:` in `BOOKS.yaml` →
+   `<ductus dir>/<voice>/series/<series>.md`, book → series → voice), with the tightening-only
+   rule at each step. The reason it stays one contract per book is unchanged: the pipeline's
+   evidence is that a book's register is specific to its material.
 5. **Per-lane caps, or the single global set in `deslop-check.sh`?**
    Default: the global set, unchanged, because moving a cap is a freeze event and a scanner
    change is larger than this skill. The cost is that a second lane cannot derive its own

@@ -127,7 +127,13 @@ ANTITHESIS = re.compile(
 )
 TEXTURE = ["gray", "flat", "cold", "heavy", "dry", "pale", "dark"]
 SIMILE = re.compile(r"\b(?:like a|like an|like the|as if|as though)\b", re.I)
-QUOTED = re.compile(r"\u201c([^\u201d]{1,4000})\u201d|\"([^\"]{1,4000})\"")
+# Double quotes are the US convention; British typesetting sets speech in single ones.
+# The action-voice lane holds both (Abercrombie 2006 runs 100% single-quoted), so a
+# counter that reads only "..." reports a dialogue-dense book as 0% speech - a number
+# about the typesetter, not the register. Non-overlapping finditer keeps a nested
+# \u201c'...'\u201d from being counted twice.
+QUOTED = re.compile(r"\u201c([^\u201d]{1,4000})\u201d|\"([^\"]{1,4000})\""
+                    r"|\u2018([^\u2019]{1,4000})\u2019")
 STOP_FIRST = set("the a an i it this that there".split())
 
 
@@ -230,7 +236,7 @@ def metrics(text):
 
     quoted = 0
     for m in QUOTED.finditer(body):
-        quoted += len((m.group(1) or m.group(2) or "").split())
+        quoted += len((m.group(1) or m.group(2) or m.group(3) or "").split())
 
     firsts = []
     for s in sents:
@@ -288,6 +294,10 @@ def load_excerpts(directory):
     out = []
     for path in sorted(glob.glob(os.path.join(directory, "*.txt")) +
                        glob.glob(os.path.join(directory, "*.md"))):
+        # A README documents the excerpt format and a manifest lists it; neither is an
+        # excerpt. Counting the instructions as prose measures this project, not the book.
+        if os.path.basename(path).lower().startswith(("readme", "manifest")):
+            continue
         text = read_text(path)
         source = None
         m = re.match(r"^---\s*\n(.*?)\n---\s*\n", text, re.S)
@@ -484,21 +494,39 @@ LANE_COLUMNS = ("lane", "role", "register", "books", "words", "path", "note")
 
 
 def read_lanes(path=LANES):
-    """[dict]. Tab-separated on purpose: a space-separated row is a parse error, not a
-    guess - a registry read wrongly is a lane measured wrongly."""
+    """[dict] keyed by the registry's own header row.
+
+    Header-mapped rather than positional since 2026-11-12: the registry grew `works`,
+    `era`, `status`, `answers` and `cannot`, and a positional reader would have shifted
+    `note` into the wrong field for every lane without ever raising. The seven original
+    columns are required; later ones are carried as-is, so a registry can say more
+    without every tool learning the new schema at once. Tab-separated on purpose: a
+    space-separated row is a parse error, not a guess - a registry read wrongly is a
+    lane measured wrongly.
+    """
     rows, problem = [], None
     if not os.path.isfile(path):
         return [], "no %s" % os.path.basename(path)
+    header = None
     for number, line in enumerate(read_text(path).splitlines(), 1):
         if not line.strip() or line.lstrip().startswith("#"):
             continue
-        parts = line.split("\t")
-        if len(parts) != len(LANE_COLUMNS) and parts[0] != "lane":
-            problem = "line %d is not %d tab-separated columns" % (number, len(LANE_COLUMNS))
+        parts = [p.strip() for p in line.split("\t")]
+        if header is None:
+            if parts[0] != "lane":
+                return [], ("line %d: the first table row is not a header" % number)
+            missing = [c for c in LANE_COLUMNS if c not in parts]
+            if missing:
+                return [], ("the header is missing %s" % ", ".join(missing))
+            header = parts
             continue
-        if parts[0] == "lane":
+        if len(parts) != len(header):
+            problem = ("line %d has %d columns and the header has %d"
+                       % (number, len(parts), len(header)))
             continue
-        rows.append(dict(zip(LANE_COLUMNS, [p.strip() for p in parts])))
+        rows.append(dict(zip(header, parts)))
+    if header is None:
+        return [], "no header row in %s" % os.path.basename(path)
     return rows, problem
 
 

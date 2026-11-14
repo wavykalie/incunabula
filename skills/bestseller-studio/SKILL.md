@@ -36,8 +36,12 @@ delivery, and launch material.
 
 1. Run `scout` before architecture, unless market research already exists.
 2. Run `incunabula` phases 0–3 to build intake, foundation, architecture, and draft.
-3. After the first full draft or a major part, run `reader-swarm --light`.
-4. Run `reader-swarm` when the book needs many readers, niche-risk scouting, public reaction, or package-framing tests.
+3. After the first full draft or a major part, run `reader-swarm --light` if a market read is
+   wanted. It is an optional instrument, not a gate: the evaluation itself stays `proof-panel`'s
+   job, against the `readership` personas built at 1.5.
+4. Run the full `reader-swarm` only when the question is crowd-level — many readers, niche-risk
+   scouting, public reaction, or package-framing tests. It adds a second audience to reconcile,
+   so it is not run because a phase ended.
 5. Run the Devil's Audit and the Incunabula Score.
 6. Send only specific findings to `corrector`, with an explicit mode.
 7. Run `deslopify` on the prose and `copy-editing` on the marketing copy once structure is stable.

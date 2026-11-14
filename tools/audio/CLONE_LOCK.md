@@ -207,14 +207,61 @@ automatic: any torch build that reports a device (CUDA, ROCm/HIP, ZLUDA) is used
 
 Two practical constraints of the tiny release, measured on this checkout:
 
-- **16.7 GiB of bf16 weights** (`7.9B total, 1.3B active`). It does not fit an 8 GiB
-  card; the 0.5b checkpoint (2.8 GiB) is the one that fits on small GPUs, and it is
-  the design/freeze engine only.
-- **Triton runtime.** The checkpoint has Kimi-Delta linear-attention layers, so the
-  engine imports `fla-core`, which imports `triton`. There is no CPU Triton backend
-  and no AMD Triton backend on Windows, so the tiny engine cannot execute on a
-  Windows/AMD machine. A CUDA host, or Linux/WSL with a working Triton backend, is
-  required for single-pass multi-speaker rendering.
+- **16.7 GiB of bf16 weights** (`8.98B parameters`). They cannot be held on an 8 GiB
+  card, and this host's torch build is CPU-only, so the card is not used at all: the
+  scene renders on the CPU out of system RAM. The 0.5b checkpoint (2.8 GiB) is the
+  one that fits on small GPUs, and it is the design/freeze engine only.
+- **Triton runtime, worked around.** The checkpoint has Kimi-Delta linear-attention
+  layers, so the engine imports `fla-core`, which imports `triton`. There is no CPU
+  Triton backend and no AMD Triton backend on Windows, so the import fails before a
+  weight is read. `ming_torch_kda.py` supplies the four symbols `ming_tiny` imports
+  in plain torch, and the renderer installs it automatically before importing the
+  engine (`_install_tiny_kda_backend`), then applies the release's two CPU shims
+  (`_patch_tiny_cpu_runtime`).
+
+Verified on this checkout (Windows, CPU, AMD RX 6600 XT present but unusable from
+this torch build):
+
+- `ming_torch_kda` matches `fla`'s own naive KDA reference to float precision:
+  both gate modes `0.0`, chunked `4.8e-06`, incremental-vs-full `6e-08`.
+- Audio-VAE round-trip of a frozen reference transcribes back to its own text
+  verbatim, so the encode/decode path is sound.
+- A three-turn, two-character `podcast` scene through
+  `renderer.synthesize_scene_to_wav` produced 9.84 s of audio whose transcript is
+  the script line for line, with `kda_backend: ming_torch_kda (pure-torch KDA; no
+  triton)` recorded in the scene metadata.
+- Throughput: **~8x slower than realtime** (91.7 s wall for 9.84 s of audio,
+  including 14 s of model load; ≈0.6 s per 80 ms latent step). A 10-minute scene
+  is roughly 80 minutes. Decode, not prompt prefill, is the cost.
+
+The renderer refuses a GPU device while the pure-torch backend is active, so a host
+without Triton cannot silently appear to be using its card.
+
+### Why not quantize it onto the card
+
+Measured, so it is not re-litigated:
+
+- **The card has no compute path on this OS.** WSL2 exposes `/dev/dri` and
+  `/dev/dxg` (DirectX passthrough) but no `/dev/kfd`, which HIP/ROCm requires, and
+  RX 6600 XT (`gfx1032`, RDNA2) is outside AMD's ROCm support matrix on both
+  Windows and WSL. Ming on ROCm is real, but on a supported Linux card
+  (`gfx110x`, MI series), not on this one.
+- **int8 weight-only is slower here**, not faster: LM-head GEMV (`157184x1536`)
+  33.8 ms int8 versus 20.0 ms bf16, because torch's CPU int8 kernel is not
+  bandwidth-bound at these shapes. 4-bit needs bitsandbytes, which has no CPU and
+  no Windows backend.
+- **The weights are not the bottleneck anyway.** Eight expert GEMVs cost 0.36 ms
+  per MoE layer (~25 ms per token of 740 ms), and the whole 16.7 GiB is only read
+  for the experts actually routed.
+- **Size still rules it out.** bf16 is 16.7 GiB, int8 ~9 GiB (already over 8 GiB),
+  and only 4-bit (~4.5 GiB) would fit — the one format with no CPU path.
+
+Where a 740 ms decode step does go: ~43% the flow sampler (10 Euler passes of a
+16-layer DiT under CFG=2) and ~57% the LLM's per-op overhead across 24 layers.
+`flow_steps` is the only meaningful dial and it is part of the release's formal
+sampling contract: on the verification scene 4 steps rendered in 46.5 s against
+74.6 s at 10 with the transcript still exact, but 6 steps drifted off-script — so
+it needs per-scene verification, not a global default.
 
 ---
 

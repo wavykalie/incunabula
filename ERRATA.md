@@ -163,3 +163,99 @@ visible, because a ledger with no recorded mistakes is a ledger being curated.
 - **state:**    adopted
 - **proposes:** none. The rows now work in the other direction: a future proposal that
                reaches for one of them has to argue with the count that rejected it.
+
+### 2026-11-06 — P1 is a rate whose denominator assumes a chapter, and a document layer is not one
+- **row:**      P1 (anaphora abuse) — appears only when the prose gate is scoped per layer (candidate 17)
+- **observed:** one occurrence of a repeated two-word opener fails any scanned file smaller than 167 words, because P1 fails when count x 1000 exceeds 6 x words; two layers of a layered book (78 and 96 words) therefore fail on prose that the whole-chapter scan passes.
+- **n:**        1 book (test-books/ashgrove-inventory), 2 independent documents in that book
+- **evidence:**  tools/prose/deslop-check.sh over artifacts/layers/03-letters (exit 1, "amend to" x1, 10.0% of sentences) and artifacts/layers/00-film (exit 1, "a line" x1, 5.3%); the same chapter whole exits 0 with "i have" x4 at 2.9%. Row arithmetic from the scanner's own caps, not a re-measurement.
+- **motive:**    aesthetic
+- **state:**     observed
+- **proposes:**  none. This is a scoping defect, not a threshold defect: the fix is a minimum-size rule of the same class as check-dialogue-tags.py MIN_TAGGED_FOR_V3 (report UNMEASURED below the denominator), which is a frozen-instrument change requiring a corpus. Padding a document to 167 words to satisfy it would be writing to a number.
+
+### 2026-11-06 — `P1` fails a short document on its first repeated opener, and a second cluster replicates it
+- **row:**      P1 (anaphora abuse), under per-layer gate scoping (candidate 17)
+
+- **observed:** a document shorter than 167 words fails on a single repeated opener, because
+  the cap allows 6 per 1,000 words and 167 is the first length at which one occurrence fits
+
+- **n:**        1 book, 4 independent documents (78, 96, 131, 132 words); the second cluster
+  replicates the failure and does not raise n, because it is the same book
+
+- **evidence:** `evaluations/layer-gates-ch01.md` and `evaluations/layer-gates-ch02.md`;
+  cluster 2 failed 4 of 4 layers before any fix, two of them on a single occurrence
+
+- **motive:**   aesthetic — a 78-word letter failed on prose the whole-chapter scan passes,
+  and the only way to pass was to lengthen the document to satisfy arithmetic
+
+- **state:**    observed
+
+- **proposes:** none. A floor now stops the rate judging such a document (`GATE_FREEZE.md`,
+  2026-11-06); the entry stays `observed` until a second **book** trips it.
+
+### 2026-11-07 — A25 has P1's arithmetic, and cluster 3 is the first real document to report it
+- **row:**      A25 (antithesis formula), under per-layer gate scoping (candidate 17)
+- **observed:** the cap is 3 occurrences per 2,000 words, so a single antithesis computes 3.27 against it on any document under 667 words. A 612-word annotation layer failed A25 at 1.63/1k on one instance: "the 0.25 is not a recess cut into anything. It is a gap between two skins of brick".
+- **n:**        1 book (test-books/ashgrove-inventory), 1 document (cluster 3 annotations, 608-612 words)
+- **evidence:**  evaluations/layer-gates-ch03.md; deslop-check.sh artifacts/layers/02-annotations exit 1 before the rewrite and exit 0 after. The hit was a real antithesis, so the prose was rewritten and no cap moved.
+- **motive:**    aesthetic
+- **state:**     observed
+- **proposes:**  none. This is P1's finding one row over and it is deliberately NOT repaired here: adding a floor to A25 in the run that just failed on it is the sequencing GATE_FREEZE.md forbids. P1's floor was added after two clusters reproduced the arithmetic and only changed files that had failed BEFORE it existed. An A25 floor added today would change the file that failed today. Editor's decision, with its own probe and freeze entry.
+
+### 2026-11-07 — P1 has the same size floor as A25, at about 330 words
+- **row:**      P1 (anaphora abuse), under per-layer gate scoping (candidate 17)
+- **observed:** the row fires on a share of sentences, so a short document reaches the cap on very few instances. Reel 8 of cluster 4 is 280 words and 46 sentences; two lines opening "Camera ..." compute 4.3% and fail. At 3,000 words the same two lines are 0.4% and pass. Fixing one line moved the count to 4.3% again on a different repeated opener, which is what a rate doing its job looks like at that size.
+- **n:**        1 book (test-books/ashgrove-inventory), 1 document (film layer, 280 words). Against it: 44 published documents of 167-1,500 words scanned with the same instrument, **0 P1 failures**, including 8 at 167-400 and 11 at 400-667.
+- **evidence:**  evaluations/layer-gates-ch04.md; evaluations/ch04-passes.md; tools/prose/calibration/corpus/layers (fetch-document-layers.py)
+- **motive:**    aesthetic
+- **state:**     observed
+- **proposes:**  none. The measured human base rate is zero at this size, so a floor is not what the evidence asks for. What it asks for is the same thing A25's entry asks for: a decision about whether a 280-word shot list can be judged by a sentence-share rule at all, made with its own probe and its own freeze entry rather than in the run that failed.
+
+### 2026-11-07 — A25 gets the 667-word floor its own rate implies
+- **row:**      A25 (antithesis formula)
+- **observed:** the fail line is 3 occurrences per 2,000 words, so at 666 words one real
+               antithesis computes 1.50/1k against a 1.50/1k cap and fails on arithmetic;
+               at 667 the same sentence passes. The row now reports UNMEASURED below 667.
+- **n:**        410 published documents of 167-1,500 words, 0 A25 failures; 1 book
+               (test-books/ashgrove-inventory) whose 612-word layer failed on one
+- **evidence:** tools/prose/calibration/fetch-document-layers.py; the 410-document scan;
+               GATE_FREEZE.md 2026-11-07; probes at 666, 667 and 678 words
+- **motive:**   aesthetic
+- **state:**    adopted
+- **proposes:** none. The cap is unchanged; the floor is derived from it.
+
+### 2026-11-07 — P1's 167-word floor stands; the 280-word reel was a real repetition
+- **row:**      P1 (anaphora abuse)
+- **observed:** raising P1's floor to 334 words would pass cluster 4's 280-word film layer,
+               which failed on two "Camera" openers at 4.3% of sentences. The widened layer
+               corpus has 124 human documents at 167-400 words and 0 P1 failures, so the
+               rate is not false-failing human prose at that size.
+- **n:**        410 published documents, 124 of them at 167-400 words; 1 book
+- **evidence:** tools/prose/calibration/fetch-document-layers.py; the 410-document scan;
+               evaluations/layer-gates-ch04.md
+- **motive:**   aesthetic
+- **state:**    observed
+- **proposes:** none. No floor or cap moved; the decision is recorded so the next run does
+               not re-derive it from the one failure.
+
+**WRONG (2026-11-07, before the entry was a day old).** The 44-document layer corpus was 41
+Evelina letters plus 3 Walton letters. The widened 410-document corpus has 47 P1 failures,
+45 under 667 words, across Emily Montague, The Coquette and Humphry Clinker. The entry above
+is kept as written because it records what the smaller corpus said; the decision below
+supersedes it.
+
+### 2026-11-07 — P1's floor moves to 667 on the widened corpus
+- **row:**      P1 (anaphora abuse)
+- **observed:** the 410-document layer corpus has 47 P1 failures under the 167-word floor,
+               45 of them under 667 words and spread across three books; above 667, only
+               2 of 129 fail, at 1,303 and 1,434 words with 5 and 9 instances. A rate
+               calibrated on chapters cannot judge a published letter at 176 words, and the
+               share test failed 22 of the same human documents, so it is not a rescue.
+- **n:**        410 published documents; 281 under 667, 129 above; 3 books for the failures
+- **evidence:** tools/prose/calibration/fetch-document-layers.py; the 410-document scan;
+               GATE_FREEZE.md 2026-11-07; probes at 285 and 1,303 words
+- **motive:**   aesthetic
+- **state:**    adopted
+- **proposes:** none. P1 and A25 now share the 667-word document floor; the cap, numerator
+               and denominator are unchanged, and the two surviving chapter-sized failures
+               still fail.

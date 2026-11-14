@@ -5,6 +5,55 @@ conversation.
 
 ---
 
+## 0. Before anything: this run needs tool approval handled
+
+A pipeline book issues hundreds of shell commands — a gate per phase, and a phase walk that
+restarts from a resume pointer. If your session asks a human to approve each one, the book
+will spend its whole budget waiting at a prompt, and the operator (who must only answer
+pipeline gates, not shovel approvals) becomes the bottleneck the study is trying to measure.
+
+Launch the session with tool approval already granted, scoped to this run:
+
+- Antigravity CLI: `agy --dangerously-skip-permissions` — "auto-approve all tool permission
+  requests without prompting". This is the route the study's own probe recorded and the author
+  ruled on (`tools/prose/study/DECISIONS.md`, 2026-11-02); Arm A was drafted under it.
+- Anything else: an allow-rule covering `bash` and `python` **inside the repository and the
+  run worktree**, with everything outside still prompting.
+
+**If the session is already running with prompts on**, it does not have to be abandoned —
+the conversation survives a relaunch, and this was measured on the study machine:
+
+```bash
+agy -c --dangerously-skip-permissions                     # -c resumes the most recent conversation
+agy --conversation <id> --dangerously-skip-permissions    # a specific one
+```
+
+`-c` with the flag continued an existing conversation rather than starting a new one, so no
+context is lost — the approval mode is per-session, which is exactly why it has to be given
+on every launch.
+
+`--mode auto` is **not** a fallback on every machine: where the terminal sandbox is
+unavailable (Windows before 11 24H2, or Linux without unprivileged user namespaces) the CLI
+warns `--mode auto is not available because the terminal sandbox is not available` and falls
+back to prompting. `--mode accept-edits` only covers file edits, not shell commands.
+
+So inside a running session the only lever is the prompt itself: it offers allowing the
+action **for the conversation**, and that choice covers every subagent the main conversation
+spawns. Take that option rather than answering one command at a time — and if a book needs
+more than a handful of such grants, stop and relaunch with the flag instead, because an
+operator clicking through permissions is the human-in-the-loop this arm is meant to rule out.
+
+Two limits that do not relax with the grant:
+
+- every command belongs in `$REPO`, `$STUDY` or `$WT` — not the home directory, not system
+  paths, not other projects;
+- auto-approval is permission to *run* commands, not permission to change what §2 forbids.
+  Editing prose, disabling a gate or adjusting a threshold remains a stop condition, and
+  being able to type the command is not authorisation to do it.
+
+If the grant is unavailable, say so and stop before phase 1 rather than approving commands by
+hand: a book filed with a human in the loop at that level measures the human.
+
 ## 1. What the study is
 
 The study asks one question: **does a gated, multi-phase writing pipeline produce prose that
