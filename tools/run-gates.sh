@@ -287,14 +287,16 @@ run_row "check-surplus.py" report "$PROSE/check-surplus.py" "$BOOK"
 run_row "check-recoverable.py" report "$PROSE/check-recoverable.py" "$BOOK"
 run_row "check-figurative.py" report "$PROSE/check-figurative.py" "$BOOK"
 run_row "check-quantities.py" report "$PROSE/check-quantities.py" "$BOOK"
-# Object agency ("The hall knows", "the city remembered") and motive by absence ("because
-# it didn't need to"). Report-only for a measured reason, not for want of one: 23 hits in
-# 4,531,815 words of published prose, and the ones that do occur are deliberate - the
-# fire refused to burn, the city knows and remembers. The directory's 1.5x cap would land
-# at ~0.55/1k, a line every manuscript measured already clears, so a cap there would be a
-# gate in name only. The zero-tolerance candidate is the second row, on ten hits. So this
-# row lists per chapter and a reader rules; promoting either row is a freeze event, and
-# the tool's own docstring carries the numbers that decide it.
+# Place agency ("The hall knows") and object agency ("the car waited"), counted apart, plus
+# motive by absence ("because it didn't need to"). Report-only for a measured reason, not
+# for want of one: 11 hits in 4,531,815 words of published prose, and the ones that occur
+# are deliberate. Published prose runs about 1:1 place to object; this tree runs 15 to 0.
+# A 1.5x cap from the worst published document (0.21/1k) would land at ~0.32/1k and fail
+# the project book's own deliberate chapter 14 (0.74/1k) - the D1/D2 document-vs-chapter
+# mismatch, never tested on chapters. The stronger signal is the second row: 2 hits in
+# 4.5M published words against 0.014/1k in this tree, and two hits is a hypothesis. So
+# this row lists per chapter and a reader rules; promoting either row is a freeze event,
+# and the tool's docstring carries the numbers that decide it.
 run_row "check-agency.py" report "$PROSE/check-agency.py" "$BOOK"
 
 echo "== narrative gate (Freeze 13) =================================="

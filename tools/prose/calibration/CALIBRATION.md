@@ -1858,3 +1858,53 @@ same: print the number and the band, do not fail a book for writing in its own r
 A 1.5×-headroom line built from this corpus would fail contemporary commercial prose, and
 no modern corpus exists here to check that, so the burden of proof sits with the next
 person who wants the row enforced.
+
+## The agency baseline, 2026-11-14 — place and object counted apart, with the shipped regexes
+
+`check-agency.py` was first measured with a scratch copy of its patterns, and its docstring
+carried those numbers. This section is the re-measurement with the tool itself, imported rather
+than retyped, over every lane `LANES.tsv` marks INSTALLED and every chapter in the project tree.
+`layers/` is excluded by role: 410 documents cut from seven works already counted in
+`era-prepublished`, so counting it would double the human corpus.
+
+| lane | docs | words | R1a | R1b | R2 | R1/1k |
+|---|---|---|---|---|---|---|
+| light-novel (governing) | 51 | 177,620 | 0 | 0 | 0 | 0.000 |
+| action-voice (governing) | 178 | 837,502 | 1 | 4 | 0 | 0.006 |
+| native-control | 3 | 270,149 | 1 | 0 | 0 | 0.004 |
+| era-prepublished | 303 | 945,924 | 1 | 0 | 1 | 0.001 |
+| nonfiction-discursive | 143 | 1,337,286 | 1 | 0 | 0 | 0.001 |
+| prescriptive-advice | 134 | 963,334 | 2 | 1 | 1 | 0.003 |
+| **published total** | **812** | **4,531,815** | **6** | **5** | **2** | **0.0024** |
+| project tree (18 books) | 213 | 517,822 | 15 | 0 | 7 | 0.029 |
+
+**The ratio is the finding, and it is not the one the row was built to find.** Published English
+narrative does place agency and object agency at almost the same rate — 6 and 5, a 1.2:1 ratio —
+and the project tree does 15 and 0. Object agency is not a rare figure; doing one without the
+other is what is rare. The lane that governs the uncanny project book, `action-voice`, carries
+four of the five published object hits against one place hit, which is the inverse of the book
+it governs.
+
+**What the 11 hits actually are, read one by one.** Genuine (5): *The city knows.* (Bennett);
+*the town knew of the loan* (Eliot); *those stones shall forget me* (Bennett); *The car waited,
+idling at the curb.* (Child); *Her body knew what to do.* (Sanderson). Institutional metonymy
+where a thing was expected (1): *The Church decides that the Church has a right to decide.*
+(Rousseau). A neighbouring verb's object, not a subject (5): *rent the house wanted* (Montgomery),
+*mended the road demanded* (Ruskin), *the house physician watches* (Montessori), *The Steel
+Ministry wants you to believe* (Sanderson), *The letters once learned* (Montessori). Precision on
+published prose is 5 of 11, not "about a third"; the project tree's 14 of 15 is the better
+figure, and its one miss is the same institutional metonymy (*the office decides*).
+
+**The two R2 hits in published prose**, both new to this instrument and both fatal to the word
+"zero": Brontë's *because there is no reason for my lingering another minute* (dialogue, a
+person's motive) and Marden's *This poor girl did not need to go to London* (a person as subject,
+which the uncaused form is meant to exclude — the guard lists pronouns, not "girl").
+
+**The cap arithmetic, corrected.** Worst published document: 0.21/1k on R1 combined. The
+directory's 1.5× convention therefore lands at ~0.32/1k, not the ~0.55/1k the first note derived.
+At 0.32/1k the project book's chapter 14 — three hits in 4,075 words, 0.74/1k, the *town forgets*
+refrain and the room/ceiling pair — fails, and it is deliberately written. Every published
+document clears the cap by construction; no published *chapter* has been measured against it, and
+chapters here run 3–10k words against documents of 30–100k. That mismatch is what made `D1` and
+`D2` report-only, and it is the reason this row stays report-only for a reason nobody has yet
+tested rather than for the reason first written down.

@@ -623,3 +623,26 @@ whole tree reads 18 manuscripts and reports **place 15, object 0, motive-by-abse
 lexicon moved no count. `bash -n` passes on `run-gates.sh`, which this edit does not touch: the
 row keeps its name and its report class. No manifest hash moves, for the reason the previous
 entry gives. `verify-freeze.sh` reports FREEZE HOLDS.
+
+### Correction recorded 2026-11-14 — the agency baseline was measured with a retyped instrument, and the shipped one reads two numbers differently
+
+Both entries above expire on one point of method, not of judgement. The 23 hits and the
+worst-document 0.37/1k behind them were measured with a scratch copy of the patterns, taken
+before the shipped tool was tightened (pronoun guard, preposition guard, `meant` removed). That
+is the Freeze 23 lesson in the direction nobody checks: a measurement and the instrument that
+will run on a book must be the same instrument, or the numbers are attributable to neither.
+Re-measured with `check-agency.py` itself over the same 4,531,815 words, R1 reads **11 hits
+(0.0024/1k)** — 6 place, 5 object — and the worst published document is 0.21/1k, not 0.37/1k.
+R2 reads **2 hits, not zero**.
+
+What survives unchanged: R1 is report-only, R2 is report-only, no hash moves, and no cap is
+derived here. What must not be repeated: "a cap would be a gate in name only" was true of the
+0.55/1k line; the 1.5× line from the real worst document is ~0.32/1k, and this project's own
+chapter 14 (three deliberate hits in 4,075 words, 0.74/1k) would fail it. Whether published
+*chapters* would also fail it is unmeasured — that is the D1/D2 document-vs-chapter mismatch
+again, and settling it needs a chapter-level published corpus and a freeze entry of its own.
+
+The measurement is in `tools/prose/calibration/CALIBRATION.md`, under "The agency baseline,
+2026-11-14", with the per-lane table, the place:object ratio, and the reading of all eleven hits.
+`bash tools/prose/verify-freeze.sh` still reports FREEZE HOLDS: nothing here touches a hashed
+file.

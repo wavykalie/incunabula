@@ -339,8 +339,9 @@ which is what a bad metric looks like from the inside.
   maps exists from which a floor could be derived.
 - `check-agency.py` cannot tell an object that acts from an object a person acts on.
   It requires a determiner before the noun and refuses a relative pronoun, coordinator
-  or copula between noun and verb, and still counts "the rooms you wanted": of 23 hits
-  in 4.5M words of published prose about a third were genuine. The list of nouns is the
+  or copula between noun and verb, and still counts "the rooms you wanted": of the 11
+  hits in 4.5M words of published prose, 5 are genuine when read, 5 are a neighbouring
+  verb's object and 1 is an institution. The list of nouns is the
   instrument, so an object outside it - or a proper-noun subject - is invisible. It
   points at passages; it is never evidence that one is a defect. Measured over this
   checkout's 18 manuscripts it returned fifteen hits in 517,822 words and **none of them

@@ -104,3 +104,25 @@ prose, reported and left in place rather than deleted with the tree it belongs t
 - **authority:**  the author, 2026-11-14: "Keep going with splitting by noun class." Standing
                   claims only. The freeze entry that introduced the row is dated history and was
                   not edited; the split is recorded in its own entry beneath it.
+
+### 2026-11-14 — the agency row's own numbers were measured with a retyped instrument
+
+- **file:**       `tools/prose/check-agency.py`, `tools/run-gates.sh`, `tools/prose/README.md`,
+                  `README.md`, `tools/prose/calibration/CALIBRATION.md` (new section),
+                  `GATE_FREEZE.md` (a correction entry; both dated entries untouched)
+- **was:**        "23 hits in 4,531,815 words = 0.005/1k"; "the worst human document reads
+                  0.37/1k … the 1.5x convention puts the cap at ~0.55/1k, and every manuscript
+                  measured passes it"; "0.00/1k in all six human corpora" for R2; "of 23 hits in
+                  the human corpora, about a third are genuine" — and the same four numbers
+                  repeated in the runner's comment, two READMEs and the freeze entry.
+- **now:**        11 R1 hits (0.0024/1k; 6 place, 5 object); worst published document 0.21/1k,
+                  so a 1.5x cap lands at ~0.32/1k — which the project book's deliberate chapter
+                  14 fails at 0.74/1k; R2 at 2 hits, not zero; precision 5 of 11 by reading,
+                  with all five misses named. Full table in CALIBRATION.md.
+- **cause:**      the numbers came from a scratch copy of the patterns taken before the tool was
+                  tightened, so the shipped instrument could not reproduce them. One instrument
+                  measured, another ships — the error Freeze 23 records in the other direction.
+- **authority:**  the maintenance protocol's repair-a-standing-claim rule, and the author's
+                  2026-11-14 instruction to give the split rows a human baseline instead of a
+                  ratio measured only on this tree. Dated freeze entries were not edited; the
+                  correction is its own entry beneath them.

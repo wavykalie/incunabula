@@ -297,9 +297,10 @@ scene at Phase 4. `collator` audits the ledger against the text in both directio
 Three companions read prose and report only: `check-figurative.py`,
 `check-quantities.py` and `check-agency.py`. No measured corpus stands behind a cap for
 any of them, so they can report and cannot fail anything. `check-agency.py` is the one
-with a measurement under its last row — motive by absence reads 0.00/1k across all six
-published registers — which is why promoting that row is a freeze decision and not a
-backlog item. `check-dialogue-tags.py` is the exception: V1/V2 report, but V3
+with the strongest measurement under its last row — motive by absence reads 2 hits in
+4.5M words of published prose against 0.014/1k in this tree — which is why promoting
+that row is a freeze decision and not a backlog item. `check-dialogue-tags.py` is the
+exception: V1/V2 report, but V3
 gates a book above 0.107 breath-family share of tagged spans — the p90 of 167
 public-domain novels, with 5% of human books above it.
 

@@ -24,36 +24,45 @@ WHY THIS EXISTS
   need to X'."
 
 WHY IT REPORTS AND NEVER GATES
-  Measured 2026-11-14 over every corpus installed in this checkout - 4,531,815 words
-  of published prose across six registers, plus the study's three arms and two project
-  books. The object-agency numbers:
+  Re-measured 2026-11-14 with THIS tool - imported, not retyped - over every corpus
+  installed in this checkout: 4,531,815 words of published prose across six lanes and
+  517,822 words across eighteen project books. R1, place and object together:
 
-    human: elaina 0.01/1k, montgomery 0.01, action-voice 0.01, multivolume 0.00,
-           nonfiction 0.00, prescriptive 0.01   (23 hits in 4,531,815 words = 0.005/1k)
-    AI:    naive 0.01, pipeline 0.02, a demo book 0.07, the two project books 0.09
+    light-novel 0.000/1k, action-voice 0.006, native-control 0.004, era 0.001,
+    nonfiction 0.001, prescriptive 0.003   (11 hits in 4,531,815 words = 0.0024/1k)
+    the project tree                       (15 hits in 517,822 words  = 0.029/1k)
+
+  The split is what that measurement found. Published prose runs 6 place hits to 5
+  object hits - about 1:1 - and the project tree runs 15 to 0. Object agency is not
+  rare in English narrative; doing one without the other is what is rare. The lane
+  governing the uncanny project book, `action-voice`, is the sharpest case: four of the
+  five published object hits are there ("The car waited, idling at the curb", "Her body
+  knew what to do", "those stones shall forget me") against one place hit, so the book
+  that lane governs - nine place, no object - inverts the register it declares.
 
   Zero tolerance is impossible, and not because the number is small: the published
-  hits are deliberate. Montgomery writes "the fire refused to burn"; Muir writes
-  "The city knows. It remembers. Its past is written in its bones"; Child writes "The
-  car waited, idling at the curb." A hard row would fail *Anne of Green Gables* and
-  *Gideon the Ninth* - the same failure that demoted `A1a`, `A2a`, `A3a`, `A19` and
-  `A21` to a density tier.
+  hits are deliberate, and one of them is a sentence a reader keeps ("The city knows.").
+  A hard row would fail Bennett, Child and Eliot - the same failure that demoted `A1a`,
+  `A2a`, `A3a`, `A19` and `A21` to a density tier.
 
-  A density cap is worse than useless at this precision. The worst human document
-  reads 0.37/1k, so the directory's 1.5x convention puts the cap at ~0.55/1k, and
-  every manuscript measured passes it - the highest AI chapter was 0.81 in a demo
-  book, and the two project books peak at 0.50. A cap that clears published prose
-  everywhere and clears the machine everywhere is a gate in name only, and its green
-  result would be read as evidence. That is the `D1`/`D2` finding exactly.
+  A cap is still not derivable, but the reason has changed, and this tool is why it had
+  to. The first version of this note derived ~0.55/1k from a worst human document at
+  0.37/1k. That figure came from a retyped copy of these patterns; the shipped ones put
+  the worst published document at 0.21/1k, so the 1.5x line is ~0.32/1k. At that cap the
+  project book's own chapter 14 - three deliberate hits in 4,075 words, 0.74/1k - fails,
+  and no published CHAPTER was ever measured to say whether human chapters fail it too.
+  That is `D1`/`D2`'s shape exactly: a limit derived from documents, enforced on
+  chapters, never tested on chapters. Deriving it needs a chapter-level published corpus,
+  and that is a freeze decision, not this file's.
 
-  The second row is the one that separated: the causal, non-human form ("because it
-  didn't need to", "since there was no reason") read **0.00/1k in all six human
-  corpora** and non-zero in three AI arms (a demo book 0.04, the pipeline arm 0.01).
-  That is the shape of a zero-tolerance rule, and it is the only reason this tool
-  exists as a candidate rather than a curiosity. But it is ten hits, and a row in the
-  scanner is a freeze event with a cap derived from a lane. Ten hits is a hypothesis.
-  So the tool prints both rows, a reader rules, and the decision to open that freeze
-  belongs to the author.
+  The second row no longer reads zero, and that is the other correction. R2 is 2 hits in
+  4,531,815 published words (0.0004/1k), not 0.00: one in Bronte's dialogue ("because
+  there is no reason for my lingering another minute") and one in Marden's advice prose
+  ("This poor girl did not need to go to London"), where the subject is a person the row
+  is supposed to exclude. Against the project tree's 0.014/1k that is still a thirty-fold
+  separation, and it is still the strongest signal here. It is a signal, not a zero, and
+  two hits is a hypothesis. So the tool prints all three rows, a reader rules, and the
+  decision to open that freeze belongs to the author.
 
   The courtesy form is excluded on purpose. "You didn't have to" is ordinary dialogue
   in every arm, the published ones included, and a row that prints it is a row its
@@ -63,12 +72,16 @@ WHY IT REPORTS AND NEVER GATES
 WHAT IT CANNOT DO
   It cannot tell an object that acts from an object a person acts on. It requires a
   determiner before the noun and refuses a relative pronoun, coordinator or copula
-  between the noun and the verb - and still counts "the rooms you wanted" and "a room
-  I remembered". Measured: of 23 hits in the human corpora, about a third are genuine
-  ("the fire refused to burn", "those stones shall forget me", "her body knew what to
-  do"); the rest are people doing things near a noun. In the two project books 10 of
-  12 were genuine - the reverse ratio, which is why the rate is a pointer and not a
-  finding.
+  between the noun and the verb - and still counts "the rooms you wanted". Measured by
+  reading all 11 published hits: 5 are genuine ("The city knows.", "the town knew of the
+  loan", "those stones shall forget me", "The car waited, idling at the curb.", "Her
+  body knew what to do."), 1 is an institution where a thing was expected ("The Church
+  decides that the Church has a right to decide"), and 5 are a neighbouring verb's
+  object ("rent the house wanted", "mended the road demanded", "the house physician
+  watches", "The Steel Ministry wants you to believe", "The letters once learned"). In
+  the project tree 14 of 15 are genuine, the fifteenth being "the office decides" - the
+  same institutional metonymy. So the rate is a pointer on published prose and a better
+  one on this tree, and it is never a finding without a reader.
 
   It cannot see an object without a determiner ("Marrow remembered"), a proper-noun
   subject, a place name, or any noun outside its list. The list IS the instrument, in
@@ -162,7 +175,10 @@ MIND = (
 
 # The gap guard. Without it the row reads relative clauses ("the room I remembered"),
 # possessives and coordinated subjects as agency - measured, that was most of the
-# false positives, and it is why R1's precision is only about a third on human prose.
+# false positives. It does not reach the other class: a transitive verb or a compound
+# takes the noun first ("rent the house wanted", "mended the road demanded", "the house
+# physician watches"), which is five of the eleven published hits. Named in the
+# docstring's precision note rather than guarded here, because that verb list is open.
 FUNCTION = (
     r"(?:that|which|who|whom|whose|where|when|and|or|but|was|were|is|are|be|been|"
     r"being|to|of|for|with|by|from|had|has|have|me|him|her|them|us|than|as|"
@@ -189,8 +205,8 @@ R1_THING = re.compile(
 #
 # CAUSAL names the cause, and takes ANY subject: "She did not answer, because she
 # didn't need to" is the tic in its most common form. The cause is the signal here, not
-# the subject - and the causal frame is the one that measured 0.00/1k across six
-# published registers, people included.
+# the subject - and the causal frame is the one that measured 2 hits in 4.5M words
+# across six published registers, people included: near zero, not zero.
 CAUSAL = re.compile(
     r"\b(?:because|since)\b[^.!?]{0,60}?"
     r"\b(?:did|does|do|would|could|had|has|have)(?:n't| not| never)\b"
@@ -303,13 +319,13 @@ def check(label, chapters):
               f"motive-by-absence {counts['R2']}).")
     print()
     print("  REPORT-ONLY. No cap exists for either row and none is invented here.")
-    print("  Published prose does R1 on purpose - Montgomery's \"the fire refused to")
-    print("  burn\", Muir's \"The city knows. It remembers.\" - so a hard row would fail")
-    print("  books that are better than anything this gate will ever see, and a cap at")
-    print("  the directory's 1.5x convention (about 0.55/1k) passes every manuscript")
-    print("  measured. R2 is the row with a zero in published prose; it is ten hits,")
-    print("  which is a hypothesis, not a measurement, and promoting it is a freeze")
-    print("  event that belongs to the author. A hit here means: read the passage.")
+    print("  Published prose does both rows on purpose - \"The city knows.\", \"The car")
+    print("  waited, idling at the curb.\" - and does them about equally often: 6 place")
+    print("  to 5 object in 4,531,815 words. A document-referenced cap would land at")
+    print("  ~0.32/1k and fail this project's own deliberate chapter 14 (0.74/1k); no")
+    print("  published chapter was ever measured against it. R2 reads 2 hits in the same")
+    print("  4.5M words, not zero. Promoting any row here is a freeze event that belongs")
+    print("  to the author. A hit here means: read the passage.")
     print("  R1a and R1b are counted apart because a hall with a mind is a setting")
     print("  speaking and a clock with a mind is an object speaking: the first is a device")
     print("  and the second is a claim, and only the second was ever in the brief.")
