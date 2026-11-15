@@ -126,3 +126,22 @@ prose, reported and left in place rather than deleted with the tree it belongs t
                   2026-11-14 instruction to give the split rows a human baseline instead of a
                   ratio measured only on this tree. Dated freeze entries were not edited; the
                   correction is its own entry beneath them.
+
+### 2026-11-14 — R1's attachment false positives are guarded, not merely named
+
+- **file:**       `tools/prose/check-agency.py`, `tools/run-gates.sh`, `tools/prose/README.md`,
+                  `tools/prose/calibration/CALIBRATION.md` (revision), `GATE_FREEZE.md` (a new
+                  entry; earlier entries untouched)
+- **was:**        a gap of `(?:\s+(?!FUNCTION)\w+)?` — any single non-function word — and a
+                  precision note that named five attachment false positives and left them in
+                  the count: 11 published hits, 5 genuine.
+- **now:**        the gap is adverbs and auxiliaries only; a `PRE_VERB` guard refuses a noun
+                  whose transitive verb sits immediately before the determiner; the pronoun
+                  blocklist and `FUNCTION` are gone because the tighter gap carries them.
+                  Published R1 is 6 hits, 5 of them genuine.
+- **cause:**      the author, 2026-11-14: "stop R1 counting 'rent the house wanted' and 'the
+                  house physician watches' as agency." Both were published hits the row was
+                  reporting as findings.
+- **authority:**  the author's instruction. No threshold moved and no row changed class; the
+                  counts that changed are recorded in CALIBRATION.md as a dated revision rather
+                  than retrofitted into its table.

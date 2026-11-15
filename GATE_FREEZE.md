@@ -646,3 +646,23 @@ The measurement is in `tools/prose/calibration/CALIBRATION.md`, under "The agenc
 2026-11-14", with the per-lane table, the place:object ratio, and the reading of all eleven hits.
 `bash tools/prose/verify-freeze.sh` still reports FREEZE HOLDS: nothing here touches a hashed
 file.
+
+### Correction recorded 2026-11-14 — R1's gap closes to adverbs and auxiliaries, and the published baseline moves from 11 hits to 6
+
+The agency row's first published reading counted eleven hits, five of which were a noun a
+neighbouring verb already owned. Two mechanisms: a compound in the gap (*the house physician
+watches*, *The Steel Ministry wants*) and a transitive verb immediately before the determiner
+(*rent the house wanted*, *mended the road demanded*). The gap is now a closed list of adverbs
+and auxiliaries, and a closed list of transitive verbs (`TAKING`) refuses the second class.
+
+Re-measured over the same 4,531,815 words: published R1 reads **6 hits (0.0013/1k)** — 3 place,
+3 object — with 5 of the 6 genuine on reading, the sixth being the institutional metonymy *The
+Church decides*. The project tree is unchanged at 15 place, 0 object, 7 motive. The worst
+published document stays 0.21/1k, so the 1.5× line and the chapter-14 finding in the entry above
+both stand.
+
+Two guards disappear into the structure: a pronoun cannot occupy the gap any more, so the
+separate pronoun blocklist and the `FUNCTION` constant are deleted with it. No manifest hash
+moves — `verify-freeze.sh` reports FREEZE HOLDS — and the row keeps its name, its class and its
+verdict of none. Measurement and both versions of the table are in `CALIBRATION.md` under "The
+agency baseline, 2026-11-14" and its revision.

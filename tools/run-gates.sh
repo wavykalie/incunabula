@@ -289,8 +289,8 @@ run_row "check-figurative.py" report "$PROSE/check-figurative.py" "$BOOK"
 run_row "check-quantities.py" report "$PROSE/check-quantities.py" "$BOOK"
 # Place agency ("The hall knows") and object agency ("the car waited"), counted apart, plus
 # motive by absence ("because it didn't need to"). Report-only for a measured reason, not
-# for want of one: 11 hits in 4,531,815 words of published prose, and the ones that occur
-# are deliberate. Published prose runs about 1:1 place to object; this tree runs 15 to 0.
+# for want of one: 6 hits in 4,531,815 words of published prose, and the ones that occur
+# are deliberate. Published prose runs 3 place to 3 object; this tree runs 15 to 0.
 # A 1.5x cap from the worst published document (0.21/1k) would land at ~0.32/1k and fail
 # the project book's own deliberate chapter 14 (0.74/1k) - the D1/D2 document-vs-chapter
 # mismatch, never tested on chapters. The stronger signal is the second row: 2 hits in

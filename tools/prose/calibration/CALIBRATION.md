@@ -1908,3 +1908,43 @@ document clears the cap by construction; no published *chapter* has been measure
 chapters here run 3–10k words against documents of 30–100k. That mismatch is what made `D1` and
 `D2` report-only, and it is the reason this row stays report-only for a reason nobody has yet
 tested rather than for the reason first written down.
+
+### Revision, same day — the attachment guard, and the baseline it moves
+
+The section above counted 11 hits and named five of them as false positives. The guard was
+closed within the hour and the count moved, so this records the change rather than editing the
+table above: a measurement is history the moment it is written.
+
+Two mechanisms produced all five attachment false positives, and both were the gap.
+
+- **A compound noun in the gap.** The gap admitted any single word that was not a function word,
+  so *the house physician watches* and *The Steel Ministry wants* read as house-agency and
+  steel-agency. The gap is now a closed list of adverbs and auxiliaries.
+- **A transitive verb just before the determiner.** *rent the house wanted*, *mended the road
+  demanded* — the noun is the verb's object, and the next verb belongs to a subject still to
+  come. A closed list of the verbs that most often do this (`TAKING`) now refuses the match.
+
+The two lists also swallow guards that used to stand alone: a pronoun is neither an adverb nor an
+auxiliary, so *the rooms you wanted* cannot match at all, and the separate pronoun blocklist is
+gone with it. `once` is excluded from the adverb list because *the letters once learned* is a
+passive absolute, and the modal auxiliaries are admitted because *those stones shall forget me*
+is a published hit that an adverb-only gap had already started missing.
+
+| | before the guard | after |
+|---|---|---|
+| published R1a | 6 | **3** |
+| published R1b | 5 | **3** |
+| published R2 | 2 | 2 |
+| published R1 hits | 11 | **6** |
+| precision by reading | 5 of 11 | **5 of 6** |
+| worst published document | 0.21/1k | 0.21/1k |
+| project tree | 15 / 0 / 7 | 15 / 0 / 7 |
+
+Published prose now reads 3 place to 3 object. That is six hits, not a ratio; the honest
+statement is that published prose does both figures and this tree does one. The 1.5× cap from
+the worst document is still ~0.32/1k, and the project book's chapter 14 still fails it at
+0.74/1k — the finding of the section above survives the guard intact.
+
+What the guard costs: *the room once knew* is missed, as is any two-word gap (*the room has
+always remembered*) and any transitive verb outside `TAKING`. It is a slice, and the tool's
+docstring now says which slice.

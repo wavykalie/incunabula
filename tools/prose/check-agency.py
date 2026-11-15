@@ -28,15 +28,15 @@ WHY IT REPORTS AND NEVER GATES
   installed in this checkout: 4,531,815 words of published prose across six lanes and
   517,822 words across eighteen project books. R1, place and object together:
 
-    light-novel 0.000/1k, action-voice 0.006, native-control 0.004, era 0.001,
-    nonfiction 0.001, prescriptive 0.003   (11 hits in 4,531,815 words = 0.0024/1k)
-    the project tree                       (15 hits in 517,822 words  = 0.029/1k)
+    light-novel 0.000/1k, action-voice 0.005, native-control 0.000, era 0.001,
+    nonfiction 0.000, prescriptive 0.001   (6 hits in 4,531,815 words = 0.0013/1k)
+    the project tree                      (15 hits in 517,822 words  = 0.029/1k)
 
-  The split is what that measurement found. Published prose runs 6 place hits to 5
-  object hits - about 1:1 - and the project tree runs 15 to 0. Object agency is not
-  rare in English narrative; doing one without the other is what is rare. The lane
-  governing the uncanny project book, `action-voice`, is the sharpest case: four of the
-  five published object hits are there ("The car waited, idling at the curb", "Her body
+  The split is what that measurement found. Published prose runs 3 place hits to 3
+  object hits - the same rate, exactly - and the project tree runs 15 to 0. Object
+  agency is not rare in English narrative; doing one without the other is what is rare.
+  The lane governing the uncanny project book, `action-voice`, is the sharpest case: all
+  three published object hits are there ("The car waited, idling at the curb", "Her body
   knew what to do", "those stones shall forget me") against one place hit, so the book
   that lane governs - nine place, no object - inverts the register it declares.
 
@@ -70,18 +70,26 @@ WHY IT REPORTS AND NEVER GATES
   person as subject means someone chose something, which is not this construction.
 
 WHAT IT CANNOT DO
-  It cannot tell an object that acts from an object a person acts on. It requires a
-  determiner before the noun and refuses a relative pronoun, coordinator or copula
-  between the noun and the verb - and still counts "the rooms you wanted". Measured by
-  reading all 11 published hits: 5 are genuine ("The city knows.", "the town knew of the
-  loan", "those stones shall forget me", "The car waited, idling at the curb.", "Her
-  body knew what to do."), 1 is an institution where a thing was expected ("The Church
-  decides that the Church has a right to decide"), and 5 are a neighbouring verb's
-  object ("rent the house wanted", "mended the road demanded", "the house physician
-  watches", "The Steel Ministry wants you to believe", "The letters once learned"). In
-  the project tree 14 of 15 are genuine, the fifteenth being "the office decides" - the
-  same institutional metonymy. So the rate is a pointer on published prose and a better
-  one on this tree, and it is never a finding without a reader.
+  It cannot tell an object that acts from an object a person acts on. The gap is closed
+  to adverbs and auxiliaries, so a relative clause or a pronoun cannot sit between the
+  noun and the verb - but the noun can still be a verb's object if that verb is outside
+  TAKING. Measured by reading all 6 published hits: 5 are genuine ("The city knows.",
+  "the town knew of the loan", "those stones shall forget me", "The car waited, idling at
+  the curb.", "Her body knew what to do.") and 1 is an institution where a thing was
+  expected ("The Church decides that the Church has a right to decide"). The five
+  attachment cases this guard now drops, kept here as the record of what it is for:
+  "rent the house wanted", "mended the road demanded", "the house physician watches",
+  "The Steel Ministry wants you to believe", "The letters once learned". In the project
+  tree 14 of 15 are genuine, the fifteenth being "the office decides" - the same
+  institutional metonymy.
+
+  What it still cannot see, now that the gap is closed: an object with no determiner
+  ("Marrow remembered"); a two-word gap ("the room has always remembered"); a transitive
+  verb outside TAKING before the noun; a compound whose first element is not in the
+  lexicon ("the garden-gate knew"); and "once" before a participle, which the adverb
+  list refuses because "the letters once learned" is passive. So the rate is a pointer on
+  published prose and a better one on this tree, and it is never a finding without a
+  reader.
 
   It cannot see an object without a determiner ("Marrow remembered"), a proper-noun
   subject, a place name, or any noun outside its list. The list IS the instrument, in
@@ -173,27 +181,58 @@ MIND = (
     r"loved|feared|resented|forgave|blamed|listened|listens|"
     r"watched|watches|waited|waits|allowed|allows)")
 
-# The gap guard. Without it the row reads relative clauses ("the room I remembered"),
-# possessives and coordinated subjects as agency - measured, that was most of the
-# false positives. It does not reach the other class: a transitive verb or a compound
-# takes the noun first ("rent the house wanted", "mended the road demanded", "the house
-# physician watches"), which is five of the eleven published hits. Named in the
-# docstring's precision note rather than guarded here, because that verb list is open.
-FUNCTION = (
-    r"(?:that|which|who|whom|whose|where|when|and|or|but|was|were|is|are|be|been|"
-    r"being|to|of|for|with|by|from|had|has|have|me|him|her|them|us|than|as|"
-    r"if|because|while|so|not|also|"
-    # pronouns: "a room he means" is a relative clause, not a room with a mind. This
-    # was missing in the first version and the project book's own chapter 7 caught it.
-    r"she|he|they|I|you|we|it)")
+# The gap. Only an adverb or an auxiliary may sit between the noun and its verb - and
+# "only an adverb or auxiliary" is the whole guard, not a preference. The first version
+# allowed any single word that
+# was not a function word, which is how a compound noun read as a mind: "the house
+# physician watches over them" (house is the compound's first element, physician is the
+# subject), "The Steel Ministry wants you to believe" (steel modifies Ministry). A noun
+# in the gap means the head noun is further right and the verb belongs to that one.
+#
+# The adverb list also carries the pronoun guard the function list used to: a pronoun is
+# not an adverb, so "a room he means" and "the rooms you wanted" cannot match, and the
+# guard is now structural rather than a blocklist.
+#
+# "once" is deliberately absent. "The letters once learned, it is a simple matter to
+# combine them" is a passive absolute - once [they are] learned - and it was the fifth
+# published false positive. The cost is that "the room once knew" is missed.
+ADVERB = (
+    r"(?:still|always|never|already|almost|only|ever|just|even|too|also|now|then|again|"
+    r"quite|nearly|hardly|barely|scarcely|slowly|quietly|silently|patiently|simply|"
+    r"deliberately|properly|somehow|suddenly|finally|merely|truly|deeply|fully|greatly|"
+    r"indeed|perhaps|probably|certainly|itself|alone)")
+
+# An auxiliary belongs in the gap, and the choice is narrow. A modal or a perfect
+# auxiliary is followed by a base verb or a participle, and a participle is not in MIND,
+# so "the walls would remember" is caught and "the house was remembered" still is not.
+# "those stones shall forget me" is a published hit and was missed by an adverb-only gap.
+# `was|were|is|are|been|being` are deliberately absent: those are the passive, and a
+# house that was remembered is not a house doing the remembering.
+AUX = r"(?:will|would|shall|should|must|may|might|can|could|do|does|did|have|has|had)"
+GAP = rf"(?:{ADVERB}|{AUX})"
+
+# The other class the gap cannot reach: a transitive verb takes the noun as its object,
+# and the next verb belongs to the subject still to come - "to rent the house wanted to
+# know", "the laborer who mended the road demanded six sous". The noun is not the
+# subject; the sentence has not finished saying who is. No parser runs here, so the guard
+# is a closed list of the verbs that most often put a determiner straight after them, and
+# it is a slice rather than a solution - see the docstring's precision note.
+TAKING = (
+    r"(?:rent|rented|mend|mended|read|reads|hold|held|keep|kept|take|took|give|gave|"
+    r"find|found|leave|left|put|open|opened|close|closed|buy|bought|sell|sold|see|saw|"
+    r"hear|heard|feel|felt|watch|watched|follow|followed|reach|reached|cross|crossed|"
+    r"enter|entered|visit|visited|build|built|paint|painted|clean|cleaned|lock|locked|"
+    r"carry|carried|bring|brought|send|sent|show|showed|teach|taught|tell|told|ask|"
+    r"asked|meet|met|pass|passed|approach|approached|inspect|inspected|search|searched)")
+PRE_VERB = re.compile(rf"\b{TAKING}\s+$", re.I)
 
 # Same construction, two lexicons, two rows. The two lists are disjoint, so no match
 # can be counted twice and the totals still add up to the single number this tool
 # reported before the split (15 in this checkout: 15 place, 0 thing).
 R1_PLACE = re.compile(
-    rf"\b{DETERMINER}\s+{PLACE}\b(?:\s+(?!{FUNCTION}\b)\w+)?\s+{MIND}\b", re.I)
+    rf"\b{DETERMINER}\s+{PLACE}\b(?:\s+{GAP}\b)?\s+{MIND}\b", re.I)
 R1_THING = re.compile(
-    rf"\b{DETERMINER}\s+{THING}\b(?:\s+(?!{FUNCTION}\b)\w+)?\s+{MIND}\b", re.I)
+    rf"\b{DETERMINER}\s+{THING}\b(?:\s+{GAP}\b)?\s+{MIND}\b", re.I)
 
 # Two spellings of the same move.
 #
@@ -277,6 +316,10 @@ def observations(text):
         for m in rx.finditer(text):
             if PREP_TAIL.search(text[max(0, m.start() - 24):m.start()]):
                 continue
+            # A transitive verb immediately before the determiner owns the noun:
+            # "[rent] the house wanted". The window is wider than the longest verb.
+            if PRE_VERB.search(text[max(0, m.start() - 16):m.start()]):
+                continue
             found.append((m.start(), row, m.group(0)))
     spans = []
     for rx in (CAUSAL, CAUSAL_NONE, BARE):
@@ -320,8 +363,8 @@ def check(label, chapters):
     print()
     print("  REPORT-ONLY. No cap exists for either row and none is invented here.")
     print("  Published prose does both rows on purpose - \"The city knows.\", \"The car")
-    print("  waited, idling at the curb.\" - and does them about equally often: 6 place")
-    print("  to 5 object in 4,531,815 words. A document-referenced cap would land at")
+    print("  waited, idling at the curb.\" - and does them in equal number: 3 place to 3")
+    print("  object in 4,531,815 words. A document-referenced cap would land at")
     print("  ~0.32/1k and fail this project's own deliberate chapter 14 (0.74/1k); no")
     print("  published chapter was ever measured against it. R2 reads 2 hits in the same")
     print("  4.5M words, not zero. Promoting any row here is a freeze event that belongs")
