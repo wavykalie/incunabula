@@ -92,3 +92,83 @@ books:
     status: drafting
     expected_manuscript: true
     note: "Registered at creation by init-book.py. (2026-11-07) Restarted 2026-11-12 under ductus dana-voss; draft 2026-11-12 archived."
+
+  # Registered 2026-11-14, after `check-registry.py` reported twelve books on disk that the
+  # suite could not see - the omission this registry exists to prevent, twelve times over.
+  # Each status below is the registry's own claim, and where a book's PROJECT_STATE.yaml
+  # disagrees the note says so rather than quietly repeating it: `check-registry.py` refuses
+  # `complete` when no chapter carries pass evidence, and five of these books claim it with
+  # 0 of 8-11 chapters evidenced. `drafting` makes no finished claim, so disk and registry can
+  # agree while the missing evidence stays visible in the note instead of being papered over.
+
+  - path: the-origin-point
+    title: "The Origin Point"
+    status: drafting
+    expected_manuscript: true
+    note: "30 chapters, 60,616 words. Own state: in_progress. (Registered 2026-11-14)"
+
+  - path: stall-twelve
+    title: "Stall Twelve"
+    status: drafting
+    expected_manuscript: true
+    note: "Working title. 3 chapters, 6,160 words, 3 of 3 with pass evidence. Own state: in_progress. (Registered 2026-11-14)"
+
+  - path: grand-standing
+    title: "Grand Standing"
+    status: drafting
+    expected_manuscript: true
+    note: "4 chapters, 8,295 words, 3 of 4 with pass evidence. Own state: in_progress. (Registered 2026-11-14)"
+
+  - path: kagiroi-drift
+    title: "Kagiroi Drift"
+    status: drafting
+    expected_manuscript: true
+    note: "8 chapters. Own state says complete, but 0 of 8 chapters carry pass evidence, so the registry does not repeat a finished claim the artifacts do not support. Status is the registry's claim, not a re-judgement of the prose. (Registered 2026-11-14)"
+
+  - path: la-merienda
+    title: "La merienda"
+    status: drafting
+    expected_manuscript: true
+    note: "10 chapters. Own state says complete, 0 pass evidence, no evaluations/ directory. See kagiroi-drift. (Registered 2026-11-14)"
+
+  - path: pension-winter
+    title: "Pension Winter"
+    status: drafting
+    expected_manuscript: true
+    note: "Working title. 8 chapters. Own state says complete, 0 pass evidence, no evaluations/ directory. See kagiroi-drift. (Registered 2026-11-14)"
+
+  - path: quiet-hours
+    title: "Quiet Hours: A Short Book on Bedtime"
+    status: drafting
+    expected_manuscript: true
+    note: "5 chapters, 1,987 words. Own state says complete, 0 pass evidence, no evaluations/ directory. See kagiroi-drift. (Registered 2026-11-14)"
+
+  - path: sons-of-heaven-v2
+    title: "Sons of Heaven, Students of Dust"
+    status: drafting
+    expected_manuscript: true
+    note: "11 chapters, 30,163 words. Own state says complete, 0 pass evidence, no evaluations/ directory. The L1 deletion-incentive finding was made on this book. See kagiroi-drift. (Registered 2026-11-14)"
+
+  - path: incunabula-test
+    title: "Sons of Heaven, Students of Dust (gate test copy)"
+    status: fixture
+    expected_manuscript: true
+    note: "15 chapters, 27,617 words. The book the gates are exercised on; its own state says gate_passed and 0 of 15 chapters carry pass evidence, so it is registered by role, like the demo fixtures. (Registered 2026-11-14)"
+
+  - path: _audio-smoke
+    title: "Audio Smoke"
+    status: fixture
+    expected_manuscript: true
+    note: "2 chapters, 228 words, 2 of 2 with pass evidence. The audiobook smoke test. (Registered 2026-11-14)"
+
+  - path: validation-series/book-1
+    title: "Merope book one"
+    status: fixture
+    expected_manuscript: true
+    note: "11 chapters, 15,377 words. 'validation 1' in GATE_FREEZE.md's de-identification note: kept to validate the instruments, not published prose. (Registered 2026-11-14)"
+
+  - path: validation-series/book-2
+    title: "Merope book two"
+    status: fixture
+    expected_manuscript: true
+    note: "11 chapters, 14,962 words. 'validation 2'. See book-1. (Registered 2026-11-14)"
