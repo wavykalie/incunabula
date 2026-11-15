@@ -107,9 +107,14 @@ cites what they learned "on the phone," confirm that call happened or is clearly
 
 ### 4. World rules
 
-**Technology.** Establish the period, then hunt anachronism — and services used before
-they existed. A decade of drift is critical; a specific service predating its launch is a
-warning.
+**Technology.** The baseline is the date the book *declares*, never the one its material
+suggests. A city with a hundred-and-fifty-year-old institutional middle still has
+elevators, photocopiers and plastic; its age lives in its institutions and never in its
+nouns. So hunt drift in both directions — a service used before it existed, and a word or
+object older than the book is set — and treat the second as the likelier defect, because
+nothing in this pipeline measures it. If no date is declared at all, the baseline is the
+reader's present and period diction is the error, not the default. Establish what the book
+says it is; do not establish a period and then grade the page against it.
 
 **Geography.** Distances that stay consistent between chapters, directions that do not
 move, and real-world places described accurately.

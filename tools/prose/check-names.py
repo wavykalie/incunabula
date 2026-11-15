@@ -165,11 +165,18 @@ def walk_candidate_files(root):
     return out
 
 
-def clean(parts):
+def clean(parts, keep_numerals=False):
     """Keep only tokens that look like name parts. This is what stops possessives
-    ('Denny's') and sentence-initial junk ('Gives') from entering the cast."""
+    ('Denny's') and sentence-initial junk ('Gives') from entering the cast.
+
+    keep_numerals is for declarations only. A roster handle ends in a number the way an
+    ordinary surname ends in a consonant, and the numeral is part of the name; in a chapter
+    the same word is noise, and chapters are not read here at all. The same permission covers
+    the handle's first word when a number follows it, because "Rule Six" is a person and
+    "The Vell" is a place: a numeral immediately after the word is the evidence, and nothing
+    else qualifies."""
     out = []
-    for p in parts:
+    for i, p in enumerate(parts):
         p = p.strip().strip("\"'.,;:()[]")
         # Possessives are a reference, not a name. Strip the exact suffix - rstrip("'s")
         # takes a character *set* and would turn "Holli's" into "Holli", which then reads
@@ -178,7 +185,15 @@ def clean(parts):
             if p.endswith(suf):
                 p = p[: -len(suf)]
                 break
-        if not p or p in STOP:
+        if not p:
+            continue
+        if p in STOP:
+            if keep_numerals and p in NUMERALS:
+                out.append(p)
+            elif (keep_numerals and i + 1 < len(parts)
+                  and parts[i + 1].strip("\"'.,;:()[]") in NUMERALS
+                  and re.fullmatch(r"[A-Z][a-z'’-]+", p)):
+                out.append(p)
             continue
         if not re.fullmatch(r"[A-Z][a-z'’-]+", p):
             continue
@@ -186,13 +201,22 @@ def clean(parts):
     return out
 
 
-# A cast name, declared. Two accepted forms and no others:
-#   name: "First Last"            (CANON_LEDGER person entry)
+# A cast name, declared. Accepted forms:
+#   name: "First Last"            (CANON_LEDGER person entry, block style)
 #   canonical_name: "First Last"   (ENTITY_STATE entity)
+#   - { name: "First Last", ... } (CANON_LEDGER person entry, flow style)
 #   ## First Last - "role"         (03-characters.md heading)
 # The first version of this gate also scanned free prose, and picked up 'Paper Cage' out
 # of a comp title and 'Gives Rusk' out of a sentence. A cast check that reads prose is a
 # cast check that reports whatever else is capitalised, so it now reads declarations only.
+#
+# Freeze 25 (2026-11-14) added the flow form and the roster handle. Two books in this tree
+# declare their whole cast as inline flow maps, which DECL_RE never matched at all, and one
+# of them names people by <handle> <roster number> - "Tap Two", "Rule Six" - where the
+# numeral is half the name. The gate read both casts as empty and exited 2, which is the
+# right answer to the wrong question: the cast was there, the model of a name was not.
+# A trailing numeral is still a disambiguator, never a surname, and a single bare token is
+# still not a person - see clean() and the note in harvest().
 HONORIFICS = {
     "Mr", "Mrs", "Ms", "Miss", "Dr", "Officer", "Deputy", "Chief", "Pastor", "Coach",
     "Judge", "Rev", "Sgt", "Detective", "Doc",
@@ -202,6 +226,19 @@ DECL_RE = re.compile(
     r"^\s*(?:[-*]\s*)?(?:name|canonical_name)\s*:\s*[\"']?([A-Za-z'’ -]+?)[\"']?\s*(?:#.*)?$",
     re.IGNORECASE,
 )
+# The same declaration written inline: `- { name: "Tap Two", role: "..." }`. Deliberately
+# reads the name value only, up to the closing quote or the end of the mapping, so a role
+# that happens to contain a capitalised word cannot enter the cast.
+FLOW_RE = re.compile(
+    r"\{[^}]*?\b(?:name|canonical_name)\s*:\s*[\"']?([A-Za-z'’ .-]+?)[\"']?\s*[,}]",
+    re.IGNORECASE,
+)
+# Roster numerals. They sit in STOP because in prose "Two" is junk; in a declared cast the
+# same token is half a name, so a declaration is allowed to keep it (Freeze 25).
+NUMERALS = {
+    "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+    "Ten", "Eleven", "Twelve",
+}
 HEAD_RE = re.compile(r"^#{1,4}\s+([A-Z][a-z'’-]+(?:\s+[A-Z][a-z'’-]+){0,2})\s*(?:[-–—(]|$)")
 
 
@@ -223,7 +260,9 @@ def harvest(path):
             continue
 
         m = DECL_RE.match(line)
-        parts = clean(m.group(1).split()) if m else []
+        if not m:
+            m = FLOW_RE.search(line)
+        parts = clean(m.group(1).split(), keep_numerals=True) if m else []
         honorific = False
         if parts and parts[0] in HONORIFICS:
             parts = parts[1:]
@@ -231,7 +270,7 @@ def harvest(path):
         if not parts and is_markdown:
             hm = HEAD_RE.match(line.strip())
             if hm:
-                parts = clean(hm.group(1).split())
+                parts = clean(hm.group(1).split(), keep_numerals=True)
                 if parts and parts[0] in HONORIFICS:
                     parts = parts[1:]
                     honorific = True
@@ -239,15 +278,26 @@ def harvest(path):
             continue
 
         # A person is declared with at least two name parts ("Delphine Rusk"), or with one
-        # part behind an honorific ("Mrs. Okafor" -> Okafor). A single bare part is an
-        # object or a place - "Rusk's own signature" is not a character named Rusk, and
+        # part behind an honorific ("Mrs. Okafor" -> Okafor), or - Freeze 25 - with a handle
+        # and a roster number ("Tap Two"). A single bare part with no honorific and no number
+        # is still not a person: "Rusk's own signature" is not a character named Rusk, and
         # counting it would put the protagonist's own surname in her own first-name set.
-        if len(parts) >= 2:
+        # That is why "Nemi" and "Tava" in the-parts-still-warm stay unread: they are
+        # real people in that book, and this gate cannot yet tell them from a place name.
+        roster = len(parts) >= 2 and parts[-1] in NUMERALS
+        stem = parts[:-1] if roster else parts
+        if len(stem) >= 2:
+            full.add(f"{stem[0]} {stem[1]}")
+            firsts.add(stem[0])
+            surnames.add(stem[1])
+        elif honorific and stem:
+            surnames.add(stem[0])
+        elif roster:
+            # The number disambiguates two people who share a handle; it is not a family
+            # name, and putting it in the surname set would make every roster book in the
+            # catalogue share a surname that no family has.
             full.add(f"{parts[0]} {parts[1]}")
             firsts.add(parts[0])
-            surnames.add(parts[1])
-        elif honorific:
-            surnames.add(parts[0])
     return full, firsts, surnames
 
 

@@ -24,7 +24,83 @@ The format, in the maintenance protocol's §7 shape:
 
 ---
 
-**No entries.** Nothing has been pruned, archived, or corrected in this install yet.
-Nothing has been protected from pruning either — that is not an omission. It is the
-starting state, and it changes the first time a record drifts from the program or a file
-is deliberately left where it is.
+### 2026-11-14 — merged `demo-books/` into `test-books/`
+
+- **file:**       `demo-books/` (the whole tree), `.gitignore`, `README.md`, `PROGRAM_MAP.md`,
+                  `release-preview.py`, `tools/prose/ductus-fit.py`, `tools/audio/CLONE_LOCK.md`,
+                  `BOOKS.yaml`
+- **was:**        two book workspaces. `demo-books/` held `demo-magician`, `marrow-light` and
+                  `muzzle-and-marrow` as byte-identical copies of the `test-books/` books, plus
+                  the only copies of `the-emptying` and `under-three-coats`; `demo-books/` was
+                  also the only place with `muzzle-and-marrow/audiobook/` and `maintenance/WAIVERS.md`.
+                  `check-registry.py` scans `test-books/` only, so anything that existed solely in
+                  `demo-books/` was invisible to every tool in the repository.
+- **now:**        one tree. The three duplicates were verified identical before the copy was
+                  removed (`diff -rq`, no differing file, `test-books/` a strict superset); the
+                  union was moved, not copied: `audiobook/`, `WAIVERS.md`, `the-emptying/`,
+                  `under-three-coats/`. The five demo books are now registered in `BOOKS.yaml` as
+                  `status: fixture`, because merging them into the scanned tree without registering
+                  them would have turned two invisible books into two new registry failures.
+- **cause:**      the author, 2026-11-14: "we should merge test books and demo books, they're the
+                  same things." The layout was reproducing the defect the registry exists to catch —
+                  a book the suite cannot see.
+- **authority:**  the maintenance protocol's prune-and-record rule (append-only log; the old state
+                  preserved above), and `check-registry.py`'s own premise that a book outside the
+                  registry is governed by nothing.
+
+**Left where it is, deliberately.** `tools/audio/CLONE_LOCK_RUN_LOG.md` and
+`tools/prose/calibration/CALIBRATION.md` still say `demo-books/...`, because both are dated
+records of commands that were run and measurements that were taken while that tree existed.
+Rewriting a path inside a dated record would make history match the present, which is the one
+thing this project refuses. They are reported here instead, and `test-books/README.md` says so
+where a reader will meet it.
+
+### 2026-11-14 — moved the governing light-novel corpus to its registered path
+
+- **file:**       `tools/prose/calibration/corpus/elaina` (moved in), `tools/prose/calibration/LANES.tsv`,
+                  `tools/prose/calibration/CORPUS_MAP.md`, `tools/prose/README.md`
+- **was:**        `LANES.tsv` pointed `light-novel` at `tools/prose/calibration/corpus/elaina`,
+                  which did not exist. The only copy of the 51 files was under
+                  `test-books/incunabula-test/tools/calibration/corpus/elaina`, so the lane carried
+                  the status `INSTALLED ELSEWHERE`, and CORPUS_MAP.md recorded it as a stray copy.
+                  The fit tool's book-carried fallback only resolves a missing path relative to the
+                  book being measured, so for any book outside that one test tree
+                  `ductus-fit.py --lane light-novel` exited 3 NOT RUN: the lane that derived every
+                  cap in `deslop-check.sh` could not be re-measured at all.
+- **now:**        the corpus is at its registered path, verified byte-identical before and after the
+                  move (51 files, md5 `e41e5e31...` both sides) and still gitignored there
+                  (`calibration/.gitignore`). `corpus-report.py` reads it as 48 documents /
+                  175,144 words **MATCH**, where before it could only report it missing. The lane's
+                  status is `INSTALLED`; Flaw 2 in CORPUS_MAP.md is marked repaired.
+- **cause:**      the author, 2026-11-14: move the stray copy so the governing lane can be
+                  re-measured. Redundant data filed where the record already said it belonged.
+- **authority:**  the maintenance protocol's repair-a-standing-claim rule. Dated evidence is not
+                  edited: `CALIBRATION.md` (both the root copy and the book-carried one),
+                  `.private/record/GATE_FREEZE.md` and `KNOWN_FINDINGS.md` still describe the corpus
+                  as unshipped or absent, because that is what was true when they were written.
+
+**What this does not fix.** Flaw 1 stands untouched: 175,144 words, one author, one translator,
+three volumes of one series. The lane is now readable; it is still the reason every cap is a
+series' habits with a plausible story attached. And a second, byte-identical copy remains under
+`test-books/_archive/validation-series-meta/tools/calibration/corpus/elaina`, deliberately kept:
+it ships with the archived `validate-controls.sh` that defaults to that path. 1.1 MB of duplicate
+prose, reported and left in place rather than deleted with the tree it belongs to.
+
+### 2026-11-14 — `check-agency.py` counts R1 as two rows; the standing claims follow
+
+- **file:**       `README.md`, `skills/incunabula/SKILL.md`, `tools/prose/README.md`,
+                  `GATE_FREEZE.md` (a new dated entry; the previous entry untouched)
+- **was:**        "`check-agency.py` is the one with a measurement under its second row";
+                  "`check-agency.py` (objects given a mind, and motives stated by absence)";
+                  the limits bullet, which described one object row and no measurement of its
+                  own.
+- **now:**        "under its last row"; "places and objects given a mind, and motives stated
+                  by absence"; and the limits bullet carries the split and the measurement that
+                  forced it — fifteen R1 hits in 517,822 words, fifteen place, zero object.
+- **cause:**      R1 was answering an object question with place nouns. Every one of the fifteen
+                  hits was a setting — hall, room, town, street, ceiling, office, House — so the
+                  row's name was wrong about its own output, and no reader could have seen that
+                  from a single count.
+- **authority:**  the author, 2026-11-14: "Keep going with splitting by noun class." Standing
+                  claims only. The freeze entry that introduced the row is dated history and was
+                  not edited; the split is recorded in its own entry beneath it.

@@ -39,6 +39,7 @@ locked tools, and each entry underneath tells the story of one change.
 |---|---|---|
 | `tools/prose/deslop-check.sh` | `e63d9ccda4f03b10` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 20 - A10a scoped to a report for mode: nonfiction, via conventions.py; 2026-11-06 - P1 floor; 2026-11-07 - P1 and A25 take the 667-word document floor, below which both report UNMEASURED) |
 | `tools/prose/check-world.py` | `8c388d1e6e58a699` | world-physics lexicon gate: reads <book>/WORLD_RULES.txt and fails a chapter that puts a ground vehicle, a wheeled cart, a road fuel or a rubber tyre in a city that carries on backs and flies its freight (Freeze 22 - added 2026-11-09 after two ground-vehicle leaks reached drafted chapters and were caught only by reading) |
+| `tools/prose/check-diction.py` | `98503511d2abfa43` | book-declared lexical register gate: reads <book>/DICTION_RULES.txt and fails a chapter that dates the page, or that lets the book's modern vocabulary fall below the floor it declared (Freeze 24 - added 2026-11-14 after a 130,003-word book passed every cap while reading like 1880: its direction file called the city Victorian and its world rules removed every modern object without putting one back) |
 | `tools/prose/check-uniformity.py` | `3bd21d61113564f2` | U1–U6 cross-chapter rows (Freeze 19 - mode reader via conventions.py) |
 | `tools/prose/check-drift.py` | `3e1a6b33fbafc5b5` | voice drift, size-dependent floor (Freeze 2 - Spearman tie fix) |
 | `tools/prose/check-arc.py` | `f2059aec8a9580cc` | A1 gate; A2–A4 report-only |
@@ -46,7 +47,7 @@ locked tools, and each entry underneath tells the story of one change.
 | `tools/prose/check-recoverable.py` | `591c61560d8c53b3` | tic × dialogue enrichment, report-only |
 | `tools/prose/check-errata.py` | `9ec8ad323196a202` | protocol validator, reads no prose (Freeze 3 - floor 30) |
 | `tools/prose/check-length.py` | `b0f77f89fba525ba` | declared-length row `L1` (Freeze 2 - added after the sons-of-heaven-v2 run exposed the deletion incentive; Freeze 8 - exit 3 for ungoverned) |
-| `tools/prose/check-names.py` | `b09d89d8ca4b7765` | cross-book cast-name collisions + default-name filter, reads no prose (Freeze 4 - added after the author found `Priya` in two books; Freeze 21 - nonfiction case via `conventions.py`) |
+| `tools/prose/check-names.py` | `4c8f8dbdf470514a` | cross-book cast-name collisions + default-name filter, reads no prose (Freeze 4 - added after the author found `Priya` in two books; Freeze 21 - nonfiction case via `conventions.py`; Freeze 25 - reads inline flow-map cast entries and `handle + roster number` names) |
 | `tools/prose/calibration/NAME_FREQUENCY.tsv` | `f17e837f6f2ae0a5` | the name-frequency data `check-names.py` reads (Freeze 4) |
 | `tools/prose/calibration/NAME_FREQUENCY.md` | `75f6fa0dae36f327` | provenance + the tier reasoning; frozen because it states what the tiers mean (Freeze 4) |
 | `tools/prose/validate-controls.sh` | `6b005f4cda33eecc` | the controls (Freeze 10; was `e940b825763c2281` at Freeze 9; Freeze 12 - name only; Freeze 13 - controls 13-16; Freeze 20 - control 17, NF scope arms; Freeze 21 - controls 18-19, names case + A24 pin) |
@@ -57,7 +58,7 @@ locked tools, and each entry underneath tells the story of one change.
 | `tools/prose/check-figurative.py` | `394cd0e402a7f8b9` | G1/G2 figurative pile-up reporter; report-only (re-keyed at the fourth update) |
 | `tools/prose/check-dialogue-tags.py` | `560f55fbbfbde7a8` | V1/V2 per-character speech-tag register reporter; report-only (re-keyed at the second, fourth and Freeze 16 updates) |
 | `tools/prose/check-quantities.py` | `4cc4a538dde7309e` | Q1–Q4 quantity extraction, spread, sanity notes, counted-noun conflicts; report-only (re-keyed at the third and fourth updates) |
-| `tools/prose/check-monotony.py` | `5cd4b18586b77829` | M1-M4 monotony inside the sentences: repeated five-grams, subject-opening share, negation density, texture density. **Calibrated 2026-11-11** against the six published English volumes; M1 is a share of chapters, M2-M4 are advisory bands (Freeze 23, revision 2) |
+| `tools/prose/check-monotony.py` | `3d0e83da2b8b195d` | M1-M4 monotony inside the sentences: repeated five-grams, subject-opening share, negation density, texture density. **Calibrated 2026-11-11** against the six published English volumes; M1 is a share of chapters, M2-M4 are advisory bands (Freeze 23, revision 2) |
 Manifest completeness, 2026-10-13: the seven rows above for
 The narrative and research checks — `check-premise-distinct.py`, `check-comps.py`,
 `calibration/PREMISE_LEDGER.tsv`, `check-narrative.py`, `check-figurative.py`,
@@ -444,3 +445,181 @@ line was 45.0 against a measured worst of 13.0, so no book could have failed it.
 line that could not fire is not a loosening of the gate; it is the gate saying what it
 knows. Enforcement of M2–M4 waits on a modern commercial corpus, and that requirement is
 recorded in the tool's docstring rather than in a comment nobody reads.
+
+### Change recorded 2026-11-14 — a new gate: `check-diction.py` (Freeze 24)
+
+Added because a finished 130,003-word book passed every row in this suite and still read
+like 1880, and its author heard it before any tool did: *"Who says Washings, or shillings
+or all these dated terms."*
+
+The cause was not a missing cap. It was a rule that only subtracted. `WORLD_RULES.txt`
+removed the van, the tyre, the fuel and the bus from that city, on a world history that
+says freight flies and the ground carries what a back and a barrow can. Every rule was
+correct and every rule removed something, and nothing put a noun back. With no modern
+object permitted and no modern vocabulary required, the writer reached for the last nouns
+that still fitted the permitted world, and the prose came out a hundred years older than
+the city it described. The book's own direction file supplied the period - "A Victorian
+port city that industrialised without the engine". Fourteen briefs in the same project
+said "Nothing Victorian". None of them could fail anything.
+
+`check-diction.py` reads `<book>/DICTION_RULES.txt` and has two row kinds, and the second
+is the one the world gate could not express: `X` bans a word that dates the page, `R`
+requires a word the book must keep, at a floor per 10,000 words. A book with no rules file
+exits 2, the stance `check-world.py` already takes.
+
+Evidence at the time of the change, on the book it was built for. The first run exited 1
+with 34 hits in four classes, and the reading of those hits is the argument for the shape
+of the rules: 13 "washing" (correct English - "a bag of washing"), 19 "chandler" and
+"cooper" (correct port trades), 1 "on the parish" (a real 1834 institution), and 1
+"halfpenny" in chapter 10 that the 2026-11-14 diction pass had missed. The three
+false-positive classes were narrowed and the real coin was fixed; the gate now exits 0 with
+R1 8.6/10k against a floor of 2.5, R2 4.2 against 1.4, R3 3.5 against 1.0.
+
+**What the census found, which is not a gate result.** R3's word list was set from a count
+of the thirteen chapters: radio 30, screen 5, steel 6, concrete 2, enamel 1, zinc 1 - and
+plastic, photocopier, transistor, telephone, neon and lino at zero. The direction file says
+the modern surface is "the only one on the page most of the time" and the prose does not do
+that. The floor is set where the book is, not where the direction hoped; the gap is an open
+craft finding, not a threshold, and it is recorded in `PRINTERS_COPY.md` section 5.
+
+No existing cap, floor or threshold moved. The new tool is the only change to the
+instrument.
+
+### Correction recorded 2026-11-14 — a stale hash cell, not a changed gate
+
+`verify-freeze.sh` reported `check-monotony.py` CHANGED during the Freeze 24 change: the
+manifest cell held `5cd4b18586b77829` and the file hashes `3d0e83da2b8b195d`. The file was
+not modified here. `git show HEAD:` and the working tree agree at `3d0e83da2b8b195d`, and
+the only commit that touched the file is `04b0fc0` (2026-11-13), which is also the commit
+that wrote the Freeze 23 revision-2 entry. The code does what that entry says - M1 is
+enforced as a share of chapters, M2-M4 print as advisory - so the entry and the manifest's
+own role text both describe the code that is on disk, and only the hash cell was left
+behind.
+
+This is the failure mode the freeze exists to catch, and it caught it: a gate changed under
+a recorded hash and nothing noticed for a day. The repair is the cell, not the code, and it
+is recorded here rather than silently overwritten. `verify-freeze.sh` now reports FREEZE
+HOLDS across all twenty-two rows.
+
+Worth adding to the freeze ritual: a change entry and a hash re-key are two edits, and
+`verify-freeze.sh` is what proves both were made. The 2026-11-13 change made one.
+
+### Change recorded 2026-11-14 - `check-names.py` reads the cast it was given (Freeze 25)
+
+The gate was not wrong about anything it measured. It was blind to two forms of declaration
+that two books in this tree actually use, and the blindness had a cost that looked like an
+absence: `the-parts-still-warm` declares fifteen characters and the gate read all fifteen as
+nothing, exited 2, and "no cast found" went into the suite as NOT RUN.
+
+Two independent defects, and each one alone was enough:
+
+1. Every entry in that book's `characters:` block is an inline flow map,
+   `- { name: "Tap Two", role: "..." }`. `DECL_RE` anchors on `- name:` and never matched a
+   single line. A probe with a control name proves the syntax and not the name was the
+   problem: block style `- name: "Delphine Rusk"` harvested, and the same name in flow style
+   harvested nothing.
+2. The book names people by `<handle> <roster number>` - "Tap Two", "Rule Six", "Chump Four"
+   does not occur but "Chit Four" does. Numerals sit in `STOP` because in prose a stray
+   "Two" is junk, so `clean()` removed the half of the name that made it unique and the
+   remainder - one bare token - was then correctly refused as a place or an object.
+
+WHAT CHANGED
+`FLOW_RE` reads `name:` / `canonical_name:` from inside a `{ ... }` mapping, so the two
+declaration styles now read alike. `clean()` takes `keep_numerals` in declaration position
+only, and a numeral is kept as a disambiguator, never as a surname: "Tap Two" contributes the
+full name and the first name, and no surname, because "Two" is not a family. The same
+permission covers the handle's first word when a numeral follows it, which is what reads
+"Rule Six" - "Rule" is craft vocabulary in `STOP`.
+
+WHAT DID NOT CHANGE
+Exit codes, the severity ladder, and the refusal to read prose. A single bare token is still
+not a person, so four of that book's cast remain unread by design: "Nemi", "Tava",
+"Provision", "Ullage", and the job-named Doorman. The gate now reads 11 of 15, reports "cast:
+10 first names", and passes; the four it cannot see are named in the book's own ledger note
+rather than renamed to suit the instrument.
+
+THE FIRST VERSION OF THIS CHANGE WAS WRONG, AND THE CONTROLS CAUGHT IT
+It kept any `STOP` word when it arrived from an `name:` key. That promoted "The" out of
+`name: "The Vell"`, `name: "The gauge"` and `name: "The fourth chamber"` - objects and places
+in `marrow-light` and `muzzle-and-marrow` - and both books immediately failed with
+`FIRST The: also a character in ...`. The permission is now numeral-adjacent only: "Rule Six"
+is a person because a number follows the word, and "The Vell" is a place because nothing
+does. Both books are back to exit 0 and `the-parts-still-warm` still reads 10 handles.
+
+Evidence: `test-books/the-parts-still-warm/CANON_LEDGER.yaml` (15 declared characters, flow
+style), the four harvest probes (block real name, block roster handle, block single handle,
+flow real name), `validate-controls.sh` controls 18-19 (names case) passing, and the five
+books' casts re-read after the narrowing - ashgrove 3/1, marrow-light 9/8, muzzle-and-marrow
+8/8, tide-register 4/3, the-parts-still-warm 10/0.
+
+No other hash in the manifest moved. The book's ledger note was corrected in the same change,
+because it had recorded the gate's blindness as a permanent property.
+
+### Change recorded 2026-11-14 — `check-agency.py` joins the suite as a report row; no manifest row, deliberately
+
+`tools/prose/check-agency.py` is now a row in the report class of `tools/run-gates.sh`, beside
+the figurative and quantity reporters. It gets **no manifest row above**, and that is a
+decision rather than an omission: a report row cannot fail a book, so freezing it would assert
+a threshold the tool does not hold. The manifest exists for the rows a book's verdict depends
+on; this one contributes no verdict, only a list.
+
+Two rows, printed per chapter with the sentence that carries them. `R1` object agency —
+"The hall knows", "the city remembered", "the car waited" — is report-only on measurement,
+not for want of one: 23 hits in 4,531,815 words of published prose, deliberate where they
+occur (*the fire refused to burn*; *The city knows. It remembers.*), and the directory's 1.5×
+cap lands at roughly 0.55/1k, a line every manuscript measured already clears. A cap there
+would be a gate in name only, which is the D1/D2 failure this file has recorded twice. `R2`
+motive by absence — "because it didn't need to be said" — is the zero-tolerance candidate:
+0.00/1k across all six published registers against 0.04 on the demo book. That is ten hits,
+which is a hypothesis, and promoting it is the freeze event. It will need a named corpus, a
+cap and a hash, and that call is the author's.
+
+**Why wire it at all.** The Freeze 23 entry's own lesson, one layer up: a gate that is not
+wired is not run, and a row that is not run cannot be calibrated or corrected by anyone using
+the suite. A report row earns its place only if it actually appears in a run.
+
+**Evidence at the time of the change.** In the suite, `check-agency.py` reports exit 0 and
+`REPORTED` on three books: ashgrove 0 observations, tide-register 0, the parts still warm 9 in
+5 of 13 chapters. On the controls, a fixture built from the constructions the row names fires
+7 observations and exits 0; a courtesy fixture ("You didn't have to", "He didn't need to
+answer") and clean prose both exit 0 with nothing listed; an empty directory exits 1, so an
+empty read is not reported as a pass. `bash -n` passes on `run-gates.sh`, whose row count
+moves 22 → 23: the premise row is declared twice, once inside the ledger branch, so the
+count is of declarations, not of rows in a run. 17 gate rows, unchanged, plus 5 report rows
+(one of which, the premise row, is still one row in a given run). No other row's status moved on
+the three books: the parts still warm is NOT CLEAR on the empty premise ledger exactly as
+before, ashgrove fails `check-drift.py` and `check-length.py` (its own book-state rows, both
+files untouched here), and `verify-freeze.sh` reports FREEZE HOLDS with the new row in place.
+
+### Change recorded 2026-11-14 — `check-agency.py` R1 splits into R1a place agency and R1b object agency
+
+The row was asked for as object agency. Run over every manuscript in this checkout — 18 books,
+213 chapters, 517,822 words — it returned fifteen hits, and not one of them was an object:
+`hall` ×5, `room` ×3, `town` ×2, `street` ×2, `ceiling`, `office`, `House`. Every carrier was
+the setting. Counted as one number the row was reporting *object agency 15* about fifteen
+places, which is the wrong answer to the question it was built for, and a reader had no way to
+see that from the output.
+
+R1 is now two rows over the same construction: **R1a place agency**, the setting given a mind
+(*The hall waited.*), and **R1b object agency**, a discrete article given one (*The car waited,
+idling at the curb.*). The lexicon splits at whether the noun can stand for the scene itself: a
+wall is the room, so it goes in `PLACE`; a brick is a brick, so it goes in `THING`, and building
+materials (timber, tile, wallpaper) sit with the things. The two lists are disjoint, so nothing
+is counted twice and the totals still add up to the fifteen this row reported before.
+
+**Why it matters beyond bookkeeping.** A place with a mind is the *genius loci*, and it has a
+tradition behind it — Muir's *The city knows. It remembers.* is a published instance, and the
+parts still warm's nine hits read as a chorus, not a tic. An object with a mind is a stranger
+claim and materially rarer: zero in 517,822 words here, and the published instances are the
+car-and-fire kind (*the car waited, idling at the curb*). The two do not deserve the same
+reading, and a single count invited exactly that.
+
+**Evidence at the time of the change.** `py_compile` passes. A fixture built to separate the
+classes reads 2 place + 3 object + 1 motive-by-absence = 6 and exits 0; the constructions
+fixture reads 4 + 1 + 2 = 7; the courtesy and clean fixtures read 0 with nothing listed; an
+empty directory exits 1, so an empty read is still not a pass. The no-argument sweep over the
+whole tree reads 18 manuscripts and reports **place 15, object 0, motive-by-absence 7**, exit 0
+— the same 15 R1 hits and 7 R2 hits as before the split, which is the check that re-cutting the
+lexicon moved no count. `bash -n` passes on `run-gates.sh`, which this edit does not touch: the
+row keeps its name and its report class. No manifest hash moves, for the reason the previous
+entry gives. `verify-freeze.sh` reports FREEZE HOLDS.

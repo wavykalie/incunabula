@@ -17,8 +17,7 @@ Measured 2026-11-12 by walking each directory and counting documents and words.
 
 | directory | documents | words | works | era | registered as a lane |
 |---|---|---|---|---|---|
-| `corpus/light-novel` (registered path) | **absent** | — | 3 | recent translations | `light-novel`, **governing** |
-| `test-books/incunabula-test/…/elaina` | 48 | 175,144 | 1 (a series, 3 volumes) | unrecorded | no — a stray copy |
+| `corpus/elaina` (registered path) | 48 | 175,144 | 1 (a series, 3 volumes) | unrecorded | `light-novel`, **governing** |
 | `corpus/montgomery` | 3 | 279,281 | 3 | 1923–27 | `native-control` |
 | `corpus/multivolume` | 303 | 945,924 | 6 | 1813–1897 | `era-prepublished` (new) |
 | `corpus/nonfiction` | 143 | 1,337,286 | 8 | 18th–early 20th c. | `nonfiction-discursive` (new) |
@@ -31,7 +30,7 @@ Measured 2026-11-12 by walking each directory and counting documents and words.
 Counts are `corpus-report.py`'s, which strips headings the way `ductus-fit.py` does; a
 plain `wc -w` reads a few hundred words higher on the large corpora.
 
-**Total prose on disk: 4,827,281 words**, counting the stray light-novel copy and the
+**Total prose on disk: 4,827,281 words**, counting the light-novel lane and the
 893,044 in the two new lanes. Before this map, 454,425 of them (12%) were reachable by a
 lane that governed or controlled a book. Now 1,291,813 (27%) are, a further 55,656 sit in a
 study lane that cannot govern, and 3.48M are measured by nothing. Registering them changed
@@ -96,13 +95,22 @@ author, one translator. That is below the 5–10 book rule this project applies 
 it violates the one-work-per-author rule by construction. The caps are not a genre's
 thresholds; they are a series' habits with a plausible story attached.
 
-**Flaw 2 — the governing lane is not installed where it is registered.**
-`LANES.tsv` points `light-novel` at `tools/prose/calibration/corpus/elaina`. That directory
-does not exist in this checkout. The only copy is under
+**Flaw 2 — the governing lane was not installed where it is registered.** *(Repaired
+2026-11-14. Kept here because the flaw is what the `INSTALLED ELSEWHERE` status existed to
+show.)* `LANES.tsv` points `light-novel` at `tools/prose/calibration/corpus/elaina`, and that
+directory did not exist in this checkout: the only copy sat under
 `test-books/incunabula-test/tools/calibration/corpus/elaina`. The fit tool's book-carried
 fallback resolves a missing path relative to the book being measured, so for any book
-outside that one test tree, `ductus-fit.py --lane light-novel` exits **3 NOT RUN** — the
-lane that set every cap cannot be re-measured here at all.
+outside that one test tree `ductus-fit.py --lane light-novel` exited **3 NOT RUN** — the
+lane that set every cap could not be re-measured here at all.
+
+The copy was moved to its registered path on 2026-11-14 (51 files, byte-identical before
+and after; the change is recorded in `maintenance/PRUNING_LOG.md`), the lane's status is now
+`INSTALLED`, and `corpus-report.py` reads it as 48 documents / 175,144 words **MATCH**. The
+repair settles where the text is, not what it can say: **Flaw 1 stands** — the lane is now
+measurable, and it is still one series by one author. A second copy remains under
+`test-books/_archive/validation-series-meta/tools/calibration/corpus/elaina`, kept with the
+archived `validate-controls.sh` that defaults to it.
 
 **Flaw 3 — era is not an axis, and it confounds the rows that matter.**
 The only corpus that meets the lane size rule is `multivolume`: 6 books, 945,622 words, all
@@ -152,7 +160,7 @@ Role vocabulary, unchanged: `governing` (sets thresholds for the books it names)
 
 | lane | role | text on disk | what it can answer | what it cannot |
 |---|---|---|---|---|
-| `light-novel` | governing | 3 vols, 175k (absent at registered path) | what that series does; the eight current caps | anything about a second author, a second register, or modern commercial prose |
+| `light-novel` | governing | 3 vols, 175k (installed at registered path) | what that series does; the eight current caps | anything about a second author, a second register, or modern commercial prose |
 | `action-voice` | **governing** | 5, 837k, 1997–2019 | the action register's pace, and which current caps it already fails | a thriller's number specifically: one of the five is contemporary, four are secondary-world |
 | `weird-texture` | study (new) | 1, 56k, 2014 | what dense physical texture costs in sentence length and short share | anything at one work; pace; the action register |
 | `native-control` | control | 3, 279k, 1923–27 | whether a rule from the light-novel lane is a rule of prose or of one translator | modern idiom, genre, anything after 1927 |

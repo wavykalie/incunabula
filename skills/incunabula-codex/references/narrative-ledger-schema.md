@@ -182,7 +182,7 @@ nothing has been able to ask it what it owes.
 the obligations *that book declared for itself*, exactly as `check-length.py` (L1)
 compares a book to its declared length. "There is no population it can false-fail."
 Every prose-reading companion in the narrative class (`check-figurative.py`,
-`check-dialogue-tags.py`, `check-quantities.py`) is **report-only** for as long as no
+`check-dialogue-tags.py`, `check-quantities.py`, `check-agency.py`) is **report-only** for as long as no
 measured corpus exists behind it — the same line this directory has always drawn.
 
 ## What this file is not

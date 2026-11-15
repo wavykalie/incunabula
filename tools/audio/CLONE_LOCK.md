@@ -39,7 +39,7 @@ missing from it, or present with `frozen: false`, cannot be rendered.
 ### 2. Design — once per character, before first use
 
 ```
-python tools/audio/clone_lock.py design demo-books/muzzle-and-marrow
+python tools/audio/clone_lock.py design test-books/muzzle-and-marrow
 ```
 
 Design runs the voice design from the character's brief, then renders a **3–5
@@ -59,7 +59,7 @@ reference with sample text.
 ### 3. Human listen-approval
 
 ```
-python tools/audio/clone_lock.py approve demo-books/muzzle-and-marrow \
+python tools/audio/clone_lock.py approve test-books/muzzle-and-marrow \
     --character "Mittens Brisk" --reviewer "your name"
 ```
 
@@ -72,7 +72,7 @@ approval no longer matches and freezing refuses.
 ### 4. Freeze
 
 ```
-python tools/audio/clone_lock.py freeze demo-books/muzzle-and-marrow \
+python tools/audio/clone_lock.py freeze test-books/muzzle-and-marrow \
     --character "Mittens Brisk"
 ```
 
@@ -99,7 +99,7 @@ freeze and no script can trigger a re-freeze.
 ### 5. Render by cloning, never by designing
 
 ```
-python tools/audio/render-book.py demo-books/muzzle-and-marrow
+python tools/audio/render-book.py test-books/muzzle-and-marrow
 ```
 
 Every scene is rendered in **one engine pass** with `speaker_N:` tags and one
@@ -131,7 +131,7 @@ and each character's golden reference is measured **per character** and appended
 `audiobook/audio/drift-log.json`:
 
 ```
-python tools/audio/clone_lock.py drift demo-books/muzzle-and-marrow
+python tools/audio/clone_lock.py drift test-books/muzzle-and-marrow
 ```
 
 ```

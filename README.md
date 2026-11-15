@@ -294,9 +294,12 @@ Three tools feed the ledger. `case-keeper` records debt at extraction pass 6.
 `proof-panel` declares the beat arc of each chapter and the function of each extended
 scene at Phase 4. `collator` audits the ledger against the text in both directions.
 
-Two companions read prose and report only: `check-figurative.py` and
-`check-quantities.py`. No measured corpus stands behind them, so they can report and
-cannot fail anything. `check-dialogue-tags.py` is the exception: V1/V2 report, but V3
+Three companions read prose and report only: `check-figurative.py`,
+`check-quantities.py` and `check-agency.py`. No measured corpus stands behind a cap for
+any of them, so they can report and cannot fail anything. `check-agency.py` is the one
+with a measurement under its last row — motive by absence reads 0.00/1k across all six
+published registers — which is why promoting that row is a freeze decision and not a
+backlog item. `check-dialogue-tags.py` is the exception: V1/V2 report, but V3
 gates a book above 0.107 breath-family share of tagged spans — the p90 of 167
 public-domain novels, with 5% of human books above it.
 
@@ -402,10 +405,12 @@ else is the log.
 
 Everything above is the book-production system. Three classes of file are not part of it:
 
-- **Your books are not here.** Git ignores `test-books/` and `demo-books/`. The
-  books that you write go there, stay on your disk, and never leave it because of a
-  `git push`. Every path in every document still refers to those directories, because
-  that is where the books live.
+- **Your books are not here.** Git ignores `test-books/`. The books that you write go
+  there, stay on your disk, and never leave it because of a `git push`. Every path in
+  every document refers to that directory, because that is where the books live. A
+  second tree, `demo-books/`, once held the same demo books under other paths; it was
+  merged into `test-books/` on 2026-11-14, so a book cannot live in a tree no tool
+  scans.
 - **The record of this installation is not here.** The author's errata ledger, commonplace
   book, known findings, freeze history, registry, and books are kept beside the framework
   and are not tracked. The repository carries a template at each canonical path, so that

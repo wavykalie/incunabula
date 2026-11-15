@@ -38,6 +38,7 @@ surface of prose:
 check-narrative.py     what the book owes: debt, beat arcs, scene functions
                        (N1/N4 gate on declared contracts - reads no prose, L1's class)
 check-figurative.py    where the images pile up on one referent   (reports, never gates)
+check-agency.py        place/object agency, "didn't need to"    (reports, never gates)
 check-dialogue-tags.py per-character speech-tag register          (V3 gates; V1/V2 report)
 check-quantities.py    do the numbers agree with each other       (reports, never gates)
 ```
@@ -163,6 +164,7 @@ python ductus-fit.py <book>/ --lane action-voice            # report only; corpu
 
 python check-narrative.py <book>/                           # N1/N4 gate; N2/N3 report
 python check-figurative.py <book>/                          # report only, cannot fail
+python check-agency.py <book>/                              # report only, cannot fail
 python check-dialogue-tags.py <book>/                       # V3 gates; V1/V2 report
 python check-quantities.py <book>/                          # report only, cannot fail
 
@@ -335,6 +337,18 @@ which is what a bad metric looks like from the inside.
   population it can false-fail. N2/N3 report repetition and duplication and fail
   nothing: a repeated circuit is sometimes deliberate, and no corpus of published beat
   maps exists from which a floor could be derived.
+- `check-agency.py` cannot tell an object that acts from an object a person acts on.
+  It requires a determiner before the noun and refuses a relative pronoun, coordinator
+  or copula between noun and verb, and still counts "the rooms you wanted": of 23 hits
+  in 4.5M words of published prose about a third were genuine. The list of nouns is the
+  instrument, so an object outside it - or a proper-noun subject - is invisible. It
+  points at passages; it is never evidence that one is a defect. Measured over this
+  checkout's 18 manuscripts it returned fifteen hits in 517,822 words and **none of them
+  was an object** - hall ×5, room ×3, town ×2, street ×2, ceiling, office, House - so the
+  row is counted as two: **R1a place agency**, the setting given a mind (*The hall
+  waited.*), and **R1b object agency**, a discrete article given one (*The car waited,
+  idling at the curb.*). The first is the *genius loci* and can be a device; the second is
+  what the row was named for, and it reads zero here.
 - `check-figurative.py` counts figurative *markers* and coordinated image clauses, not
   meaning. It cannot see a metaphor without a marker, it counts `like` in comparisons
   that are not figurative, and it cannot attribute an image to a referent — the
@@ -386,8 +400,10 @@ plus `PRINTERS_COPY.md` §7 reserve changes to it. These are recorded, not repai
 
 ## 1. `validate-controls.sh` reports "no corpus installed" when 2.5M words are on disk
 
-The script defaults `HUMAN_CORPUS` to `calibration/corpus/elaina`, which does not
-exist. `calibration/corpus/` actually holds:
+The script defaults `HUMAN_CORPUS` to `calibration/corpus/elaina`, which did not
+exist. *(2026-11-14: the stray light-novel copy was moved to that path, so the default now
+resolves to the real lane. The finding below is left as 2026-09-28 recorded it.)*
+`calibration/corpus/` also holds:
 
 | directory | files | words |
 |---|---|---|
@@ -412,7 +428,8 @@ AI_CONTROL="/path/to/machine-written/chapters" \
 
 **Correct fix (not applied):** default to the newest installed corpus directory and
 print which one it chose, or fail loudly listing the directories it did find. A default
-pointing at a directory that has never existed in this repo is the whole defect.
+pointing at a directory that has never existed in this repo is the whole defect. That
+defect is now repaired: see the note at the top of this section.
 
 ## 0. A chapter filename the gates do not recognise is a whole book silently unchecked
 

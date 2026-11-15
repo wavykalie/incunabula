@@ -35,9 +35,19 @@
 #   for the full contracts.
 #
 # USAGE
-#   bash tools/run-gates.sh <book-root>
+#   bash tools/run-gates.sh <book-root> [--ledger <premise-ledger.tsv>]
 #
 #   <book-root> is the project directory holding manuscript/chapters/.
+#
+#   --ledger points check-premise-distinct.py at a premise ledger other than the frozen
+#   one in this tree. The public tree's PREMISE_LEDGER.tsv holds no rows by design - the
+#   de-identification pass removed them (GATE_FREEZE, 2026-10-15) - so the premise row
+#   reads NOT RUN in every checkout, and correctly so: an empty ledger makes that gate
+#   pass everything. The real rows live in .private/record/PREMISE_LEDGER.seed.tsv, which
+#   is gitignored and absent from a clone. This flag lets a local run measure the row
+#   against them without seeding the frozen file, which would publish them and break the
+#   freeze. WITHOUT THE FLAG NOTHING CHANGES: the row still reads NOT RUN, and not-run is
+#   never a pass.
 #
 # EXIT
 #   0  CLEAR - every gate ran and passed (report-only rows gate nothing)
@@ -62,7 +72,7 @@
 #             check-manuscript-integrity.py, check-pass-evidence.py:
 #             0 pass, 2 could-not-read / not-applicable -> NOT RUN, else fail.
 #   report    check-surplus.py, check-recoverable.py, check-figurative.py,
-#             check-quantities.py: 0 REPORTED,
+#             check-quantities.py, check-agency.py: 0 REPORTED,
 #             findings never fail anything; a report that could not run is
 #             NOTED and gates nothing, because these rows cannot gate.
 
@@ -81,7 +91,7 @@ fi
 
 usage() {
   cat <<'EOF'
-usage: bash tools/run-gates.sh <book-root>
+usage: bash tools/run-gates.sh <book-root> [--ledger <premise-ledger.tsv>]
 
 Runs the full gate suite against one book and prints every tool's own output,
 followed by a summary table. Exit 0 = clear, 1 = a gate failed the book,
@@ -92,13 +102,45 @@ Not-run is never a pass. That is the whole contract of this file.
 EOF
 }
 
-if [ $# -ne 1 ] || [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+LEDGER=""
+BOOK=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help)
+      usage; exit 0 ;;
+    --ledger)
+      shift
+      LEDGER="${1:-}"
+      if [ -z "$LEDGER" ]; then
+        echo "run-gates: --ledger needs a path to a premise ledger."
+        exit 3
+      fi ;;
+    --ledger=*)
+      LEDGER="${1#*=}" ;;
+    -*)
+      echo "run-gates: unknown option: $1"
+      usage
+      exit 3 ;;
+    *)
+      if [ -n "$BOOK" ]; then
+        echo "run-gates: one book per run (got '$BOOK' and '$1')."
+        exit 3
+      fi
+      BOOK="$1" ;;
+  esac
+  shift
+done
+
+if [ -z "$BOOK" ]; then
   usage
-  if [ $# -eq 1 ]; then exit 0; fi
   exit 3
 fi
-
-BOOK="$1"
+if [ -n "$LEDGER" ] && [ ! -f "$LEDGER" ]; then
+  echo "run-gates: no premise ledger at $LEDGER"
+  echo "          (the private seed is .private/record/PREMISE_LEDGER.seed.tsv"
+  echo "           and is not present in a public clone)"
+  exit 3
+fi
 if [ ! -d "$BOOK" ]; then
   echo "run-gates: no such book directory: $BOOK"
   exit 3
@@ -197,6 +239,9 @@ run_row() {  # run_row NAME KIND SCRIPT [ARGS...]
 echo "================================================================="
 echo "run-gates - the full suite against one book"
 echo "book:  $BOOK   ($chapter_files chapter files)"
+if [ -n "$LEDGER" ]; then
+  echo "ledger: $LEDGER  (premise row only; the frozen ledger is untouched)"
+fi
 echo "tools: ${PROSE#$ROOT/}  (the frozen instrument; book-embedded"
 echo "       copies are never used, so every result is attributable)"
 echo "================================================================="
@@ -204,7 +249,11 @@ echo
 
 echo "== research gates (P1, C1) ====================================="
 run_row "check-comps.py" hygiene "$PROSE/check-comps.py" "$BOOK"
-run_row "check-premise-distinct.py" hygiene "$PROSE/check-premise-distinct.py" "$BOOK"
+if [ -n "$LEDGER" ]; then
+  run_row "check-premise-distinct.py" hygiene "$PROSE/check-premise-distinct.py" "$BOOK" --ledger "$LEDGER"
+else
+  run_row "check-premise-distinct.py" hygiene "$PROSE/check-premise-distinct.py" "$BOOK"
+fi
 
 echo "== cross-book and integrity ===================================="
 run_row "check-names.py" hygiene "$PROSE/check-names.py" "$BOOK"
@@ -222,6 +271,12 @@ run_row "check-uniformity.py" prose "$PROSE/check-uniformity.py" "$BOOK"
 run_row "check-monotony.py" prose "$PROSE/check-monotony.py" "$BOOK"
 run_row "check-drift.py" prose "$PROSE/check-drift.py" "$BOOK"
 run_row "check-arc.py" prose "$PROSE/check-arc.py" "$BOOK"
+# check-world.py forbids objects; this row reads <book>/DICTION_RULES.txt, which both
+# forbids words that date the page and REQUIRES the vocabulary the book must keep. The
+# failure it was built for was a world that subtracted every modern noun and never put
+# one back - prose that passed all eight caps and still sounded like 1880. A book with no
+# rules file reads NOT RUN, the same stance every other undeclared contract takes.
+run_row "check-diction.py" prose "$PROSE/check-diction.py" "$BOOK"
 # V3 is the one measured row in the tag tool; V1/V2 above it still report only. A book
 # under 40 tagged spans reads UNMEASURED and exits 0 (see the tool's MIN_TAGGED_FOR_V3),
 # so a dialogue-sparse book is not failed for a rate it cannot support.
@@ -232,6 +287,15 @@ run_row "check-surplus.py" report "$PROSE/check-surplus.py" "$BOOK"
 run_row "check-recoverable.py" report "$PROSE/check-recoverable.py" "$BOOK"
 run_row "check-figurative.py" report "$PROSE/check-figurative.py" "$BOOK"
 run_row "check-quantities.py" report "$PROSE/check-quantities.py" "$BOOK"
+# Object agency ("The hall knows", "the city remembered") and motive by absence ("because
+# it didn't need to"). Report-only for a measured reason, not for want of one: 23 hits in
+# 4,531,815 words of published prose, and the ones that do occur are deliberate - the
+# fire refused to burn, the city knows and remembers. The directory's 1.5x cap would land
+# at ~0.55/1k, a line every manuscript measured already clears, so a cap there would be a
+# gate in name only. The zero-tolerance candidate is the second row, on ten hits. So this
+# row lists per chapter and a reader rules; promoting either row is a freeze event, and
+# the tool's own docstring carries the numbers that decide it.
+run_row "check-agency.py" report "$PROSE/check-agency.py" "$BOOK"
 
 echo "== narrative gate (Freeze 13) =================================="
 run_row "check-narrative.py" contract "$PROSE/check-narrative.py" "$BOOK"

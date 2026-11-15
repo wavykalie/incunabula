@@ -34,9 +34,10 @@
 books:
   - path: tide-register
     title: "The Tide Register"
+    ductus: bastorius-quinn
     status: drafting
     expected_manuscript: true
-    note: "Registered at creation by init-book.py. (2026-11-06)"
+    note: "Registered at creation by init-book.py. (2026-11-06) Assigned 2026-11-14, after the four chapters were drafted; the book's ductus.md is a description of the hand the draft has, and DIRECTION.md is the statement of record."
 
   - path: ashgrove-inventory
     title: "The Ashgrove Inventory"
@@ -46,6 +47,42 @@ books:
     expected_manuscript: true
     note: "Registered at creation by init-book.py. (2026-11-06)"
 
+
+  # The demo fixtures. Merged here from `demo-books/` on 2026-11-14 (that tree held
+  # byte-identical copies of three of these books and the only copies of two others, so a
+  # book could sit in a directory no tool scanned and be silently skipped). `fixture` is the
+  # registry's vocabulary for a book kept to exercise the gates, and their own
+  # PROJECT_STATE.yaml files still carry the status the run left behind - this entry records
+  # the role they play here, not a re-judgement of their prose.
+  - path: demo-magician
+    title: "The Trick"
+    status: fixture
+    expected_manuscript: true
+    note: "1930s conjuring mystery, 34 chapters, 80,394 words. The clean run: full sweep, every finding closed. (Moved from demo-books/, 2026-11-14)"
+
+  - path: marrow-light
+    title: "Marrow Light"
+    status: fixture
+    expected_manuscript: true
+    note: "Working title. 38 chapters, 78,064 words. The book a hand-typed suite list omitted, which is why this registry and check-registry.py exist. (Moved from demo-books/, 2026-11-14)"
+
+  - path: muzzle-and-marrow
+    title: "Muzzle and Marrow"
+    status: fixture
+    expected_manuscript: true
+    note: "Working title. 10 chapters. The from-scratch pilot; its U1/L1 failures are kept findings, and audiobook/ carries the rendered chapter 1 and the clone locks. (Moved from demo-books/, 2026-11-14)"
+
+  - path: the-emptying
+    title: "The Emptying"
+    status: fixture
+    expected_manuscript: true
+    note: "6 chapters, 7,685 words, 6 of 6 with pass evidence. (Moved from demo-books/, 2026-11-14)"
+
+  - path: under-three-coats
+    title: "Under Three Coats"
+    status: fixture
+    expected_manuscript: true
+    note: "6 chapters, 6,871 words, 6 of 6 with pass evidence. (Moved from demo-books/, 2026-11-14)"
 
   - path: the-parts-still-warm
     title: "The Parts Still Warm"

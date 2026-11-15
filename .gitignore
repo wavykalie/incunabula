@@ -28,9 +28,12 @@ USER_PREFERENCES.md
 .private/
 
 # Your books. The framework does not ship them: a clone gets the checks, the skills and
-# a scaffold command, and nothing that belongs to anyone else.
+# a scaffold command, and nothing that belongs to anyone else. One tree, not two: the
+# `demo-books/` fixture tree was merged into this one on 2026-11-14, because two
+# workspaces for the same books meant a book could sit in the tree no tool scanned and
+# be silently skipped by the suite - the failure BOOKS.yaml and check-registry.py exist
+# to catch, reproduced by the layout itself.
 test-books/
-demo-books/
 
 # Book-carried copies of the calibration corpus. Same class as the corpus/ rule in
 # tools/prose/calibration/.gitignore: published commercial prose that is nobody else's

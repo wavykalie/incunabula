@@ -35,6 +35,8 @@
 #     check-uniformity  0 pass, 1 failure or nothing checkable
 #     check-drift       0 pass, 1 a voice shift or nothing checkable
 #     check-arc         0 pass, 1 failure or nothing checkable
+#     check-diction     0 pass, 1 a dated word or a required word below its floor,
+#                       2 no DICTION_RULES.txt (NOT RUN), 3 missing book or chapters
 #     check-narrative   0 clean, 1 N1/N4 fail, 2 ledger declares nothing (NOT RUN)
 #     check-length      0 in range, 1 outside, 2 not declared, 3 ungoverned,
 #                       4 status in_progress (recorded, not judged)
@@ -74,6 +76,7 @@ gates:
   premise: "python tools/prose/check-premise-distinct.py {book}"
   deslop: "bash tools/prose/deslop-check.sh {chapters}"
   world: "python tools/prose/check-world.py {book}"
+  diction: "python tools/prose/check-diction.py {book}"
   uniformity: "python tools/prose/check-uniformity.py {book}"
   drift: "python tools/prose/check-drift.py {book}"
   arc: "python tools/prose/check-arc.py {book}"
@@ -174,7 +177,7 @@ phases:
     name: "Evaluation"
     skill: "proof-panel"
     artifacts: []
-    gates: ["deslop", "world", "waivers", "uniformity", "drift", "arc", "narrative", "pass-evidence", "check-eval", "monotony"]
+    gates: ["deslop", "world", "diction", "waivers", "uniformity", "drift", "arc", "narrative", "pass-evidence", "check-eval", "monotony"]
     human: "scores per dimension with citations, the weakness taxonomy ranked, the tic scan at genre targets, the chaos check, keepsake anchors counted, and beat arcs plus scene functions declared into NARRATIVE_LEDGER.yaml"
 
   - id: "4.5"

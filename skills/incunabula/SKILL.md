@@ -263,10 +263,11 @@ It is one declared file — `NARRATIVE_LEDGER.yaml` at the book root — checked
 
 The ledger is fed by declarations, not by scripts: `case-keeper` extraction pass 6
 records debt, `proof-panel` declares each chapter's beat arc and each extended scene's
-function at Phase 4, `collator` audits the ledger against the text. The three
+function at Phase 4, `collator` audits the ledger against the text. The four
 prose-reading companions — `check-figurative.py` (two images fighting over one
 referent), `check-dialogue-tags.py` (per-character tag register vs. the voice matrix),
-`check-quantities.py` (numbers that disagree with each other) — report, with one
+`check-quantities.py` (numbers that disagree with each other), `check-agency.py` (places
+and objects given a mind, and motives stated by absence) — report, with one
 exception: `check-dialogue-tags.py`'s V3 row **gates** the book's breath-family share of
 tagged spans above 0.107 (p90 of 167 public-domain novels; 5% of human books exceed it).
 The other rows cannot fail anything: no measured corpus stands behind them.

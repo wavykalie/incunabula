@@ -544,8 +544,6 @@ def resolve_corpus(path):
     candidates = []
     for pattern in (os.path.join(HERE, "calibration", "corpus", name),
                     os.path.join(ROOT, "test-books", "*", "tools", "calibration",
-                                 "corpus", name),
-                    os.path.join(ROOT, "demo-books", "*", "tools", "calibration",
                                  "corpus", name)):
         candidates.extend(p for p in glob.glob(pattern) if os.path.isdir(p))
     candidates = sorted(set(os.path.abspath(c) for c in candidates))

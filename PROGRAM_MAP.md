@@ -154,7 +154,7 @@ separate bundle, not part of this suite.)
 | **Prose gate** | every prose phase | `deslop-check.sh` (per-chapter machine tells) · `check-uniformity.py` (are the chapters suspiciously alike?) · `check-monotony.py` (does every sentence start the same way?) · `check-drift.py` (does the voice shift mid-book?) · `check-arc.py` (does the emotional direction ever reverse?) |
 | **Narrative gate** | evaluation + delivery | `check-narrative.py` against `NARRATIVE_LEDGER.yaml`: every set-up paid off or explicitly deferred; no beat/scene monotony |
 | **Maintenance gate** | every phase | state, canon, and pruning log exist and reconcile; nothing resolved silently |
-| **The gate runner** | checkpoints + on demand | `tools/run-gates.sh` — all of the above in one command, 17 rows, one verdict |
+| **The gate runner** | checkpoints + on demand | `tools/run-gates.sh` — all of the above in one command, 17 gate rows plus 5 report-only rows, one verdict |
 
 Report-only companions (`check-surplus`, `check-recoverable`, `check-figurative`,
 `check-quantities`) inform but can never fail anything: no measured corpus stands behind
@@ -266,7 +266,7 @@ person still decides.
 | `tools/` | the harness: `run-gates.sh`, `preflight.sh`, `init-book.py`, `roll-brief.py`, `prune-stale.py`, `ductus.py`, … |
 | `ductus.yaml`, `ductus/` | the author voices: one contract an agent pilots plus one developing taste ledger per voice, created by `tools/ductus.py new` |
 | `tools/prose/calibration/` | how the thresholds were measured; corpus supplied locally, never committed |
-| `demo-books/`, `test-books/` | your books — gitignored, never published by a push. The framework ships no manuscripts; `tools/init-book.py` makes the first one |
+| `test-books/` | your books — gitignored, never published by a push. The framework ships no manuscripts; `tools/init-book.py` makes the first one. The demo fixtures and every working book live here in one tree |
 | `GATE_FREEZE.md`, `ERRATA.md`, `PRINTERS_COPY.md`, `KNOWN_FINDINGS.md` | the evidence and history record |
 | `INCUNABULA_LEXICON.md` | the dictionary of every term |
 

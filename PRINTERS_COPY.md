@@ -168,6 +168,22 @@ clean gate report means nothing about any of it.
   an explicit waiver. A green report on a book half its intended length is the clearest
   possible demonstration that these gates are necessary and nowhere near sufficient.
 
+- **Lexical vintage — the words that date a page.** A book can pass every cap here and
+  still read like 1880, and one did. *The Parts Still Warm* was drafted against a direction
+  file that called its city Victorian, in a world whose rules removed the van, the tyre,
+  the fuel and the bus and never replaced them. What the gates measured was syntax; what
+  the author heard was nouns — *shillings*, *washings*, *coppers*, *queue*. It is now
+  **partly measured and not calibrated**. `check-diction.py` reads a book's own
+  `DICTION_RULES.txt` and fails two things: a word that dates the page, and a required
+  modern word below its floor. That second row answers the actual mechanism — a world
+  defined entirely by prohibitions starves the page of its own vocabulary, and no amount of
+  "no anachronism" rule-writing puts a noun back. Three limits: the rules are written by
+  hand, so the gate catches only the words somebody named (its first run fired 34 times and
+  33 were correct prose); the floors are one book's measure, a regression guard and not a
+  threshold; and there is still no modern corpus, `contemporary-commercial` still 0 of ~30
+  works, so nothing here can say a book *is* modern. It can say it is not still saying the
+  words its own note names.
+
 - **Moral ambiguity.** VERMILLION's clearest statement of its own limit: ambiguity is an
   *architecture*, not a property of any sentence. A measure counting hedges finds more
   hedging in a novel built from incompatible testimony, and the finding is coincidental.

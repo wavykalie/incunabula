@@ -259,3 +259,29 @@ supersedes it.
 - **proposes:** none. P1 and A25 now share the 667-word document floor; the cap, numerator
                and denominator are unchanged, and the two surviving chapter-sized failures
                still fail.
+
+### 2026-11-14 — a world that only subtracts turns a modern book into a period one
+- **row:**      (delegation) — the world-rules layer, and the half of it that was missing
+- **observed:** *The Parts Still Warm* passed every prose cap in the suite, at 130,003
+               words, and read as though it were set a century before its own artifacts.
+               The cause was not an unmeasured tell but an unmeasured absence:
+               `WORLD_RULES.txt` forbade every modern object on the street (van, lorry,
+               tram, tyre, road fuel, bus, cab) and no rule anywhere required a modern
+               noun back, so the permitted world's vocabulary was the oldest surviving
+               one. `DIRECTION.md` named the city "Victorian" while fourteen briefs in the
+               same project said "Nothing Victorian"; both could be true because nothing
+               measured either. Spellings and cadence had been fixed on 2026-11-12 and the
+               ticket closed green, because those were what had instruments.
+- **n:**        1 book, 13 chapters, 130,003 words; the defect class is a rule shape, not
+               a number, so it needs no corpus to be visible and no second book to be real
+- **evidence:** `tools/prose/check-diction.py` first run (34 hits, 33 of them correct
+               prose), `test-books/the-parts-still-warm/DICTION_RULES.txt`, the modern-noun
+               census of the thirteen chapters, `GATE_FREEZE.md` Freeze 24
+- **motive:**   aesthetic
+- **state:**    observed
+- **proposes:** none. No cap or floor moved. The proposal this entry carries is structural
+               and already applied at book scope: a world's rules must say what it carries
+               as well as what it forbids, and a book's register is checkable only against
+               a register it declared. Promoting a *rate* from one book would repeat the
+               n=1 error this ledger exists to prevent; three books that drift the same way
+               would make the proposal.

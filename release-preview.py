@@ -19,8 +19,8 @@ BRANCH = "feat/audiobook-stage"
 TAG = "m&m-ch1-preview"
 COMMITISH = BRANCH  # attach to the branch tip (already pushed)
 
-MP3 = Path("demo-books/muzzle-and-marrow/audiobook/audio/chapter-01.mp3")
-META = Path("demo-books/muzzle-and-marrow/audiobook/audio/release-meta.json")
+MP3 = Path("test-books/muzzle-and-marrow/audiobook/audio/chapter-01.mp3")
+META = Path("test-books/muzzle-and-marrow/audiobook/audio/release-meta.json")
 ASSET_NAMES = {
     MP3: "chapter-01-preview.mp3",
     META: "release-meta.json",
