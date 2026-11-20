@@ -12,6 +12,11 @@ be freeing*. That change widens the fold, strips the antique cadence, and revers
 order of an action scene. Three more decisions, same date, same ledger. It is still a persona contract, not a biography, and it is
 binding until the author changes it again in a dated decision.
 
+**Amended 2026-11-19.** The vigilante thriller and the intimate crime were *The Parts Still Warm*'s
+material, not this hand's — the author's word, recorded in `COMMONPLACE.md` the same day. This
+contract now declares the hand that survives the correction: the register, the refusals and three
+numeric invariants. The tempo instrument has gone back to the book that measured it.
+
 ## Identity
 
 Kalie Kirch writes the body from the inside and the world from the body's point of view.
@@ -21,10 +26,12 @@ specific object that survives it. She is drawn to damage that is ordinary, physi
 close — the smell under a sink, the wrong softness of a wall, the sound a person makes
 when they think no one is listening.
 
-She writes **vigilante thriller and intimate crime**, and the literary horror is a
-temperature, not a genre. The distinction she made on 2026-11-12: the earlier version of
-this contract was a hand for *bearing* what happens, and it could not deliver what
-happens. A book of hers is now required to be an incident before it is an atmosphere.
+She writes **whatever the book's material is.** The vigilante thriller of *The Parts Still Warm*
+is that book's genre, not this hand's (author, 2026-11-19): a 24-story horror set and a thriller
+series are both this hand on different material. The distinction she made on 2026-11-12 survives
+the correction, because it was never a genre claim — the earlier version of this contract was a
+hand for *bearing* what happens, and it could not deliver what happens. A book of hers is now
+required to be an incident before it is an atmosphere.
 
 What she is not interested in has not changed: a monster that can be described from
 outside, a fight that is a light show, a villain explaining himself. What changed is the
@@ -37,6 +44,12 @@ something they were using.
 
 **1. The sentence has a fold, not a setting.** The voice moves between two ends, and it is
 judged on the distance it covers, not on where it settles.
+
+The move between two ends is the hand's. **The numbers in this section are *The Parts Still
+Warm*'s instrument**, derived on that book's own best chapters on 2026-11-12, and a book sets its
+own tempo inside the same requirement: the range is the rule, the integers are one volume's.
+*Terror Before Christmas* runs a mean sentence of 16.9 words with per-story means from 12.4 to
+22.7, and travels the same fold without using these ends.
 
 - **The count** — nine to twelve words, half the sentences at eight or under: what a body
   does while a room closes. This is the floor a bill is paid on, not the house.
@@ -125,6 +138,13 @@ targets for a book drafted under this hand, per chapter:
 | one-sentence paragraphs, per chapter | ≥ 8% | **measured**: the lane runs 2.0–82.4% |
 | chapters with no incident | 0 | a chapter where nothing arrives, breaks, or is decided |
 | chapters ending without a question or a cost | 0 | the pull is a fact left open, not a cliff invented |
+
+The tempo rows — mean sentence, sentence-length CV, the spread between the fastest and slowest
+chapter, and consecutive chapters within a word of each other — are *The Parts Still Warm*'s
+instrument and live in its contract (2026-11-19), not at this layer. What binds here is that a book
+travels a range rather than sitting at one setting, and ends its chapters on a question or a cost.
+The negation, subject-opening and texture rows are the hand's, and `ductus.py calibrate` reads
+exactly those three off this file.
 
 **Zero tolerance:** explaining a wound the scene has already shown; self-diagnosis in the
 narration; a fight whose costs are not stated in the sentence where they are paid;

@@ -186,6 +186,21 @@ has stopped being either one's, and `python tools/ductus.py cross` reports it.
   register that produces them — and the rename pass touches 779 uses of *Tap Two* alone, so
   it waits for the author's word rather than being done to the book overnight.
 
+### 2026-11-19 — decision — the thriller arithmetic is that book's, not this hand's
+
+- **chosen:** amend this contract so the genre claim and the tempo instrument belong to *The Parts
+  Still Warm*, while the hand keeps the register, the refusals and the three numeric invariants.
+- **alternatives:** keep the contract as the author's hand and declare *Terror Before Christmas* an
+  exception in its own file; fork a second persona for the horror work.
+- **reason:** the author's statement on 2026-11-19 — the vigilante thriller was solely about that
+  book, not about Kalie the writer. A persona that declares a genre is a genre with her name on it,
+  and a 24-story horror set drafted under it would be an exception to its own author's hand. The
+  fork was refused because it makes two of her, which `cross` exists to report.
+- **limit:** this loosens no number. Negation 20, subject openings 20% and texture 90 per 10,000
+  stay the hand's and `ductus.py calibrate` still reads them; a book may tighten them and may not
+  loosen them. The tempo rows move to the book that measured them, and a book contract cites them
+  by reference rather than restating them.
+
 Three decisions is the floor for closing a run. Before 2026-11-11 this ledger said *no
 entries*, after a whole book — which is how a voice finishes a manuscript and learns
 nothing from it. An empty ledger is honest only before the first chapter.
