@@ -18,6 +18,7 @@ import sys
 import zipfile
 import html
 import xml.etree.ElementTree as ET
+from urllib.parse import unquote
 
 
 def spine_docs(path):
@@ -41,6 +42,11 @@ def spine_docs(path):
         if el.tag.endswith("itemref") and "idref" in el.attrib:
             href = manifest.get(el.attrib["idref"], "")
             if href:
+                # The OPF percent-encodes a filename it has to (%20 for a space); the zip
+                # entry is stored under the decoded name. Without this, an epub whose
+                # documents carry spaces in their names resolves to zero documents and is
+                # reported as "0 docs kept" rather than as the filename bug it is.
+                href = unquote(href)
                 # zip entry names are always POSIX-separated, even on Windows
                 order.append(posixpath.join(base, href) if base else href)
     return z, order
