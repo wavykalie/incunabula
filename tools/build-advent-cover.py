@@ -23,7 +23,10 @@ prints these digitally from RGB, and the wrap PDF here is RGB with no transparen
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 import json
+import os
 import sys
+
+import numpy as np
 
 BOOK = Path(__file__).resolve().parents[1] / "test-books" / "advent-horror"
 OUT = BOOK / "delivery" / "print"
@@ -65,6 +68,9 @@ RED = (150, 28, 18)
 CREAM_FIELD = (242, 234, 219)       # the plate layout's paper
 INK = (30, 22, 20)                  # type on that paper, and on snow
 GREEN = (25, 74, 44)                # the full-bleed layout's type: dark forest on snow
+LIME = (124, 236, 20)               # the supplied front's own title green
+PLATES = BOOK / "art" / "illustrations" / "print"   # 24 untitled plates, 1 per night
+BACK_DOORS = (8, 3)                 # 24 windows on the back, as a calendar reads
 
 
 TITLE_FONT = "Creepster-Regular.ttf"
@@ -321,33 +327,88 @@ def full_panel(art, w, h):
 
 
 def supplied_panel(path, w, h):
-    """The author's finished front, fitted by width, never cropped across the type.
+    """The author's finished front at trim, nothing added over the design.
 
-    The supplied file is 6 x 9 in (2:3); this panel is 5.5 x 8.5 in (0.647), so a
-    crop-to-fill would take 3% off the sides - and the title in this cover reaches the
-    sides. Fit by width instead: 1800 -> 1650 is 0.917x, which leaves 2475 px of image
-    for a 2550 px panel. The 75 px difference is split top and bottom and filled with a
-    mirrored sliver, so the composition is unchanged and the added band falls in the
-    bleed, outside the trim. A side effect worth having: the title moves 0.125 in in
-    from the head trim, back inside KDP's 0.25 in safe area.
+    The supplied file is a full-bleed 6 x 9 in design (1800 x 2700, 2:3) and this panel is
+    5.5 x 8.5 in (0.647), so 3% of the aspect has to go somewhere. Cropping it takes
+    0.083 in off each side and the subtitle already sits 0.103 in from the right trim, so
+    a crop eats the type. Filling the bleed box instead squeezes the art's own 0.097 in
+    head margin into the bleed, which cuts 0.033 in off the top of the title at trim.
+
+    So the art is placed at trim at her composition and the aspect difference is taken as
+    a 3% horizontal compression - the same one the ebook cover gets, so the two fronts
+    match - and the bleed around it is built by extending the edge pixels, never by
+    mirroring. The design's outer inch is dark in every direction, so the extension is a
+    dark band in the bleed: no seam, no reversed title, no invented content, and nothing
+    cut at the trim line.
     """
-    art = Image.open(path).convert("RGB")
-    art = art.resize((w, max(1, int(round(art.height * w / art.width)))), Image.LANCZOS)
-    canvas = Image.new("RGB", (w, h))
-    if art.height >= h:
-        top = (art.height - h) // 2
-        canvas.paste(art.crop((0, top, w, top + h)), (0, 0))
-    else:
-        top = (h - art.height) // 2
-        canvas.paste(art, (0, top))
-        band = h - art.height
-        if top:
-            canvas.paste(art.crop((0, 0, w, top)).transpose(Image.FLIP_TOP_BOTTOM), (0, 0))
-        rest = band - top
-        if rest:
-            canvas.paste(art.crop((0, art.height - rest, w, art.height))
-                         .transpose(Image.FLIP_TOP_BOTTOM), (0, h - rest))
-    return canvas.filter(ImageFilter.UnsharpMask(radius=1.0, percent=32, threshold=2))
+    art = Image.open(path).convert("RGB").resize((w, h), Image.LANCZOS)
+    return art.filter(ImageFilter.UnsharpMask(radius=1.0, percent=32, threshold=2))
+
+
+def edge_pad(img, left, top, right, bottom):
+    """Grow a panel into the bleed from its own edges: exact at the trim, soft outside.
+
+    Not a mirror, and not a repeated line. A mirror pastes reversed art into the bleed,
+    which on this front put a flipped copy of the green title at the head and of the gold
+    byline at the foot, with a hard seam where the reflection began. A repeated line has
+    no seam but drags any patch on the edge - the foot's cream and blue-grey - straight
+    down the band as stripes.
+
+    So each band starts as the panel's outermost line, which is continuous with the trim
+    at the fold, and fades to a heavy blur of that same line by the page edge. Nothing is
+    invented and nothing reverses: the band only ever carries colours already on the
+    edge, and it is trimmed away, so it is never printed.
+    """
+    w, h = img.size
+    out = Image.new("RGB", (w + left + right, h + top + bottom))
+    out.paste(img, (left, top))
+    if left:
+        out.paste(img.crop((0, 0, 1, h)).resize((left, h)), (0, top))
+    if right:
+        out.paste(img.crop((w - 1, 0, w, h)).resize((right, h)), (left + w, top))
+    if top:
+        out.paste(img.crop((0, 0, w, 1)).resize((w, top)), (left, 0))
+    if bottom:
+        out.paste(img.crop((0, h - 1, w, h)).resize((w, bottom)), (left, top + h))
+    for x0, y0 in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)):
+        bw = left if x0 == 0 else right
+        bh = top if y0 == 0 else bottom
+        if bw and bh:
+            out.paste(img.crop((x0, y0, x0 + 1, y0 + 1)).resize((bw, bh)),
+                      (0 if x0 == 0 else left + w, 0 if y0 == 0 else top + h))
+    return feather_bleed(out, left, top, right, bottom)
+
+
+def feather_bleed(img, left, top, right, bottom):
+    """Soften each bleed band away from the trim, leaving its inner edge untouched.
+
+    The band's inner edge keeps the panel's own outermost line, so the join is invisible;
+    at the page edge the band is a wide blur of that line, so an edge patch reads as paper
+    going soft rather than as a stripe. Blur is horizontal along the band, which is where
+    the stripes were: the band is uniform down its depth by construction.
+    """
+    a = np.asarray(img.convert("RGB"), dtype=np.float32)
+    H, W = a.shape[:2]
+    blk = a.copy()
+
+    def band(line, depth, lean_out):
+        soft = np.asarray(Image.fromarray(line[None].astype(np.uint8)).filter(
+            ImageFilter.GaussianBlur(max(4.0, len(line) / 14.0))), dtype=np.float32)[0]
+        t = np.linspace(0.0, 1.0, depth)[:, None, None]
+        if lean_out:
+            t = t[::-1]
+        return line[None] * (1 - t) + soft[None] * t
+
+    if top:
+        blk[:top] = band(a[0], top, True)
+    if bottom:
+        blk[H - bottom:] = band(a[H - 1], bottom, False)
+    if left:
+        blk[:, :left] = np.transpose(band(a[:, 0], left, True), (1, 0, 2))
+    if right:
+        blk[:, W - right:] = np.transpose(band(a[:, W - 1], right, False), (1, 0, 2))
+    return Image.fromarray(np.clip(blk, 0, 255).astype(np.uint8))
 
 
 def front_panel(art, w, h, variant="full"):
@@ -373,6 +434,100 @@ def bleed_extend(img, bleed):
     return out
 
 
+def back_panel(w, h, bleed, trim_px, spine_px):
+    """The back cover: the painting at night, the title, the blurb, 24 windows.
+
+    The panel is built here rather than left as flat black because a 7.2 pt paragraph on
+    six inches of empty ink is the one thing a proofreader sees first. The painting is
+    carried across the back at 30% so the back and front read as one object around the
+    spine; the 24 untitled plates sit under the copy as the calendar the book is.
+
+    Text lives between 0.40 in and the trim edge minus 0.40 in, and the bottom-right
+    2.0 x 1.2 in is left clear in paper cream for the barcode KDP prints there.
+    """
+    art = Image.open(ART).convert("RGB")
+    scale = max(w / art.width, h / art.height)
+    art = art.resize((max(w, int(round(art.width * scale))),
+                      max(h, int(round(art.height * scale)))), Image.LANCZOS)
+    left, top = (art.width - w) // 2, (art.height - h) // 2
+    art = art.crop((left, top, left + w, top + h)).filter(ImageFilter.GaussianBlur(3))
+    art = Image.blend(Image.new("RGB", (w, h), BG), art, 0.30)
+    veil, mask = scrim(w, h, top=120, top_end=0.42, foot=90, foot_start=0.92)
+    img = Image.composite(veil, art, mask)
+
+    # a soft ground under the copy: the pole, the deer and the reindeer legs run straight
+    # through the middle of the panel, and 9 pt on 30% art needs a darker bed than that
+    ground = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    ImageDraw.Draw(ground).rectangle(
+        [bleed + int(0.22 * DPI), int(0.30 * DPI),
+         bleed + trim_px - int(0.22 * DPI), int(5.45 * DPI)], fill=(6, 8, 14, 128))
+    img = Image.alpha_composite(img.convert("RGBA"),
+                                ground.filter(ImageFilter.GaussianBlur(26))).convert("RGB")
+
+    inner = int(0.40 * DPI)
+    x0, x1 = bleed + inner, bleed + trim_px - inner
+    cx, max_w = (x0 + x1) / 2, x1 - x0
+
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+
+    # title: each line fitted to the same measure, as on the front
+    y = int(0.42 * DPI)
+    for line in TITLE_LINES:
+        f = fit_font(line, max_w, start=260)
+        tracked_center(d, cx, y + f.size * 0.46, line, f, LIME, tracking=0.02 * f.size)
+        y += int(f.size * 0.84)
+
+    d.line([cx - max_w * 0.16, y + int(0.06 * DPI), cx + max_w * 0.16,
+            y + int(0.06 * DPI)], fill=(196, 74, 52, 220), width=3)
+    y += int(0.16 * DPI)
+    af = font("georgia.ttf", 52)
+    tracked_center(d, cx, y, AUTHOR, af, CREAM, tracking=16)
+    y += int(0.22 * DPI)
+
+    # blurb: 38 px is 9.1 pt, readable at arm's length on paper; the panel runs to
+    # y > H before the windows start
+    bf = font("georgia.ttf", 38)
+    y += int(0.10 * DPI)
+    for para in (OUT / "back-cover.txt").read_text(encoding="utf-8").strip().split("\n\n"):
+        for line in wrap_text(d, " ".join(para.split()), bf, max_w):
+            d.text((x0, y), line, font=bf, fill=CREAM)
+            y += 56
+        y += 26
+
+    img = with_shadow(img, layer, strength=0.55)
+
+    # 24 windows, 8 across and 3 down, in the lower third
+    cols, rows = BACK_DOORS
+    cell, gap = 150, 12
+    gw = cols * cell + (cols - 1) * gap
+    gh = rows * cell + (rows - 1) * gap
+    gx = bleed + (trim_px - gw) // 2
+    gy = int(0.720 * h) - gh // 2
+    d2 = ImageDraw.Draw(img)
+    for i in range(cols * rows):
+        cx_i = gx + (i % cols) * (cell + gap)
+        cy_i = gy + (i // cols) * (cell + gap)
+        plate = Image.open(PLATES / ("%02d.jpg" % (i + 1))).convert("RGB")
+        s = max(cell / plate.width, cell / plate.height)
+        plate = plate.resize((max(cell, int(plate.width * s)),
+                              max(cell, int(plate.height * s))), Image.LANCZOS)
+        l2 = (plate.width - cell) // 2
+        t2 = (plate.height - cell) // 2
+        img.paste(plate.crop((l2, t2, l2 + cell, t2 + cell)), (cx_i, cy_i))
+        d2.rectangle([cx_i, cy_i, cx_i + cell - 1, cy_i + cell - 1],
+                     outline=(146, 36, 28), width=2)
+
+    # barcode: KDP prints it bottom-right; the ground there stays paper cream
+    bw, bh = int(2.0 * DPI), int(1.2 * DPI)
+    bx = bleed + trim_px - int(0.30 * DPI) - bw
+    by = h - int(0.30 * DPI) - bh
+    d2.rectangle([bx, by, bx + bw, by + bh], fill=CREAM_FIELD)
+    print("back       title y %.2f in, blurb to %.2f in, windows %.2f-%.2f in, barcode %.2f-%.2f in"
+          % (0.42, y / DPI, gy / DPI, (gy + gh) / DPI, by / DPI, (by + bh) / DPI))
+    return img
+
+
 def wrap_text(draw, text, f, max_w):
     words, lines, cur = text.split(), [], ""
     for word in words:
@@ -387,24 +542,36 @@ def wrap_text(draw, text, f, max_w):
     return lines
 
 
-def build_wrap(front, spine_in, extend=False):
-    w_in = BLEED + TRIM_W + spine_in + TRIM_W + BLEED
-    h_in = TRIM_H + 2 * BLEED
-    W, H = int(round(w_in * DPI)), int(round(h_in * DPI))
-    img = Image.new("RGB", (W, H), BG)
-    draw = ImageDraw.Draw(img)
+def build_wrap(front, spine_in, extend=False, supplied=False):
+    """Assemble back, spine and front on a page measured in whole pixels.
 
+    The page is 2*bleed + 2*trim + spine pixels wide and 2*bleed + trim tall, and the
+    typst page is that pixel count over 300 dpi. So one image pixel is one page pixel: the
+    PDF and the JPG are the same picture, and nothing is stretched by the 100% x 100%
+    image box or clipped at an edge that does not divide evenly by 300.
+    """
     bleed = int(round(BLEED * DPI))
     spine_px = int(round(spine_in * DPI))
     trim_px = int(round(TRIM_W * DPI))
+    trim_h_px = int(round(TRIM_H * DPI))
+    W = 2 * bleed + 2 * trim_px + spine_px
+    H = 2 * bleed + trim_h_px
+    w_in, h_in = W / DPI, H / DPI
     front_x = bleed + trim_px + spine_px
 
-    if extend:
+    img = Image.new("RGB", (W, H), BG)
+    img.paste(back_panel(bleed + trim_px, H, bleed, trim_px, spine_px), (0, 0))
+    draw = ImageDraw.Draw(img)
+
+    if supplied:
+        # the author's finished front: art at trim, edges continued into the bleed
+        img.paste(edge_pad(front, 0, bleed, bleed, bleed), (front_x, 0))
+    elif extend:
         # full bleed: art runs over the three trimmed edges, but stops at the spine fold
         img.paste(bleed_extend(front, bleed).resize((trim_px + bleed, H), Image.LANCZOS),
                   (front_x, 0))
     else:
-        img.paste(front.resize((trim_px, int(TRIM_H * DPI)), Image.LANCZOS), (front_x, bleed))
+        img.paste(front.resize((trim_px, trim_h_px), Image.LANCZOS), (front_x, bleed))
 
     # spine: author set in the usable band, rotated to read bottom-to-top
     band = spine_in - 2 * 0.0625
@@ -417,19 +584,6 @@ def build_wrap(front, spine_in, extend=False):
         img.paste(layer, (bleed + trim_px + (spine_px - layer.width) // 2,
                           bleed + (int(TRIM_H * DPI) - layer.height) // 2), layer)
 
-    # back panel: copy at the head, barcode corner kept clear
-    copy = (OUT / "back-cover.txt").read_text(encoding="utf-8").strip().split("\n\n")
-    bf = font("georgia.ttf", 30)
-    x = bleed + 120
-    max_w = trim_px - 240
-    y = bleed + 150
-    for para in copy:
-        for line in wrap_text(draw, " ".join(para.split()), bf, max_w):
-            draw.text((x, y), line, font=bf, fill=CREAM)
-            y += int(bf.size * 1.55)
-        y += int(bf.size * 0.75)
-        if y > H - 700:
-            break
     return img, w_in, h_in, spine_px, bleed, trim_px
 
 
@@ -439,15 +593,23 @@ def ink_box(img, box):
     return strip.point(lambda v: 255 if v > 110 else 0).getbbox()
 
 
-def wrap_pdf(jpg_name, w_in, h_in):
+def wrap_pdf(jpg_name, w_px, h_px, stem="cover-wrap"):
+    """One page, sized from the JPG's pixel count in points, so it maps 1:1.
+
+    Inches rounded to four places left the page 0.004 pt shorter than the image, which
+    typst then had to absorb by scaling the picture by 0.00007 in. Points divide evenly
+    (3500 px = 840 pt, 2626 px = 630.24 pt at 300 dpi), so the image is placed at its own
+    size and the PDF and the JPG are the same picture.
+    """
     import typst
     src = (
-        "#set page(width: %.4fin, height: %.4fin, margin: 0pt, fill: white)\n"
-        "#image(\"%s\", width: 100%%, height: 100%%)\n" % (w_in, h_in, jpg_name)
+        "#set page(width: %.4fpt, height: %.4fpt, margin: 0pt, fill: white)\n"
+        "#image(\"%s\", width: 100%%, height: 100%%)\n" % (w_px / DPI * 72, h_px / DPI * 72,
+                                                          jpg_name)
     )
-    (OUT / "cover-wrap.typ").write_text(src, encoding="utf-8")
-    typst.compile(str(OUT / "cover-wrap.typ"), output=str(OUT / "cover-wrap.pdf"))
-    return OUT / "cover-wrap.pdf"
+    (OUT / (stem + ".typ")).write_text(src, encoding="utf-8")
+    typst.compile(str(OUT / (stem + ".typ")), output=str(OUT / (stem + ".pdf")))
+    return OUT / (stem + ".pdf")
 
 
 def main():
@@ -484,9 +646,15 @@ def main():
 
     spine_in = pages * CALIPER
     wrap, w_in, h_in, spine_px, bleed, trim_px = build_wrap(
-        front, spine_in, extend=(variant in ("full", "supplied")))
+        front, spine_in, extend=(variant == "full"),
+        supplied=(variant == "supplied"))
 
-    jpg = OUT / ("cover-wrap.jpg" if measured else "cover-wrap-comp.jpg")
+    # ADVENT_COVER_PREVIEW=1 writes cover-wrap-preview.* and leaves the upload files
+    # alone, so a new back can be looked at before it replaces anything.
+    preview = os.environ.get("ADVENT_COVER_PREVIEW") == "1"
+    stem = ("cover-wrap-preview" if preview else
+            ("cover-wrap" if measured else "cover-wrap-comp"))
+    jpg = OUT / (stem + ".jpg")
     wrap.save(jpg, quality=95, dpi=(DPI, DPI))
 
     # the spine band must hold its type: ink inside it, clear of both folds
@@ -505,13 +673,14 @@ def main():
     print("wrap       %s  %dx%d px (%.4f x %.4f in)" % (jpg, wrap.width, wrap.height,
                                                        w_in, h_in))
     print("extent     %d pages (%s)" % (pages, "measured" if measured else "ESTIMATED"))
-    print("spine      %.4f in (%.2f mm)   usable band %.3f in" % (spine_in, spine_in * 25.4,
-                                                                  spine_in - 0.125))
+    print("spine      %.4f in (%.2f mm)   usable band %.3f in" % (spine_px / DPI,
+                                                                  spine_px / DPI * 25.4,
+                                                                  spine_px / DPI - 0.125))
     print("spine ink  %s" % spine_note)
-    print("folds      %.4f in and %.4f in from the left edge" % (BLEED + TRIM_W,
-                                                                 BLEED + TRIM_W + spine_in))
+    print("folds      %.4f in and %.4f in from the left edge" % ((bleed + trim_px) / DPI,
+                                                                 (bleed + trim_px + spine_px) / DPI))
     if measured:
-        pdf = wrap_pdf(jpg.name, w_in, h_in)
+        pdf = wrap_pdf(jpg.name, wrap.width, wrap.height, stem)
         import pypdf
         r = pypdf.PdfReader(str(pdf))
         box = r.pages[0].mediabox
@@ -519,7 +688,7 @@ def main():
                                                           float(box.width) / 72,
                                                           float(box.height) / 72))
         stale = OUT / "cover-wrap-comp.jpg"
-        if stale.is_file():
+        if stale.is_file() and not preview:
             stale.unlink()
             print("removed    %s (superseded by the measured wrap)" % stale.name)
 
