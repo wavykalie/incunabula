@@ -149,6 +149,34 @@ Repeating the same sentence opening multiple times in quick succession. Anaphora
 - "They could expose... They could offer... They could provide... They could create... They could let... They could unlock..."
 - "They have built engines, but not vehicles. They have built power, but not leverage. They have built walls, but not doors."
 
+### The Comparison That Becomes the Book's Only Engine — "the way you …"
+
+The form is not a tell. *the way a card folds along the crease* is ordinary English, and it is
+often the best clause in the paragraph. What is a tell is a book that owns exactly one comparison
+and reaches for it on every page: at that point the reader is no longer hearing a simile, they
+are hearing a machine with one move.
+
+**Measured here, 2026-11-18.** Across 1,409 published documents (6,419,470 words) the construction
+`the way you / the way people / the way a / the way the` runs at **0.02/1k** — 151 hits in the
+whole corpus, worst single document 1.21/1k. A 46,305-word collection in this tree carried **71**
+of them, **1.53/1k**, seventy-six times the published rate, with nine of its twenty-four chapters
+over the threshold its own direction file had set at four per story. The thinned chapters read no
+worse; each kept the clause that was doing the work.
+
+**What to do.** Keep the clause when it is the best sentence in the paragraph — the one that makes
+the reader see the thing. Replace the others with the plain description they were standing in for:
+*Cut, the way you cut something with a good knife* becomes *Cut clean*; *the way a farmhouse window
+looks from a road at night* becomes *at the height of a kitchen window*. Do not swap in a different
+simile. The point is to describe, not to decorate with something fresher.
+
+**Where the author has declared it.** A direction file that names this construction as the book's
+grammar has made a decision, not a mistake. Thin to the declared number and leave the declaration
+alone — the finding is that the number was exceeded, not that the form is wrong.
+
+**Why a rate and not a ban.** `A27` in `tools/prose/deslop-check.sh` reports it and cannot fail a
+book. A form English uses cannot be forbidden; only a density can be named. The row exists so the
+number is visible in a run instead of being discovered by a hostile reader with a screenshot.
+
 ### Tricolon Abuse
 
 Overuse of the rule-of-three pattern, often extended to four or five. A single tricolon is elegant; three back-to-back tricolons are a pattern recognition failure.

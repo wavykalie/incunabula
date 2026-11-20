@@ -245,6 +245,30 @@ DENSITY=(
 REPORT=(
   'D1|em dash|10|1000|7|1000|—'                                                                            # worst published CHAPTER 33.52/1k
   'D2|rule of three|5|1000|4|1000|[^,.;:]{3,30}, [^,.;:]{3,30}, and [^,.;:]{3,30}'                         # worst published CHAPTER 8.40/1k
+  # A27 - the comparison this project's own direction file protects, kept as a REPORT row.
+  # The construction is ordinary English ("the way a card folds along the crease"). What is
+  # not ordinary is the rate: measured 2026-11-18 at 0.02/1k across 1,409 published documents
+  # (151 hits in 6,419,470 words; worst single document 1.21/1k, Dracula ch.18). A 46,305-word
+  # collection in this tree ran 71 of them - 1.53/1k, seventy-six times the corpus - and nine
+  # of its twenty-four chapters were over the threshold its own direction file declares.
+  # REPORT and not gate for the reason DEMOTED gives one tier up: a form English uses is only a
+  # tell at a rate, and a per-chapter cap here would fail the prose this book asks for.
+  'A27|protected comparison|3|2000|2|2000|[Tt]he way (you|people|a |an |the )'                            # corpus 0.02/1k; worst doc 1.21/1k; cap 1.5/1k keeps the reference passing
+  # A28 - the withheld-speech beat. Measured 2026-11-18 over 336 manuscripts (22 in this tree,
+  # 314 study controls) against 1,247 published documents: corpus 0.06/1k, p90 0.26, worst single
+  # document 1.33/1k. Three books here exceed that: validation-series/book-1 1.76/1k (27 hits),
+  # under-three-coats 1.60 (11), validation-series/book-2 1.40 (21); marrow-light sits at 0.94 (73).
+  # A person not answering is a scene, so this is only a tell at a rate - the DEMOTED sentence
+  # applied. Cap 2/1k is 1.5x the worst document; warn at the corpus band's edge.
+  'A28|withheld-speech beat|2|1000|1|1000|([Dd]id not|[Dd]idn.t) (say|move|answer|look|turn|stop)'  # corpus 0.06/1k; worst doc 1.33/1k
+  # A30 - the hand-placement beat. The numbering skips A29 on purpose: A29 was reserved for the
+  # gloss ("That was the part/thing"), measured at 0.39/1k in the collection against a worst
+  # published document of 0.44/1k, and DECLINED - a row that fires on nothing the corpus does not
+  # already contain would be a gate in name only (the D1/D2 lesson). This one clears: corpus
+  # 0.01/1k (worst document 0.73), while the-parts-still-warm runs 1.13/1k (147 hits) after
+  # running 0.25 (34 hits) in its own 2026-11-12 draft - a revision artifact grown 4.5x. One per
+  # 1,000 is the nearest representable cap above the worst document (1.5x would be 1.1/1k).
+  'A30|hand-placement beat|1|1000|1|2000|[Pp]ut (his|her|both) hands?'                          # corpus 0.01/1k; worst doc 0.73/1k
 )
 
 # ------------------------------------------------------------------ reporting
@@ -339,8 +363,9 @@ print_caps() {
     an=${rest%%|*}; rest=${rest#*|}
     aw=${rest%%|*}; rest=${rest#*|}
     wn=${rest%%|*}; rest=${rest#*|}
+    ww=${rest%%|*}; rest=${rest#*|}
     if [ -n "$wn" ]; then
-      capstr="$an per $aw words (warn above $wn per $aw)"
+      capstr="$an per $aw words (warn above $wn per $ww)"
     else
       capstr="$an per $aw words"
     fi
@@ -354,8 +379,9 @@ print_caps() {
     an=${rest%%|*}; rest=${rest#*|}
     aw=${rest%%|*}; rest=${rest#*|}
     wn=${rest%%|*}; rest=${rest#*|}
+    ww=${rest%%|*}; rest=${rest#*|}
     if [ -n "$wn" ]; then
-      capstr="$an per $aw words (warn above $wn per $aw)"
+      capstr="$an per $aw words (warn above $wn per $ww)"
     else
       capstr="$an per $aw words"
     fi

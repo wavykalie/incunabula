@@ -37,7 +37,7 @@ locked tools, and each entry underneath tells the story of one change.
 
 | file | sha256 (first 16) | role |
 |---|---|---|
-| `tools/prose/deslop-check.sh` | `e63d9ccda4f03b10` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 20 - A10a scoped to a report for mode: nonfiction, via conventions.py; 2026-11-06 - P1 floor; 2026-11-07 - P1 and A25 take the 667-word document floor, below which both report UNMEASURED) |
+| `tools/prose/deslop-check.sh` | `09b242725673f331` | density + slop caps, HARD / DEMOTED / REPORT tiers (Freeze 20 - A10a scoped to a report for mode: nonfiction, via conventions.py; 2026-11-06 - P1 floor; 2026-11-07 - P1 and A25 take the 667-word document floor, below which both report UNMEASURED; Freeze 26 - A27 report row, the protected comparison; Freeze 27 - A28 and A30 report rows, the withheld-speech and hand-placement beats) |
 | `tools/prose/check-world.py` | `8c388d1e6e58a699` | world-physics lexicon gate: reads <book>/WORLD_RULES.txt and fails a chapter that puts a ground vehicle, a wheeled cart, a road fuel or a rubber tyre in a city that carries on backs and flies its freight (Freeze 22 - added 2026-11-09 after two ground-vehicle leaks reached drafted chapters and were caught only by reading) |
 | `tools/prose/check-diction.py` | `98503511d2abfa43` | book-declared lexical register gate: reads <book>/DICTION_RULES.txt and fails a chapter that dates the page, or that lets the book's modern vocabulary fall below the floor it declared (Freeze 24 - added 2026-11-14 after a 130,003-word book passed every cap while reading like 1880: its direction file called the city Victorian and its world rules removed every modern object without putting one back) |
 | `tools/prose/check-uniformity.py` | `3bd21d61113564f2` | U1–U6 cross-chapter rows (Freeze 19 - mode reader via conventions.py) |
@@ -666,3 +666,127 @@ separate pronoun blocklist and the `FUNCTION` constant are deleted with it. No m
 moves — `verify-freeze.sh` reports FREEZE HOLDS — and the row keeps its name, its class and its
 verdict of none. Measurement and both versions of the table are in `CALIBRATION.md` under "The
 agency baseline, 2026-11-14" and its revision.
+
+
+
+### Change recorded 2026-11-18 — a new report row: `A27`, the protected comparison (Freeze 26)
+
+`A27` counts `the way you / the way people / the way a / the way the` and **cannot fail a book**.
+It joins `D1` and `D2` in the REPORT tier, and it belongs there for the same reason: on this form
+the two arms of the instrument do not separate.
+
+WHY IT EXISTS
+
+A 46,305-word collection in this tree used the construction 89 times. Its own direction file calls
+it "the book's grammar, not a tic to be sanded off" and permits thinning "only when it runs to
+four". Nine of twenty-four chapters were over four. Read on three chapters the form looked like a
+protected tic used well; read on all twenty-four it was the only comparison the book owned. That
+is a different finding, and it is the one a hostile reader can put a number on.
+
+THE MEASUREMENT
+
+1,409 published documents in `tools/prose/calibration/corpus`, 6,419,470 words: **151 hits,
+0.02/1k**. Worst single document 1.21/1k (Stoker, Dracula ch. 18 - 2 hits in 1,655 words); p90 and
+median both 0.00/1k. The collection above, after thinning, runs **71 hits in 46,305 words =
+1.53/1k** - 76x the corpus rate and above the worst published document. The cap is 3 per 2,000
+words (1.5/1k), which keeps the worst reference document passing with headroom; the warn band is
+2 per 2,000.
+
+WHY A REPORT AND NOT A GATE
+
+The construction is ordinary English, and any per-chapter cap fails published prose: Dracula ch. 18
+carries 2 hits in 1,655 words, and a 1,900-word chapter with four of them is not a defect, it is a
+paragraph that reached for the same clause twice. The DEMOTED block one tier up states the rule
+this row obeys - a form English uses is only a tell at a rate. So the row keeps a cap, a warn band
+and a number, and it cannot accuse.
+
+WHAT DID NOT CHANGE
+
+No gating row was added, no exit code moved, and no book's verdict can change because of this row.
+`HARD`, `DENSITY`, `DEMOTED` and the `D1`/`D2` report rows are untouched. The id is `A27` because
+`A1`-`A26` are taken.
+
+EVIDENCE AT THE TIME OF THE CHANGE
+
+`bash -n tools/prose/deslop-check.sh` passes. On the slop fixture the row prints its number and the
+fixture's verdict is unchanged, because a report row can neither rescue nor worsen a book. On
+chapter 19 of the collection (4 hits, 2,376 words, 1.68/1k) the row reports over its cap without
+failing the file. `bash tools/prose/verify-freeze.sh` reports FREEZE HOLDS with the re-key below.
+
+Manifest re-keyed: `deslop-check.sh` -> `d75b4e1cc8d197f5`. The matching catalogue entry is
+`skills/deslopify/references/style_guide.md`, "The Comparison That Becomes the Book's Only Engine",
+which carries the same measurements and the thinning rule - keep the clause that is the best in its
+paragraph, replace the rest with plain description, never with a different simile.
+
+
+### Change recorded 2026-11-18 — two report rows: `A28`, the withheld-speech beat, and `A30`, the hand-placement beat (Freeze 27)
+
+Both rows count a construction that ordinary prose uses, and **neither can fail a book**. They join
+`D1`, `D2` and `A27` in the REPORT tier. `A29` is deliberately unassigned: it was reserved for the
+gloss (*That was the part / thing*), which the same survey measured and declined.
+
+WHY THEY EXIST
+
+`A27` was added the same day for a form the collection's own direction file protects. The obvious
+next question was whether the tree holds the same shape in other words, so every manuscript in the
+checkout was counted — 22 under `test-books/` including archives, and 314 study controls — and each
+candidate was measured on the same 1,247 published documents (6,419,470 words) that the caps come
+from. Two constructions clear the test, where clearing means: a manuscript in this tree exceeds the
+worst published document, not merely the corpus median.
+
+THE MEASUREMENT
+
+`A28` — `did not / didn't` + `say, move, answer, look, turn, stop`. Corpus **0.06/1k** (p90 0.26,
+worst document **1.33/1k**). Above it: `validation-series/book-1` **1.76/1k** (27 hits),
+`under-three-coats` **1.60** (11), `validation-series/book-2` **1.40** (21). `marrow-light` 0.94
+(73). Cap **2 per 1,000** — 1.5× the worst document — warn above 1 per 1,000.
+
+`A30` — `put his / her / both hand(s)`. Corpus **0.01/1k** (p90 0.00, worst document **0.73/1k**).
+`the-parts-still-warm` runs **1.13/1k** (147 hits) and ran **0.25** (34 hits) in its own 2026-11-12
+draft: this one grew 4.5× during revision, which is why it was not visible in any first-draft
+reading. `under-three-coats` 0.87, `the-emptying` 0.65. Cap **1 per 1,000** — the nearest
+representable cap above the worst document, since 1.5× would be 1.1/1k — warn above 1 per 2,000.
+
+THE ROW NOT ADDED
+
+The gloss measured 18 hits in the collection, **0.39/1k**, roughly 490× the corpus rate and the
+reason this survey was run. It was declined: 5 hits across 5 published documents put the worst
+document at **0.44/1k**, so the book is inside the published distribution, and a cap that clears
+0.44 would clear the book too. A row there would print a number that cannot accuse — precisely the
+D1/D2 failure this block exists to prevent. It stays a direction-file rule (one per story), not a
+row.
+
+WHY REPORTS AND NOT GATES
+
+`A28` is how prose writes a pause; `A30` is how prose writes a hand. A per-chapter cap on either
+fails published chapters at the same rate the caps were built to tolerate, and the separation test
+that promoted `A25` does not apply: the AI control does not sit above the human distribution on
+either form. So both rows keep a cap, a warn band and a number, and cannot accuse.
+
+WHAT DID NOT CHANGE
+
+No gating row, no exit code, and no book's verdict can move because of these rows. `HARD`,
+`DENSITY`, `DEMOTED` and the `D1`/`D2`/`A27` report rows are untouched. The survey that produced
+them, including the eleven constructions checked and cleared, is
+`tools/prose/calibration/tic-survey-2026-11-18.md` with per-book data in the matching `.tsv`.
+
+EVIDENCE AT THE TIME OF THE CHANGE
+
+`bash -n tools/prose/deslop-check.sh` passes and the file carries no stray control byte. The first
+draft of these rows was written with a word-boundary escape that arrived as a literal backspace, so
+both rows counted zero everywhere while still printing a plausible 0.00. It was caught by scanning
+a synthetic fixture that says `put his hand` and `did not answer` on purpose, and the rows now use
+the same `[Tt]`-style case handling as `A27` instead of a boundary escape.
+
+On `the-parts-still-warm` chapter 12 the `A30` row reports **1.95/1k** (20 hits, 10,240 words)
+against its 1.00/1k cap; on `validation-series/book-1` chapter 11 the `A28` row reports **4.15/1k**
+(7 hits, 1,688 words) against 2.00/1k. Both print `--` and neither file's exit code moves -
+book-1 and the-parts-still-warm both still exit 0, because a report row cannot set a verdict.
+
+`bash tools/prose/verify-freeze.sh` reports FREEZE HOLDS with the re-key below, and
+`bash tools/prose/validate-controls.sh` exits 0 with ALL CONTROLS PASS; its REPORT-tier control
+lists the ids and printed `D1,D2,A27,A28,A30 cannot fail anything`. Control 3 (the
+AI-discrimination arm) skipped for want of an AI control at that path, which is the one arm of the
+suite this change is not evidenced by.
+
+Manifest re-keyed: `deslop-check.sh` -> `09b242725673f331`.
