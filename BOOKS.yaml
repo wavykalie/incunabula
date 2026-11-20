@@ -172,3 +172,11 @@ books:
     status: fixture
     expected_manuscript: true
     note: "11 chapters, 14,962 words. 'validation 2'. See book-1. (Registered 2026-11-14)"
+
+  - path: advent-horror
+    title: "Terror Before Christmas"
+    ductus: kalie-kirch
+    author: "Kalie Kirch"
+    status: drafting
+    expected_manuscript: true
+    note: "Registered at creation by init-book.py. (2026-11-17)"
