@@ -89,7 +89,7 @@ required artifact that was never produced is reported as a failure — not added
 list of things to do later.
 
 - **The canon layer precedes phase 0.** `CANON_LEDGER.yaml` at both series and book
-  scope, the live voice contracts, and `maintenance/PRUNING_LOG.md` must exist before
+  scope, the live voice specifications, and `maintenance/PRUNING_LOG.md` must exist before
   anything else starts. Finding them missing at a later phase is a REPAIR, and it gets
   recorded as handled late rather than as if it had been there all along.
 - **Check-in, before dispatch.** Open the primary state file, the ledger, the recent
@@ -98,7 +98,7 @@ list of things to do later.
   Fold duplicates into the fact IDs that already exist. Stamp provenance and a
   verification date.
 - **Check-out, after the work.** Write the primary state, the ledger, the voice
-  contract, and the document registry. Append to the pruning log, which is append-only.
+  specification, and the document registry. Append to the pruning log, which is append-only.
   Re-run the phase's gate before anyone claims the phase advanced.
 - **Contradictions are surfaced, never smoothed.** Hold both values with their sources,
   open a conflict record, and escalate anything that moves content boundaries, changes
@@ -116,13 +116,13 @@ list of things to do later.
 
 `maintenance-protocol.md` holds the operational detail: the four modes, the check-in and
 check-out sequences, how duplicates are recognised, how stale facts are handled, and the
-point at which the agent must stop and ask. The ledger, intake, and voice-contract
+point at which the agent must stop and ask. The ledger, intake, and voice-specification
 schemas sit alongside it.
 
 ## Phase notes
 
 **Phase 0 — Intake.** Take the user's idea, infer the assumptions, persist the brief.
-Maintenance gate: stand up `CANON_LEDGER.yaml`, the live voice contracts, and
+Maintenance gate: stand up `CANON_LEDGER.yaml`, the live voice specifications, and
 `maintenance/PRUNING_LOG.md` here. A project that reaches phase 1 without them has
 already broken the gate.
 
@@ -131,8 +131,8 @@ already broken the gate.
 **Phase 2 — Architecture.** Outline, emotional curve, opening strategy, the promise the
 ending has to keep.
 
-**Phase 3 — Drafting.** Resolve the author first: `python tools/ductus.py contract
-<book-root>`. A resolved contract is the voice these chapters are written as, and it
+**Phase 3 — Drafting.** Resolve the author first: `python tools/ductus.py voice
+<book-root>`. A resolved voice is the voice these chapters are written as, and it
 governs the book-level register; a REFUSED one stops the phase, and an UNASSIGNED book is
 drafted under the root `COMMONPLACE.md` alone, recorded as such. Write in chapter blocks
 and let the blocks differ from one another structurally. Maintenance gate: check in before each block, check out after it,

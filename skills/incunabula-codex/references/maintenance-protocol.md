@@ -8,7 +8,7 @@ behind the author's back.
 
 - **NEW** — no project state, no manuscript.
 - **RESUME** — Incunabula state exists and the user wants to keep going.
-- **UPGRADE** — a project exists but predates the canon ledger or the voice contracts.
+- **UPGRADE** — a project exists but predates the canon ledger or the voice specifications.
 - **REPAIR** — the state or the ledger is malformed, contradictory, or out of step with the
   files. Stop before overwriting anything and report the boundary of the damage.
 
@@ -27,7 +27,7 @@ delivery files.
    manuscript, research, and decisions.
 5. Facts that live only in planning documents come in as `planned`. Facts established in
    approved prose come in as `active`.
-6. If `voice-matrix.md` exists, extend it with the chapter and fact-presentation contracts.
+6. If `voice-matrix.md` exists, extend it with the chapter and fact-presentation specifications.
    Create `VOICE_CONTRACT.md` only when extending the existing file would make it less
    coherent than a fresh one.
 7. Write `maintenance/MIGRATION_REPORT.md` listing what was imported, which state file was
@@ -54,7 +54,7 @@ delivery files.
 ## 4. Check-out
 
 1. Write the primary state file.
-2. Write `CANON_LEDGER.yaml` and the human-readable voice contract.
+2. Write `CANON_LEDGER.yaml` and the human-readable voice specification.
 3. Append a session entry: decisions, files changed, facts merged, conflicts, next step.
 4. Append to `maintenance/PRUNING_LOG.md`.
 5. Register new documents with their authority and status.
@@ -138,10 +138,10 @@ gate over missing inputs passes.
 
 | Phase | Reads |
 |---|---|
-| Drafting | primary state, ledger, foundation, outline, voice contract, relevant entities |
+| Drafting | primary state, ledger, foundation, outline, voice specification, relevant entities |
 | Editing | all of the above, plus conflicts, supersession links, and the pruning log |
 | Continuity audit | entity state first, then ledger conflicts, knowledge flow, timeline, manuscript evidence |
-| Scoring | the current manuscript and state; the ledger only to check intended contracts, never to inflate a score |
+| Scoring | the current manuscript and state; the ledger only to check intended specifications, never to inflate a score |
 | Packaging | current state, approved manuscript, live editorial files; archived working documents only when tracing provenance |
 
 ## 9. Where the agent has to stop and ask

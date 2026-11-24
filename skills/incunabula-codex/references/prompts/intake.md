@@ -8,6 +8,7 @@ gets written into `ASSUMPTIONS.md` so the author can see it and push back.
 
 ## What you leave behind
 
+- `maintenance/IDEA.md` — the author's own sentence, before anything touches it
 - `ASSUMPTIONS.md`
 - `artifacts/00-brief.md`
 - `artifacts/01-market-map.md`
@@ -25,6 +26,27 @@ Say what the reader is being promised.
 
 Then work out what makes this version *legible* to the market it wants — legible, not
 generic. Those are different goals and only one of them is worth having.
+
+## Keep the idea in the author's words
+
+Before you rewrite anything, write what the author actually said into `maintenance/IDEA.md`,
+verbatim, in their phrasing, with the date. A paragraph is enough. Do not tidy it, do not add
+the genre, do not turn it into a logline: the file's entire value is that this engine has
+not touched it.
+
+That file is the input to `tools/blind-packet.py`, which builds the packet a fresh context —
+another model, a fresh subagent, or a person — turns into the book's world. A packet built
+from `premise.md` is already contaminated: by the time a premise exists, these phases' nouns
+are in it, and a world grown from them comes back as a contract, a debt, or a court. So the
+raw sentence has to survive somewhere untouched, and this is where.
+
+If the author gave no sentence — only a title, or a genre, or a feeling — ask for one
+sentence in their own words and record the answer. Carrying that question into the session is
+cheaper than inventing an answer and discovering it three phases later.
+
+Never overwrite this file later in the run. If the author revises the idea, append the new
+wording under a date; the history of the sentence is the record of what the book was asked
+to be.
 
 ## Brief contents
 
@@ -53,11 +75,15 @@ foundation phase.
 
 ## Before you finish
 
-Run the maintenance check-in. `CANON_LEDGER.yaml`, the live voice contracts, and
+Confirm `maintenance/IDEA.md` exists and carries the author's wording rather than a rewrite.
+The blind packet reads it verbatim, and an empty file is the one failure that shows up much
+later, as a world that sounds like the tooling.
+
+Run the maintenance check-in. `CANON_LEDGER.yaml`, the live voice specifications, and
 `maintenance/PRUNING_LOG.md` must exist before phase 1 is dispatched.
 
 Also settle the author this book is drafted as, because phase 3 will need the answer:
-`python tools/ductus.py contract <book-root>`. A resolved voice means `ductus/<slug>/` is
+`python tools/ductus.py voice <book-root>`. A resolved voice means `ductus/<slug>/` is
 read before every prose phase and its digest recorded in the state file's `voice:` block;
 `UNASSIGNED` means the root `COMMONPLACE.md` alone, and that absence is recorded rather
 than left blank; a `REFUSED` assignment stops the run at intake rather than at the first

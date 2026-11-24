@@ -2,7 +2,7 @@
 
 `CANON_LEDGER.yaml` is the deduplicated memory layer. It replaces nothing — not the
 manuscript, not the foundation, not the outline, not the Voice Matrix, not the entity
-tracker. What it does is answer, for every phase, which version of a fact or a contract
+tracker. What it does is answer, for every phase, which version of a fact or a specification
 currently holds and where that version came from.
 
 ## Schema
@@ -119,7 +119,7 @@ Resolving a conflict keeps both values and both provenances. Record the decision
 what resolved it, and the date. Deleting the losing evidence is not a resolution.
 `archived` is a document status, not a fact status.
 
-## The voice contract block
+## The voice specification block
 
 The `voice_contract` section is the machine-readable index; the readable rules stay in
 `voice-matrix.md` or `VOICE_CONTRACT.md`. A fact-presentation profile must distinguish at

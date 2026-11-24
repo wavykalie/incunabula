@@ -15,7 +15,7 @@ Without it, every session starts from nothing. With it, fifty sessions build one
 
 ## PROJECT_STATE.yaml
 
-**Scope contract (state files).** This skill owns `PROJECT_STATE.yaml` — the session
+**Scope split (state files).** This skill owns `PROJECT_STATE.yaml` — the session
 scope: chapters, scores, decisions, sessions, handoffs. The engine owns `STATE.yaml` —
 the engine scope: phase position and session mode. Each writes only its own file; when
 both exist, `incunabula`'s mode rule picks the primary and neither file is deleted or
@@ -95,10 +95,10 @@ Run whenever work begins.
    attributed to; the commonplace book says what has already been chosen and declined.
    A session that starts without both is working from memory, which is the failure this
    layer exists to end.
-1. Resolve the voice this book is drafted under: `python tools/ductus.py contract
+1. Resolve the voice this book is drafted under: `python tools/ductus.py voice
    <book-root>`. `UNASSIGNED` means the root `COMMONPLACE.md` is the only taste ledger in
-   play; a resolved contract means that voice's `ductus/<slug>/COMMONPLACE.md` is read as
-   well; `REFUSED` stops the session before it starts, because a contract nobody authored
+   play; a resolved voice means that voice's `ductus/<slug>/COMMONPLACE.md` is read as
+   well; `REFUSED` stops the session before it starts, because a specification nobody authored
    cannot govern the work and a run has to know which of the three it is in. Record the
    state and the digests in the state file's `voice:` block.
 2. Read the state file.
@@ -126,8 +126,8 @@ Run whenever work stops.
    earned by one voice that turns out to hold for another is merged deliberately and
    dated in `ductus/PROMOTIONS.md`, and `python tools/ductus.py cross` reports an entry
    two ledgers both carry, because a preference in both has stopped being either one's.
-   Write the contract digest `contract` printed beside the entries, so a decision is
-   attributable to the exact contract it was made under.
+   Write the voice digest `voice` printed beside the entries, so a decision is
+   attributable to the exact voice it was made under.
 4. Tell the user what got done, what is still open, and what the logical next step is.
 5. Warn about any handoff that has been open more than two sessions.
 

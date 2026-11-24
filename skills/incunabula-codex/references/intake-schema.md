@@ -1,6 +1,6 @@
-# Intake Contract
+# Intake Interview
 
-Invoke this contract when a project begins, and only then — or when an upgrade turns up a
+Invoke this specification when a project begins, and only then — or when an upgrade turns up a
 decision that was never actually made. Ask in short rounds. If the project files already
 answer a question, do not ask it again.
 
@@ -20,7 +20,7 @@ Do not ask the user to confirm or restate it, do not summarise it back, and do n
 round for it. At the end of the project, note which preferences applied and which did not
 fit — the ones that did not fit are how the file gets better.
 
-`tools/prose/PREFERENCES.md` is the full contract, including why nothing enforces this.
+`tools/prose/PREFERENCES.md` is the full specification, including why nothing enforces this.
 
 ## Round 1 — What the book is
 
@@ -141,7 +141,7 @@ aesthetic_contract:
 ```
 
 Mirror this into `ENTITY_STATE.yaml` under `physical.aesthetic` (case-keeper schema) so
-the contract survives to the chapters that will violate it. A reintroduced anti-trope is
+the specification survives to the chapters that will violate it. A reintroduced anti-trope is
 a continuity error like any other.
 
 ## Round 5 — Persistence
@@ -167,8 +167,8 @@ Once the answers are in:
 1. Write `ASSUMPTIONS.md`, labelling every inference as an inference.
 2. Write or update `PROJECT_STATE.yaml`.
 3. Produce the foundation and architecture artifacts the active phase calls for.
-4. Write the voice contract, or extend the one that already exists.
-5. Mirror each character's Physique & Aesthetic Contract into `ENTITY_STATE.yaml` under
+4. Write the voice specification, or extend the one that already exists.
+5. Mirror each character's Physique & Aesthetic Specification into `ENTITY_STATE.yaml` under
    `physical.aesthetic`, anti-trope list included.
 6. Seed `CANON_LEDGER.yaml` from the decisions, foundation, outline, existing manuscript,
    research, and entity state — keeping the provenance of each entry.

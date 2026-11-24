@@ -78,7 +78,7 @@ usage:  tools/ductus.py <command> [--root DIR]
                                            voice's — with digests, or UNASSIGNED. A book
                                            assigned to a voice whose contract is a
                                            skeleton is REFUSED, and so is a declared
-                                           series with no contract: a phase may not draft
+                                           series with no voice: a phase may not draft
                                            under layers nobody authored.
   cross                                    report an entry held by two ledgers, and two
                                            contracts that are the same voice
@@ -911,8 +911,8 @@ def cmd_contract(root, args):
         untitled = thin_sections(read_text(child))
         if untitled:
             print(f"ductus: REFUSED — {_relpath(root, child)} is a skeleton "
-                  f"({', '.join(untitled)}). A book contract under a real voice is still "
-                  "a contract nobody authored: author it, or delete it so the book is "
+                  f"({', '.join(untitled)}). A book-level voice under an authored parent "
+                  "is still a voice nobody wrote: write it, or delete it so the book is "
                   "openly drafted under the parent alone.")
             return 1
 
@@ -942,17 +942,17 @@ def cmd_contract(root, args):
         about = ""
     print(f"ductus: {rel} is drafted under {slug}{about}")
     if child:
-        print(f"  book contract:   {_relpath(root, child)}  sha256:{digest(child)}")
+        print(f"  book voice:   {_relpath(root, child)}  sha256:{digest(child)}")
     if series:
-        print(f"  series contract: {_relpath(root, series)}  sha256:{digest(series)}")
+        print(f"  series voice: {_relpath(root, series)}  sha256:{digest(series)}")
     if child or series:
         print(f"  parent:          {ddir}/{slug}/{CONTRACT}  sha256:{digest(parent)}")
     else:
-        print(f"  contract: {ddir}/{slug}/{CONTRACT}  sha256:{digest(parent)}")
+        print(f"  voice:    {ddir}/{slug}/{CONTRACT}  sha256:{digest(parent)}")
     print(f"  ledger:   {ddir}/{slug}/{LEDGER}  "
           f"{os.path.getsize(ledger)} byte(s)  sha256:{digest(ledger)}")
     print("  read before: drafting, revision, auditing and scoring. Record these digests "
-          "in the session ledger so a result is attributable to the contract it was "
+          "in the session ledger so a result is attributable to the voice it was "
           "drafted under. Not packaging: the query letter and cover copy are written in "
           "the imprint's register, not the book's.")
     return 0
@@ -1479,7 +1479,7 @@ def selftest():
         rc, out = captured(cmd_contract, tmp, ["some-book"])
         ok(rc == 0 and "is drafted under folio" in out and "sha256:" in out,
            "contract: an authored contract resolves with its digest")
-        ok(re.search(r"contract: \S+\s+sha256:[0-9a-f]{12}", out) is not None
+        ok(re.search(r"voice:\s+\S+\s+sha256:[0-9a-f]{12}", out) is not None
            and re.search(r"ledger:\s+\S+\s+\d+ byte\(s\)\s+sha256:[0-9a-f]{12}", out)
            is not None,
            "contract: both digests are printed in the documented form")
@@ -1616,7 +1616,7 @@ def selftest():
         write_text(serie, series_text)
         assign("folio", "the-sequence")
         rc, out = captured(cmd_contract, tmp, ["some-book"])
-        ok(rc == 0 and "series contract" in out and "the-sequence" in out,
+        ok(rc == 0 and "series voice" in out and "the-sequence" in out,
            "contract: a book resolves through its series, and the report names the layer")
         _r, _s, resolved_s, err_s = _resolved_contract(tmp, "some-book")
         ok(err_s is None and resolved_s == serie,
@@ -1655,7 +1655,7 @@ def selftest():
         print(f"SELF-TEST FAILURE — {len(failed)} of {len(checks)} assertions failed.")
         return 1
     print(f"SELF-TEST PASS — {len(checks)} assertions (creation, slug safety, the "
-          "unauthored report and its clearing, the contract interface and every "
+          "unauthored report and its clearing, the voice interface and every "
           "refusal path, the book/series/voice resolution and its precedence, "
           "isolation, missing ledger, stray dir, assignment, development "
           "counts, leak detection, dispatch).")
@@ -1680,7 +1680,7 @@ def main():
         return selftest()
     table = {"new": cmd_new, "check": lambda r, a: cmd_check(r, a),
              "log": cmd_log, "audit": cmd_audit, "calibrate": cmd_calibrate,
-             "contract": cmd_contract,
+             "voice": cmd_contract, "contract": cmd_contract,  # old name, kept for scripts
              "cross": lambda r, a: cmd_cross(r, a), "list": cmd_list}
     if cmd not in table:
         print(f"ductus: unknown command {cmd}")

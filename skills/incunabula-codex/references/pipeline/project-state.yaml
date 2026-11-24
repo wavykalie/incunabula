@@ -56,19 +56,19 @@ project:
 # A book may be assigned to a *ductus* - an authorial voice a creator made - with the
 # `ductus:` key in BOOKS.yaml. That key is the assignment; this block records what the
 # assignment RESOLVED TO at the time, which is what makes a result attributable to a
-# contract rather than to a convention. Resolve it with:
+# declaration rather than to a convention. Resolve it with:
 #
-#     python tools/ductus.py contract <book-root>
+#     python tools/ductus.py voice <book-root>
 #
-#   exit 0, resolved   writes the slug and a sha256 for the contract and the ledger
+#   exit 0, resolved   writes the slug and a sha256 for the specification and the ledger
 #   exit 0, UNASSIGNED no assignment: drafted under the root COMMONPLACE.md alone, which
 #                      is where the whole catalogue was drafted. Record it as a state,
 #                      not as a blank - a run nobody can read back is a run nobody can
 #                      attribute.
-#   exit 1, REFUSED    assigned to a voice whose contract is still a skeleton, or which
+#   exit 1, REFUSED    assigned to a voice whose specification is still a skeleton, or which
 #                      has no ledger. The phase stops; it does not fall back silently.
 #
-# A contract that resolves is read before drafting, editing, auditing, scoring and
+# A specification that resolves is read before drafting, editing, auditing, scoring and
 # packaging, and it governs the BOOK-LEVEL register. Its own taste ledger lives at
 # ductus/<slug>/COMMONPLACE.md, and decisions taken under it are recorded there rather
 # than in the root ledger.

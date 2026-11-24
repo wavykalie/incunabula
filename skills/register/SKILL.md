@@ -21,9 +21,9 @@ must already pass the prose gate; do not run line-level prose work here.
 1. Read the chapter: `manuscript/chapters/chapter-[N].md`.
 2. Read `voice-matrix.md` — the per-character voice cards and the differentiation matrix.
 3. Read `foundation.md` for character relationships, register, and social class.
-4. Resolve the ductus, if the book has one: `python tools/ductus.py contract <book-root>`.
-   A `REFUSED` contract stops the pass. When one is in force, the narrator's register in
-   this chapter is measured against that contract's benchmark lines, and its **Refusals**
+4. Resolve the ductus, if the book has one: `python tools/ductus.py voice <book-root>`.
+   A `REFUSED` specification stops the pass. When one is in force, the narrator's register in
+   this chapter is measured against that specification's benchmark lines, and its **Refusals**
    are binding on dialogue too.
 
 ## The Blind Sort Test
@@ -87,7 +87,7 @@ Append to the chapter's evaluation file and record the pass:
 
 **Speaking characters this chapter:** [names]
 **Blind Sort:** pass / fail
-**Narrative register vs ductus:** [contract slug, or UNASSIGNED — when a contract is in force, whether this chapter's narration is recognisably the same hand as its benchmarks]
+**Narrative register vs ductus:** [specification slug, or UNASSIGNED — when a specification is in force, whether this chapter's narration is recognisably the same hand as its benchmarks]
 | Pair | Distinguishing markers | Verdict |
 |------|------------------------|---------|
 | A vs B | diction, syntax, refusal | pass |

@@ -17,7 +17,7 @@ never arrives.
 Before the first line of a chapter, resolve what you are writing as:
 
 ```bash
-python tools/ductus.py contract <book-root>
+python tools/ductus.py voice <book-root>
 ```
 
 **Resolved.** `ductus/<slug>/ductus.md` is in force, and it is not advice. Its
@@ -33,7 +33,7 @@ deviation you judge necessary is recorded as a decision in that voice's
 **UNASSIGNED.** No voice is declared for this book. Everything below stands alone, which
 is how the whole catalogue was written.
 
-**REFUSED.** The assignment names a voice whose contract is a skeleton. Stop — do not
+**REFUSED.** The assignment names a voice whose specification is a skeleton. Stop — do not
 draft a chapter into a voice nobody authored and let the assignment stand as if it had
 governed. Report it and take the phase problem to the orchestrator.
 

@@ -1,6 +1,6 @@
 ---
 name: incunabula
-description: The Incunabula production engine. Runs a book from a one-line idea to a finished manuscript through seventeen gated phases, coordinating the specialist skills while it holds project state, canon, voice contracts, and maintenance. Never writes prose itself.
+description: The Incunabula production engine. Runs a book from a one-line idea to a finished manuscript through seventeen gated phases, coordinating the specialist skills while it holds project state, canon, voice specifications, and maintenance. Never writes prose itself.
 ---
 
 # Incunabula — the orchestrator
@@ -57,7 +57,7 @@ itself. Run it after any change to the guidance.
 
 ## The durable layer
 
-The engine keeps its seventeen phases. Around them sit four contracts that must exist
+The engine keeps its seventeen phases. Around them sit four standing records that must exist
 before phase one and stay current throughout.
 
 **Modes.** Every session starts by establishing which one it is: **NEW**, **RESUME**,
@@ -69,7 +69,7 @@ for the rest of the run. Re-deciding it every session is how two state files bec
 process weight, and it is an error class nobody catches. Never delete or silently overwrite
 the other.
 
-**Scope contract (state files).** The engine owns `STATE.yaml` — the engine scope: phase
+**Scope split (state files).** The engine owns `STATE.yaml` — the engine scope: phase
 position and session mode. `press-ledger` owns `PROJECT_STATE.yaml` — the session scope:
 chapters, scores, decisions, sessions, handoffs. Each writes only its own file; the
 primary-selection rule above is the referee when both exist. (Do not merge the two: the
@@ -79,26 +79,26 @@ scopes are different.)
 voice, character voices, chapter narration, fact-presentation voice, content boundaries,
 and persistence preferences before any foundation work.
 
-**Canon and voice.** `CANON_LEDGER.yaml`, the active voice contracts, and
+**Canon and voice.** `CANON_LEDGER.yaml`, the active voice specifications, and
 `maintenance/PRUNING_LOG.md` are created or reconciled before the first phase is
 dispatched. A layer built late is recorded as a repair, never backdated.
 
 **The author's voice — the ductus.** A book may be drafted under a *ductus*: an authorial
-voice a creator made, held in `ductus.yaml` and `ductus/<slug>/` (a contract an agent
+voice a creator made, held in `ductus.yaml` and `ductus/<slug>/` (a specification an agent
 pilots, plus that voice's own developing taste ledger). Resolve it before phase 2.5 and
 again before any prose work, and read what it says:
 
 ```bash
-python tools/ductus.py contract <book-root>
+python tools/ductus.py voice <book-root>
 ```
 
 | what it prints | what the engine does |
 |---|---|
 | `UNASSIGNED` (exit 0) | no `ductus:` in `BOOKS.yaml`. The book is drafted under the root `COMMONPLACE.md` alone — the state every book in the catalogue was drafted in. Say so in the session record; nobody may read the run as having had a voice. |
-| `REFUSED` (exit 1) | assigned to a voice whose contract is still a skeleton, or which has no ledger. **The phase stops.** The engine does not draft under a voice nobody authored, and it does not quietly fall back to the root ledger — a run that claims a voice it did not have is worse than a run with none. |
-| resolved (exit 0) | the contract and ledger paths with a sha256 digest each. Record the digests in the session ledger, so a result is attributable to the exact contract it was drafted under. |
+| `REFUSED` (exit 1) | assigned to a voice whose specification is still a skeleton, or which has no ledger. **The phase stops.** The engine does not draft under a voice nobody authored, and it does not quietly fall back to the root ledger — a run that claims a voice it did not have is worse than a run with none. |
+| resolved (exit 0) | the specification and ledger paths with a sha256 digest each. Record the digests in the session ledger, so a result is attributable to the exact voice it was drafted under. |
 
-Where a contract governs, it governs the **book-level register** — how the prose sounds,
+Where a specification governs, it governs the **book-level register** — how the prose sounds,
 what it refuses, how it breaks under pressure. The per-character specifications stay
 `voice-matrix.md`'s job, and the two are not rivals: the ductus is upstream on register
 the way the foundation is upstream on character. A conflict is resolved in the ductus's
@@ -109,12 +109,12 @@ ledger, not the root one — nothing crosses between voices except a dated merge
 
 Carry the voice across sessions with the book's own log. Before drafting a chapter, run
 `python tools/ductus.py log <book-root> --chapter N --tone "…" --register "…" --survives "…"`;
-the entry records the contract digest and what the next session must preserve. On resume,
-read `maintenance/DUCTUS_LOG.md` beside the contract. `python tools/ductus.py audit
+the entry records the voice digest and what the next session must preserve. On resume,
+read `maintenance/DUCTUS_LOG.md` beside the specification. `python tools/ductus.py audit
 <book-root>` fails if a chapter has no entry, if a quoted survival claim is missing from its
-chapter, or if the contract changed after the entry was written; `tools/check-ductus.py` is
+chapter, or if the specification changed after the entry was written; `tools/check-ductus.py` is
 the gate-suite wrapper, and `python tools/ductus.py calibrate <book-root>` measures the book
-against the numeric lines the contract declares. A book assigned to a ductus without a
+against the numeric lines the specification declares. A book assigned to a ductus without a
 current log is not ready for the next chapter.
 
 **Host contract.** Read the host contract at start and resume, and confirm the host can
@@ -133,10 +133,10 @@ grade C is diagnostic only and cannot support an independent publication claim.
 ### During a run
 
 Keep the phase order, the specialist dispatches, the gates, and the revision taxonomy
-intact. Read the active canon, the voice contracts, and — where the book has one — its
+intact. Read the active canon, the voice specifications, and — where the book has one — its
 ductus before drafting, editing, auditing, or scoring. Resolve it with
-`python tools/ductus.py contract <book-root>` and record the digests it prints; a
-`REFUSED` contract stops the phase outright. After every chapter block, revision, audit, score, or user decision,
+`python tools/ductus.py voice <book-root>` and record the digests it prints; a
+`REFUSED` voice stops the phase outright. After every chapter block, revision, audit, score, or user decision,
 run a maintenance check-in: merge duplicates, add provenance, scope facts that have
 evolved, and flag contradictions without ever overwriting canon silently. Book-scoped and
 chapter-scoped changes are scoped facts, not automatic contradictions. The compact
@@ -145,11 +145,49 @@ portable workflow explicitly.
 
 ### After the work
 
-Run a maintenance check-out: update the state, canon, voice contract, document registry, and
+Run a maintenance check-out: update the state, canon, voice specification, document registry, and
 the append-only pruning log. Keep rejected conflict values with their provenance and resolve
 them only by explicit decision. Archive only what is clearly superseded, recording the
 original path, the archive path, the replacement, the reason, and the date. Never call the
 book finished until the proof pulls and the state-canon-voice consistency gate both pass.
+
+---
+
+## Worlds are not filings
+
+**Added 2026-11-23, after the second book in a row arrived with a legal instrument where a
+game should have been.** The cause was not the genre. It was this file: before Phase 2 the
+engine names its own artifacts *contract*, *ledger*, *gate*, *digest*, and *standing*, and
+it had no worldbuilding step at all. A pilot that reads the pipeline before it invents a
+world invents the pipeline.
+
+So a world is now a required artifact, and the order of invention is fixed:
+
+- **`world.md` exists before `forme` runs.** Three candidate world-engines, each in plain
+  language, one chosen, the other two kept with the reason they lost.
+- **The first candidate is the genre's own engine.** A LitRPG's world is a progression
+  system: levels, stats, classes, and what they cost. A mystery's is an information
+  asymmetry. A romance's is a social obstacle. If the first engine named is administrative,
+  the run has imported this file and starts again.
+- **An administrative engine is named and discarded.** A contract, a debt, a charter, a
+  writ, a court, a permit, a title: these are this tooling's filing system wearing costume.
+  "The sentence is a debt instrument" is not a world; it is a `STATE.yaml` with weather.
+  Record it as the discarded candidate, because the next pilot will reach for it too, and
+  the record is what stops it.
+- **Every engine answers two physical questions.** What does the world do with this family
+  that it could not do with anyone else? What does their labour produce that the surface
+  cannot live without? A world that cannot answer the second has procedure in it, not
+  politics.
+- **The blind packet is how a world is found; `--gate` is how a contaminated one is
+  refused.** `python tools/blind-packet.py <book-root>` builds the premise with none of this
+  system's words in it, for a fresh context, a different model, or a person. `--gate` then
+  judges the `world.md` that comes back, and the Phase 2 gate will not pass without it. See
+  `references/fresh-eyes.md`. Run the packet before Phase 2 whenever the premise was written
+  by this pipeline.
+
+**What is not renamed.** The *host contract* keeps its name: it describes a real interface
+between an agent and a host and has no fictional analogue. The rename covers the words a
+pilot could mistake for a world — voice, book, series, scope, and length.
 
 ---
 
@@ -217,7 +255,7 @@ reverses. None replaces another: the scanner never holds two chapters at once, t
 cross-chapter checks never see a bad sentence, and all four must be green.
 
 **The suite runs as one command:** `bash tools/run-gates.sh <book-root>`. It runs every
-gate — prose, narrative, length, contract-vs-plan, research, pass evidence — and exits nonzero if any gate
+gate — prose, narrative, length, declared-length-vs-plan, research, pass evidence — and exits nonzero if any gate
 fails **or does not run**. Exit 0 is CLEAR; exit 1 is FAIL; exit 2 is NOT CLEAR (a gate did
 not run or declined to judge) and blocks the phase exactly like a failure. A phase may not
 claim a gate passed without a `run-gates.sh` verdict on record.
@@ -281,9 +319,9 @@ perfectly, which is why collator's full pass runs before the row is consulted.
 
 Required at every phase, and never satisfied by a layer that was never created.
 
-- `CANON_LEDGER.yaml`, the active voice contracts, and the pruning log exist. Their absence at a later phase is a repair, recorded as run late.
+- `CANON_LEDGER.yaml`, the active voice specifications, and the pruning log exist. Their absence at a later phase is a repair, recorded as run late.
 - Check-in before the work: state, canon, recent session entries, and the phase prompt read; chapter status and word counts reconciled against the actual files; a changed-file scan done; duplicates merged; provenance and verification stamps added. The mechanical half is `bash tools/preflight.sh` plus `python tools/check-registry.py` — run them and record their verdict instead of re-deriving it by hand, and let the runner's own phase record stand as the history entry for a phase that did not run.
-- Check-out after the work: state, canon, voice contract, document registry, and pruning log updated, and the phase gate re-run before progress is claimed.
+- Check-out after the work: state, canon, voice specification, document registry, and pruning log updated, and the phase gate re-run before progress is claimed.
 - A session log entry exists for the session, and a history entry exists for every phase — including the phases that did not run. A skipped step is recorded as skipped.
 - The primary state file parses under a real parser. A file that will not parse means no downstream gate could have read it: report, repair, re-verify.
 - No contradiction resolved silently. Both values kept with provenance, a conflict record raised, and anything touching content boundaries, ending ambiguity, or a character's core identity escalated rather than decided.
@@ -292,7 +330,7 @@ Required at every phase, and never satisfied by a layer that was never created.
 - Gate evidence recorded: the `run-gates.sh` summary table — command, exit status, documents scanned, failing rows with rule identifiers — and the control run. A gate without a recorded verdict is a gate that did not run.
 - Every phase-level pass is complete only with its artifact file on disk: `register` leaves the blind-sort table with its verdict; `catchword` leaves hook/pull scores and the hook-type log; `quoin` leaves the operation log (the diagnosis, the operations applied, and the operations declined with their reasons); `composing` leaves the diff-review note; `proof-panel` leaves persona verdicts, the tic scan, and the independence grade; `proof-pull` leaves the round log. A claim without the artifact is a FAIL, not a pass. (`tools/check-pass-evidence.py` verifies presence; it reads no prose and judges no manuscript.)
 - Progress is tracked as gated words — words in chapters with complete pass files. Chapters-drafted is informational.
-- No chapter under 2,000 words or 50% of its planned length without a recorded waiver (reason, outline actuals updated, session-log entry). A waiver is not a routine device: a second consecutive waiver, or one that leaves the running total behind the outline's plan (row `L2` of `tools/check-progress.py` reports that running total; row `C1` there fails a contract that contradicts the outline's plan, so the band cannot be shrunk to fit the output), is a stop-the-line event escalated to the human. A recurring waiver is itself the pattern.
+- No chapter under 2,000 words or 50% of its planned length without a recorded waiver (reason, outline actuals updated, session-log entry). A waiver is not a routine device: a second consecutive waiver, or one that leaves the running total behind the outline's plan (row `L2` of `tools/check-progress.py` reports that running total; row `C1` there fails a declared length that contradicts the outline's plan, so the band cannot be shrunk to fit the output), is a stop-the-line event escalated to the human. A recurring waiver is itself the pattern.
 - Grade-C evaluations are diagnostic only and cannot advance phases. Where no independent critic exists, checkpoints belong to the human; self-votes stand in for nobody.
 
 ---
@@ -304,9 +342,16 @@ Each arrow below must be earned, not assumed. **Every "gate passes" below means:
 requires.** A FAIL (1) or a NOT CLEAR (2) blocks the transition; a run that was skipped
 proves nothing and is never recorded as a pass.
 
+**The one exception is the world gate.** It belongs to 2 → 2.5, and by definition it runs
+before the book has chapters, so `run-gates.sh` (which needs `manuscript/chapters/`) cannot
+carry it: `python tools/blind-packet.py <book-root> --gate` is the command, its exit 0 is
+the pass, and its printed verdict is pasted into the phase record as the row's evidence.
+Where a book does have chapters and still carries `world.md`, `run-gates.sh` runs the same
+check as a hygiene row.
+
 - **1 → 1.5** market study with comps, genre conventions, a length target, an engagement type, and explicit user approval of direction.
 - **1.5 → 2** three to five personas; a primary that drives writing and a hostile that drives evaluation; deal-breakers and triggers on each.
-- **2 → 2.5** character profiles with wound, lie, and arc for every principal, and the disorder devices (irrelevant obsession, distortion, unprompted memory, failed emotional management) **assigned by fit rather than carried by every character** — they are devices, not a template, and characters should differ in kind and not only in which quirk was assigned; a chapter outline carrying emotional anchors and emotional surprises instead of intensity numbers; `story-spine.md` with the ends decided (true state, false surface, thread endings, twist seeds, multi-scene chapters, flippable lines) and the means left loose; an opening strategy; a structural approach per chapter *(variety rule)*; a transition plan *(variety rule)*; theme as a question; ranked engagement types; re-read architecture; a chosen stylistic device; user approval.
+- **2 → 2.5** `world.md` records three candidate world-engines and the one chosen, with the pipeline's own administrative idiom named among the discarded, and `python tools/blind-packet.py <book-root> --gate` returns PASS (W1 three candidates, W2 a chosen engine, W3 that engine is not administrative, W4 the attractor named among the discards) — a FAIL blocks the transition however complete the other artifacts are, because a world made of a contract or a debt is the failure the gate exists to catch; character profiles with wound, lie, and arc for every principal, and the disorder devices (irrelevant obsession, distortion, unprompted memory, failed emotional management) **assigned by fit rather than carried by every character** — they are devices, not a template, and characters should differ in kind and not only in which quirk was assigned; a chapter outline carrying emotional anchors and emotional surprises instead of intensity numbers; `story-spine.md` with the ends decided (true state, false surface, thread endings, twist seeds, multi-scene chapters, flippable lines) and the means left loose; an opening strategy; a structural approach per chapter *(variety rule)*; a transition plan *(variety rule)*; theme as a question; ranked engagement types; re-read architecture; a chosen stylistic device; user approval.
 - **2.5 → 2.7** the voice matrix exists with a global profile, per-character cards including how each voice breaks, a differentiation matrix showing at least three distinguishing markers per pair, the anti-pattern checklist, and benchmark samples; the voice bank holds at least ten samples, including at least three that demonstrate voice under pressure and two irrelevant-thought samples.
 - **2.7 → 2.8** the entity file was built from foundation and outline, tracking every character, location, and timeline entry.
 - **2.8 → 3** the outline collation found no critical issues; warnings logged, and each either addressed or deferred with a reason.
@@ -355,7 +400,7 @@ systemic_patterns:  # pattern, chapters, severity, notes
 decisions:          # date, decision, rationale, phase
 human_feedback:     # date, source, summary, status
 revision_cycles:
-length_gate:        # pass | flag | block against the recorded positioning contract
+length_gate:        # pass | flag | block against the declared positioning
 ```
 
 ---
@@ -386,13 +431,13 @@ estimate, engagement recommendation, and the prose-rules file for the drafting s
 **Readership** — `readership` for three to five personas, naming the primary, the hostile,
 and the stretch reader.
 
-**Ductus** — `ductus-designer` for the book's voice contract, designed from what the author
-wants and from text that sounds like it, with the corpus-fit check run before a word of the
-contract is written. It writes `ductus.md` beside the foundation and never writes prose. If
+**Ductus** — `ductus-designer` for the book's voice specification, designed from what the
+author wants and from text that sounds like it, with the corpus-fit check run before a word
+of the specification is written. It writes `ductus.md` beside the foundation and never writes prose. If
 the book carries a press ductus, that voice is the parent and its refusals bind. Output is
 frozen before chapter one; a change after drafting starts is a dated decision.
 
-**Foundation** — `forme` for characters with wound, lie, and arc (plus the disorder devices
+**Foundation** — `forme` for characters with wound, lie, and arc, built on the chosen engine in `world.md` (plus the disorder devices
 the characters' own logic calls for), an outline carrying anchors and surprises and
 structural approaches, `story-spine.md` with the ends decided and the means left loose, the
 opening strategy, the voice bank, theme as question, re-read architecture, and cultural
@@ -579,7 +624,7 @@ A book may declare `structure: layered`: a document set rather than a manuscript
 layers accuse each other and the contradiction is the design. For those books, and only where
 the intake declares it:
 
-- **Canon is per layer.** Every `CANON_LEDGER.yaml` and voice contract carries a `layer:` key.
+- **Canon is per layer.** Every `CANON_LEDGER.yaml` and voice specification carries a `layer:` key.
   A contradiction between layers is content; a contradiction within a layer is a finding. No
   layer resolves another's value — the channel firewall applied to fiction.
 - **The outline is architecture.** The spine records the document layers, the nesting depth,
@@ -607,7 +652,7 @@ recorded as one rather than papered over.
 |---|---|---|
 | One book, start to finish, minimal steering | `incunabula-auto "<idea>"` | The full engine, autonomous, stopping only at three checkpoints (foundation, manuscript, delivery) |
 | To steer every phase | `incunabula` | The same engine, driven by hand: `start`, `write`, `evaluate`, `revise`, `score`, `deliver` |
-| A small project, or a host that only reads and writes files | `incunabula-codex` | The contract layer (intake, canon, voice contracts) and an optional 8-phase compact pipeline |
+| A small project, or a host that only reads and writes files | `incunabula-codex` | The continuity layer (intake, canon, voice specifications) and an optional 8-phase compact pipeline |
 
 The first two are one engine with a different amount of pilot. The third is a smaller
 pipeline that must never be swapped in silently for the full one.
@@ -632,14 +677,14 @@ trigger a macro re-evaluation.
 
 ## Session protocol
 
-**Start.** Establish the mode and read the primary state, canon, active voice contract, the
+**Start.** Establish the mode and read the primary state, canon, active voice specification, the
 phase prompt, and the maintenance protocol. Run the maintenance check-in. Report the phase,
 chapter progress, floor, first impression, pending feedback, systemic patterns, and any
 unresolved canon reviews. Recommend the next action with a full dispatch. Flag feedback that
 has sat unintegrated for more than two sessions.
 
 **End.** Update the state and log decisions with rationale. Note pending human actions. State
-the next session's recommended action. Update canon, voice contract, and document registry,
+the next session's recommended action. Update canon, voice specification, and document registry,
 and append merged facts, conflicts, resolutions, supersessions, and archival actions to the
 pruning log.
 
@@ -715,7 +760,7 @@ graduated reveal — and those are not penalised in that genre.
 and it refuses on FAIL or on NOT CLEAR · `write [n]` prepare a
 drafting dispatch · `quoin [n]` · `evaluate [n|all]` · `revise [n]` · `score` the
 breakdown plus both indices · `deliver` phase six after its gate check · `feedback [file]` ·
-`voice-bank add [file]` · `voice-matrix` · `readership` · `continuity [outline|manuscript]` ·
+`voice-bank add [file]` · `blind` build the fresh-eyes packet (`python tools/blind-packet.py <project> --write`) · `voice-matrix` · `readership` · `continuity [outline|manuscript]` ·
 `register [n]` · `catchword [n|binge]` · `composing [n|all]` · `proof-pull [n]` ·
 `patterns` · `oscillation`.
 

@@ -1,12 +1,12 @@
 ---
 name: rewrite
-description: Re-derive an existing finished book under a changed drafting framework, contract, or gate baseline. Distinct from corrector, which revises passages inside a living text. Use when the rules the book was built under have changed - a chapter-length rule removed, a canon decision reversed, a gate re-baselined - and the whole book has to be re-measured and repaired against the new rules, not patched in place. Also use before shipping any book whose artifacts predate a repair.
+description: Re-derive an existing finished book under a changed drafting framework, specification, or gate baseline. Distinct from corrector, which revises passages inside a living text. Use when the rules the book was built under have changed - a chapter-length rule removed, a canon decision reversed, a gate re-baselined - and the whole book has to be re-measured and repaired against the new rules, not patched in place. Also use before shipping any book whose artifacts predate a repair.
 ---
 
 # Rewrite — the book was built under different rules
 
 Corrector revises a living text. This re-derives a book that was **finished under a
-contract that has since changed**. The text may be excellent and still be wrong for the
+specification that has since changed**. The text may be excellent and still be wrong for the
 new rules, because the rules are not in the prose.
 
 Worked example: the two validation books (`validation 1`, `validation 2`), re-derived 2026-09-28 after
@@ -148,7 +148,7 @@ yet, that is step 2's job, not step 8's — but step 8 is where you find out you
 
 ### 9. Record what the rewrite did *not* prove
 
-Say plainly which parts of the new contract the book was never under. In the worked
+Say plainly which parts of the new specification the book was never under. In the worked
 example: the validation books were re-chaptered from seven planned chapters to eleven
 specifically to break uniform lengths, under a state file declaring
 `average_words_per_chapter_planned: 2450`. So they are evidence that a spread **survives

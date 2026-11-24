@@ -2,7 +2,7 @@
 #
 # SCOPE, stated first because a host reading only this file would otherwise conclude
 # wrongly. The default production route is the `incunabula` engine (17 phases) running
-# inside this contract layer. This file declares the compact pipeline, which a project
+# inside this continuity layer. This file declares the compact pipeline, which a project
 # selects deliberately - never as a silent substitution for the full engine, which the
 # pipeline explicitly forbids.
 #
@@ -33,10 +33,10 @@ maintenance_gate:
   present_before_phase_0:
     - "CANON_LEDGER.yaml - series scope"
     - "CANON_LEDGER.yaml - book scope"
-    - "live voice contracts inside voice-matrix.md"
+    - "live voice specifications inside voice-matrix.md"
     - "maintenance/PRUNING_LOG.md"
     - "maintenance/SESSION_LOG.md"
-    - "the ductus resolution for this book - the assigned voice, or the fact that there is none (tools/ductus.py contract), recorded in the state file's voice block"
+    - "the ductus resolution for this book - the assigned voice, or the fact that there is none (tools/ductus.py voice), recorded in the state file's voice block"
   check_in:
     - "open the primary state file, the canon ledger, the recent session entries and the phase prompt"
     - "verify every chapter's status and word count against the files on disk"
@@ -45,7 +45,7 @@ maintenance_gate:
     - "attach provenance and a verification date"
   check_out:
     - "write the primary state file"
-    - "write the canon ledger, the voice contract and the document registry"
+    - "write the canon ledger, the voice specification and the document registry"
     - "append a session entry covering decisions, changed files, facts merged, conflicts and the next step"
     - "append to maintenance/PRUNING_LOG.md"
     - "re-run the phase gate before reporting that the phase advanced"
@@ -96,10 +96,10 @@ phase_3_drafting:
   label: "Phase 3: Drafting"
   prompt: "references/prompts/drafting.md"
   # The author this book is drafted AS, when it has one. Resolve before the first
-  # chapter: `python tools/ductus.py contract <book-root>`. A REFUSED contract stops the
+  # chapter: `python tools/ductus.py voice <book-root>`. A REFUSED specification stops the
   # phase; an UNASSIGNED book is drafted under the root COMMONPLACE.md alone, and the
   # state file records that as a state rather than leaving it blank.
-  voice_contract: "tools/ductus.py contract"
+  voice_contract: "tools/ductus.py voice"
   gate: "drafting"
   maintenance_gate: "required"
   prose_gate: "required"

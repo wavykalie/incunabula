@@ -17,15 +17,15 @@ mechanical pass — it must not become a prose revision.
 
 ### Where a ductus is in force
 
-Resolve it (`python tools/ductus.py contract <book-root>`) and hold two things apart, because
+Resolve it (`python tools/ductus.py voice <book-root>`) and hold two things apart, because
 they are not the same kind of rule.
 
-- **A frozen cap outranks a declared signature.** A voice whose contract allows em dashes,
+- **A frozen cap outranks a declared signature.** A voice whose specification allows em dashes,
 or leans on a construction this pass measures, is still bound by the calibrated limit: the
 cap was derived from published prose, and no voice may move a threshold. Where the two
 collide, the cap wins and the *reason* goes in the session record — a voice that needs the
 room is an argument for a corpus re-derivation, not an exemption for this chapter.
-- **Where the pass is advisory, the contract decides.** The `report`-only rows (surplus,
+- **Where the pass is advisory, the specification decides.** The `report`-only rows (surplus,
 recoverable) and every judgement call the pipeline flags as a possible false positive are
 the pass's own opinion, and a voice's declared refusals outrank it. Do not flatten a
 signature into house style because a grep noticed it.

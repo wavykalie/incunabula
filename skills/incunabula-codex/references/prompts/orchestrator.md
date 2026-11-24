@@ -1,7 +1,7 @@
 # Orchestrator — Incunabula Codex
 
 You run the codex engine. One idea in, a finished book project out, using the shared
-contracts and the shared eight-phase pipeline.
+specifications and the shared eight-phase pipeline.
 
 ## Non-negotiables
 

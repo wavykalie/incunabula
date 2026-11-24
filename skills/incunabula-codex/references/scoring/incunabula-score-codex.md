@@ -1,6 +1,6 @@
 # Incunabula Score
 
-The one scoring contract for the codex engine. Prompts, adapters, examples, reports,
+The one scoring specification for the codex engine. Prompts, adapters, examples, reports,
 and manual review all have to produce it the same way, or the number stops meaning
 anything across runs.
 
@@ -103,7 +103,7 @@ All of the following, together:
    is not a fix.
 4. Rescore after the revision, from scratch.
 
-## Report contract
+## Report format
 
 `artifacts/09-incunabula-score.md` must contain:
 

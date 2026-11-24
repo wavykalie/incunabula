@@ -1,6 +1,6 @@
 ---
 name: incunabula-codex
-description: The contract layer for Incunabula — guided intake, voice contracts for character, chapter, and fact, durable canon tracking, safe pruning, and an upgrade path for projects that already exist. Read by the incunabula engine during a normal run; also hosts an optional 8-phase compact pipeline for small projects. Not tied to any particular agent or host despite the legacy folder name.
+description: The continuity layer for Incunabula — guided intake, voice specifications for character, chapter, and fact, durable canon tracking, safe pruning, and an upgrade path for projects that already exist. Read by the incunabula engine during a normal run; also hosts an optional 8-phase compact pipeline for small projects. Not tied to any particular agent or host despite the legacy folder name.
 ---
 
 # Incunabula Universal Core — the portable pipeline
@@ -23,7 +23,7 @@ Do not quietly swap the compact pipeline in where the full engine was chosen.
 ### The whole thing in plain words
 
 This folder is the memory and the paperwork around the writing. It defines the intake
-interview (what kind of book this is), the voice contracts (how each character speaks),
+interview (what kind of book this is), the voice specifications (how each character speaks),
 the canon ledger (the book's facts, each with its source), and the rules for resuming a
 project days later — or bringing an old project into the system without losing anything.
 The unusual terms used below — gate, freeze, platen, colophon — are defined in plain
@@ -35,21 +35,22 @@ Persist decisions to files. A run leaves a durable project tree, not chat.
 
 ## The layer
 
-The full engine owns the phases. This folder supplies the contracts that wrap it — intake,
-state selection, voice contracts, the canon ledger, contradiction handling, persistence,
+The full engine owns the phases. This folder supplies the standing records that wrap it — intake,
+state selection, voice specifications, the canon ledger, contradiction handling, persistence,
 migration, deduplication, and safe pruning — and it runs in three modes:
 
-- **NEW** — run the intake contract before any foundation work.
-- **RESUME** — load the primary state, the canon ledger, the voice contract, and the current phase prompt before acting.
+- **NEW** — run the intake interview before any foundation work.
+- **RESUME** — load the primary state, the canon ledger, the voice specification, and the current phase prompt before acting.
 - **UPGRADE** — migrate an existing project in place: keep its files, register their authority, import verified facts, and write a migration report. Where two state files exist, choose a primary by explicit decision, completeness, progress, and update evidence, and never erase the other.
 
-Contracts live in `references/`: the intake schema, the canon ledger schema, the maintenance
+Specifications live in `references/`: the intake schema, the canon ledger schema, the maintenance
 protocol, the host contract, and the evaluator protocol.
 
 The durable layers kept in step with each other:
 
 - the state file (`STATE.yaml` or `PROJECT_STATE.yaml`)
 - `ASSUMPTIONS.md` — explicit inferences
+- `world.md` — the world engine: three candidates, one chosen, the discards kept with their reasons
 - `foundation.md` — premise, theme, characters, world
 - `outline.md` — chapter architecture
 - `voice-matrix.md` — global, character, chapter, and fact-presentation voice
@@ -63,7 +64,7 @@ maintenance gate enforces that: a mandated artifact that was never created is a 
 reported as a failure, and a layer built late is recorded as a repair rather than backdated.
 
 Before drafting, editing, auditing, or packaging, read the active canon entries and voice
-contracts. Superseded material is not active canon.
+specifications. Superseded material is not active canon.
 
 Project layout:
 
@@ -107,7 +108,7 @@ orchestration rules, and the phases overview summarises the sequence.
 1. Read the host contract at start and on resume.
 2. Locate the project directory, or create it.
 3. Read the state, the assumptions, and the actual saved outputs. If the project is new, initialise from the project-state template.
-4. Confirm the length contract before architecture or drafting; short-form positioning must be explicit.
+4. Confirm the declared length before architecture or drafting; short-form positioning must be explicit.
 5. Load the current phase prompt and produce only what that phase requires.
 6. Update the state after every phase, chapter block, audit, or score, with real word counts and the length-gate status.
 7. Do not skip the devil's audit; it comes before the fine press loop and before any final score.

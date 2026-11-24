@@ -7,11 +7,11 @@ blocks structurally distinct from one another.
 
 ## Rules
 
-- Resolve the voice before the first chapter: `python tools/ductus.py contract <book-root>`.
-  A resolved contract is what these chapters are written AS — its Register is the sound,
+- Resolve the voice before the first chapter: `python tools/ductus.py voice <book-root>`.
+  A resolved voice is what these chapters are written AS — its Register is the sound,
   its Refusals are binding, and its benchmark lines are the tuning fork. `UNASSIGNED`
-  means there is no such contract for this book and the root `COMMONPLACE.md` is the only
-  taste ledger in play. A `REFUSED` contract stops phase 3; do not draft a chapter into a
+  means there is no such specification for this book and the root `COMMONPLACE.md` is the only
+  taste ledger in play. A `REFUSED` specification stops phase 3; do not draft a chapter into a
   voice nobody authored.
 - Write whole chapter blocks. Disconnected scenes produce a book that reads like a folder.
 - Every block earns its place with a clear narrative function.

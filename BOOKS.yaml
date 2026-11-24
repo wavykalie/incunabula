@@ -180,3 +180,21 @@ books:
     status: drafting
     expected_manuscript: true
     note: "Registered at creation by init-book.py. (2026-11-17)"
+
+  - path: the-slow-room
+    title: "The Slow Room"
+    author: "Maren Hearth"
+    ductus: maren-hearth
+    series: third-places
+    status: drafting
+    expected_manuscript: true
+    note: "Registered at creation by init-book.py. (2026-11-20)"
+
+  - path: the-down/book-1
+    title: "A Thousand Terms"
+    author: "The Game Master"
+    ductus: game-master
+    series: the-down
+    status: drafting
+    expected_manuscript: true
+    note: "Registered at creation by init-book.py. (2026-11-23) Assigned to the Game Master hand; the Sabel Rook clerk persona was rejected by the author as a device the story casts, and replaced the same day."

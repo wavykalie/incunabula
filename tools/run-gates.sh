@@ -265,6 +265,21 @@ run_row "check-ductus.py" hygiene "$ROOT/tools/check-ductus.py" "$BOOK"
 # A book with no `ductus:` reads NOT RUN, the same as any other undeclared contract.
 run_row "ductus.py calibrate" contract "$ROOT/tools/ductus.py" "calibrate" "$BOOK"
 
+echo "== world gate (Phase 2; only where a world is declared) ========"
+# A book's world is fixed before it has chapters, so this row cannot exist for most books
+# and must not read as NOT RUN for them: an absent world.md means the book has not reached
+# Phase 2, not that a gate declined to judge. A book that does carry world.md is judged by
+# the same audit the Phase 2 gate names (blind-packet.py --gate, rules W1-W4): three
+# candidate engines, one chosen, a chosen engine that is not administration in costume,
+# and the administrative attractor named among the discards.
+if [ -f "$BOOK/world.md" ]; then
+  run_row "blind-packet.py --gate" hygiene "$ROOT/tools/blind-packet.py" "$BOOK" --gate
+else
+  echo "     no world.md under this book - the Phase 2 world gate does not apply."
+  echo "     (A book that reaches Phase 2 acquires one; run the row then.)"
+  echo
+fi
+
 echo "== prose gate =================================================="
 run_row "deslop-check.sh" prose "$PROSE/deslop-check.sh" "$CHAPTERS"
 run_row "check-uniformity.py" prose "$PROSE/check-uniformity.py" "$BOOK"

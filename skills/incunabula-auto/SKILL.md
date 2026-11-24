@@ -16,7 +16,7 @@ brief is rolled, not given:
    `tools/niche-pool.txt`, plus two premise seeds. The dice choose the shelf,
    not the story: the run invents the premise from the seeds. **The language is
    English and is no longer drawn.** This harness is a book-production pipeline,
-   not a localisation engine: its gates, voice contracts and calibration corpus
+   not a localisation engine: its gates, voice specifications and calibration corpus
    are English, and a run in another language is a run whose instruments are a
    guess. German and Spanish were in the table briefly and were cut again, on the
    ground that "delivered once" is not "supported". A book in another language is
@@ -66,10 +66,10 @@ interruption except three approval points:
 1. Market research
 2. Readership
 3. Foundation — characters, outline, theme
-4. Voice matrix — after resolving the author: `python tools/ductus.py contract <book-root>`.
+4. Voice matrix — after resolving the author: `python tools/ductus.py voice <book-root>`.
    A resolved voice governs the book-level register and its refusals bind every chapter
    after it; `UNASSIGNED` means no voice is declared and the root ledger stands alone. A
-   `REFUSED` contract stops the run here, at the cheapest possible point, rather than
+   `REFUSED` specification stops the run here, at the cheapest possible point, rather than
    twenty chapters into a voice nobody authored.
 5. **Checkpoint one: the foundation is approved**
 6. Entity state built from the foundation
