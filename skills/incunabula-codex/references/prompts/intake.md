@@ -27,6 +27,37 @@ Say what the reader is being promised.
 Then work out what makes this version *legible* to the market it wants — legible, not
 generic. Those are different goals and only one of them is worth having.
 
+## The discard record
+
+This project has built engines it threw away, and they are recorded in the root
+`COMMONPLACE.md` under **Do not rebuild**. Read that section before you accept an engine,
+then run the refusal:
+
+```bash
+python tools/blind-packet.py <book-root> --discards
+```
+
+It reads `premise.md` and the chosen engine in `world.md` and refuses a premise that rebuilds
+a scrapped one, naming the entry that scrapped it. Two are on the list today:
+
+- **the-debt-engine** — the family as collateral on an ancestor's surety, where cleared
+  terms bought standing, standing bought shares, and shares bought a charter. Scrapped
+  2026-11-24 with the book that carried it.
+- **the-clerk-narrator** — a narrator who is a device the story casts: a clerk, notary or
+  registrar recording the book from inside the fiction. Scrapped for the same book, on the
+  author's rule that *"the author should not take the shape of a device the story casts."*
+
+A refusal is not a taste note, and it is not cleared by softening the premise until the
+pattern hides from the scanner. New nouns over the same ladder is the same engine. There are
+two ways past it, and only one of them is silent:
+
+1. **Change the engine.** The gate reads shapes, not words: if the family is not collateral,
+   there is no ladder to rename.
+2. **Overturn the record.** Append a dated entry to the root `COMMONPLACE.md` saying what the
+   old diagnosis missed and why this premise is not that engine, then re-run with
+   `--allow-discard <slug>`. That leaves a record of who was wrong and why, which is the
+   point of having a record at all.
+
 ## Keep the idea in the author's words
 
 Before you rewrite anything, write what the author actually said into `maintenance/IDEA.md`,
@@ -78,6 +109,10 @@ foundation phase.
 Confirm `maintenance/IDEA.md` exists and carries the author's wording rather than a rewrite.
 The blind packet reads it verbatim, and an empty file is the one failure that shows up much
 later, as a world that sounds like the tooling.
+
+Run `python tools/blind-packet.py <book-root> --discards` and record the verdict with the
+intake, beside the voice resolution. A premise that has not been checked against the discard
+record has not passed intake; a premise that fails it has no engine yet.
 
 Run the maintenance check-in. `CANON_LEDGER.yaml`, the live voice specifications, and
 `maintenance/PRUNING_LOG.md` must exist before phase 1 is dispatched.

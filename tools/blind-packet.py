@@ -23,13 +23,15 @@ Usage
   python tools/blind-packet.py <book-root> --write                 write it to maintenance/
   python tools/blind-packet.py <book-root> --prompt                print the paste-ready ask
   python tools/blind-packet.py <book-root> --gate                  judge world.md (Phase 2)
+  python tools/blind-packet.py <book-root> --discards              refuse a scrapped premise
   python tools/blind-packet.py <book-root> --audit <file>          scan an artifact for leak
 
   --idea may be a file path; otherwise the tool reads <book-root>/maintenance/IDEA.md.
   --allow "word,word" records a deliberate use of a flagged word and continues.
 
-Exit codes: 0 clean, 1 the packet, the audited file, or the chosen world engine carries the
-pipeline's vocabulary, 2 usage, no idea to send, or no world.md to judge.
+Exit codes: 0 clean, 1 the packet, the audited file, the chosen world engine, or the premise
+carries the pipeline's vocabulary or rebuilds a scrapped engine, 2 usage, no idea to send, or
+nothing to judge.
 """
 
 import argparse
@@ -54,6 +56,34 @@ ADMIN_WORDS = [
     "tribunal", "tariff", "toll", "deed", "notary", "plaintiff", "defendant",
     "litigation", "debt", "debtor", "creditor", "audit", "permit", "licence",
     "license", "ordinance", "treaty",
+]
+
+# Engines this project has already built and thrown away. A premise that rebuilds one is
+# refused by name, with the entry that scrapped it -- not scored, not softened, not
+# re-named into a pass. Each phrase is a shape, not a word: "debt" is a legitimate subject,
+# while "standing buys" is the ladder the scrapped book stood on.
+DISCARDS = [
+    {
+        "slug": "the-debt-engine",
+        "what": "the family as collateral on an ancestor's surety, where cleared terms bought "
+                "standing, standing bought shares, and shares bought a charter",
+        "recorded": "root COMMONPLACE.md, 2026-11-24, under 'Do not rebuild'",
+        "phrases": [
+            "collateral on a surety", "collateral on the surety", "terms for standing",
+            "standing buys", "shares buy", "seat in the concord", "seats in the concord",
+            "charter-holder", "buys a charter", "writ-holder", "the assay",
+        ],
+    },
+    {
+        "slug": "the-clerk-narrator",
+        "what": "a narrator who is a device the story casts: a clerk, notary or registrar "
+                "recording the book from inside the fiction",
+        "recorded": "root COMMONPLACE.md, 2026-11-24; ductus/game-master/COMMONPLACE.md",
+        "phrases": [
+            "narrated by a clerk", "the narrator is a clerk", "a clerk of the",
+            "the clerk writes", "keeper of the writ", "the undersigned",
+        ],
+    },
 ]
 
 PACKET = """# The blind packet — {title}
@@ -194,7 +224,60 @@ def section(text, title):
     return "\n".join(out)
 
 
-def gate(root, admin):
+def discard_hits(text):
+    """[(discard, phrase, line)] for every scrapped engine this text is rebuilding."""
+    low = text.lower()
+    found = []
+    for d in DISCARDS:
+        for phrase in d["phrases"]:
+            for m in re.finditer(r"\b" + re.escape(phrase), low):
+                found.append((d, phrase, low.count("\n", 0, m.start()) + 1))
+    return found
+
+
+def discards_check(root, allowed=frozenset()):
+    """Intake's refusal: a premise may not rebuild an engine this project scrapped."""
+    checked = []
+    premise = os.path.join(root, "premise.md")
+    if os.path.isfile(premise):
+        checked.append((premise, read_text(premise)))
+    world = os.path.join(root, "world.md")
+    if os.path.isfile(world):
+        # Only the engine that was chosen: `## Discarded` is required to name these.
+        checked.append((world, section(read_text(world), "chosen engine")))
+    if not checked:
+        print("blind-packet: discards: NOT RUN — no premise.md or world.md to judge in " + root)
+        return 2
+
+    bad = 0
+    for path, text in checked:
+        found = [t for t in discard_hits(text) if t[0]["slug"] not in allowed]
+        if not found:
+            continue
+        bad += 1
+        print("blind-packet: REFUSED — " + os.path.basename(path) +
+              " rebuilds an engine this project already scrapped:")
+        seen = set()
+        for d, phrase, line in found:
+            if d["slug"] in seen:
+                continue
+            seen.add(d["slug"])
+            print("  " + d["slug"] + " — " + d["what"])
+            print("    scrapped in " + d["recorded"])
+            print("    first at line " + str(line) + ": \"" + phrase + "\"")
+
+    if bad:
+        print("blind-packet: discards: FAIL — change the engine, or overturn the record with "
+              "a dated entry in the root COMMONPLACE.md saying what the old diagnosis "
+              "missed, then re-run with --allow-discard <slug>.")
+        return 1
+
+    print("blind-packet: discards: clean — no scrapped engine in "
+          + ", ".join(os.path.basename(p) for p, _t in checked))
+    return 0
+
+
+def gate(root, admin, allow_discards=frozenset()):
     """Phase 2's world gate: the artifact, not the process. Returns 0 pass, 1 fail, 2 no world."""
     path = os.path.join(root, "world.md")
     if not os.path.isfile(path):
@@ -231,6 +314,13 @@ def gate(root, admin):
         fails.append("W4 no administrative engine named among the discarded; the attractor "
                      "goes on the record or the next pilot reaches for it too")
 
+    rebuilt = [t for t in discard_hits(chosen) if t[0]["slug"] not in allow_discards]
+    for d in {id(t[0]): t[0] for t in rebuilt}.values():
+        fails.append("W5 the chosen engine rebuilds " + d["slug"] + " (" + d["what"] + "), "
+                     "scrapped in " + d["recorded"] + "; new nouns over the same ladder is "
+                     "the same engine. Change it, or overturn the record and pass "
+                     "--allow-discard " + d["slug"])
+
     if fails:
         for f in fails:
             print("blind-packet: FAIL " + f)
@@ -239,7 +329,8 @@ def gate(root, admin):
         return 1
 
     print("blind-packet: world gate: PASS (W1 three candidates, W2 chosen engine, "
-          "W3 chosen engine physical, W4 attractor named and discarded)")
+          "W3 chosen engine physical, W4 attractor named and discarded, W5 no scrapped "
+          "engine rebuilt)")
     return 0
 
 
@@ -293,14 +384,14 @@ The floor breathes and the family works inside its inhale.
 The surety lost: it described the paperwork, not the world.
 """
 
-    def run(text, admin=None, name="world.md"):
+    def run(text, admin=None, name="world.md", allow=frozenset()):
         d = tempfile.mkdtemp(prefix="blind-packet-selftest-")
         if text is not None:
             with open(os.path.join(d, name), "w", encoding="utf-8") as f:
                 f.write(text)
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
-            rc = gate(d, ADMIN_WORDS if admin is None else admin)
+            rc = gate(d, ADMIN_WORDS if admin is None else admin, allow)
         return rc, buf.getvalue()
 
     rc, out = run(good)
@@ -324,6 +415,15 @@ The surety lost: it described the paperwork, not the world.
                                "The other two were duller."))
     check(rc == 1, "discards that name no administrative engine fail")
     check("W4" in out, "the W4 failure is named")
+
+    rebuilt = good.replace("The floor breathes and the family works inside its inhale.",
+                           "The family clears terms for standing, and standing buys shares.")
+    rc, out = run(rebuilt)
+    check(rc == 1, "W5 refuses a scrapped engine rebuilt under new nouns")
+    check("W5" in out, "the W5 failure is named")
+
+    rc, out = run(rebuilt, allow={"the-debt-engine"})
+    check(rc == 0, "--allow-discard clears a recorded overturn")
 
     rc, out = run(None)
     check(rc == 2, "no world.md is NOT RUN, never a pass")
@@ -350,8 +450,9 @@ The surety lost: it described the paperwork, not the world.
         return 1
 
     print("SELF-TEST PASS — " + str(passed) + " assertions (W1 three candidates, W2 chosen "
-          "engine, W3 engine not administrative, W4 attractor named, NOT RUN without a "
-          "world, --allow, packet construction and refusal)")
+          "engine, W3 engine not administrative, W4 attractor named, W5 no scrapped engine "
+          "rebuilt, the overturn path, NOT RUN without a world, --allow, packet construction "
+          "and refusal)")
     return 0
 
 
@@ -364,7 +465,11 @@ def main(argv=None):
     ap.add_argument("--prompt", action="store_true", help="print the paste-ready ask")
     ap.add_argument("--selftest", action="store_true", help="run this tool's own assertions")
     ap.add_argument("--gate", action="store_true",
-                    help="judge world.md against the Phase 2 world gate (W1-W4)")
+                    help="judge world.md against the Phase 2 world gate (W1-W5)")
+    ap.add_argument("--discards", action="store_true",
+                    help="refuse a premise that rebuilds a scrapped engine")
+    ap.add_argument("--allow-discard", default="",
+                    help="comma-separated discard slugs to accept, for a recorded overturn")
     ap.add_argument("--audit", metavar="FILE", help="scan a file for leaked system idiom")
     ap.add_argument("--allow", default="", help="comma-separated words to accept")
     args = ap.parse_args(argv)
@@ -376,11 +481,19 @@ def main(argv=None):
     system = [w for w in SYSTEM_WORDS if w not in allow]
     admin = [w for w in ADMIN_WORDS if w not in allow]
 
+    allowed = {s.strip() for s in args.allow_discard.split(",") if s.strip()}
+
+    if args.discards:
+        if not args.book or not os.path.isdir(args.book):
+            print("blind-packet: --discards needs a book directory", file=sys.stderr)
+            return 2
+        return discards_check(args.book, allowed)
+
     if args.gate:
         if not args.book or not os.path.isdir(args.book):
             print("blind-packet: --gate needs a book directory", file=sys.stderr)
             return 2
-        return gate(args.book, admin)
+        return gate(args.book, admin, allowed)
 
     if args.audit:
         if not os.path.isfile(args.audit):

@@ -280,6 +280,17 @@ else
   echo
 fi
 
+echo "== discard record (Phase 0-2; only where a premise is declared) ======"
+# The refusal intake runs by hand: a premise that rebuilds an engine this project
+# scrapped (root COMMONPLACE.md, "Do not rebuild") has no engine yet, whatever its
+# nouns. Absent premise.md means the book predates the record, not that it passed.
+if [ -f "$BOOK/premise.md" ]; then
+  run_row "blind-packet.py --discards" hygiene "$ROOT/tools/blind-packet.py" "$BOOK" --discards
+else
+  echo "     no premise.md under this book - the discard refusal does not apply."
+  echo
+fi
+
 echo "== prose gate =================================================="
 run_row "deslop-check.sh" prose "$PROSE/deslop-check.sh" "$CHAPTERS"
 run_row "check-uniformity.py" prose "$PROSE/check-uniformity.py" "$BOOK"
