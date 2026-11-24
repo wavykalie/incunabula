@@ -101,3 +101,45 @@ Three things to know before the first entry:
 drafted under a ductus, its decisions go to that voice's own ledger instead
 (`ductus/<slug>/COMMONPLACE.md`), and nothing crosses except a dated merge in
 `ductus/PROMOTIONS.md`.
+
+### 2026-11-24 — decision — scrap The Down, the world engine under it, and the hand that grew from it
+
+- **book:**    the-down/book-1 (*A Thousand Terms*). Scrapped by the author 2026-11-24; the
+  book tree, its canon ledger and its voice layers are deleted. The framework built while
+  diagnosing it is in commit `cb30ad9` and still stands.
+- **chose:**   scrap the world, the book, and the series layer; keep the Game Master hand,
+  unassigned, for a book that does not exist yet.
+- **over:**    rebuilding the world on the same engine; keeping the debt engine and repairing
+  the prose; renaming the engine and continuing.
+- **reason:**  the author's verdict, *"I want to scrap this idea"*, arrived after the
+  diagnosis and is consistent with it. Nothing about the prose was fixable at the line
+  level, and the author had already paid for that lesson twice.
+- **source:**  author, prompted by the agent's report that the voice had been authored inside
+  the rejected world.
+
+**What the diagnosis was.** Three world engines were built before the author saw one they
+wanted: the Dig, the Arena, and the Hunger — all three of them replacements for a fourth, the
+debt-and-asset engine the book was first founded on, in which the family were collateral on a
+surety their ancestor signed, and cleared terms were standing that bought shares that bought a
+charter. The author rejected that engine and the clerk narrator built to carry it, on the
+grounds that *"the author should not take the shape of a device the story casts."* The
+replacement hand was written while the old engine was still canon, and inherited it in three
+different places: a reason-for-being sentence about obligation, a ladder of standing to
+charter to seat, and five abstract stats with a Writ for an epigraph. The register could not be
+repaired by tuning it, because the defect was upstream of the sentence: the vocabulary of a
+world about documents becomes the syntax of anyone who narrates it.
+
+**What survives.** The world gate (W1–W4: three candidate engines, each with three concrete
+costs, before any artifact is written), the blind packet, `fresh-eyes.md`, the rename of
+*contract* to *specification* across every skill and `ductus.py`, and the hand itself. Of the
+hand, the rules that were never about the Kasks: no fudged roll; two tells before a trap; at a
+death the sentence gets shorter; a class is shown before it is named; no device inside the
+story speaking for the author.
+
+**Do not rebuild.** The debt/market engine — collateral, surety, yield, charter, Concord,
+Assay, the Writ — and the Clerk narrator (`sabel-rook`, removed 2026-11-23). Both are recorded
+as discarded in `ductus/game-master/COMMONPLACE.md`. A future intake that proposes a LitRPG
+about inherited obligation owes this record a reason why it is wrong.
+
+**What would have caught it.** Nothing at the line level; a gate at the world, before any
+prose. It exists now, and it is why this cost one session instead of a manuscript.

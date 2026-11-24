@@ -4,9 +4,11 @@
 at drafting time it reads this file as the voice contract, the way it reads a book's
 `voice-matrix.md` for the cast.
 
-**Status: WISH, unfalsified as of 2026-11-23.** No excerpts, no benchmarks, no blind
-sort. Two things falsify it: the blind sort fails, or a drafted chapter cannot pass the
-gates without breaking a Refusal.
+**Status: WISH, unfalsified as of 2026-11-23. Unassigned since 2026-11-24.** The book this
+hand was designed for was scrapped (see the root `COMMONPLACE.md`); the hand survives it,
+with no series layer and no book. No excerpts, no benchmarks, no blind sort. Two things
+falsify it: the blind sort fails, or a drafted chapter cannot pass the gates without
+breaking a Refusal.
 
 **Parent:** none.
 
@@ -48,11 +50,11 @@ permissions, a roll, a consequence. No scene, no spectacle.
 
 ## Register
 
-**Point of view.** Close third, past tense, one body per chapter. Every body in the book is
-a Kask: there is nobody else inside the Down. No head-hopping. The narrator can read the
+**Point of view.** Close third, past tense, one body per chapter. Every body in the book
+belongs to the family it follows; the hand has no outsiders to cut to. No head-hopping. The narrator can read the
 House's tally and the map; it cannot read minds.
 
-**The Table Note.** Five, one per part, before the first Term Ledger of the part. Present
+**The Table Note.** Five, one per part, before the part's first tally. Present
 tense, second person, the GM's own diction — *dungeon, build, roll, trap, sheet, campaign*
 are all allowed here and **only** here. It may state the price of the part, name the cost of the
 obvious choice, and refuse to apologise for the map. It never explains the theme.
@@ -239,7 +241,9 @@ exist on disk.
 - **Replaces:** `sabel-rook` (2026-11-23), rejected by the author the same day. Removed,
   not archived; it was never used for prose.
 - **Excerpts:** none. **Lane:** none governing. **Blind sort:** not run.
-- **Designed:** 2026-11-23, by the agent, for *The Down*.
+- **Designed:** 2026-11-23, by the agent, for *The Down*. That project was scrapped by
+  the author on 2026-11-24 and its artifacts deleted; the hand was kept, and its series
+  layer for that world with it went out of the tree.
 - **Conflicts:** the want is a GM who addresses players, and the book is close third. This
   is not averaged: the GM gets the **Table Note** and the narration gets the GM's habits,
   not his grammar. If a reader wants the GM on every page, the fix is more Notes, not

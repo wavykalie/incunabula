@@ -358,7 +358,7 @@ The surety lost: it described the paperwork, not the world.
 def main(argv=None):
     ap = argparse.ArgumentParser(
         description="Build a packet that carries the book and nothing about the system.")
-    ap.add_argument("book", nargs="?", help="book root, e.g. test-books/the-down/book-1")
+    ap.add_argument("book", nargs="?", help="book root, e.g. test-books/<book>")
     ap.add_argument("--idea", help="the author's sentence, or a path holding it")
     ap.add_argument("--write", action="store_true", help="write maintenance/BLIND_PACKET.md")
     ap.add_argument("--prompt", action="store_true", help="print the paste-ready ask")
