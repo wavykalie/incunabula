@@ -1,0 +1,53 @@
+name: preflight
+
+# The make-ready stack, run where a person cannot forget it.
+#
+# Every harness tool in this repo carries its own self-test, and until now the only
+# thing that ran them was someone typing `bash tools/preflight.sh`. Ten harnesses and
+# no runner is how the installed-skill drift of 2026-11-24 reached a commit: the
+# preflight would have caught it, and nothing ran the preflight.
+#
+# WHAT A GREEN RUN HERE DOES NOT MEAN. preflight is a session-start ritual, not a CI
+# gate, and three of its rows cannot move to a runner: the installed skill copies live
+# in the author's home directory (row 2 reports MISSING and exits 0 here), the state
+# rows need a book root, and test-books/ is gitignored by design. Green says the
+# instruments are self-consistent. Ready-to-draft is still `bash tools/preflight.sh`
+# in the folder you are about to draft in.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # v7 is the first major on node24; Node 20 was removed from runners in
+      # September 2026, so anything older fails before the first step runs.
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      # Row 3 reports a missing YAML parser as SKIP rather than PASS, but the tools
+      # themselves (errata-store, ductus, rollout records) read YAML to work at all.
+      - name: PyYAML
+        run: python -m pip install --quiet pyyaml
+
+      - name: preflight — freeze, skill copies, records, eight harness self-tests
+        run: bash tools/preflight.sh
+
+      # The two that preflight only half-covers: it runs prune-stale --check (the
+      # verdict) but not its self-test (the append that must not rewrite history),
+      # and blind-packet is not in its row-4 list at all.
+      - name: the self-tests preflight does not run
+        run: |
+          python tools/blind-packet.py --selftest
+          python tools/prune-stale.py --self-test
